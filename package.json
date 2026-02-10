@@ -10,11 +10,14 @@
     "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "serve": "npx http-server . -p 8080 -c-1"
+    "serve": "npx http-server . -p 8080 -c-1",
+    "test:e2e": "npx playwright test",
+    "test:e2e:headed": "npx playwright test --headed"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
     "@jest/globals": "^29.7.0",
+    "@playwright/test": "^1.58.2",
     "eslint": "^9.19.0",
     "globals": "^17.3.0",
     "jest": "^29.7.0",
@@ -30,4 +33,3 @@
   "author": "Matt J Bordenet",
   "license": "MIT"
 }
-
