@@ -6,7 +6,7 @@ AI-powered document creation with adversarial review workflow. Generate professi
 
 ## Background
 
-DocForgeAI is the successor to the Genesis experiment—a collection of 9 separate document assistant repos that explored AI-assisted professional writing with adversarial review.
+DocForgeAI is the successor to the Genesis experiment: a collection of 9 separate document assistant repos that explored AI-assisted professional writing with adversarial review.
 
 **Lessons learned from Genesis:**
 - The 3-phase adversarial workflow (generate → critique → synthesize) produces measurably better documents
@@ -32,17 +32,17 @@ DocForgeAI applies lessons from [Genesis](https://github.com/bordenet/genesis), 
 | AI adoption | 60%+ of companies using AI across multiple functions | [LinkedIn][3] |
 | Complex logic | 10-19% slower due to debugging "almost-right" code | [dev.to][4] |
 
-### Core Principles
+### What DocForgeAI Does Differently
 
-- **Architecture first, AI second** — Define structure upfront (plugin architecture, shared infrastructure), let AI handle implementation details
-- **Vibe coding with guardrails** — Use AI pair programming for speed; enforce architectural boundaries with tooling
-- **Tests as safety nets** — Comprehensive test coverage (97 tests) catches regressions without mandating line-by-line code review
-- **Context engineering** — Dedicated files (AGENTS.md, structured prompts) guide AI behavior better than long instructions
-- **Iterate fast, refactor when needed** — Ship working code, improve it when patterns emerge
+- **Unified codebase:** One repo instead of nine, with shared infrastructure and isolated plugin data
+- **Plugin architecture:** Each document type is a self-contained plugin; add new types without touching core code
+- **97 tests as the safety net:** Full coverage across all document types catches regressions automatically
+- **Context files over instructions:** AGENTS.md guides AI behavior; no need for lengthy prompts
+- **Ship fast, refactor later:** Working code first, patterns emerge through iteration
 
-### Built on Genesis
+### Lessons from Genesis
 
-Genesis pushed conformity tooling to its limits: 1,600+ commits, 9 repositories, byte-for-byte diff tools. It worked—but the maintenance burden compounded. DocForgeAI applies those lessons with a lighter touch: one codebase, plugin architecture, 97 tests covering all document types.
+The [genesis experiment](https://github.com/bordenet/genesis) explored deterministic AI development across 9 separate repos. The conformity tooling (byte-for-byte diff tools, self-reinforcing instructions) kept things aligned, but every improvement had to propagate to all 9 projects. DocForgeAI consolidates those lessons: same principles, simpler maintenance.
 
 [1]: https://itrevolution.com/articles/new-research-reveals-ai-coding-assistants-boost-developer-productivity-by-26-what-it-leaders-need-to-know/
 [2]: https://coaio.com/ai-revolutionizing-software-development/
@@ -143,9 +143,9 @@ npm run lint:fix   # Auto-fix style issues
 
 Industry context and research informing this project's development philosophy:
 
-- [International AI Safety Report 2026: Extended Summary for Policymakers](https://internationalaisafetyreport.org/publication/2026-report-extended-summary-policymakers) — Comprehensive analysis of AI capabilities, risks, and governance
-- [Claude Opus 4.6 Announcement](https://www.anthropic.com/news/claude-opus-4-6) — Anthropic's latest model capabilities (Feb 2026)
-- [State of Health AI 2026](https://www.bvp.com/atlas/state-of-health-ai-2026) — Bessemer Venture Partners on AI investment trends
+- [International AI Safety Report 2026: Extended Summary for Policymakers](https://internationalaisafetyreport.org/publication/2026-report-extended-summary-policymakers): Comprehensive analysis of AI capabilities, risks, and governance
+- [Claude Opus 4.6 Announcement](https://www.anthropic.com/news/claude-opus-4-6): Anthropic's latest model capabilities (Feb 2026)
+- [State of Health AI 2026](https://www.bvp.com/atlas/state-of-health-ai-2026): Bessemer Venture Partners on AI investment trends
 
 ## See Also
 
