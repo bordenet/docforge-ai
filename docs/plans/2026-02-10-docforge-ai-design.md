@@ -1,8 +1,8 @@
-# Fusion Experiment Design
+# DocForgeAI Design
 
 > **Date**: 2026-02-10
-> **Status**: In Progress
-> **Goal**: Merge all 9 genesis child repos into a single unified codebase with plugin architecture
+> **Status**: Complete (Core Architecture)
+> **Goal**: AI-powered document creation with adversarial review workflow - 9 document types in one unified platform
 
 ## Problem Statement
 
@@ -40,7 +40,7 @@ const DOCUMENT_TYPES = {
     name: 'One-Pager',
     icon: '📄',
     description: 'Concise one-page decision document',
-    dbName: 'one-pager-fusion-db',
+    dbName: 'one-pager-docforge-db',
     formFields: [...],      // Lazy-loaded from plugins/one-pager/form-fields.js
     prompts: { phase1: '...', phase2: '...', phase3: '...' },
     validator: {...},       // Scoring dimensions, patterns
@@ -53,7 +53,7 @@ const DOCUMENT_TYPES = {
 ### Directory Structure
 
 ```
-fusion-experiment/
+docforge-ai/
 ├── assistant/
 │   ├── index.html              # Single unified assistant
 │   ├── js/
@@ -134,7 +134,7 @@ Default: `?type=one-pager` if no type specified.
 ## Key Design Decisions
 
 ### 1. IndexedDB Naming
-Each document type gets unique DB: `{doctype}-fusion-db` to prevent data corruption.
+Each document type gets unique DB: `{doctype}-docforge-db` to prevent data corruption.
 
 ### 2. Plugin Loading
 Static imports for simplicity. No dynamic `import()` - all plugins bundled.

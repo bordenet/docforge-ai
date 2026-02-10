@@ -33,7 +33,7 @@ function updateHeader(plugin) {
   document.getElementById('header-icon').textContent = plugin.icon;
   document.getElementById('header-title').textContent = `${plugin.name} Validator`;
   document.getElementById('doc-type-label').textContent = plugin.name;
-  document.title = `${plugin.name} Validator - Genesis Fusion`;
+  document.title = `${plugin.name} Validator - DocForgeAI`;
 
   const favicon = document.getElementById('favicon');
   if (favicon) {

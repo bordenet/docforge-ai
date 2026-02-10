@@ -7,7 +7,7 @@ export const adrPlugin = {
   name: 'ADR',
   icon: '🏗️',
   description: 'Architecture Decision Record for technical decisions',
-  dbName: 'adr-fusion-db',
+  dbName: 'adr-docforge-db',
 
   formFields: [
     {

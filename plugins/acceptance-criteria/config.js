@@ -7,7 +7,7 @@ export const acceptanceCriteriaPlugin = {
   name: 'Acceptance Criteria',
   icon: '✅',
   description: 'Generate testable acceptance criteria for user stories',
-  dbName: 'acceptance-criteria-fusion-db',
+  dbName: 'acceptance-criteria-docforge-db',
 
   formFields: [
     {

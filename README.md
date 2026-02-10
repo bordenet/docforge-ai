@@ -1,6 +1,53 @@
-# Genesis Fusion Experiment
+# DocForgeAI
 
-A unified codebase experiment that merges all 9 genesis-tools document assistants into a single, plugin-based architecture.
+AI-powered document creation with adversarial review workflow. Generate professional documents using a 3-phase Claude → Gemini → Claude pipeline that produces higher-quality outputs through structured critique.
+
+**9 document types, one unified platform.**
+
+## Background
+
+DocForgeAI is the successor to the Genesis experiment—a collection of 9 separate document assistant repos that explored AI-assisted professional writing with adversarial review.
+
+**Lessons learned from Genesis:**
+- The 3-phase adversarial workflow (generate → critique → synthesize) produces measurably better documents
+- 9 separate repos with 95%+ code duplication created maintenance burden due to the current state of AI coding assistants
+- Each document type differs by structure in terms of form fields, prompts, and scoring dimensions
+
+**What DocForgeAI does differently:**
+- Single unified codebase with plugin architecture
+- Document types are plugins, not separate repos
+- Shared infrastructure, isolated data (per-plugin IndexedDB)
+- One test suite covering all document types
+
+## Development Philosophy
+
+DocForgeAI applies lessons from [Genesis](https://github.com/bordenet/genesis), updated for how AI-assisted development actually works in 2026.
+
+### What the Industry Data Shows
+
+| Metric | Finding | Source |
+|--------|---------|--------|
+| Developer productivity | 26% boost from AI coding assistants | [IT Revolution][1] |
+| Prototype velocity | 16-26% boost for MVPs (3-4 week cycles) | [Coaio][2] |
+| AI adoption | 60%+ of companies using AI across multiple functions | [LinkedIn][3] |
+| Complex logic | 10-19% slower due to debugging "almost-right" code | [dev.to][4] |
+
+### Core Principles
+
+- **Architecture first, AI second** — Define structure upfront (plugin architecture, shared infrastructure), let AI handle implementation details
+- **Vibe coding with guardrails** — Use AI pair programming for speed; enforce architectural boundaries with tooling
+- **Tests as safety nets** — Comprehensive test coverage (97 tests) catches regressions without mandating line-by-line code review
+- **Context engineering** — Dedicated files (AGENTS.md, structured prompts) guide AI behavior better than long instructions
+- **Iterate fast, refactor when needed** — Ship working code, improve it when patterns emerge
+
+### Built on Genesis
+
+Genesis pushed conformity tooling to its limits: 1,600+ commits, 9 repositories, byte-for-byte diff tools. It worked—but the maintenance burden compounded. DocForgeAI applies those lessons with a lighter touch: one codebase, plugin architecture, 97 tests covering all document types.
+
+[1]: https://itrevolution.com/articles/new-research-reveals-ai-coding-assistants-boost-developer-productivity-by-26-what-it-leaders-need-to-know/
+[2]: https://coaio.com/ai-revolutionizing-software-development/
+[3]: https://www.linkedin.com/pulse/5-ai-predictions-executives-cant-ignore-2026-dmitry-sverdlik-igqlf
+[4]: https://dev.to/austin_welsh/ai-assisted-development-in-2026-best-practices-for-the-modern-developer-3jb0
 
 ## Document Types
 
@@ -36,7 +83,7 @@ Change `?type=` to use different document types: `prd`, `adr`, `pr-faq`, `power-
 ## Architecture
 
 ```
-fusion-experiment/
+docforge-ai/
 ├── assistant/           # Unified assistant UI
 │   ├── index.html
 │   └── js/app.js
@@ -77,25 +124,31 @@ npm run lint       # Check code style
 npm run lint:fix   # Auto-fix style issues
 ```
 
-## Development Status
-
-This is an **experiment** to explore whether a unified plugin architecture can simplify the genesis-tools ecosystem. The original repos remain unchanged.
+## Status
 
 **What works:**
 - ✅ Plugin registry with all 9 document types
 - ✅ Dynamic form generation from plugin configs
-- ✅ URL-based routing
-- ✅ Prompt template filling
-- ✅ 48 passing tests
-- ✅ All prompt templates copied
+- ✅ URL-based routing (doc type in query, view in hash)
+- ✅ Prompt template filling for all 27 phase templates
+- ✅ 97 passing tests (58 unit + 39 E2E)
+- ✅ Per-plugin IndexedDB storage
 
-**Not yet implemented:**
-- ❌ Full workflow execution (LLM API calls)
-- ❌ Clipboard integration
-- ❌ Export functionality
-- ❌ Advanced validator scoring (currently heuristic-based)
+**Coming soon:**
+- ⏳ LLM API integration (Claude + Gemini)
+- ⏳ Clipboard copy for prompts/outputs
+- ⏳ Export/Import JSON
+
+## Further Reading
+
+Industry context and research informing this project's development philosophy:
+
+- [International AI Safety Report 2026: Extended Summary for Policymakers](https://internationalaisafetyreport.org/publication/2026-report-extended-summary-policymakers) — Comprehensive analysis of AI capabilities, risks, and governance
+- [Claude Opus 4.6 Announcement](https://www.anthropic.com/news/claude-opus-4-6) — Anthropic's latest model capabilities (Feb 2026)
+- [State of Health AI 2026](https://www.bvp.com/atlas/state-of-health-ai-2026) — Bessemer Venture Partners on AI investment trends
 
 ## See Also
 
-- [Design Document](docs/plans/2026-02-10-fusion-experiment-design.md)
+- [Design Document](docs/plans/2026-02-10-docforge-ai-design.md)
+- [Status & Roadmap](STATUS.md)
 

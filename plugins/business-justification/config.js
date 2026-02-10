@@ -7,7 +7,7 @@ export const businessJustificationPlugin = {
   name: 'Business Justification',
   icon: '📊',
   description: 'Justify headcount, promotions, budget, or investments',
-  dbName: 'business-justification-fusion-db',
+  dbName: 'business-justification-docforge-db',
 
   formFields: [
     {

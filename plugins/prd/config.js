@@ -7,7 +7,7 @@ export const prdPlugin = {
   name: 'PRD',
   icon: '📋',
   description: 'Product Requirements Document for engineering teams',
-  dbName: 'prd-fusion-db',
+  dbName: 'prd-docforge-db',
 
   formFields: [
     {

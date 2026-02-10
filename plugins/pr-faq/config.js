@@ -7,7 +7,7 @@ export const prFaqPlugin = {
   name: 'PR-FAQ',
   icon: '📰',
   description: 'Amazon-style PR-FAQ document for product launches',
-  dbName: 'pr-faq-fusion-db',
+  dbName: 'pr-faq-docforge-db',
 
   formFields: [
     {

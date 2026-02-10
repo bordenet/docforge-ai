@@ -1,13 +1,13 @@
-# Fusion Experiment - Status & Continuation Plan
+# DocForgeAI - Status & Continuation Plan
 
 > **Last Updated:** 2026-02-10
 > **Status:** Local repo only (not on GitHub yet)
-> **Location:** `genesis-tools/fusion-experiment/`
+> **Location:** `genesis-tools/docforge-ai/`
 
 ## Quick Start (Resume Work)
 
 ```bash
-cd ~/GitHub/Personal/genesis-tools/fusion-experiment
+cd ~/GitHub/Personal/genesis-tools/docforge-ai
 npm install
 npm test              # 58 unit tests
 npm run test:e2e      # 39 E2E tests
@@ -53,7 +53,7 @@ Then open:
 ### File Structure
 
 ```
-fusion-experiment/
+docforge-ai/
 ├── .github/workflows/ci.yml    # GitHub Actions
 ├── assistant/
 │   ├── index.html              # Unified assistant UI
@@ -102,8 +102,8 @@ db4ddbe test: add IndexedDB storage E2E tests
 24b31d9 test: add Playwright E2E tests for assistant and validator
 2d58437 docs: add README with architecture overview and quick start
 2c44ac2 feat: add all prompt templates for 9 document types
-ec2176a feat: implement unified genesis-fusion with plugin architecture
-e4f00ed Initial commit: Fusion experiment design document
+ec2176a feat: implement unified docforge-ai with plugin architecture
+e4f00ed Initial commit: DocForgeAI design document
 ```
 
 ---
@@ -112,7 +112,7 @@ e4f00ed Initial commit: Fusion experiment design document
 
 ### Phase 1: Push to GitHub (Next Session)
 
-1. Create GitHub repo `bordenet/genesis-fusion` (or similar)
+1. Create GitHub repo `bordenet/docforge-ai`
 2. Push existing commits
 3. Verify CI passes
 4. Add repo description and topics
@@ -192,7 +192,7 @@ We use static imports in `plugin-registry.js` rather than dynamic `import()`:
 
 ### Why Per-Plugin IndexedDB
 
-Each document type has its own database (e.g., `one-pager-fusion-db`, `prd-fusion-db`):
+Each document type has its own database (e.g., `one-pager-docforge-db`, `prd-docforge-db`):
 - Isolation between document types
 - Easier to clear/reset one type
 - No schema conflicts
@@ -284,7 +284,7 @@ All aligned with genesis baseline versions:
 
 ## Questions for Future Sessions
 
-1. **GitHub repo name?** - `genesis-fusion`, `fusion-experiment`, or something else?
+1. ~~**GitHub repo name?**~~ - Decided: `docforge-ai`
 2. **Keep as experiment or replace originals?** - Is this the new canonical implementation?
 3. **API key management?** - localStorage only, or add optional backend?
 4. **Demo data for all types?** - Worth the effort, or one-pager is enough?

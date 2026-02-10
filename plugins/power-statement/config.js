@@ -7,7 +7,7 @@ export const powerStatementPlugin = {
   name: 'Power Statement',
   icon: '💪',
   description: 'Compelling power statements for sales and marketing',
-  dbName: 'power-statement-fusion-db',
+  dbName: 'power-statement-docforge-db',
 
   formFields: [
     {

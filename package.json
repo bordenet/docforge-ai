@@ -1,7 +1,7 @@
 {
-  "name": "genesis-fusion-experiment",
+  "name": "docforge-ai",
   "version": "0.1.0",
-  "description": "Unified genesis-tools codebase with plugin architecture for all document types",
+  "description": "AI-powered document creation with adversarial review workflow - 9 document types in one unified platform",
   "type": "module",
   "private": true,
   "scripts": {

@@ -5,17 +5,17 @@
 This session accomplished two main things:
 
 1. **Security scan of all repos** - Found and fixed 1 vulnerability in RecipeArchive (axios)
-2. **Fusion experiment** - Created unified genesis-tools codebase with plugin architecture
+2. **DocForgeAI** - Created unified genesis-tools codebase with plugin architecture
 
 ## All Tasks COMPLETE ✅
 
 Every task from this session is done. No outstanding work.
 
-## Fusion Experiment Final State
+## DocForgeAI Final State
 
 | Metric | Value |
 |--------|-------|
-| Location | `genesis-tools/fusion-experiment/` |
+| Location | `genesis-tools/docforge-ai/` |
 | Commits | 10 |
 | Files | 70 |
 | Unit tests | 58 passing |
@@ -26,7 +26,7 @@ Every task from this session is done. No outstanding work.
 ## To Resume Work
 
 ```bash
-cd ~/GitHub/Personal/genesis-tools/fusion-experiment
+cd ~/GitHub/Personal/genesis-tools/docforge-ai
 npm install
 npm test && npm run test:e2e
 npm run serve
@@ -42,8 +42,8 @@ Read `STATUS.md` for complete details on:
 
 1. **Push to GitHub**
    ```bash
-   cd genesis-tools/fusion-experiment
-   gh repo create bordenet/genesis-fusion --private --source=. --push
+   cd genesis-tools/docforge-ai
+   gh repo create bordenet/docforge-ai --private --source=. --push
    ```
 
 2. **Verify CI passes** on GitHub Actions
@@ -58,7 +58,7 @@ Read `STATUS.md` for complete details on:
 
 ## Files Created This Session
 
-Key files in fusion-experiment:
+Key files in docforge-ai:
 - `STATUS.md` - Comprehensive continuation plan
 - `HANDOFF.md` - This file
 - `README.md` - Project overview

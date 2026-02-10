@@ -7,7 +7,7 @@ export const strategicProposalPlugin = {
   name: 'Strategic Proposal',
   icon: '🎯',
   description: 'Strategic proposals for business initiatives',
-  dbName: 'strategic-proposal-fusion-db',
+  dbName: 'strategic-proposal-docforge-db',
 
   formFields: [
     {

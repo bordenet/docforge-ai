@@ -7,7 +7,7 @@ export const jdPlugin = {
   name: 'Job Description',
   icon: '💼',
   description: 'Create inclusive, compelling job descriptions',
-  dbName: 'jd-fusion-db',
+  dbName: 'jd-docforge-db',
 
   formFields: [
     {

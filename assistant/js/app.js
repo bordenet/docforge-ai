@@ -1,5 +1,5 @@
 /**
- * Main Application Module for Genesis Fusion Assistant
+ * Main Application Module for DocForgeAI Assistant
  * @module app
  */
 
@@ -53,7 +53,7 @@ async function initApp() {
 function updateHeader(plugin) {
   document.getElementById('header-icon').textContent = plugin.icon;
   document.getElementById('header-title').textContent = `${plugin.name} Assistant`;
-  document.title = `${plugin.name} Assistant - Genesis Fusion`;
+  document.title = `${plugin.name} Assistant - DocForgeAI`;
 
   // Update favicon
   const favicon = document.getElementById('favicon');

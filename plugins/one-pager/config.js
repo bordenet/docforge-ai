@@ -7,7 +7,7 @@ export const onePagerPlugin = {
   name: 'One-Pager',
   icon: '📄',
   description: 'Concise one-page decision document',
-  dbName: 'one-pager-fusion-db',
+  dbName: 'one-pager-docforge-db',
 
   formFields: [
     {
