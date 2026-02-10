@@ -1,0 +1,19 @@
+/** @type {import('jest').Config} */
+export default {
+  testEnvironment: 'jsdom',
+  moduleFileExtensions: ['js', 'mjs'],
+  testMatch: ['**/tests/**/*.test.js'],
+  transform: {},
+  moduleNameMapper: {
+    '^(\\.{1,2}/.*)\\.js$': '$1'
+  },
+  collectCoverageFrom: [
+    'shared/js/**/*.js',
+    'plugins/**/*.js',
+    '!**/node_modules/**'
+  ],
+  coverageDirectory: 'coverage',
+  coverageReporters: ['text', 'lcov', 'html'],
+  verbose: true
+};
+

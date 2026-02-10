@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Genesis Fusion Validator</title>
+  <meta name="description" content="Unified document validator for One-Pager, PRD, ADR, PR-FAQ, and more">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class' }</script>
+
+  <style>
+    .prose h1 { font-size: 2em; font-weight: bold; margin: 0.67em 0; }
+    .prose h2 { font-size: 1.5em; font-weight: bold; margin: 0.83em 0; border-bottom: 1px solid #374151; padding-bottom: 0.3em; }
+    .prose h3 { font-size: 1.17em; font-weight: bold; margin: 1em 0; }
+    .prose p { margin: 1em 0; }
+    .prose ul, .prose ol { margin: 1em 0; padding-left: 2em; }
+    .prose ul { list-style-type: disc; }
+    .prose ol { list-style-type: decimal; }
+    .prose li { margin: 0.5em 0; }
+  </style>
+
+  <link rel="stylesheet" href="../shared/css/styles.css">
+  <link rel="icon" type="image/svg+xml" id="favicon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✓</text></svg>">
+</head>
+<body class="bg-slate-950 text-slate-100 transition-colors duration-200">
+  <div id="app" class="flex flex-col h-screen">
+
+    <!-- Header -->
+    <header class="bg-slate-600 border-b border-slate-500 shadow-sm">
+      <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <span class="text-3xl" id="header-icon">✓</span>
+          <h1 class="text-2xl font-bold text-white" id="header-title">Genesis Fusion Validator</h1>
+        </div>
+        <div class="flex items-center gap-3">
+          <!-- Document Type Selector -->
+          <select id="doc-type-selector" class="px-3 py-2 border border-slate-600 rounded-lg bg-slate-800 text-white">
+            <option value="one-pager">📄 One-Pager</option>
+            <option value="prd">📋 PRD</option>
+            <option value="adr">🏗️ ADR</option>
+            <option value="pr-faq">📰 PR-FAQ</option>
+            <option value="power-statement">💪 Power Statement</option>
+            <option value="acceptance-criteria">✅ Acceptance Criteria</option>
+            <option value="jd">💼 Job Description</option>
+            <option value="business-justification">📊 Business Justification</option>
+            <option value="strategic-proposal">🎯 Strategic Proposal</option>
+          </select>
+          <button id="btn-dark-mode" class="p-2 rounded-lg hover:bg-slate-500 transition-colors text-white" aria-label="Toggle dark mode">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+            </svg>
+          </button>
+          <button id="btn-about" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white transition-colors font-medium border border-slate-700">
+            About
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-hidden">
+      <div class="max-w-7xl mx-auto h-full px-6 py-6 flex flex-col gap-6">
+        <div class="flex gap-6 flex-1 min-h-0">
+
+          <!-- Left: Markdown Editor -->
+          <div class="flex-1 flex flex-col min-w-0">
+            <label for="editor" class="block text-sm font-semibold text-white mb-1">
+              Paste Your <span id="doc-type-label">Document</span>
+            </label>
+            <p class="text-xs text-slate-300 mb-2" id="editor-help">
+              Generate a document with the Assistant, then paste the markdown here.
+            </p>
+            <textarea
+              id="editor"
+              class="flex-1 w-full p-4 border border-slate-400 rounded-lg bg-slate-900 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none font-mono text-sm"
+              placeholder="→ Paste your document here (Cmd/Ctrl+V)"
+            ></textarea>
+          </div>
+
+          <!-- Right: Scorecard -->
+          <div class="w-80 flex flex-col gap-3">
+            <div id="scorecard" class="bg-slate-900 border border-slate-800 rounded-lg p-6 shadow-sm">
+              <div class="mb-6">
+                <div class="text-4xl font-bold text-blue-400 mb-2">
+                  <span id="score-total">--</span><span class="text-xl">/100</span>
+                </div>
+                <div id="score-badge" class="inline-block px-3 py-1 rounded-full text-sm font-medium bg-slate-700 text-slate-300">
+                  Paste a document to score
+                </div>
+              </div>
+
+              <!-- Dimension Scores -->
+              <div id="dimension-scores" class="space-y-4">
+                <!-- Rendered by JS based on plugin config -->
+              </div>
+            </div>
+
+            <!-- Validate Button -->
+            <button id="btn-validate" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">
+              Validate Document
+            </button>
+
+            <!-- Clear Button -->
+            <button id="btn-clear" class="w-full py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium rounded-lg transition-colors">
+              Clear
+            </button>
+          </div>
+        </div>
+
+        <!-- Feedback Panel -->
+        <div id="feedback-panel" class="hidden bg-slate-900 border border-slate-800 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-white mb-3">Detailed Feedback</h3>
+          <div id="feedback-content" class="prose prose-invert max-w-none text-slate-300">
+            <!-- Rendered by validator -->
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
+

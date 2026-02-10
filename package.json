@@ -1,0 +1,33 @@
+{
+  "name": "genesis-fusion-experiment",
+  "version": "0.1.0",
+  "description": "Unified genesis-tools codebase with plugin architecture for all document types",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
+    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "serve": "npx http-server . -p 8080 -c-1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.19.0",
+    "@jest/globals": "^29.7.0",
+    "eslint": "^9.19.0",
+    "globals": "^17.3.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  },
+  "keywords": [
+    "genesis",
+    "document-assistant",
+    "one-pager",
+    "prd",
+    "adr"
+  ],
+  "author": "Matt J Bordenet",
+  "license": "MIT"
+}
+
