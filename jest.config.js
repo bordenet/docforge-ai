@@ -11,7 +11,8 @@ export default {
   collectCoverageFrom: [
     'shared/js/**/*.js',
     'plugins/**/*.js',
-    '!**/node_modules/**'
+    '!**/node_modules/**',
+    '!shared/js/lib/**'
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],

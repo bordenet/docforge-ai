@@ -108,28 +108,96 @@ function isGenericSectionHeader(text) {
 }
 
 /**
+ * Compute markdown confidence score (0-100)
+ * Higher score = more likely to be markdown
+ * @param {string} text - Text content
+ * @returns {number} Confidence score 0-100
+ */
+function computeMarkdownConfidence(text) {
+  if (!text) return 0;
+
+  let score = 0;
+  const lines = text.split('\n');
+
+  // Headers (# ## ### etc) - strong indicator
+  const headerMatches = text.match(/^#{1,6}\s+/gm) || [];
+  score += Math.min(headerMatches.length * 15, 40);
+
+  // Bold **text** - strong indicator
+  const boldMatches = text.match(/\*\*[^*\n]+\*\*/g) || [];
+  score += Math.min(boldMatches.length * 5, 20);
+
+  // Italic *text* (but not list items)
+  const italicMatches = text.match(/(?<!\*)\*[^*\n]+\*(?!\*)/g) || [];
+  score += Math.min(italicMatches.length * 3, 10);
+
+  // Unordered lists (- or * at start of line)
+  const listMatches = text.match(/^\s*[-*+]\s+\S/gm) || [];
+  score += Math.min(listMatches.length * 2, 15);
+
+  // Ordered lists (1. 2. etc)
+  const orderedMatches = text.match(/^\s*\d+\.\s+/gm) || [];
+  score += Math.min(orderedMatches.length * 2, 10);
+
+  // Code blocks or inline code
+  if (/```/.test(text)) score += 10;
+  const inlineCodeMatches = text.match(/`[^`\n]+`/g) || [];
+  score += Math.min(inlineCodeMatches.length * 2, 10);
+
+  // Links [text](url)
+  const linkMatches = text.match(/\[[^\]]+\]\([^)]+\)/g) || [];
+  score += Math.min(linkMatches.length * 3, 10);
+
+  // Tables |col|col|
+  const tableMatches = text.match(/^\|.+\|$/gm) || [];
+  score += Math.min(tableMatches.length * 2, 10);
+
+  // Blockquotes
+  const quoteMatches = text.match(/^\s*>/gm) || [];
+  score += Math.min(quoteMatches.length * 2, 5);
+
+  return Math.min(score, 100);
+}
+
+/**
  * Check if text content contains markdown syntax
  * @param {string} text - Plain text content
  * @returns {boolean} True if text contains markdown patterns
  */
 function containsMarkdownSyntax(text) {
-  if (!text) return false;
+  // Use confidence score - anything above 10 is likely markdown
+  return computeMarkdownConfidence(text) >= 10;
+}
 
-  // Check for markdown patterns in the text
-  const markdownPatterns = [
-    /^#{1,6}\s+/m,           // Headers: # ## ### etc
-    /^\s*[-*+]\s+\S/m,       // Unordered lists (dash/asterisk/plus followed by space and content)
-    /^\s*\d+\.\s+/m,         // Ordered lists
-    /\*\*[^*\n]+\*\*/,       // Bold **text**
-    /\*[^*\n]+\*/,           // Italic *text*
-    /`[^`\n]+`/,             // Inline code
-    /```/,                   // Code block markers
-    /^\s*>/m,                // Blockquotes
-    /\[[^\]]+\]\([^)]+\)/,   // Links [text](url)
-    /^\|.+\|$/m              // Table rows |col|col|
-  ];
+/**
+ * Normalize markdown by adding H1 title if missing
+ * If the markdown has no H1 but appears to be valid markdown,
+ * prepend a title using the document type
+ * @param {string} markdown - Markdown content
+ * @param {string} docType - Document type name (e.g., "One-Pager")
+ * @returns {string} Normalized markdown with H1 title
+ */
+export function normalizeMarkdown(markdown, docType) {
+  if (!markdown || !markdown.trim()) return markdown;
 
-  return markdownPatterns.some(pattern => pattern.test(text));
+  // Check if markdown already has an H1
+  const hasH1 = /^#\s+[^#]/m.test(markdown);
+  if (hasH1) {
+    return markdown; // Already has H1, no normalization needed
+  }
+
+  // Compute confidence that this is markdown
+  const confidence = computeMarkdownConfidence(markdown);
+
+  // If confidence is high enough (has markdown syntax), add H1
+  // Threshold of 15 means at least one header OR a few other markdown elements
+  if (confidence >= 15) {
+    // Prepend H1 with document type
+    return `# ${docType}\n\n${markdown}`;
+  }
+
+  // Low confidence - might be plain text, don't modify
+  return markdown;
 }
 
 /**
@@ -268,12 +336,16 @@ export function showImportModal(plugin, saveProject, onComplete) {
     saveBtn.textContent = 'Saving...';
 
     try {
-      const markdown = previewArea.value;
-      if (!markdown.trim()) {
+      const rawMarkdown = previewArea.value;
+      if (!rawMarkdown.trim()) {
         showToast('No content to save', 'error');
         return;
       }
 
+      // Normalize markdown: add H1 title if missing but content looks like markdown
+      const markdown = normalizeMarkdown(rawMarkdown, docType);
+
+      // Extract title from normalized markdown (will find the H1 we just added if needed)
       const title = extractTitleFromMarkdown(markdown, docType) || `Imported ${docType}`;
       const now = new Date().toISOString();
 
@@ -284,7 +356,7 @@ export function showImportModal(plugin, saveProject, onComplete) {
         currentPhase: 2,  // Start at Phase 2 (review) since we already have the document
         phases: {
           1: {
-            response: markdown,
+            response: markdown,  // Save normalized markdown with H1
             completed: true,  // Phase 1 is complete - we have the document
             startedAt: now,
             completedAt: now

@@ -6,15 +6,15 @@
 import { describe, test, expect } from '@jest/globals';
 
 // Import all template files
-import { TEMPLATES as ONE_PAGER_TEMPLATES } from '../plugins/one-pager/templates.js';
-import { TEMPLATES as PRD_TEMPLATES } from '../plugins/prd/templates.js';
-import { TEMPLATES as ADR_TEMPLATES } from '../plugins/adr/templates.js';
-import { TEMPLATES as PR_FAQ_TEMPLATES } from '../plugins/pr-faq/templates.js';
-import { TEMPLATES as POWER_STATEMENT_TEMPLATES } from '../plugins/power-statement/templates.js';
-import { TEMPLATES as ACCEPTANCE_TEMPLATES } from '../plugins/acceptance-criteria/templates.js';
-import { TEMPLATES as JD_TEMPLATES } from '../plugins/jd/templates.js';
-import { TEMPLATES as BUSINESS_TEMPLATES } from '../plugins/business-justification/templates.js';
-import { TEMPLATES as STRATEGIC_TEMPLATES } from '../plugins/strategic-proposal/templates.js';
+import { TEMPLATES as ONE_PAGER_TEMPLATES, getTemplate as getOnePagerTemplate, getAllTemplates as getAllOnePagerTemplates } from '../plugins/one-pager/templates.js';
+import { TEMPLATES as PRD_TEMPLATES, getTemplate as getPrdTemplate, getAllTemplates as getAllPrdTemplates } from '../plugins/prd/templates.js';
+import { TEMPLATES as ADR_TEMPLATES, getTemplate as getAdrTemplate, getAllTemplates as getAllAdrTemplates } from '../plugins/adr/templates.js';
+import { TEMPLATES as PR_FAQ_TEMPLATES, getTemplate as getPrFaqTemplate, getAllTemplates as getAllPrFaqTemplates } from '../plugins/pr-faq/templates.js';
+import { TEMPLATES as POWER_STATEMENT_TEMPLATES, getTemplate as getPowerTemplate, getAllTemplates as getAllPowerTemplates } from '../plugins/power-statement/templates.js';
+import { TEMPLATES as ACCEPTANCE_TEMPLATES, getTemplate as getAcceptanceTemplate, getAllTemplates as getAllAcceptanceTemplates } from '../plugins/acceptance-criteria/templates.js';
+import { TEMPLATES as JD_TEMPLATES, getTemplate as getJdTemplate, getAllTemplates as getAllJdTemplates } from '../plugins/jd/templates.js';
+import { TEMPLATES as BUSINESS_TEMPLATES, getTemplate as getBusinessTemplate, getAllTemplates as getAllBusinessTemplates } from '../plugins/business-justification/templates.js';
+import { TEMPLATES as STRATEGIC_TEMPLATES, getTemplate as getStrategicTemplate, getAllTemplates as getAllStrategicTemplates } from '../plugins/strategic-proposal/templates.js';
 
 // Map of all plugins and their templates
 const ALL_TEMPLATES = {
@@ -134,6 +134,41 @@ describe('Templates - All Document Types', () => {
             expect(typeof value).toBe('string');
             expect(key.length).toBeGreaterThan(0);
           });
+        });
+      });
+    });
+  });
+
+  describe('getTemplate and getAllTemplates functions', () => {
+    const templateFunctions = {
+      'one-pager': { get: getOnePagerTemplate, getAll: getAllOnePagerTemplates, templates: ONE_PAGER_TEMPLATES },
+      'prd': { get: getPrdTemplate, getAll: getAllPrdTemplates, templates: PRD_TEMPLATES },
+      'adr': { get: getAdrTemplate, getAll: getAllAdrTemplates, templates: ADR_TEMPLATES },
+      'pr-faq': { get: getPrFaqTemplate, getAll: getAllPrFaqTemplates, templates: PR_FAQ_TEMPLATES },
+      'power-statement': { get: getPowerTemplate, getAll: getAllPowerTemplates, templates: POWER_STATEMENT_TEMPLATES },
+      'acceptance-criteria': { get: getAcceptanceTemplate, getAll: getAllAcceptanceTemplates, templates: ACCEPTANCE_TEMPLATES },
+      'jd': { get: getJdTemplate, getAll: getAllJdTemplates, templates: JD_TEMPLATES },
+      'business-justification': { get: getBusinessTemplate, getAll: getAllBusinessTemplates, templates: BUSINESS_TEMPLATES },
+      'strategic-proposal': { get: getStrategicTemplate, getAll: getAllStrategicTemplates, templates: STRATEGIC_TEMPLATES }
+    };
+
+    Object.entries(templateFunctions).forEach(([pluginId, { get, getAll, templates }]) => {
+      describe(`${pluginId} template functions`, () => {
+        test('getTemplate returns template by ID', () => {
+          const blankTemplate = get('blank');
+          expect(blankTemplate).not.toBeNull();
+          expect(blankTemplate.id).toBe('blank');
+        });
+
+        test('getTemplate returns null for invalid ID', () => {
+          const result = get('non-existent-id');
+          expect(result).toBeNull();
+        });
+
+        test('getAllTemplates returns all templates', () => {
+          const allTemplates = getAll();
+          expect(allTemplates).toEqual(templates);
+          expect(allTemplates.length).toBe(templates.length);
         });
       });
     });
