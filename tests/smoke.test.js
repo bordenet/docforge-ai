@@ -187,6 +187,38 @@ describe('Smoke Test - Module Imports', () => {
     });
   });
 
+  describe('Export Consistency - validator.js', () => {
+    test('exports validateDocument', async () => {
+      const validator = await import('../shared/js/validator.js');
+      expect(typeof validator.validateDocument).toBe('function');
+    });
+
+    test('exports getGrade', async () => {
+      const validator = await import('../shared/js/validator.js');
+      expect(typeof validator.getGrade).toBe('function');
+    });
+
+    test('exports getScoreColor', async () => {
+      const validator = await import('../shared/js/validator.js');
+      expect(typeof validator.getScoreColor).toBe('function');
+    });
+
+    test('exports getScoreLabel', async () => {
+      const validator = await import('../shared/js/validator.js');
+      expect(typeof validator.getScoreLabel).toBe('function');
+    });
+
+    test('exports detectSections', async () => {
+      const validator = await import('../shared/js/validator.js');
+      expect(typeof validator.detectSections).toBe('function');
+    });
+
+    test('exports analyzeContentQuality', async () => {
+      const validator = await import('../shared/js/validator.js');
+      expect(typeof validator.analyzeContentQuality).toBe('function');
+    });
+  });
+
   describe('Export Consistency - plugin-registry.js', () => {
     test('exports getPlugin', async () => {
       const registry = await import('../shared/js/plugin-registry.js');
