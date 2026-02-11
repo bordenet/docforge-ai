@@ -52,18 +52,37 @@ export function renderPhaseContent(plugin, project, phase) {
         <div class="flex items-center justify-between flex-wrap gap-4">
           <div>
             <h4 class="text-lg font-semibold text-green-800 dark:text-green-300 flex items-center">
-              <span class="mr-2">🎉</span> Your ${plugin.name} is Complete!
+              <span class="mr-2">🎉</span> Your ${escapeHtml(plugin.name)} is Complete!
             </h4>
             <p class="text-green-700 dark:text-green-400 mt-1">
-              You can copy the final document or validate it.
+              <strong>Next steps:</strong> Copy your document, then validate it for quality scoring.
             </p>
           </div>
-          <div class="flex gap-3">
+          <div class="flex gap-3 flex-wrap">
             <button id="export-final-btn" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
               📋 Copy Final Document
             </button>
+            <a href="../validator/?type=${encodeURIComponent(plugin.type || '')}" target="_blank" rel="noopener noreferrer" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+              📊 Validate Document ↗
+            </a>
           </div>
         </div>
+        <details class="mt-4">
+          <summary class="cursor-pointer text-green-700 dark:text-green-400 font-medium hover:underline">
+            📝 What's next?
+          </summary>
+          <div class="mt-3 p-4 bg-white dark:bg-gray-800 rounded-lg text-sm text-gray-700 dark:text-gray-300">
+            <ol class="list-decimal list-inside space-y-2">
+              <li>Click <strong>"Copy Final Document"</strong> to copy your markdown</li>
+              <li>Click <strong>"Validate Document"</strong> to open the validator</li>
+              <li>Paste your document in the validator to get quality scores</li>
+              <li>Use the feedback to improve your document</li>
+            </ol>
+            <p class="mt-3 text-gray-500 dark:text-gray-400 text-xs">
+              💡 The validator scores your document on multiple dimensions and detects AI slop patterns.
+            </p>
+          </div>
+        </details>
       </div>
     `;
   }
