@@ -58,37 +58,39 @@ export const COVERAGE_PARTIAL_WEIGHT = 0.1;
 // Section Detection Patterns
 // ============================================================================
 
+// Patterns use optional ^(#+\s*)? to match both markdown headings AND plain text headings
+// This allows detection of sections pasted from Word/Google Docs without # prefixes
 export const COMMON_SECTIONS = [
   {
-    pattern: /^#+\s*(problem|challenge|pain.?point|context)/im,
+    pattern: /^(#+\s*)?(problem|challenge|pain.?point|context)/im,
     name: 'Problem/Challenge',
     weight: 2,
   },
   {
-    pattern: /^#+\s*(solution|proposal|approach|recommendation)/im,
+    pattern: /^(#+\s*)?(solution|proposal|approach|recommendation)/im,
     name: 'Solution/Proposal',
     weight: 2,
   },
-  { pattern: /^#+\s*(goal|objective|benefit|outcome)/im, name: 'Goals/Benefits', weight: 2 },
+  { pattern: /^(#+\s*)?(goal|objective|benefit|outcome)/im, name: 'Goals/Benefits', weight: 2 },
   {
-    pattern: /^#+\s*(scope|in.scope|out.of.scope|boundary)/im,
+    pattern: /^(#+\s*)?(scope|in.scope|out.of.scope|boundary)/im,
     name: 'Scope Definition',
     weight: 2,
   },
-  { pattern: /^#+\s*(success|metric|kpi|measure)/im, name: 'Success Metrics', weight: 1 },
-  { pattern: /^#+\s*(stakeholder|team|owner|raci)/im, name: 'Stakeholders/Team', weight: 1 },
+  { pattern: /^(#+\s*)?(success|metric|kpi|measure)/im, name: 'Success Metrics', weight: 1 },
+  { pattern: /^(#+\s*)?(stakeholder|team|owner|raci)/im, name: 'Stakeholders/Team', weight: 1 },
   {
-    pattern: /^#+\s*(timeline|milestone|phase|schedule)/im,
+    pattern: /^(#+\s*)?(timeline|milestone|phase|schedule)/im,
     name: 'Timeline/Milestones',
     weight: 1,
   },
   {
-    pattern: /^#+\s*(risk|assumption|mitigation|dependency)/im,
+    pattern: /^(#+\s*)?(risk|assumption|mitigation|dependency)/im,
     name: 'Risks/Assumptions',
     weight: 1,
   },
-  { pattern: /^#+\s*(background|context|why)/im, name: 'Background/Context', weight: 1 },
-  { pattern: /^#+\s*(requirement|acceptance|criteria)/im, name: 'Requirements', weight: 1 },
+  { pattern: /^(#+\s*)?(background|context|why)/im, name: 'Background/Context', weight: 1 },
+  { pattern: /^(#+\s*)?(requirement|acceptance|criteria)/im, name: 'Requirements', weight: 1 },
 ];
 
 // Content quality patterns
