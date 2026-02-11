@@ -21,77 +21,40 @@
  * The standalone functions operate directly on project data.
  */
 
-import { generateId } from './storage.js';
 import { generatePrompt as generatePromptFromTemplate } from './prompt-generator.js';
+import {
+  WORKFLOW_CONFIG,
+  PHASES,
+  getPhaseMetadata,
+  getPhaseOutputInternal,
+} from './workflow-config.js';
+import {
+  createProject,
+  updateFormData,
+  validatePhase,
+  advancePhase as advancePhaseFunction,
+  isProjectComplete,
+  getCurrentPhase as getCurrentPhaseFunction,
+  updatePhaseResponse,
+  getProgress as getProgressFunction,
+  getExportFilename,
+} from './workflow-functions.js';
 
-/**
- * Workflow configuration
- */
-export const WORKFLOW_CONFIG = {
-  phaseCount: 3,
-  phases: [
-    {
-      number: 1,
-      name: 'Generate',
-      description: 'Create initial draft with AI assistance',
-      aiModel: 'Claude',
-      icon: '✨',
-      type: 'generate',
-    },
-    {
-      number: 2,
-      name: 'Critique',
-      description: 'Get alternative perspective and identify weaknesses',
-      aiModel: 'Gemini',
-      icon: '🔍',
-      type: 'critique',
-    },
-    {
-      number: 3,
-      name: 'Synthesize',
-      description: 'Combine perspectives into final polished document',
-      aiModel: 'Claude',
-      icon: '🎯',
-      type: 'synthesize',
-    },
-  ],
+// Re-export config for backward compatibility
+export { WORKFLOW_CONFIG, PHASES, getPhaseMetadata };
+
+// Re-export standalone functions for backward compatibility
+export {
+  createProject,
+  updateFormData,
+  validatePhase,
+  advancePhaseFunction as advancePhase,
+  isProjectComplete,
+  getCurrentPhaseFunction as getCurrentPhase,
+  updatePhaseResponse,
+  getProgressFunction as getProgress,
+  getExportFilename,
 };
-
-// Legacy alias for backward compatibility
-export const PHASES = WORKFLOW_CONFIG.phases;
-
-/**
- * Get phase metadata by number
- * @param {number} phaseNumber - Phase number (1-3)
- * @returns {Object|undefined} Phase metadata
- */
-export function getPhaseMetadata(phaseNumber) {
-  return WORKFLOW_CONFIG.phases.find((p) => p.number === phaseNumber);
-}
-
-/**
- * Helper to get phase output from project
- * @param {Object} project - Project object
- * @param {number} phaseNum - Phase number (1-3)
- * @returns {string} Phase output or empty string
- */
-function getPhaseOutputInternal(project, phaseNum) {
-  // Flat format (canonical)
-  const flatKey = `phase${phaseNum}_output`;
-  if (project[flatKey]) {
-    return project[flatKey];
-  }
-  // Legacy nested format
-  if (project.phases) {
-    if (Array.isArray(project.phases) && project.phases[phaseNum - 1]) {
-      return project.phases[phaseNum - 1].response || '';
-    }
-    if (project.phases[phaseNum] && typeof project.phases[phaseNum] === 'object') {
-      return project.phases[phaseNum].response || '';
-    }
-  }
-  return '';
-}
 
 /**
  * Workflow Class - Canonical implementation for 3-phase document workflow
@@ -242,159 +205,9 @@ export class Workflow {
 }
 
 // ============================================================================
-// Standalone Functions (Functional API)
-// These functions operate directly on project data objects without requiring
-// a Workflow instance. Used for project CRUD operations and data manipulation.
+// Workflow-dependent Functions
+// These functions require the Workflow class instance for their implementation
 // ============================================================================
-
-/**
- * Create a new project
- * @param {string} name - Project name
- * @param {string} description - Project description
- * @returns {Object} New project object
- */
-export function createProject(name, description) {
-  return {
-    id: generateId(),
-    name,
-    description,
-    created: Date.now(),
-    modified: Date.now(),
-    currentPhase: 1,
-    formData: {},
-    phases: PHASES.map((phase) => ({
-      number: phase.number,
-      name: phase.name,
-      type: phase.type,
-      prompt: '',
-      response: '',
-      completed: false,
-    })),
-  };
-}
-
-/**
- * Update project form data
- * @param {Object} project - Project object
- * @param {Object} formData - Form data to merge
- * @returns {Object} Updated project
- */
-export function updateFormData(project, formData) {
-  project.formData = { ...project.formData, ...formData };
-  return project;
-}
-
-/**
- * Validate current phase
- * @param {Object} project - Project object
- * @param {Object} [requiredFields] - Required form fields for phase 1
- * @returns {{valid: boolean, error?: string}}
- */
-export function validatePhase(project, requiredFields = ['title']) {
-  const phaseNumber = project.currentPhase || project.phase || 1;
-  const phaseData = getPhaseData(project, phaseNumber);
-
-  // Phase 1: Validate form data
-  if (phaseNumber === 1 && requiredFields.length > 0) {
-    for (const field of requiredFields) {
-      if (!project.formData?.[field] || project.formData[field].trim() === '') {
-        return { valid: false, error: `Please fill in the ${field}` };
-      }
-    }
-  }
-
-  // All phases: Validate response
-  if (!phaseData.response || phaseData.response.trim() === '') {
-    return { valid: false, error: 'Please paste the AI response' };
-  }
-
-  return { valid: true };
-}
-
-/**
- * Get phase data from project
- * @param {Object} project - Project object
- * @param {number} phaseNum - Phase number (1-3)
- * @returns {Object} Phase data
- */
-function getPhaseData(project, phaseNum) {
-  const defaultPhase = { prompt: '', response: '', completed: false };
-  if (!project.phases) return defaultPhase;
-
-  if (Array.isArray(project.phases) && project.phases[phaseNum - 1]) {
-    return project.phases[phaseNum - 1];
-  }
-  if (project.phases[phaseNum] && typeof project.phases[phaseNum] === 'object') {
-    return project.phases[phaseNum];
-  }
-  return defaultPhase;
-}
-
-/**
- * Advance to next phase
- * @param {Object} project - Project object
- * @returns {Object} Updated project
- */
-export function advancePhase(project) {
-  const phaseNumber = project.currentPhase || project.phase || 1;
-  const phaseData = getPhaseData(project, phaseNumber);
-
-  if (phaseData) {
-    phaseData.completed = true;
-  }
-
-  if (phaseNumber <= PHASES.length) {
-    project.currentPhase = phaseNumber + 1;
-    project.phase = phaseNumber + 1;
-  }
-
-  return project;
-}
-
-/**
- * Check if project is complete
- * @param {Object} project - Project object
- * @returns {boolean} True if all phases completed
- */
-export function isProjectComplete(project) {
-  if (Array.isArray(project.phases)) {
-    return project.phases.every((phase) => phase.completed);
-  }
-  return [1, 2, 3].every((num) => getPhaseData(project, num).completed);
-}
-
-/**
- * Get current phase data
- * @param {Object} project - Project object
- * @returns {Object} Current phase data
- */
-export function getCurrentPhase(project) {
-  const phaseNumber = project.currentPhase || project.phase || 1;
-  return getPhaseData(project, phaseNumber);
-}
-
-/**
- * Update current phase response
- * @param {Object} project - Project object
- * @param {string} response - Response text
- * @returns {Object} Updated project
- */
-export function updatePhaseResponse(project, response) {
-  const phase = getCurrentPhase(project);
-  phase.response = response;
-  return project;
-}
-
-/**
- * Get project progress percentage
- * @param {Object} project - Project object
- * @returns {number} Progress 0-100
- */
-export function getProgress(project) {
-  if (!project.phases) return 0;
-  const completedPhases = project.phases.filter((p) => p.completed).length;
-  return Math.round((completedPhases / PHASES.length) * 100);
-}
 
 /**
  * Get final markdown from project
@@ -421,14 +234,4 @@ export function getFinalMarkdown(project) {
 export function exportFinalDocument(project) {
   const workflow = new Workflow(project);
   return workflow.exportAsMarkdown();
-}
-
-/**
- * Generate export filename for project
- * @param {Object} project - Project object
- * @returns {string} Filename with .md extension
- */
-export function getExportFilename(project) {
-  const title = project.title || project.name || 'document';
-  return `${title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.md`;
 }

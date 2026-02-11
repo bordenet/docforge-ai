@@ -4,69 +4,35 @@
  * @module import-document
  */
 
-import { showToast } from './ui.js';
 import { logger } from './logger.js';
-
-// ============================================================================
-// Configuration Constants
-// ============================================================================
-
-/** Maximum lines to scan at the top of a document for title extraction */
-const TITLE_SCAN_LINE_LIMIT = 20;
-
-/** Maximum character length for a valid title */
-const MAX_TITLE_LENGTH = 100;
-
-/** Maximum length for first-line title candidates (shorter than full titles to filter sentences) */
-const MAX_FIRST_LINE_TITLE_LENGTH = 80;
-
-/** Minimum length for non-empty lines to be considered as title candidates */
-const MIN_LINE_LENGTH_FOR_TITLE = 5;
-
-// Markdown confidence scoring weights
-/** Points per header match (e.g., # ## ###) */
-const CONFIDENCE_HEADER_POINTS = 15;
-/** Maximum points for headers */
-const CONFIDENCE_HEADER_MAX = 40;
-/** Points per bold text match */
-const CONFIDENCE_BOLD_POINTS = 5;
-/** Maximum points for bold text */
-const CONFIDENCE_BOLD_MAX = 20;
-/** Points per italic match */
-const CONFIDENCE_ITALIC_POINTS = 3;
-/** Maximum points for italic */
-const CONFIDENCE_ITALIC_MAX = 10;
-/** Points per list item */
-const CONFIDENCE_LIST_POINTS = 2;
-/** Maximum points for lists */
-const CONFIDENCE_LIST_MAX = 15;
-/** Points per ordered list item */
-const CONFIDENCE_ORDERED_LIST_POINTS = 2;
-/** Maximum points for ordered lists */
-const CONFIDENCE_ORDERED_LIST_MAX = 10;
-/** Points for presence of code blocks */
-const CONFIDENCE_CODE_BLOCK_POINTS = 10;
-/** Points per inline code match */
-const CONFIDENCE_INLINE_CODE_POINTS = 2;
-/** Maximum points for inline code */
-const CONFIDENCE_INLINE_CODE_MAX = 10;
-/** Points per link match */
-const CONFIDENCE_LINK_POINTS = 3;
-/** Maximum points for links */
-const CONFIDENCE_LINK_MAX = 10;
-/** Points per table row match */
-const CONFIDENCE_TABLE_POINTS = 2;
-/** Maximum points for tables */
-const CONFIDENCE_TABLE_MAX = 10;
-/** Points per blockquote match */
-const CONFIDENCE_QUOTE_POINTS = 2;
-/** Maximum points for blockquotes */
-const CONFIDENCE_QUOTE_MAX = 5;
-
-/** Minimum confidence score to treat text as markdown */
-const MIN_MARKDOWN_CONFIDENCE = 10;
-/** Confidence threshold for adding H1 normalization */
-const H1_NORMALIZATION_THRESHOLD = 15;
+import {
+  TITLE_SCAN_LINE_LIMIT,
+  MAX_TITLE_LENGTH,
+  MAX_FIRST_LINE_TITLE_LENGTH,
+  MIN_LINE_LENGTH_FOR_TITLE,
+  CONFIDENCE_HEADER_POINTS,
+  CONFIDENCE_HEADER_MAX,
+  CONFIDENCE_BOLD_POINTS,
+  CONFIDENCE_BOLD_MAX,
+  CONFIDENCE_ITALIC_POINTS,
+  CONFIDENCE_ITALIC_MAX,
+  CONFIDENCE_LIST_POINTS,
+  CONFIDENCE_LIST_MAX,
+  CONFIDENCE_ORDERED_LIST_POINTS,
+  CONFIDENCE_ORDERED_LIST_MAX,
+  CONFIDENCE_CODE_BLOCK_POINTS,
+  CONFIDENCE_INLINE_CODE_POINTS,
+  CONFIDENCE_INLINE_CODE_MAX,
+  CONFIDENCE_LINK_POINTS,
+  CONFIDENCE_LINK_MAX,
+  CONFIDENCE_TABLE_POINTS,
+  CONFIDENCE_TABLE_MAX,
+  CONFIDENCE_QUOTE_POINTS,
+  CONFIDENCE_QUOTE_MAX,
+  MIN_MARKDOWN_CONFIDENCE,
+  H1_NORMALIZATION_THRESHOLD,
+  isGenericSectionHeader,
+} from './import-config.js';
 
 /**
  * Extract title from the BEGINNING of markdown (first N lines only)
@@ -75,7 +41,7 @@ const H1_NORMALIZATION_THRESHOLD = 15;
  * @param {string} docType - Document type name
  * @returns {string|null} Extracted title or null
  */
-function extractTitleFromMarkdown(markdown, docType) {
+export function extractTitleFromMarkdown(markdown, docType) {
   if (!markdown) return null;
 
   // Only look at the first N lines to avoid grabbing appendix titles
@@ -155,32 +121,6 @@ function extractTitleFromMarkdown(markdown, docType) {
 
   // No valid title found - return null to trigger fallback
   return null;
-}
-
-/**
- * Check if text is a generic section header (not a real title)
- * @param {string} text - Text to check
- * @returns {boolean} True if it's a generic section header
- */
-function isGenericSectionHeader(text) {
-  const genericHeaders = [
-    /^problem\s*statement$/i,
-    /^cost\s*of\s*doing\s*nothing$/i,
-    /^proposed\s*solution$/i,
-    /^key\s*goals?\/?\s*benefits?$/i,
-    /^success\s*metrics?$/i,
-    /^key\s*stakeholders?$/i,
-    /^timeline$/i,
-    /^budget\s*impact$/i,
-    /^scope$/i,
-    /^appendix/i,
-    /^executive\s*summary$/i,
-    /^overview$/i,
-    /^background$/i,
-    /^introduction$/i,
-    /^conclusion$/i,
-  ];
-  return genericHeaders.some((pattern) => pattern.test(text.trim()));
 }
 
 /**
@@ -313,148 +253,4 @@ export function convertHtmlToMarkdown(html) {
   });
 
   return turndownService.turndown(html);
-}
-
-/**
- * Generate the import modal HTML
- * @param {string} docType - Document type name
- * @returns {string} Modal HTML
- */
-export function getImportModalHtml(docType) {
-  return `
-    <div id="import-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col">
-        <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-          <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
-            📋 Import Existing ${docType}
-          </h2>
-          <button id="import-modal-close" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-          </button>
-        </div>
-        <div class="p-4 overflow-y-auto flex-1">
-          <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-            Paste your ${docType} from Word, Google Docs, or any source below. We'll convert it to Markdown.
-          </p>
-          <div id="import-paste-step">
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Paste your content here
-            </label>
-            <div id="import-paste-area" contenteditable="true"
-              class="w-full h-48 p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg focus:border-blue-500 focus:outline-none overflow-y-auto bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
-            </div>
-            <button id="import-convert-btn" class="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              Convert to Markdown
-            </button>
-          </div>
-          <div id="import-preview-step" class="hidden">
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Converted Markdown</label>
-            <textarea id="import-preview-area"
-              class="w-full h-64 p-4 border border-gray-300 dark:border-gray-600 rounded-lg font-mono text-sm bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
-            </textarea>
-          </div>
-        </div>
-        <div class="flex justify-end gap-3 p-4 border-t border-gray-200 dark:border-gray-700">
-          <button id="import-cancel-btn" class="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
-            Cancel
-          </button>
-          <button id="import-save-btn" class="hidden px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-            Save & Continue to Phase 2
-          </button>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-/**
- * Show the import modal and wire up event handlers
- * @param {Object} plugin - Current plugin config
- * @param {Function} saveProject - Function to save project
- * @param {Function} onComplete - Callback when import is complete (receives project)
- */
-export function showImportModal(plugin, saveProject, onComplete) {
-  const docType = plugin.name;
-  const modalContainer = document.createElement('div');
-  modalContainer.innerHTML = getImportModalHtml(docType);
-  document.body.appendChild(modalContainer.firstElementChild);
-
-  const modal = document.getElementById('import-modal');
-  const pasteArea = document.getElementById('import-paste-area');
-  const convertBtn = document.getElementById('import-convert-btn');
-  const previewStep = document.getElementById('import-preview-step');
-  const pasteStep = document.getElementById('import-paste-step');
-  const previewArea = document.getElementById('import-preview-area');
-  const saveBtn = document.getElementById('import-save-btn');
-
-  const closeModal = () => modal.remove();
-  document.getElementById('import-modal-close').addEventListener('click', closeModal);
-  document.getElementById('import-cancel-btn').addEventListener('click', closeModal);
-  modal.addEventListener('click', (e) => {
-    if (e.target === modal) closeModal();
-  });
-
-  convertBtn.addEventListener('click', () => {
-    const html = pasteArea.innerHTML;
-    if (!html || html === '<br>' || html.trim() === '') {
-      showToast('Please paste some content first', 'error');
-      return;
-    }
-    const markdown = convertHtmlToMarkdown(html);
-    pasteStep.classList.add('hidden');
-    previewStep.classList.remove('hidden');
-    previewArea.value = markdown;
-    saveBtn.classList.remove('hidden');
-  });
-
-  let isSaving = false;
-  saveBtn.addEventListener('click', async () => {
-    if (isSaving) return;
-    isSaving = true;
-    saveBtn.disabled = true;
-    saveBtn.textContent = 'Saving...';
-
-    try {
-      const rawMarkdown = previewArea.value;
-      if (!rawMarkdown.trim()) {
-        showToast('No content to save', 'error');
-        return;
-      }
-
-      // Normalize markdown: add H1 title if missing but content looks like markdown
-      const markdown = normalizeMarkdown(rawMarkdown, docType);
-
-      // Extract title from normalized markdown (will find the H1 we just added if needed)
-      const title = extractTitleFromMarkdown(markdown, docType) || `Imported ${docType}`;
-      const now = new Date().toISOString();
-
-      // When importing, the document IS Phase 1 output - skip to Phase 2 for review
-      const project = await saveProject(plugin.dbName, {
-        title,
-        formData: { title, importedContent: markdown },
-        currentPhase: 2, // Start at Phase 2 (review) since we already have the document
-        phases: {
-          1: {
-            response: markdown, // Save normalized markdown with H1
-            completed: true, // Phase 1 is complete - we have the document
-            startedAt: now,
-            completedAt: now,
-          },
-        },
-        isImported: true,
-      });
-
-      closeModal();
-      showToast(`${docType} imported! Continue to Phase 2 for review.`, 'success');
-      onComplete(project);
-    } finally {
-      isSaving = false;
-      saveBtn.disabled = false;
-      saveBtn.textContent = 'Save & Continue to Phase 2';
-    }
-  });
-
-  pasteArea.focus();
 }

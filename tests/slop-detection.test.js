@@ -10,13 +10,12 @@ import {
   detectStructuralPatterns,
   analyzeSentenceVariance,
   analyzeTypeTokenRatio,
-  calculateSlopScore,
-  getSlopPenalty,
   GENERIC_BOOSTERS,
   BUZZWORDS,
   FILLER_PHRASES,
   HEDGE_PATTERNS,
 } from '../shared/js/slop-detection.js';
+import { calculateSlopScore, getSlopPenalty } from '../shared/js/slop-scoring.js';
 
 // ============================================================================
 // detectEmDashes tests

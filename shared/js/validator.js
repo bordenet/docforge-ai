@@ -7,106 +7,39 @@
  * @module validator
  */
 
-import { calculateSlopScore, getSlopPenalty } from './slop-detection.js';
+import { calculateSlopScore, getSlopPenalty } from './slop-scoring.js';
+import {
+  MIN_HEADINGS_FOR_STRUCTURE,
+  MIN_WORDS_FOR_SUBSTANCE,
+  QUANTIFIED_FULL_POINTS_THRESHOLD,
+  WORD_COUNT_FULL_POINTS,
+  WORD_COUNT_PARTIAL_POINTS,
+  SECTION_COUNT_FULL_POINTS,
+  SECTION_COUNT_PARTIAL_POINTS,
+  GRADE_A_THRESHOLD,
+  GRADE_B_THRESHOLD,
+  GRADE_C_THRESHOLD,
+  GRADE_D_THRESHOLD,
+  COLOR_GREEN_THRESHOLD,
+  COLOR_YELLOW_THRESHOLD,
+  COLOR_ORANGE_THRESHOLD,
+  LABEL_EXCELLENT_THRESHOLD,
+  LABEL_READY_THRESHOLD,
+  LABEL_NEEDS_WORK_THRESHOLD,
+  LABEL_DRAFT_THRESHOLD,
+  STRUCTURE_SCORE_WEIGHT,
+  QUANTIFIED_FULL_WEIGHT,
+  QUANTIFIED_PARTIAL_WEIGHT,
+  SUBSTANCE_FULL_WEIGHT,
+  SUBSTANCE_PARTIAL_WEIGHT,
+  COVERAGE_FULL_WEIGHT,
+  COVERAGE_PARTIAL_WEIGHT,
+  COMMON_SECTIONS,
+  QUALITY_PATTERNS,
+} from './validator-config.js';
 
 // Re-export for direct access
 export { calculateSlopScore };
-
-// ============================================================================
-// Validation Constants
-// ============================================================================
-
-/** Minimum heading count for a document to be considered "structured" */
-const MIN_HEADINGS_FOR_STRUCTURE = 3;
-
-/** Minimum word count for a document to have "substance" */
-const MIN_WORDS_FOR_SUBSTANCE = 100;
-
-/** Minimum quantified metrics count for full points */
-const QUANTIFIED_FULL_POINTS_THRESHOLD = 3;
-
-/** Minimum word count for full substance points */
-const WORD_COUNT_FULL_POINTS = 200;
-
-/** Minimum word count for partial substance points */
-const WORD_COUNT_PARTIAL_POINTS = 100;
-
-/** Minimum section count for full section coverage points */
-const SECTION_COUNT_FULL_POINTS = 5;
-
-/** Minimum section count for partial section coverage points */
-const SECTION_COUNT_PARTIAL_POINTS = 3;
-
-// Grade thresholds
-const GRADE_A_THRESHOLD = 90;
-const GRADE_B_THRESHOLD = 80;
-const GRADE_C_THRESHOLD = 70;
-const GRADE_D_THRESHOLD = 60;
-
-// Score color thresholds
-const COLOR_GREEN_THRESHOLD = 70;
-const COLOR_YELLOW_THRESHOLD = 50;
-const COLOR_ORANGE_THRESHOLD = 30;
-
-// Score label thresholds
-const LABEL_EXCELLENT_THRESHOLD = 80;
-const LABEL_READY_THRESHOLD = 70;
-const LABEL_NEEDS_WORK_THRESHOLD = 50;
-const LABEL_DRAFT_THRESHOLD = 30;
-
-// Scoring percentages (as decimals)
-const STRUCTURE_SCORE_WEIGHT = 0.3;
-const QUANTIFIED_FULL_WEIGHT = 0.25;
-const QUANTIFIED_PARTIAL_WEIGHT = 0.15;
-const SUBSTANCE_FULL_WEIGHT = 0.25;
-const SUBSTANCE_PARTIAL_WEIGHT = 0.15;
-const COVERAGE_FULL_WEIGHT = 0.2;
-const COVERAGE_PARTIAL_WEIGHT = 0.1;
-
-// ============================================================================
-// Section Detection Patterns
-// ============================================================================
-
-const COMMON_SECTIONS = [
-  {
-    pattern: /^#+\s*(problem|challenge|pain.?point|context)/im,
-    name: 'Problem/Challenge',
-    weight: 2,
-  },
-  {
-    pattern: /^#+\s*(solution|proposal|approach|recommendation)/im,
-    name: 'Solution/Proposal',
-    weight: 2,
-  },
-  { pattern: /^#+\s*(goal|objective|benefit|outcome)/im, name: 'Goals/Benefits', weight: 2 },
-  {
-    pattern: /^#+\s*(scope|in.scope|out.of.scope|boundary)/im,
-    name: 'Scope Definition',
-    weight: 2,
-  },
-  { pattern: /^#+\s*(success|metric|kpi|measure)/im, name: 'Success Metrics', weight: 1 },
-  { pattern: /^#+\s*(stakeholder|team|owner|raci)/im, name: 'Stakeholders/Team', weight: 1 },
-  {
-    pattern: /^#+\s*(timeline|milestone|phase|schedule)/im,
-    name: 'Timeline/Milestones',
-    weight: 1,
-  },
-  {
-    pattern: /^#+\s*(risk|assumption|mitigation|dependency)/im,
-    name: 'Risks/Assumptions',
-    weight: 1,
-  },
-  { pattern: /^#+\s*(background|context|why)/im, name: 'Background/Context', weight: 1 },
-  { pattern: /^#+\s*(requirement|acceptance|criteria)/im, name: 'Requirements', weight: 1 },
-];
-
-// Content quality patterns
-const QUALITY_PATTERNS = {
-  quantified: /\d+\s*(%|million|thousand|hour|day|week|month|year|\$|dollar|user|customer)/gi,
-  businessFocus: /\b(business|customer|user|market|revenue|profit|competitive|strategic|value)\b/gi,
-  actionable: /\b(will|shall|must|should|enable|provide|deliver|implement|build|create)\b/gi,
-  measurable: /\b(measure|metric|kpi|track|monitor|achieve|target|goal)\b/gi,
-};
 
 // ============================================================================
 // Detection Functions

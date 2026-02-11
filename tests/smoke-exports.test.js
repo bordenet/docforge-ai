@@ -3,171 +3,27 @@
  */
 
 /**
- * Smoke Test - Catches module import failures early
+ * Smoke Test - Module Exports and Cross-Module Contracts
  *
  * This test verifies:
- * 1. All JS modules can be imported (catches missing dependencies)
- * 2. All modules export expected functions
- * 3. Cross-module contracts are maintained
+ * 1. Additional modules export expected functions
+ * 2. Cross-module contracts are maintained
  */
 
-describe('Smoke Test - Module Imports', () => {
-  describe('Core Module Imports', () => {
-    test('storage.js can be imported without errors', async () => {
-      await expect(import('../shared/js/storage.js')).resolves.toBeDefined();
-    });
-
-    test('workflow.js can be imported without errors', async () => {
-      await expect(import('../shared/js/workflow.js')).resolves.toBeDefined();
-    });
-
-    test('ui.js can be imported without errors', async () => {
-      await expect(import('../shared/js/ui.js')).resolves.toBeDefined();
-    });
-
-    test('router.js can be imported without errors', async () => {
-      await expect(import('../shared/js/router.js')).resolves.toBeDefined();
-    });
-
-    test('views.js can be imported without errors', async () => {
-      await expect(import('../shared/js/views.js')).resolves.toBeDefined();
-    });
-
-    test('plugin-registry.js can be imported without errors', async () => {
-      await expect(import('../shared/js/plugin-registry.js')).resolves.toBeDefined();
-    });
-
-    test('diff-view.js can be imported without errors', async () => {
-      await expect(import('../shared/js/diff-view.js')).resolves.toBeDefined();
-    });
-
-    test('slop-detection.js can be imported without errors', async () => {
-      await expect(import('../shared/js/slop-detection.js')).resolves.toBeDefined();
-    });
-
-    test('prompt-generator.js can be imported without errors', async () => {
-      await expect(import('../shared/js/prompt-generator.js')).resolves.toBeDefined();
-    });
-
-    test('form-generator.js can be imported without errors', async () => {
-      await expect(import('../shared/js/form-generator.js')).resolves.toBeDefined();
-    });
-
-    test('import-document.js can be imported without errors', async () => {
-      await expect(import('../shared/js/import-document.js')).resolves.toBeDefined();
-    });
-
-    test('projects.js can be imported without errors', async () => {
-      await expect(import('../shared/js/projects.js')).resolves.toBeDefined();
-    });
-
-    test('demo-data.js can be imported without errors', async () => {
-      await expect(import('../shared/js/demo-data.js')).resolves.toBeDefined();
-    });
-  });
-
-  describe('Export Consistency - storage.js', () => {
-    test('exports generateId', async () => {
-      const storage = await import('../shared/js/storage.js');
-      expect(typeof storage.generateId).toBe('function');
-    });
-
-    test('exports saveProject', async () => {
-      const storage = await import('../shared/js/storage.js');
-      expect(typeof storage.saveProject).toBe('function');
-    });
-
-    test('exports getProject', async () => {
-      const storage = await import('../shared/js/storage.js');
-      expect(typeof storage.getProject).toBe('function');
-    });
-
-    test('exports getAllProjects', async () => {
-      const storage = await import('../shared/js/storage.js');
-      expect(typeof storage.getAllProjects).toBe('function');
-    });
-
-    test('exports deleteProject', async () => {
-      const storage = await import('../shared/js/storage.js');
-      expect(typeof storage.deleteProject).toBe('function');
-    });
-  });
-
-  describe('Export Consistency - workflow.js', () => {
-    test('exports WORKFLOW_CONFIG', async () => {
-      const workflow = await import('../shared/js/workflow.js');
-      expect(workflow.WORKFLOW_CONFIG).toBeDefined();
-      expect(workflow.WORKFLOW_CONFIG.phaseCount).toBe(3);
-    });
-
-    test('exports Workflow class', async () => {
-      const workflow = await import('../shared/js/workflow.js');
-      expect(typeof workflow.Workflow).toBe('function');
-    });
-
-    test('exports getPhaseMetadata', async () => {
-      const workflow = await import('../shared/js/workflow.js');
-      expect(typeof workflow.getPhaseMetadata).toBe('function');
-    });
-
-    test('exports createProject', async () => {
-      const workflow = await import('../shared/js/workflow.js');
-      expect(typeof workflow.createProject).toBe('function');
-    });
-  });
-
-  describe('Export Consistency - ui.js', () => {
-    test('exports showToast', async () => {
-      const ui = await import('../shared/js/ui.js');
-      expect(typeof ui.showToast).toBe('function');
-    });
-
-    test('exports escapeHtml', async () => {
-      const ui = await import('../shared/js/ui.js');
-      expect(typeof ui.escapeHtml).toBe('function');
-    });
-
-    test('exports copyToClipboard', async () => {
-      const ui = await import('../shared/js/ui.js');
-      expect(typeof ui.copyToClipboard).toBe('function');
-    });
-
-    test('exports downloadFile', async () => {
-      const ui = await import('../shared/js/ui.js');
-      expect(typeof ui.downloadFile).toBe('function');
-    });
-  });
-
-  describe('Export Consistency - diff-view.js', () => {
-    test('exports computeWordDiff', async () => {
-      const diffView = await import('../shared/js/diff-view.js');
-      expect(typeof diffView.computeWordDiff).toBe('function');
-    });
-
-    test('exports renderDiffHtml', async () => {
-      const diffView = await import('../shared/js/diff-view.js');
-      expect(typeof diffView.renderDiffHtml).toBe('function');
-    });
-
-    test('exports getDiffStats', async () => {
-      const diffView = await import('../shared/js/diff-view.js');
-      expect(typeof diffView.getDiffStats).toBe('function');
-    });
-  });
-
+describe('Smoke Test - Module Exports', () => {
   describe('Export Consistency - slop-detection.js', () => {
     test('exports detectAISlop', async () => {
       const slop = await import('../shared/js/slop-detection.js');
       expect(typeof slop.detectAISlop).toBe('function');
     });
 
-    test('exports calculateSlopScore', async () => {
-      const slop = await import('../shared/js/slop-detection.js');
+    test('exports calculateSlopScore from slop-scoring.js', async () => {
+      const slop = await import('../shared/js/slop-scoring.js');
       expect(typeof slop.calculateSlopScore).toBe('function');
     });
 
-    test('exports getSlopPenalty', async () => {
-      const slop = await import('../shared/js/slop-detection.js');
+    test('exports getSlopPenalty from slop-scoring.js', async () => {
+      const slop = await import('../shared/js/slop-scoring.js');
       expect(typeof slop.getSlopPenalty).toBe('function');
     });
 
@@ -288,14 +144,26 @@ describe('Smoke Test - Module Imports', () => {
       expect(typeof importDoc.convertHtmlToMarkdown).toBe('function');
     });
 
-    test('exports showImportModal', async () => {
+    test('exports extractTitleFromMarkdown', async () => {
       const importDoc = await import('../shared/js/import-document.js');
-      expect(typeof importDoc.showImportModal).toBe('function');
+      expect(typeof importDoc.extractTitleFromMarkdown).toBe('function');
+    });
+
+    test('exports normalizeMarkdown', async () => {
+      const importDoc = await import('../shared/js/import-document.js');
+      expect(typeof importDoc.normalizeMarkdown).toBe('function');
+    });
+  });
+
+  describe('Export Consistency - import-modal.js', () => {
+    test('exports showImportModal', async () => {
+      const importModal = await import('../shared/js/import-modal.js');
+      expect(typeof importModal.showImportModal).toBe('function');
     });
 
     test('exports getImportModalHtml', async () => {
-      const importDoc = await import('../shared/js/import-document.js');
-      expect(typeof importDoc.getImportModalHtml).toBe('function');
+      const importModal = await import('../shared/js/import-modal.js');
+      expect(typeof importModal.getImportModalHtml).toBe('function');
     });
   });
 
@@ -334,3 +202,4 @@ describe('Smoke Test - Module Imports', () => {
     });
   });
 });
+
