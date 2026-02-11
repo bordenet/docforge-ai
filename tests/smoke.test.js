@@ -57,6 +57,10 @@ describe('Smoke Test - Module Imports', () => {
       await expect(import('../shared/js/import-document.js')).resolves.toBeDefined();
     });
 
+    test('projects.js can be imported without errors', async () => {
+      await expect(import('../shared/js/projects.js')).resolves.toBeDefined();
+    });
+
     test('demo-data.js can be imported without errors', async () => {
       await expect(import('../shared/js/demo-data.js')).resolves.toBeDefined();
     });
@@ -184,6 +188,43 @@ describe('Smoke Test - Module Imports', () => {
     test('exports fillPromptTemplate', async () => {
       const promptGen = await import('../shared/js/prompt-generator.js');
       expect(typeof promptGen.fillPromptTemplate).toBe('function');
+    });
+  });
+
+  describe('Export Consistency - projects.js', () => {
+    test('exports extractTitleFromMarkdown', async () => {
+      const projects = await import('../shared/js/projects.js');
+      expect(typeof projects.extractTitleFromMarkdown).toBe('function');
+    });
+
+    test('exports updatePhase', async () => {
+      const projects = await import('../shared/js/projects.js');
+      expect(typeof projects.updatePhase).toBe('function');
+    });
+
+    test('exports updateProject', async () => {
+      const projects = await import('../shared/js/projects.js');
+      expect(typeof projects.updateProject).toBe('function');
+    });
+
+    test('exports exportProject', async () => {
+      const projects = await import('../shared/js/projects.js');
+      expect(typeof projects.exportProject).toBe('function');
+    });
+
+    test('exports exportAllProjects', async () => {
+      const projects = await import('../shared/js/projects.js');
+      expect(typeof projects.exportAllProjects).toBe('function');
+    });
+
+    test('exports importProjects', async () => {
+      const projects = await import('../shared/js/projects.js');
+      expect(typeof projects.importProjects).toBe('function');
+    });
+
+    test('exports sanitizeFilename', async () => {
+      const projects = await import('../shared/js/projects.js');
+      expect(typeof projects.sanitizeFilename).toBe('function');
     });
   });
 
