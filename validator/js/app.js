@@ -6,6 +6,7 @@
 import { getCurrentDocumentType } from '../../shared/js/router.js';
 import { getPlugin } from '../../shared/js/plugin-registry.js';
 import { showToast } from '../../shared/js/ui.js';
+import { validateDocument, getGrade, getScoreColor, getScoreLabel } from '../../shared/js/validator.js';
 
 let currentPlugin = null;
 
@@ -80,13 +81,13 @@ function setupEventListeners() {
   const clearBtn = document.getElementById('btn-clear');
   const darkModeBtn = document.getElementById('btn-dark-mode');
 
-  validateBtn?.addEventListener('click', () => validateDocument());
+  validateBtn?.addEventListener('click', () => runValidation());
   clearBtn?.addEventListener('click', () => clearEditor());
   darkModeBtn?.addEventListener('click', () => toggleDarkMode());
 
   // Auto-validate on paste
   editor?.addEventListener('paste', () => {
-    setTimeout(() => validateDocument(), 100);
+    setTimeout(() => runValidation(), 100);
   });
 }
 
@@ -107,9 +108,9 @@ function setupDocTypeSelector() {
 }
 
 /**
- * Validate the document
+ * Validate the document using shared validator module
  */
-function validateDocument() {
+function runValidation() {
   const editor = document.getElementById('editor');
   const content = editor?.value?.trim() || '';
 
@@ -118,63 +119,125 @@ function validateDocument() {
     return;
   }
 
-  // Simple scoring based on section detection
-  const scores = scoreDocument(content, currentPlugin);
-  updateScoreDisplay(scores);
+  // Use the shared validator module
+  const result = validateDocument(content, currentPlugin);
+  updateScoreDisplay(result);
+  renderSlopDetection(result.slopDetection);
+  renderIssues(result.issues);
   showToast('Document validated!', 'success');
 }
 
 /**
- * Score a document based on plugin dimensions
+ * Update score display from validation result
  */
-function scoreDocument(content, plugin) {
-  const scores = {};
-  // Reserved for future keyword matching
-  // const lowerContent = content.toLowerCase();
+function updateScoreDisplay(result) {
+  // Update dimension scores
+  currentPlugin.scoringDimensions.forEach((dim, index) => {
+    const dimResult = result[`dimension${index + 1}`] || result[dim.name];
+    if (!dimResult) return;
 
-  plugin.scoringDimensions.forEach(dim => {
-    // Simple heuristic: check for keywords related to each dimension
-    let score = Math.floor(dim.maxPoints * 0.5); // Base score
+    const scoreEl = document.querySelector(`.dim-score[data-dim="${dim.name}"]`);
+    const barEl = document.querySelector(`.dim-bar[data-dim="${dim.name}"]`);
 
-    // Bonus for longer content
-    if (content.length > 500) score += Math.floor(dim.maxPoints * 0.2);
-    if (content.length > 1000) score += Math.floor(dim.maxPoints * 0.1);
-
-    // Check for sections (headings)
-    const headingCount = (content.match(/^#+\s/gm) || []).length;
-    if (headingCount >= 3) score += Math.floor(dim.maxPoints * 0.1);
-
-    scores[dim.name] = Math.min(score, dim.maxPoints);
+    if (scoreEl) scoreEl.textContent = dimResult.score;
+    if (barEl) {
+      const pct = (dimResult.score / dim.maxPoints) * 100;
+      barEl.style.width = `${pct}%`;
+      barEl.className = `dim-bar h-2 rounded-full transition-all duration-300 ${getBarColor(pct)}`;
+    }
   });
 
-  return scores;
+  // Update total score
+  const totalEl = document.getElementById('score-total');
+  if (totalEl) totalEl.textContent = result.totalScore;
+
+  updateBadge(result.totalScore);
 }
 
 /**
- * Update score display
+ * Get bar color class based on percentage
  */
-function updateScoreDisplay(scores) {
-  let total = 0;
-  Object.entries(scores).forEach(([name, score]) => {
-    total += score;
-    const scoreEl = document.querySelector(`.dim-score[data-dim="${name}"]`);
-    const barEl = document.querySelector(`.dim-bar[data-dim="${name}"]`);
-    const dim = currentPlugin.scoringDimensions.find(d => d.name === name);
-    if (scoreEl) scoreEl.textContent = score;
-    if (barEl && dim) barEl.style.width = `${(score / dim.maxPoints) * 100}%`;
-  });
-
-  document.getElementById('score-total').textContent = total;
-  updateBadge(total);
+function getBarColor(pct) {
+  if (pct >= 70) return 'bg-green-500';
+  if (pct >= 50) return 'bg-yellow-500';
+  if (pct >= 30) return 'bg-orange-500';
+  return 'bg-red-500';
 }
 
+/**
+ * Update badge using shared helper functions
+ */
 function updateBadge(score) {
   const badge = document.getElementById('score-badge');
   if (!badge) return;
-  if (score >= 90) { badge.textContent = 'Excellent'; badge.className = 'inline-block px-3 py-1 rounded-full text-sm font-medium bg-green-600 text-white'; }
-  else if (score >= 70) { badge.textContent = 'Good'; badge.className = 'inline-block px-3 py-1 rounded-full text-sm font-medium bg-blue-600 text-white'; }
-  else if (score >= 50) { badge.textContent = 'Needs Work'; badge.className = 'inline-block px-3 py-1 rounded-full text-sm font-medium bg-yellow-600 text-white'; }
-  else { badge.textContent = 'Poor'; badge.className = 'inline-block px-3 py-1 rounded-full text-sm font-medium bg-red-600 text-white'; }
+
+  const label = getScoreLabel(score);
+  const color = getScoreColor(score);
+  const grade = getGrade(score);
+
+  const colorClasses = {
+    green: 'bg-green-600',
+    yellow: 'bg-yellow-600',
+    orange: 'bg-orange-600',
+    red: 'bg-red-600'
+  };
+
+  badge.textContent = `${grade} - ${label}`;
+  badge.className = `inline-block px-3 py-1 rounded-full text-sm font-medium ${colorClasses[color] || 'bg-slate-600'} text-white`;
+}
+
+/**
+ * Render slop detection results
+ */
+function renderSlopDetection(slopData) {
+  const container = document.getElementById('slop-detection');
+  if (!container || !slopData) return;
+
+  const severityColors = {
+    clean: 'text-green-400',
+    light: 'text-yellow-400',
+    moderate: 'text-orange-400',
+    heavy: 'text-red-400',
+    severe: 'text-red-600'
+  };
+
+  container.innerHTML = `
+    <div class="mt-4 p-3 bg-slate-800 rounded-lg">
+      <div class="flex justify-between items-center mb-2">
+        <span class="text-sm font-medium text-slate-300">AI Slop Detection</span>
+        <span class="text-sm ${severityColors[slopData.severity] || 'text-slate-400'}">
+          ${slopData.severity?.toUpperCase() || 'N/A'} (${slopData.penalty || 0} pt penalty)
+        </span>
+      </div>
+      ${slopData.issues?.length > 0 ? `
+        <ul class="text-xs text-slate-400 space-y-1">
+          ${slopData.issues.map(issue => `<li>• ${escapeHtml(issue)}</li>`).join('')}
+        </ul>
+      ` : '<p class="text-xs text-green-400">No AI slop detected</p>'}
+    </div>
+  `;
+}
+
+/**
+ * Render validation issues
+ */
+function renderIssues(issues) {
+  const container = document.getElementById('validation-issues');
+  if (!container) return;
+
+  if (!issues || issues.length === 0) {
+    container.innerHTML = '';
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="mt-4 p-3 bg-slate-800 rounded-lg">
+      <span class="text-sm font-medium text-slate-300">Suggestions</span>
+      <ul class="mt-2 text-xs text-slate-400 space-y-1">
+        ${issues.slice(0, 5).map(issue => `<li>• ${escapeHtml(issue)}</li>`).join('')}
+      </ul>
+    </div>
+  `;
 }
 
 function clearEditor() {
