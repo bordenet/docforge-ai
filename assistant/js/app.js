@@ -293,7 +293,11 @@ function setupListEventHandlers() {
       if (confirm('Delete this project?')) {
         await deleteProject(currentPlugin.dbName, id);
         showToast('Project deleted', 'success');
-        window.location.hash = '';
+        // Re-render the list directly (hash may already be empty, so hashchange won't fire)
+        const container = document.getElementById('app-container');
+        if (container) {
+          await renderList(container);
+        }
       }
     });
   });
