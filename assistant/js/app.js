@@ -11,6 +11,22 @@ import { showToast, showLoading, hideLoading, copyToClipboard } from '../../shar
 import { generatePrompt } from '../../shared/js/prompt-generator.js';
 
 let currentPlugin = null;
+let currentTemplates = [];
+
+/**
+ * Load templates for a plugin (if available)
+ * @param {string} pluginId
+ * @returns {Promise<Object[]>}
+ */
+async function loadPluginTemplates(pluginId) {
+  try {
+    const module = await import(`../../plugins/${pluginId}/templates.js`);
+    return module.getAllTemplates?.() || module.TEMPLATES || [];
+  } catch {
+    // No templates for this plugin
+    return [];
+  }
+}
 
 /**
  * Initialize the application
@@ -115,7 +131,7 @@ async function handleRouteChange(view, params) {
       await renderList(container);
       break;
     case 'new':
-      renderNew(container);
+      await renderNew(container);
       break;
     case 'project':
       await renderProject(container, params.projectId);
@@ -137,8 +153,9 @@ async function renderList(container) {
   setupListEventHandlers();
 }
 
-function renderNew(container) {
-  container.innerHTML = renderNewView(currentPlugin);
+async function renderNew(container) {
+  currentTemplates = await loadPluginTemplates(currentPlugin.id);
+  container.innerHTML = renderNewView(currentPlugin, {}, currentTemplates);
   setupNewFormEventHandlers();
 }
 
@@ -224,6 +241,32 @@ function setupNewFormEventHandlers() {
     const project = await saveProject(currentPlugin.dbName, { formData, title: formData.title, currentPhase: 1 });
     showToast('Project created!', 'success');
     window.location.hash = `project/${project.id}`;
+  });
+
+  // Template selection handlers
+  document.querySelectorAll('.template-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const templateId = btn.dataset.templateId;
+      const template = currentTemplates.find(t => t.id === templateId);
+
+      // Update button styling
+      document.querySelectorAll('.template-btn').forEach(b => {
+        b.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+        b.classList.add('border-gray-200', 'dark:border-gray-600');
+      });
+      btn.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+      btn.classList.remove('border-gray-200', 'dark:border-gray-600');
+
+      // Pre-fill form fields from template
+      if (template && template.fields) {
+        Object.keys(template.fields).forEach(fieldId => {
+          const input = document.getElementById(fieldId);
+          if (input) {
+            input.value = template.fields[fieldId];
+          }
+        });
+      }
+    });
   });
 }
 

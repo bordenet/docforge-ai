@@ -136,10 +136,31 @@ function renderProjectCard(project, plugin) {
  * Render the new project form view
  * @param {Object} plugin - Current plugin config
  * @param {Object} [existingData] - Existing form data (for editing)
+ * @param {Object[]} [templates] - Optional array of templates for this plugin
  * @returns {string} HTML
  */
-export function renderNewView(plugin, existingData = {}) {
+export function renderNewView(plugin, existingData = {}, templates = []) {
   const formFields = generateFormFields(plugin.formFields, existingData);
+
+  // Template selector (only if templates provided)
+  const templateSelector = templates.length > 0 ? `
+    <div class="mb-6">
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+        Choose a Template
+      </label>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="template-selector">
+        ${templates.map(t => `
+          <button type="button"
+            class="template-btn p-3 border-2 rounded-lg text-center transition-all hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 ${t.id === 'blank' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-600'}"
+            data-template-id="${t.id}">
+            <span class="text-2xl block mb-1">${t.icon}</span>
+            <span class="text-sm font-medium text-gray-900 dark:text-white block">${escapeHtml(t.name)}</span>
+            <span class="text-xs text-gray-500 dark:text-gray-400">${escapeHtml(t.description)}</span>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  ` : '';
 
   return `
     <div class="max-w-3xl mx-auto">
@@ -151,7 +172,11 @@ export function renderNewView(plugin, existingData = {}) {
       </div>
 
       <form id="new-project-form" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-        ${formFields}
+        ${templateSelector}
+
+        <div id="form-fields-container">
+          ${formFields}
+        </div>
 
         <div class="flex justify-end space-x-3 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
           <a href="#" class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 rounded-lg">Cancel</a>
