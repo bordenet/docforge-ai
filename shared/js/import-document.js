@@ -57,53 +57,47 @@ function extractTitleFromMarkdown(markdown, docType) {
 }
 
 /**
- * Check if content appears to be plain Markdown (not rich HTML)
- * @param {string} html - HTML content from paste
- * @returns {boolean} True if content is likely plain Markdown
+ * Check if text content contains markdown syntax
+ * @param {string} text - Plain text content
+ * @returns {boolean} True if text contains markdown patterns
  */
-function isPlainMarkdown(html) {
-  // If it contains rich HTML tags (not just browser wrapper tags), it's not plain markdown
-  const richHtmlTags = /<(h[1-6]|strong|em|b|i|ul|ol|li|table|tr|td|th|a|img|blockquote|pre|code)[^>]*>/i;
-  if (richHtmlTags.test(html)) {
-    return false;
-  }
+function containsMarkdownSyntax(text) {
+  if (!text) return false;
 
-  // Extract text content
-  const temp = document.createElement('div');
-  temp.innerHTML = html;
-  const text = temp.textContent || temp.innerText || '';
-
-  // Check for markdown patterns
+  // Check for markdown patterns in the text
   const markdownPatterns = [
     /^#{1,6}\s+/m,           // Headers: # ## ### etc
-    /^\s*[-*+]\s+/m,         // Unordered lists
+    /^\s*[-*+]\s+\S/m,       // Unordered lists (dash/asterisk/plus followed by space and content)
     /^\s*\d+\.\s+/m,         // Ordered lists
-    /\*\*[^*]+\*\*/,         // Bold
-    /\*[^*]+\*/,             // Italic
-    /`[^`]+`/,               // Inline code
-    /```[\s\S]*```/,         // Code blocks
+    /\*\*[^*\n]+\*\*/,       // Bold **text**
+    /\*[^*\n]+\*/,           // Italic *text*
+    /`[^`\n]+`/,             // Inline code
+    /```/,                   // Code block markers
     /^\s*>/m,                // Blockquotes
-    /\[.+\]\(.+\)/           // Links
+    /\[[^\]]+\]\([^)]+\)/,   // Links [text](url)
+    /^\|.+\|$/m              // Table rows |col|col|
   ];
 
-  // If text has markdown patterns, it's likely plain markdown
   return markdownPatterns.some(pattern => pattern.test(text));
 }
 
 /**
  * Convert HTML to Markdown using Turndown (if available)
- * If content is already plain Markdown, return it as-is
+ * If content already contains markdown syntax, return plain text to preserve it
  * @param {string} html - HTML content from paste
  * @returns {string} Markdown content
  */
 export function convertHtmlToMarkdown(html) {
-  // First, extract plain text to check if it's already markdown
+  // First, extract plain text
   const temp = document.createElement('div');
   temp.innerHTML = html;
   const plainText = temp.textContent || temp.innerText || '';
 
-  // If the content looks like plain markdown, return it directly
-  if (isPlainMarkdown(html)) {
+  // If the plain text contains markdown syntax, return it directly
+  // This handles cases where:
+  // 1. User pastes plain markdown (browser wraps in divs)
+  // 2. User pastes from rich editor that preserved markdown in text
+  if (containsMarkdownSyntax(plainText)) {
     return plainText.trim();
   }
 
@@ -113,7 +107,7 @@ export function convertHtmlToMarkdown(html) {
     return plainText;
   }
 
-  // Use Turndown for rich HTML content
+  // Use Turndown for rich HTML content that has no markdown syntax
   const turndownService = new TurndownService({
     headingStyle: 'atx',
     codeBlockStyle: 'fenced',

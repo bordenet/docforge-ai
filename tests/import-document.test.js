@@ -85,6 +85,35 @@ describe('Import Document Module', () => {
       expect(result).toContain('`inline code`');
       expect(result).toContain('```');
     });
+
+    test('should preserve markdown even when pasted from rich editor with HTML tags', () => {
+      // This simulates pasting from Notion/Google Docs where the HTML has rich tags
+      // but the text content still contains markdown syntax
+      const html = `
+        <h2>## Problem Statement</h2>
+        <p>Current development hardware cannot run multiple AI agents.</p>
+        <p><strong>**Measured impact:**</strong> 30 minutes of daily wait time.</p>
+        <ul>
+          <li>* **Productivity Loss:** 10 hours per month</li>
+          <li>* **Workflow Constraint:** Single-agent limitation</li>
+        </ul>
+        <table><tr><td>| Option | Price |</td></tr></table>
+      `;
+      const result = convertHtmlToMarkdown(html);
+      // Should preserve the markdown syntax, not escape it
+      expect(result).toContain('## Problem Statement');
+      expect(result).toContain('**Measured impact:**');
+      expect(result).toContain('**Productivity Loss:**');
+      expect(result).not.toContain('\\#');
+      expect(result).not.toContain('\\*');
+    });
+
+    test('should preserve markdown tables', () => {
+      const html = '<div>| Option | Price |</div><div>|----|----|</div><div>| Framework | $1,500 |</div>';
+      const result = convertHtmlToMarkdown(html);
+      expect(result).toContain('| Option | Price |');
+      expect(result).toContain('| Framework | $1,500 |');
+    });
   });
 
   describe('getImportModalHtml', () => {
