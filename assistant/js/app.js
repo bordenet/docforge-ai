@@ -4,12 +4,11 @@
  */
 
 import { getCurrentPlugin, initRouter } from '../../shared/js/router.js';
-// Plugin registry available for future use
-// import { getPlugin } from '../../shared/js/plugin-registry.js';
 import { saveProject, getProject, getAllProjects, deleteProject } from '../../shared/js/storage.js';
 import { extractFormData, validateFormData } from '../../shared/js/form-generator.js';
-import { renderListView, renderNewView, renderProjectView } from '../../shared/js/views.js';
-import { showToast, showLoading, hideLoading } from '../../shared/js/ui.js';
+import { renderListView, renderNewView, renderProjectView, renderPhaseContent } from '../../shared/js/views.js';
+import { showToast, showLoading, hideLoading, copyToClipboard } from '../../shared/js/ui.js';
+import { generatePrompt } from '../../shared/js/prompt-generator.js';
 
 let currentPlugin = null;
 
@@ -150,7 +149,23 @@ async function renderProject(container, projectId) {
     window.location.hash = '';
     return;
   }
+
+  // Initialize phases object if not present
+  if (!project.phases) {
+    project.phases = {};
+  }
+
   container.innerHTML = renderProjectView(currentPlugin, project);
+
+  // Populate phase content
+  const currentPhase = project.currentPhase || 1;
+  const phaseContent = document.getElementById('phase-content');
+  if (phaseContent) {
+    phaseContent.innerHTML = renderPhaseContent(currentPlugin, project, currentPhase);
+  }
+
+  // Attach event listeners
+  attachProjectEventListeners(project, currentPhase);
 }
 
 function setupListEventHandlers() {
@@ -181,6 +196,199 @@ function setupNewFormEventHandlers() {
     showToast('Project created!', 'success');
     window.location.hash = `project/${project.id}`;
   });
+}
+
+/**
+ * Attach event listeners for project view
+ */
+function attachProjectEventListeners(project, phase) {
+  // Phase tab navigation
+  document.querySelectorAll('.phase-tab').forEach(tab => {
+    tab.addEventListener('click', async () => {
+      const targetPhase = parseInt(tab.dataset.phase);
+      const freshProject = await getProject(currentPlugin.dbName, project.id);
+
+      // Guard: Can only navigate to a phase if all prior phases are complete
+      if (targetPhase > 1) {
+        const priorPhase = targetPhase - 1;
+        const priorPhaseComplete = freshProject.phases?.[priorPhase]?.completed;
+        if (!priorPhaseComplete) {
+          showToast(`Complete Phase ${priorPhase} before proceeding to Phase ${targetPhase}`, 'warning');
+          return;
+        }
+      }
+
+      freshProject.currentPhase = targetPhase;
+      updatePhaseTabStyles(targetPhase);
+      document.getElementById('phase-content').innerHTML = renderPhaseContent(currentPlugin, freshProject, targetPhase);
+      attachPhaseEventListeners(freshProject, targetPhase);
+    });
+  });
+
+  attachPhaseEventListeners(project, phase);
+}
+
+/**
+ * Update phase tab styles
+ */
+function updatePhaseTabStyles(activePhase) {
+  document.querySelectorAll('.phase-tab').forEach(tab => {
+    const tabPhase = parseInt(tab.dataset.phase);
+    if (tabPhase === activePhase) {
+      tab.classList.remove('text-gray-600', 'dark:text-gray-400', 'hover:text-gray-900', 'dark:hover:text-gray-200');
+      tab.classList.add('border-b-2', 'border-blue-600', 'text-blue-600', 'dark:text-blue-400');
+    } else {
+      tab.classList.remove('border-b-2', 'border-blue-600', 'text-blue-600', 'dark:text-blue-400');
+      tab.classList.add('text-gray-600', 'dark:text-gray-400', 'hover:text-gray-900', 'dark:hover:text-gray-200');
+    }
+  });
+}
+
+/**
+ * Attach event listeners for phase interactions
+ */
+function attachPhaseEventListeners(project, phase) {
+  const copyPromptBtn = document.getElementById('copy-prompt-btn');
+  const saveResponseBtn = document.getElementById('save-response-btn');
+  const responseTextarea = document.getElementById('response-textarea');
+  const nextPhaseBtn = document.getElementById('next-phase-btn');
+  const exportFinalBtn = document.getElementById('export-final-btn');
+
+  // Copy prompt button
+  if (copyPromptBtn) {
+    copyPromptBtn.addEventListener('click', async () => {
+      try {
+        // Build previous responses for prompt generation
+        const previousResponses = {
+          1: project.phases?.[1]?.response || '',
+          2: project.phases?.[2]?.response || ''
+        };
+
+        const prompt = await generatePrompt(currentPlugin, phase, project.formData, previousResponses);
+        await copyToClipboard(prompt);
+        showToast('Prompt copied to clipboard!', 'success');
+
+        // Save prompt to phase data
+        if (!project.phases) project.phases = {};
+        if (!project.phases[phase]) project.phases[phase] = { prompt: '', response: '', completed: false };
+        project.phases[phase].prompt = prompt;
+        await saveProject(currentPlugin.dbName, project);
+
+        // Enable the "Open AI" button
+        const openAiBtn = document.getElementById('open-ai-btn');
+        if (openAiBtn) {
+          openAiBtn.classList.remove('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+          openAiBtn.classList.add('hover:bg-green-700');
+          openAiBtn.removeAttribute('aria-disabled');
+        }
+
+        // Enable the response textarea
+        if (responseTextarea) {
+          responseTextarea.disabled = false;
+          responseTextarea.classList.remove('opacity-50', 'cursor-not-allowed');
+          responseTextarea.focus();
+        }
+
+        // Enable save button
+        if (saveResponseBtn) {
+          saveResponseBtn.disabled = false;
+        }
+      } catch (error) {
+        console.error('Failed to copy prompt:', error);
+        showToast('Failed to copy prompt', 'error');
+      }
+    });
+  }
+
+  // Enable save button as user types
+  if (responseTextarea) {
+    responseTextarea.addEventListener('input', () => {
+      const hasContent = responseTextarea.value.trim().length >= 3;
+      if (saveResponseBtn) saveResponseBtn.disabled = !hasContent;
+    });
+  }
+
+  // Save response button
+  if (saveResponseBtn) {
+    saveResponseBtn.addEventListener('click', async () => {
+      const response = responseTextarea?.value?.trim();
+      if (!response || response.length < 3) {
+        showToast('Please enter a response', 'warning');
+        return;
+      }
+
+      try {
+        // Re-fetch project to get fresh data
+        const freshProject = await getProject(currentPlugin.dbName, project.id);
+        if (!freshProject.phases) freshProject.phases = {};
+        if (!freshProject.phases[phase]) freshProject.phases[phase] = { prompt: '', response: '', completed: false };
+
+        freshProject.phases[phase].response = response;
+        freshProject.phases[phase].completed = true;
+
+        // Auto-advance to next phase if not final
+        if (phase < 3) {
+          freshProject.currentPhase = phase + 1;
+          await saveProject(currentPlugin.dbName, freshProject);
+          showToast('Response saved! Moving to next phase...', 'success');
+
+          updatePhaseTabStyles(phase + 1);
+          document.getElementById('phase-content').innerHTML = renderPhaseContent(currentPlugin, freshProject, phase + 1);
+          attachPhaseEventListeners(freshProject, phase + 1);
+
+          // Update tab checkmark for completed phase
+          const completedTab = document.querySelector(`.phase-tab[data-phase="${phase}"]`);
+          if (completedTab && !completedTab.innerHTML.includes('✓')) {
+            completedTab.innerHTML += '<span class="ml-2 text-green-500">✓</span>';
+          }
+        } else {
+          // Final phase complete
+          await saveProject(currentPlugin.dbName, freshProject);
+          showToast('Your document is complete!', 'success');
+
+          // Re-render to show completion banner
+          document.getElementById('phase-content').innerHTML = renderPhaseContent(currentPlugin, freshProject, phase);
+          attachPhaseEventListeners(freshProject, phase);
+
+          // Update tab checkmark
+          const completedTab = document.querySelector(`.phase-tab[data-phase="${phase}"]`);
+          if (completedTab && !completedTab.innerHTML.includes('✓')) {
+            completedTab.innerHTML += '<span class="ml-2 text-green-500">✓</span>';
+          }
+        }
+      } catch (error) {
+        console.error('Failed to save response:', error);
+        showToast('Failed to save response', 'error');
+      }
+    });
+  }
+
+  // Next phase button
+  if (nextPhaseBtn) {
+    nextPhaseBtn.addEventListener('click', async () => {
+      const nextPhase = phase + 1;
+      const freshProject = await getProject(currentPlugin.dbName, project.id);
+      freshProject.currentPhase = nextPhase;
+
+      updatePhaseTabStyles(nextPhase);
+      document.getElementById('phase-content').innerHTML = renderPhaseContent(currentPlugin, freshProject, nextPhase);
+      attachPhaseEventListeners(freshProject, nextPhase);
+    });
+  }
+
+  // Export final document button (Phase 3 complete)
+  if (exportFinalBtn) {
+    exportFinalBtn.addEventListener('click', async () => {
+      const freshProject = await getProject(currentPlugin.dbName, project.id);
+      const finalResponse = freshProject.phases?.[3]?.response || '';
+      if (finalResponse) {
+        await copyToClipboard(finalResponse);
+        showToast('Final document copied to clipboard!', 'success');
+      } else {
+        showToast('No final document to copy', 'warning');
+      }
+    });
+  }
 }
 
 function toggleTheme() {
