@@ -35,20 +35,22 @@ describe('Prompt Generator - Template Filling', () => {
       expect(result).toBe('Problem: This is the problem');
     });
 
-    it('should leave unmatched variables unchanged', () => {
+    it('should replace unmatched variables with empty string', () => {
       const template = 'Hello {{NAME}}, your ID is {{USER_ID}}';
       const data = { name: 'World' };
 
       const result = fillPromptTemplate(template, data);
 
-      expect(result).toBe('Hello World, your ID is {{USER_ID}}');
+      // Unmatched variables should be replaced with empty string, not left as placeholders
+      expect(result).toBe('Hello World, your ID is ');
     });
 
-    it('should handle empty data object', () => {
+    it('should handle empty data object by replacing all variables', () => {
       const template = 'Hello {{NAME}}!';
       const result = fillPromptTemplate(template, {});
 
-      expect(result).toBe('Hello {{NAME}}!');
+      // All variables should be replaced with empty string when no data provided
+      expect(result).toBe('Hello !');
     });
 
     it('should handle empty template', () => {

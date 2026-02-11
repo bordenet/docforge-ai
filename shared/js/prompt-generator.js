@@ -16,13 +16,24 @@ import { logger } from './logger.js';
 export function fillPromptTemplate(template, formData) {
   if (!template) return '';
 
-  return template.replace(/\{\{(\w+)\}\}/g, (match, fieldId) => {
+  let result = template.replace(/\{\{(\w+)\}\}/g, (match, fieldId) => {
     // Convert from UPPER_CASE to camelCase for lookup
     const camelCase = fieldId
       .toLowerCase()
       .replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
-    return formData[camelCase] || formData[fieldId] || match;
+    // Return value or empty string - never return the raw placeholder
+    return formData[camelCase] || formData[fieldId] || '';
   });
+
+  // Safety check: detect and remove any remaining placeholders
+  // This prevents unsubstituted {{PLACEHOLDER}} from reaching the LLM
+  const remaining = result.match(/\{\{[A-Z_]+\}\}/g);
+  if (remaining) {
+    logger.warn(`Unsubstituted placeholders detected: ${remaining.join(', ')}`, 'prompt-generator');
+    result = result.replace(/\{\{[A-Z_]+\}\}/g, '');
+  }
+
+  return result;
 }
 
 /**
