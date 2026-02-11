@@ -10,6 +10,7 @@ import { renderListView, renderNewView, renderProjectView, renderPhaseContent } 
 import { showToast, showLoading, hideLoading, copyToClipboard } from '../../shared/js/ui.js';
 import { generatePrompt } from '../../shared/js/prompt-generator.js';
 import { showImportModal } from '../../shared/js/import-document.js';
+import { exportAllProjects, importProjects } from '../../shared/js/projects.js';
 
 let currentPlugin = null;
 let currentTemplates = [];
@@ -115,6 +116,41 @@ function setupGlobalEventListeners() {
   if (!localStorage.getItem('privacy-notice-dismissed')) {
     document.getElementById('privacy-notice')?.classList.remove('hidden');
   }
+
+  // Export all projects button
+  document.getElementById('export-all-btn')?.addEventListener('click', async () => {
+    try {
+      await exportAllProjects(currentPlugin.dbName, currentPlugin.id);
+      showToast('All projects exported', 'success');
+    } catch (error) {
+      console.error('Export failed:', error);
+      showToast('Export failed', 'error');
+    }
+  });
+
+  // Import projects button
+  document.getElementById('import-btn')?.addEventListener('click', () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = async (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        try {
+          const imported = await importProjects(currentPlugin.dbName, file);
+          showToast(`Imported ${imported} project(s)`, 'success');
+          // Refresh current view if on home page
+          if (window.location.hash === '#home' || !window.location.hash) {
+            window.location.reload();
+          }
+        } catch (error) {
+          console.error('Import failed:', error);
+          showToast('Import failed: ' + error.message, 'error');
+        }
+      }
+    };
+    input.click();
+  });
 }
 
 /**

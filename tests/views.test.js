@@ -151,6 +151,7 @@ describe('Views Module', () => {
       const html = renderListView(mockPlugin, [mockProject]);
       expect(html).toContain('Test description');
     });
+    // Note: export-all-btn and import-btn are in static HTML header, not rendered view
   });
 
   describe('renderNewView', () => {

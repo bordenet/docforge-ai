@@ -82,5 +82,50 @@ test.describe('Assistant', () => {
     });
   }
 
+  test('export all button is visible in header', async ({ page }) => {
+    await page.goto('/assistant/?type=one-pager');
+    await page.waitForLoadState('networkidle');
+
+    // Button is in the static header, not the dynamic content
+    const exportAllBtn = page.locator('header #export-all-btn');
+    await expect(exportAllBtn).toBeVisible();
+    await expect(exportAllBtn).toContainText('Export All');
+  });
+
+  test('import button is visible in header', async ({ page }) => {
+    await page.goto('/assistant/?type=one-pager');
+    await page.waitForLoadState('networkidle');
+
+    // Button is in the static header, not the dynamic content
+    const importBtn = page.locator('header #import-btn');
+    await expect(importBtn).toBeVisible();
+    await expect(importBtn).toContainText('Import');
+  });
+
+  test('export all button triggers download', async ({ page }) => {
+    // Create a project first
+    await page.goto('/assistant/?type=one-pager#new');
+    await page.waitForLoadState('networkidle');
+    await page.fill('#title', 'Export Test Project');
+    await page.fill('#problemStatement', 'Test export functionality');
+    await page.fill('#proposedSolution', 'Click export button');
+    await page.click('button[type="submit"]');
+    await page.waitForURL(/#project\//);
+
+    // Go back to home page
+    await page.goto('/assistant/?type=one-pager');
+    await page.waitForLoadState('networkidle');
+
+    // Set up download listener
+    const downloadPromise = page.waitForEvent('download', { timeout: 5000 });
+
+    // Click export button
+    await page.locator('header #export-all-btn').click();
+
+    // Wait for download to start
+    const download = await downloadPromise;
+    expect(download.suggestedFilename()).toMatch(/one-pager-backup-.*\.json/);
+  });
+
 });
 
