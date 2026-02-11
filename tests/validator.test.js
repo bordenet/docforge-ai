@@ -49,6 +49,78 @@ We will fix it.
       const result = detectSections(text);
       expect(result.missing.length).toBeGreaterThan(0);
     });
+
+    // Tests for section detection with plain text headings (no markdown prefix)
+    // This is critical for documents imported from Word/Google Docs
+    describe('Plain Text Heading Detection', () => {
+      test('detects problem section without markdown prefix', () => {
+        const text = 'Problem\nWe have a challenge with X.';
+        const result = detectSections(text);
+        expect(result.found.some((s) => s.name === 'Problem/Challenge')).toBe(true);
+      });
+
+      test('detects solution section without markdown prefix', () => {
+        const text = 'Solution\nWe will implement Y.';
+        const result = detectSections(text);
+        expect(result.found.some((s) => s.name === 'Solution/Proposal')).toBe(true);
+      });
+
+      test('detects goals section without markdown prefix', () => {
+        const text = 'Goals\n- Goal 1\n- Goal 2';
+        const result = detectSections(text);
+        expect(result.found.some((s) => s.name === 'Goals/Benefits')).toBe(true);
+      });
+
+      test('detects multiple plain text sections', () => {
+        const text = `Problem
+We have an issue.
+
+Solution
+We will fix it.
+
+Goals
+- Goal 1
+- Goal 2`;
+        const result = detectSections(text);
+        expect(result.found.length).toBeGreaterThanOrEqual(3);
+      });
+
+      test('detects mixed markdown and plain text headings', () => {
+        const text = `# Problem
+We have an issue.
+
+Solution
+We will fix it.
+
+## Goals
+- Goal 1`;
+        const result = detectSections(text);
+        expect(result.found.some((s) => s.name === 'Problem/Challenge')).toBe(true);
+        expect(result.found.some((s) => s.name === 'Solution/Proposal')).toBe(true);
+        expect(result.found.some((s) => s.name === 'Goals/Benefits')).toBe(true);
+      });
+
+      test('handles Word/Google Docs style document', () => {
+        // Simulates a document pasted from Word with no markdown formatting
+        // Note: Section headings must start with the keyword (e.g., "Problem" not "The Problem")
+        const text = `Problem Statement
+Our current system is slow and unreliable.
+
+Solution Overview
+We will migrate to a new architecture.
+
+Success Metrics
+- 50% faster response time
+- 99.9% uptime`;
+        const result = detectSections(text);
+        // "Problem Statement" matches the problem pattern (starts with "Problem")
+        expect(result.found.some((s) => s.name === 'Problem/Challenge')).toBe(true);
+        // "Solution Overview" matches the solution pattern (starts with "Solution")
+        expect(result.found.some((s) => s.name === 'Solution/Proposal')).toBe(true);
+        // "Success Metrics" matches the success/metric pattern
+        expect(result.found.some((s) => s.name === 'Success Metrics')).toBe(true);
+      });
+    });
   });
 
   describe('analyzeContentQuality', () => {

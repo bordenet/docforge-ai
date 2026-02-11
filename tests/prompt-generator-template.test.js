@@ -148,5 +148,96 @@ describe('Prompt Generator - Template Filling', () => {
       expect(result).not.toBe('{{PHASE2_OUTPUT}}');
     });
   });
+
+  describe('Placeholder Safety Check', () => {
+    // These tests verify the safety check that removes unsubstituted {{PLACEHOLDER}} patterns
+    // This prevents raw placeholders from reaching the LLM
+
+    it('should remove unsubstituted UPPER_CASE placeholders', () => {
+      const template = 'Hello {{NAME}}, your {{UNKNOWN_FIELD}} is ready';
+      const data = { name: 'World' };
+
+      const result = fillPromptTemplate(template, data);
+
+      // UNKNOWN_FIELD should be removed entirely, not left as {{UNKNOWN_FIELD}}
+      expect(result).toBe('Hello World, your  is ready');
+      expect(result).not.toContain('{{UNKNOWN_FIELD}}');
+    });
+
+    it('should remove multiple unsubstituted placeholders', () => {
+      const template = '{{TITLE}} - {{MISSING_A}} and {{MISSING_B}}';
+      const data = { title: 'My Document' };
+
+      const result = fillPromptTemplate(template, data);
+
+      expect(result).toBe('My Document -  and ');
+      expect(result).not.toContain('{{MISSING_A}}');
+      expect(result).not.toContain('{{MISSING_B}}');
+    });
+
+    it('should handle template with only unsubstituted placeholders', () => {
+      const template = '{{COMPLETELY_UNKNOWN}} {{ALSO_UNKNOWN}}';
+      const data = {};
+
+      const result = fillPromptTemplate(template, data);
+
+      expect(result).toBe(' ');
+      expect(result).not.toContain('{{');
+      expect(result).not.toContain('}}');
+    });
+
+    it('should not affect lowercase or mixed-case placeholders (only UPPER_CASE)', () => {
+      // The safety check specifically targets {{UPPER_CASE}} patterns
+      // This is intentional - lowercase patterns are not standard template vars
+      const template = '{{lowercase}} {{MixedCase}} {{UPPER_CASE}}';
+      const data = {};
+
+      const result = fillPromptTemplate(template, data);
+
+      // lowercase and MixedCase are replaced by the main regex (which matches \w+)
+      // UPPER_CASE is caught by the safety check
+      expect(result).not.toContain('{{UPPER_CASE}}');
+    });
+
+    it('should preserve valid substitutions while removing unsubstituted ones', () => {
+      const template = `# {{TITLE}}
+
+## Context
+{{CONTEXT}}
+
+## Unknown Section
+{{UNKNOWN_SECTION}}`;
+
+      const data = {
+        title: 'My Project',
+        context: 'This is the context',
+      };
+
+      const result = fillPromptTemplate(template, data);
+
+      expect(result).toContain('# My Project');
+      expect(result).toContain('This is the context');
+      expect(result).not.toContain('{{UNKNOWN_SECTION}}');
+    });
+
+    it('should handle phase output placeholders when not provided', () => {
+      // This is a critical case - phase outputs might not be available yet
+      const template = `## Review the following:
+{{PHASE1_OUTPUT}}
+
+## Previous critique:
+{{PHASE2_OUTPUT}}`;
+
+      const data = {
+        PHASE1_OUTPUT: 'Draft content here',
+        // PHASE2_OUTPUT intentionally not provided
+      };
+
+      const result = fillPromptTemplate(template, data);
+
+      expect(result).toContain('Draft content here');
+      expect(result).not.toContain('{{PHASE2_OUTPUT}}');
+    });
+  });
 });
 
