@@ -7,7 +7,8 @@
 import { showToast } from './ui.js';
 
 /**
- * Extract title from markdown using multiple strategies
+ * Extract title from the BEGINNING of markdown (first 20 lines only)
+ * This prevents grabbing titles from appendices or other sections
  * @param {string} markdown - Markdown content
  * @param {string} docType - Document type name
  * @returns {string|null} Extracted title or null
@@ -15,29 +16,37 @@ import { showToast } from './ui.js';
 function extractTitleFromMarkdown(markdown, docType) {
   if (!markdown) return null;
 
-  // Strategy 1: H1 header (# Title)
-  const h1Match = markdown.match(/^#\s+(.+?)(?:\n|$)/m);
+  // Only look at the first 20 lines to avoid grabbing appendix titles
+  const lines = markdown.split('\n').slice(0, 20);
+  const topContent = lines.join('\n');
+
+  // Strategy 1: H1 header at the top (# Title)
+  const h1Match = topContent.match(/^#\s+(.+?)(?:\n|$)/m);
   if (h1Match) {
     const title = h1Match[1].replace(new RegExp(`^${docType}:\\s*`, 'i'), '').trim();
-    if (title && title.length > 0) return title;
+    // Skip generic section headers
+    if (title && title.length > 0 && !isGenericSectionHeader(title)) {
+      return title;
+    }
   }
 
-  // Strategy 2: H2 header (## Title)
-  const h2Match = markdown.match(/^##\s+(.+?)(?:\n|$)/m);
+  // Strategy 2: H2 header at the top (## Title) - but not section headers
+  const h2Match = topContent.match(/^##\s+(.+?)(?:\n|$)/m);
   if (h2Match) {
     const title = h2Match[1].trim();
-    if (title && title.length > 0 && title.length <= 100) return title;
+    if (title && title.length > 0 && title.length <= 100 && !isGenericSectionHeader(title)) {
+      return title;
+    }
   }
 
-  // Strategy 3: First bold text (**Title** or __Title__)
-  const boldMatch = markdown.match(/^\*\*(.+?)\*\*|^__(.+?)__/m);
+  // Strategy 3: First bold text at the top (**Title** or __Title__)
+  const boldMatch = topContent.match(/^\*\*(.+?)\*\*|^__(.+?)__/m);
   if (boldMatch) {
     const title = (boldMatch[1] || boldMatch[2]).trim();
     if (title && title.length > 0 && title.length <= 100) return title;
   }
 
-  // Strategy 4: First non-empty line (truncated)
-  const lines = markdown.split('\n');
+  // Strategy 4: First non-empty line that's not a section header (truncated)
   for (const line of lines) {
     const trimmed = line.trim();
     if (!trimmed || /^[-=*]{3,}$/.test(trimmed) || trimmed.length < 5) continue;
@@ -48,12 +57,38 @@ function extractTitleFromMarkdown(markdown, docType) {
       .replace(/\*/g, '')
       .replace(/_/g, ' ')
       .trim();
-    if (cleaned.length > 0) {
+    if (cleaned.length > 0 && !isGenericSectionHeader(cleaned)) {
       return cleaned.length > 80 ? cleaned.substring(0, 77) + '...' : cleaned;
     }
   }
 
   return null;
+}
+
+/**
+ * Check if text is a generic section header (not a real title)
+ * @param {string} text - Text to check
+ * @returns {boolean} True if it's a generic section header
+ */
+function isGenericSectionHeader(text) {
+  const genericHeaders = [
+    /^problem\s*statement$/i,
+    /^cost\s*of\s*doing\s*nothing$/i,
+    /^proposed\s*solution$/i,
+    /^key\s*goals?\/?\s*benefits?$/i,
+    /^success\s*metrics?$/i,
+    /^key\s*stakeholders?$/i,
+    /^timeline$/i,
+    /^budget\s*impact$/i,
+    /^scope$/i,
+    /^appendix/i,
+    /^executive\s*summary$/i,
+    /^overview$/i,
+    /^background$/i,
+    /^introduction$/i,
+    /^conclusion$/i
+  ];
+  return genericHeaders.some(pattern => pattern.test(text.trim()));
 }
 
 /**
@@ -163,7 +198,7 @@ export function getImportModalHtml(docType) {
             Cancel
           </button>
           <button id="import-save-btn" class="hidden px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-            Save & Continue to Phase 1
+            Save & Continue to Phase 2
           </button>
         </div>
       </div>
@@ -224,23 +259,31 @@ export function showImportModal(plugin, saveProject, onComplete) {
       }
 
       const title = extractTitleFromMarkdown(markdown, docType) || `Imported ${docType}`;
+      const now = new Date().toISOString();
+
+      // When importing, the document IS Phase 1 output - skip to Phase 2 for review
       const project = await saveProject(plugin.dbName, {
         title,
         formData: { title, importedContent: markdown },
-        currentPhase: 1,
+        currentPhase: 2,  // Start at Phase 2 (review) since we already have the document
         phases: {
-          1: { response: markdown, completed: false, startedAt: new Date().toISOString() }
+          1: {
+            response: markdown,
+            completed: true,  // Phase 1 is complete - we have the document
+            startedAt: now,
+            completedAt: now
+          }
         },
         isImported: true
       });
 
       closeModal();
-      showToast(`${docType} imported! Review and refine in Phase 1.`, 'success');
+      showToast(`${docType} imported! Continue to Phase 2 for review.`, 'success');
       onComplete(project);
     } finally {
       isSaving = false;
       saveBtn.disabled = false;
-      saveBtn.textContent = 'Save & Continue to Phase 1';
+      saveBtn.textContent = 'Save & Continue to Phase 2';
     }
   });
 

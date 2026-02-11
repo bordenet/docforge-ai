@@ -144,7 +144,7 @@ describe('Import Document Module', () => {
     test('should include save button', () => {
       const html = getImportModalHtml('PR-FAQ');
       expect(html).toContain('import-save-btn');
-      expect(html).toContain('Save & Continue to Phase 1');
+      expect(html).toContain('Save & Continue to Phase 2');  // Import skips to Phase 2 for review
     });
 
     test('should include cancel button', () => {
