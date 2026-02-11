@@ -13,10 +13,9 @@ const DOC_TYPES = [
 ];
 
 test.describe('Assistant', () => {
-
   test('loads without JavaScript errors', async ({ page }) => {
     const errors = [];
-    page.on('pageerror', error => errors.push(error.message));
+    page.on('pageerror', (error) => errors.push(error.message));
 
     await page.goto('/assistant/?type=one-pager');
     await page.waitForLoadState('networkidle');
@@ -43,7 +42,7 @@ test.describe('Assistant', () => {
     expect(options.length).toBe(9);
 
     for (const docType of DOC_TYPES) {
-      expect(options.some(opt => opt.includes(docType.name))).toBe(true);
+      expect(options.some((opt) => opt.includes(docType.name))).toBe(true);
     }
   });
 
@@ -72,7 +71,7 @@ test.describe('Assistant', () => {
   for (const docType of DOC_TYPES) {
     test(`loads ${docType.name} without errors`, async ({ page }) => {
       const errors = [];
-      page.on('pageerror', error => errors.push(error.message));
+      page.on('pageerror', (error) => errors.push(error.message));
 
       await page.goto(`/assistant/?type=${docType.id}`);
       await page.waitForLoadState('networkidle');
@@ -154,7 +153,6 @@ test.describe('Assistant', () => {
     await page.click('.close-about-btn');
     await expect(modal).not.toBeVisible({ timeout: 2000 });
   });
-
 });
 
 // Phase output substitution tests
@@ -162,7 +160,7 @@ test.describe('Assistant', () => {
 test.describe('Phase Output Substitution', () => {
   // Use clipboard permissions for reading copied prompts
   test.use({
-    permissions: ['clipboard-read', 'clipboard-write']
+    permissions: ['clipboard-read', 'clipboard-write'],
   });
 
   test('phase 2 prompt includes phase 1 response', async ({ page, context }) => {
@@ -244,4 +242,3 @@ test.describe('Phase Output Substitution', () => {
     expect(clipboardContent).toContain(phase2Response);
   });
 });
-

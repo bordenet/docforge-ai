@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Demo Mode', () => {
-
   test('demo data module is importable', async ({ page }) => {
     await page.goto('/assistant/?type=one-pager');
     await page.waitForLoadState('networkidle');
@@ -67,7 +66,7 @@ test.describe('Demo Mode', () => {
       return {
         onePager: module.hasDemoData('one-pager'),
         prd: module.hasDemoData('prd'),
-        adr: module.hasDemoData('adr')
+        adr: module.hasDemoData('adr'),
       };
     });
 
@@ -75,6 +74,4 @@ test.describe('Demo Mode', () => {
     expect(results.prd).toBe(false);
     expect(results.adr).toBe(false);
   });
-
 });
-

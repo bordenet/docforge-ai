@@ -5,11 +5,10 @@ import {
   onePagerPhase2Output,
   onePagerPhase3Output,
   getDemoData,
-  hasDemoData
+  hasDemoData,
 } from '../shared/js/demo-data.js';
 
 describe('Demo Data', () => {
-
   describe('onePagerFormData', () => {
     test('should have all required fields', () => {
       expect(onePagerFormData.projectName).toBeDefined();
@@ -75,6 +74,4 @@ describe('Demo Data', () => {
       expect(hasDemoData('jd')).toBe(false);
     });
   });
-
 });
-

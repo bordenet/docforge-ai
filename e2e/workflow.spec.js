@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 /**
  * Complete Workflow E2E Tests
- * 
+ *
  * Tests the full user journey:
  * 1. Navigate to assistant with document type
  * 2. Create new project with template
@@ -12,12 +12,11 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('Complete Workflow', () => {
-  
   // Clear IndexedDB before each test to start fresh
   test.beforeEach(async ({ page }) => {
     await page.goto('/assistant/?type=one-pager');
     await page.waitForLoadState('networkidle');
-    
+
     // Clear IndexedDB for clean state
     await page.evaluate(async () => {
       const dbs = await indexedDB.databases();
@@ -27,7 +26,7 @@ test.describe('Complete Workflow', () => {
         }
       }
     });
-    
+
     // Reload to ensure clean state
     await page.reload();
     await page.waitForLoadState('networkidle');
@@ -173,4 +172,3 @@ test.describe('Complete Workflow', () => {
     await expect(exportBtn).toBeVisible({ timeout: 5000 });
   });
 });
-

@@ -15,7 +15,7 @@ export const prdPlugin = {
       label: 'Document Title',
       type: 'text',
       required: true,
-      placeholder: 'e.g., User Authentication System PRD'
+      placeholder: 'e.g., User Authentication System PRD',
     },
     {
       id: 'problem',
@@ -23,7 +23,7 @@ export const prdPlugin = {
       type: 'textarea',
       required: true,
       rows: 3,
-      placeholder: 'What problem does this product/feature solve?'
+      placeholder: 'What problem does this product/feature solve?',
     },
     {
       id: 'userPersona',
@@ -31,7 +31,7 @@ export const prdPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'Who is the primary user? What are their needs?'
+      placeholder: 'Who is the primary user? What are their needs?',
     },
     {
       id: 'context',
@@ -39,7 +39,7 @@ export const prdPlugin = {
       type: 'textarea',
       required: false,
       rows: 3,
-      placeholder: 'Market context, competitive landscape, strategic alignment...'
+      placeholder: 'Market context, competitive landscape, strategic alignment...',
     },
     {
       id: 'goals',
@@ -47,7 +47,7 @@ export const prdPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'What does success look like? How will it be measured?'
+      placeholder: 'What does success look like? How will it be measured?',
     },
     {
       id: 'requirements',
@@ -55,7 +55,7 @@ export const prdPlugin = {
       type: 'textarea',
       required: false,
       rows: 3,
-      placeholder: 'Key functional and non-functional requirements...'
+      placeholder: 'Key functional and non-functional requirements...',
     },
     {
       id: 'constraints',
@@ -63,16 +63,32 @@ export const prdPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'Technical constraints, dependencies, timeline constraints...'
-    }
+      placeholder: 'Technical constraints, dependencies, timeline constraints...',
+    },
   ],
 
   scoringDimensions: [
-    { name: 'Document Structure', maxPoints: 20, description: 'Section presence, organization, formatting' },
-    { name: 'Requirements Clarity', maxPoints: 25, description: 'Precision, completeness, consistency' },
+    {
+      name: 'Document Structure',
+      maxPoints: 20,
+      description: 'Section presence, organization, formatting',
+    },
+    {
+      name: 'Requirements Clarity',
+      maxPoints: 25,
+      description: 'Precision, completeness, consistency',
+    },
     { name: 'User Focus', maxPoints: 20, description: 'Personas, problem statement, alignment' },
-    { name: 'Technical Quality', maxPoints: 15, description: 'Non-functional reqs, acceptance criteria, traceability' },
-    { name: 'Strategic Viability', maxPoints: 20, description: 'Metric validity, scope realism, traceability' }
+    {
+      name: 'Technical Quality',
+      maxPoints: 15,
+      description: 'Non-functional reqs, acceptance criteria, traceability',
+    },
+    {
+      name: 'Strategic Viability',
+      maxPoints: 20,
+      description: 'Metric validity, scope realism, traceability',
+    },
   ],
 
   validateDocument: null,
@@ -80,10 +96,27 @@ export const prdPlugin = {
   workflowConfig: {
     phaseCount: 3,
     phases: [
-      { number: 1, name: 'Initial PRD Draft', icon: '📝', aiModel: 'Claude', description: 'Generate the first PRD draft' },
-      { number: 2, name: 'Alternative Perspective', icon: '🔍', aiModel: 'Gemini', description: 'Get technical review from Gemini' },
-      { number: 3, name: 'Final Synthesis', icon: '✨', aiModel: 'Claude', description: 'Combine into polished PRD' }
-    ]
-  }
+      {
+        number: 1,
+        name: 'Initial PRD Draft',
+        icon: '📝',
+        aiModel: 'Claude',
+        description: 'Generate the first PRD draft',
+      },
+      {
+        number: 2,
+        name: 'Alternative Perspective',
+        icon: '🔍',
+        aiModel: 'Gemini',
+        description: 'Get technical review from Gemini',
+      },
+      {
+        number: 3,
+        name: 'Final Synthesis',
+        icon: '✨',
+        aiModel: 'Claude',
+        description: 'Combine into polished PRD',
+      },
+    ],
+  },
 };
-

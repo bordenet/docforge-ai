@@ -46,8 +46,13 @@ function extractTitleFromMarkdown(markdown, docType) {
   if (boldMatch) {
     const title = (boldMatch[1] || boldMatch[2]).trim();
     // Skip labels (end with :) and generic headers
-    if (title && title.length > 0 && title.length <= 100 &&
-        !title.endsWith(':') && !isGenericSectionHeader(title)) {
+    if (
+      title &&
+      title.length > 0 &&
+      title.length <= 100 &&
+      !title.endsWith(':') &&
+      !isGenericSectionHeader(title)
+    ) {
       return title;
     }
   }
@@ -69,11 +74,14 @@ function extractTitleFromMarkdown(markdown, docType) {
     // - Ends with : (label) or . (sentence ending)
     // - Contains . followed by space (sentence with multiple clauses)
     // - Is a generic section header
-    if (cleaned.length > 0 && cleaned.length <= 80 &&
-        !cleaned.endsWith(':') &&
-        !cleaned.endsWith('.') &&
-        !/\.\s/.test(cleaned) &&
-        !isGenericSectionHeader(cleaned)) {
+    if (
+      cleaned.length > 0 &&
+      cleaned.length <= 80 &&
+      !cleaned.endsWith(':') &&
+      !cleaned.endsWith('.') &&
+      !/\.\s/.test(cleaned) &&
+      !isGenericSectionHeader(cleaned)
+    ) {
       return cleaned;
     }
   }
@@ -103,9 +111,9 @@ function isGenericSectionHeader(text) {
     /^overview$/i,
     /^background$/i,
     /^introduction$/i,
-    /^conclusion$/i
+    /^conclusion$/i,
   ];
-  return genericHeaders.some(pattern => pattern.test(text.trim()));
+  return genericHeaders.some((pattern) => pattern.test(text.trim()));
 }
 
 /**
@@ -230,7 +238,7 @@ export function convertHtmlToMarkdown(html) {
   const turndownService = new TurndownService({
     headingStyle: 'atx',
     codeBlockStyle: 'fenced',
-    bulletListMarker: '-'
+    bulletListMarker: '-',
   });
 
   return turndownService.turndown(html);
@@ -313,7 +321,9 @@ export function showImportModal(plugin, saveProject, onComplete) {
   const closeModal = () => modal.remove();
   document.getElementById('import-modal-close').addEventListener('click', closeModal);
   document.getElementById('import-cancel-btn').addEventListener('click', closeModal);
-  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
 
   convertBtn.addEventListener('click', () => {
     const html = pasteArea.innerHTML;
@@ -353,16 +363,16 @@ export function showImportModal(plugin, saveProject, onComplete) {
       const project = await saveProject(plugin.dbName, {
         title,
         formData: { title, importedContent: markdown },
-        currentPhase: 2,  // Start at Phase 2 (review) since we already have the document
+        currentPhase: 2, // Start at Phase 2 (review) since we already have the document
         phases: {
           1: {
-            response: markdown,  // Save normalized markdown with H1
-            completed: true,  // Phase 1 is complete - we have the document
+            response: markdown, // Save normalized markdown with H1
+            completed: true, // Phase 1 is complete - we have the document
             startedAt: now,
-            completedAt: now
-          }
+            completedAt: now,
+          },
         },
-        isImported: true
+        isImported: true,
       });
 
       closeModal();
@@ -377,4 +387,3 @@ export function showImportModal(plugin, saveProject, onComplete) {
 
   pasteArea.focus();
 }
-

@@ -128,8 +128,12 @@ textarea {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Focus styles for accessibility */
@@ -172,7 +176,9 @@ textarea:focus {
   padding: 4px 0;
   opacity: 0;
   transform: translateY(-8px) scale(0.95);
-  transition: opacity 150ms ease-out, transform 150ms ease-out;
+  transition:
+    opacity 150ms ease-out,
+    transform 150ms ease-out;
 }
 
 .dark .action-menu {
@@ -291,7 +297,9 @@ textarea:focus {
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 150ms ease, border-color 150ms ease;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
   /* Touch-friendly: minimum 44px */
   min-height: 44px;
   min-width: 44px;
@@ -313,12 +321,12 @@ textarea:focus {
   border-color: #6b7280;
 }
 
-.action-menu-trigger[aria-expanded="true"] {
+.action-menu-trigger[aria-expanded='true'] {
   background: #e5e7eb;
   border-color: #3b82f6;
 }
 
-.dark .action-menu-trigger[aria-expanded="true"] {
+.dark .action-menu-trigger[aria-expanded='true'] {
   background: #4b5563;
   border-color: #3b82f6;
 }

@@ -12,7 +12,7 @@ import {
   formatDate,
   renderMarkdown,
   copyToClipboard,
-  downloadFile
+  downloadFile,
 } from '../shared/js/ui.js';
 
 describe('UI Module', () => {
@@ -128,7 +128,7 @@ describe('UI Module', () => {
     });
 
     test('should escape single quotes', () => {
-      expect(escapeHtml('It\'s working')).toBe('It&#039;s working');
+      expect(escapeHtml("It's working")).toBe('It&#039;s working');
     });
 
     test('should escape multiple special characters', () => {
@@ -248,4 +248,3 @@ describe('UI Module', () => {
     });
   });
 });
-

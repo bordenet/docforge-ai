@@ -6,11 +6,10 @@ import { describe, it, expect } from '@jest/globals';
 import {
   generateField,
   generateFormFields,
-  validateFormData
+  validateFormData,
 } from '../shared/js/form-generator.js';
 
 describe('Form Generator', () => {
-
   describe('generateField', () => {
     it('should generate text input field', () => {
       const field = {
@@ -18,7 +17,7 @@ describe('Form Generator', () => {
         label: 'Title',
         type: 'text',
         required: true,
-        placeholder: 'Enter title'
+        placeholder: 'Enter title',
       };
 
       const html = generateField(field);
@@ -39,7 +38,7 @@ describe('Form Generator', () => {
         type: 'textarea',
         required: false,
         rows: 5,
-        placeholder: 'Enter description'
+        placeholder: 'Enter description',
       };
 
       const html = generateField(field);
@@ -58,8 +57,8 @@ describe('Form Generator', () => {
         required: true,
         options: [
           { value: 'draft', label: 'Draft' },
-          { value: 'published', label: 'Published' }
-        ]
+          { value: 'published', label: 'Published' },
+        ],
       };
 
       const html = generateField(field);
@@ -78,7 +77,7 @@ describe('Form Generator', () => {
         label: 'Notes',
         type: 'text',
         required: false,
-        helpText: 'Enter any additional notes'
+        helpText: 'Enter any additional notes',
       };
 
       const html = generateField(field);
@@ -92,7 +91,7 @@ describe('Form Generator', () => {
         id: 'title',
         label: 'Title',
         type: 'text',
-        required: true
+        required: true,
       };
 
       const existingData = { title: 'My Project' };
@@ -106,7 +105,7 @@ describe('Form Generator', () => {
         id: 'title',
         label: 'Title',
         type: 'text',
-        required: true
+        required: true,
       };
 
       const existingData = { title: '<script>alert("xss")</script>' };
@@ -121,7 +120,7 @@ describe('Form Generator', () => {
     it('should generate HTML for multiple fields', () => {
       const fields = [
         { id: 'title', label: 'Title', type: 'text', required: true },
-        { id: 'description', label: 'Description', type: 'textarea', required: false }
+        { id: 'description', label: 'Description', type: 'textarea', required: false },
       ];
 
       const html = generateFormFields(fields);
@@ -139,7 +138,7 @@ describe('Form Generator', () => {
   describe('validateFormData', () => {
     const fields = [
       { id: 'title', label: 'Title', type: 'text', required: true },
-      { id: 'description', label: 'Description', type: 'textarea', required: false }
+      { id: 'description', label: 'Description', type: 'textarea', required: false },
     ];
 
     it('should return valid for complete required fields', () => {
@@ -162,7 +161,7 @@ describe('Form Generator', () => {
     it('should handle multiple missing required fields', () => {
       const multiRequiredFields = [
         { id: 'title', label: 'Title', type: 'text', required: true },
-        { id: 'problem', label: 'Problem', type: 'textarea', required: true }
+        { id: 'problem', label: 'Problem', type: 'textarea', required: true },
       ];
 
       const data = { title: '', problem: '' };
@@ -173,4 +172,3 @@ describe('Form Generator', () => {
     });
   });
 });
-

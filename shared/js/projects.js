@@ -73,7 +73,7 @@ export async function updatePhase(dbName, projectId, phase, prompt, response, op
   project.phases[phase] = {
     prompt: prompt || '',
     response: response || '',
-    completed: !!response
+    completed: !!response,
   };
 
   // Keep legacy flat field for backward compatibility
@@ -160,7 +160,7 @@ export async function exportAllProjects(dbName, pluginId = 'docforge') {
     pluginId,
     exportedAt: new Date().toISOString(),
     projectCount: projects.length,
-    projects
+    projects,
   };
 
   const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
@@ -214,4 +214,3 @@ export async function importProjects(dbName, file) {
 
 // Re-export storage functions for convenience
 export { getProject, getAllProjects, deleteProject } from './storage.js';
-

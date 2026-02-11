@@ -63,7 +63,7 @@ export async function saveProject(dbName, project) {
     ...project,
     id: project.id || generateId(),
     createdAt: project.createdAt || now,
-    updatedAt: now
+    updatedAt: now,
   };
 
   return new Promise((resolve, reject) => {
@@ -154,4 +154,3 @@ export async function clearAllProjects(dbName) {
     request.onerror = () => reject(request.error);
   });
 }
-

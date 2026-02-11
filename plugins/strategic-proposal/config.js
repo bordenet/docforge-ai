@@ -15,42 +15,42 @@ export const strategicProposalPlugin = {
       label: 'Dealership Name',
       type: 'text',
       required: true,
-      placeholder: 'e.g., Metro Auto Group'
+      placeholder: 'e.g., Metro Auto Group',
     },
     {
       id: 'dealershipLocation',
       label: 'Dealership Location',
       type: 'text',
       required: true,
-      placeholder: 'e.g., Dallas, TX'
+      placeholder: 'e.g., Dallas, TX',
     },
     {
       id: 'storeCount',
       label: 'Number of Stores/Rooftops',
       type: 'text',
       required: false,
-      placeholder: 'e.g., 5 stores across DFW metro'
+      placeholder: 'e.g., 5 stores across DFW metro',
     },
     {
       id: 'currentVendor',
       label: 'Current Vendor (if any)',
       type: 'text',
       required: false,
-      placeholder: 'e.g., CDK Global'
+      placeholder: 'e.g., CDK Global',
     },
     {
       id: 'decisionMakerName',
       label: 'Decision Maker Name',
       type: 'text',
       required: true,
-      placeholder: 'e.g., John Smith'
+      placeholder: 'e.g., John Smith',
     },
     {
       id: 'decisionMakerRole',
       label: 'Decision Maker Role',
       type: 'text',
       required: true,
-      placeholder: 'e.g., VP of Operations'
+      placeholder: 'e.g., VP of Operations',
     },
     {
       id: 'conversationTranscripts',
@@ -58,7 +58,7 @@ export const strategicProposalPlugin = {
       type: 'textarea',
       required: false,
       rows: 4,
-      placeholder: 'Paste relevant call transcripts or conversation notes...'
+      placeholder: 'Paste relevant call transcripts or conversation notes...',
     },
     {
       id: 'meetingNotes',
@@ -66,7 +66,7 @@ export const strategicProposalPlugin = {
       type: 'textarea',
       required: false,
       rows: 3,
-      placeholder: 'Notes from discovery meetings...'
+      placeholder: 'Notes from discovery meetings...',
     },
     {
       id: 'painPoints',
@@ -74,7 +74,7 @@ export const strategicProposalPlugin = {
       type: 'textarea',
       required: true,
       rows: 3,
-      placeholder: 'What problems are they trying to solve?'
+      placeholder: 'What problems are they trying to solve?',
     },
     {
       id: 'attachmentText',
@@ -82,7 +82,7 @@ export const strategicProposalPlugin = {
       type: 'textarea',
       required: false,
       rows: 3,
-      placeholder: 'Paste any relevant content from documents or emails...'
+      placeholder: 'Paste any relevant content from documents or emails...',
     },
     {
       id: 'workingDraft',
@@ -90,7 +90,7 @@ export const strategicProposalPlugin = {
       type: 'textarea',
       required: false,
       rows: 3,
-      placeholder: 'If you have a draft started, paste it here...'
+      placeholder: 'If you have a draft started, paste it here...',
     },
     {
       id: 'additionalContext',
@@ -98,15 +98,15 @@ export const strategicProposalPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'Any other relevant information...'
-    }
+      placeholder: 'Any other relevant information...',
+    },
   ],
 
   scoringDimensions: [
     { name: 'Problem Statement', maxPoints: 25, description: 'Clear problem definition' },
     { name: 'Proposed Solution', maxPoints: 25, description: 'Actionable solution' },
     { name: 'Business Impact', maxPoints: 25, description: 'Measurable outcomes' },
-    { name: 'Implementation Plan', maxPoints: 25, description: 'Timeline and resources' }
+    { name: 'Implementation Plan', maxPoints: 25, description: 'Timeline and resources' },
   ],
 
   validateDocument: null,
@@ -114,10 +114,27 @@ export const strategicProposalPlugin = {
   workflowConfig: {
     phaseCount: 3,
     phases: [
-      { number: 1, name: 'Draft Proposal', icon: '📝', aiModel: 'Claude', description: 'Generate proposal draft' },
-      { number: 2, name: 'Executive Review', icon: '🔍', aiModel: 'Gemini', description: 'Challenge with Gemini' },
-      { number: 3, name: 'Final Proposal', icon: '✨', aiModel: 'Claude', description: 'Combine into polished proposal' }
-    ]
-  }
+      {
+        number: 1,
+        name: 'Draft Proposal',
+        icon: '📝',
+        aiModel: 'Claude',
+        description: 'Generate proposal draft',
+      },
+      {
+        number: 2,
+        name: 'Executive Review',
+        icon: '🔍',
+        aiModel: 'Gemini',
+        description: 'Challenge with Gemini',
+      },
+      {
+        number: 3,
+        name: 'Final Proposal',
+        icon: '✨',
+        aiModel: 'Claude',
+        description: 'Combine into polished proposal',
+      },
+    ],
+  },
 };
-

@@ -3,10 +3,13 @@
  */
 
 import { describe, it, expect, beforeEach } from '@jest/globals';
-import { fillPromptTemplate, loadPromptTemplate, generatePrompt } from '../shared/js/prompt-generator.js';
+import {
+  fillPromptTemplate,
+  loadPromptTemplate,
+  generatePrompt,
+} from '../shared/js/prompt-generator.js';
 
 describe('Prompt Generator', () => {
-
   describe('fillPromptTemplate', () => {
     it('should replace single variable', () => {
       const template = 'Hello {{NAME}}!';
@@ -73,7 +76,7 @@ describe('Prompt Generator', () => {
       const data = {
         title: 'My Project',
         problemStatement: 'Users are frustrated',
-        proposedSolution: 'Build a better UX'
+        proposedSolution: 'Build a better UX',
       };
 
       const result = fillPromptTemplate(template, data);
@@ -92,7 +95,7 @@ describe('Prompt Generator', () => {
 
       const data = {
         PHASE1_RESPONSE: 'Initial draft content',
-        PHASE2_RESPONSE: 'Suggested improvements'
+        PHASE2_RESPONSE: 'Suggested improvements',
       };
 
       const result = fillPromptTemplate(template, data);
@@ -115,7 +118,7 @@ describe('Prompt Generator', () => {
 
       const data = {
         PHASE1_OUTPUT: 'This is the Phase 1 draft content from Claude',
-        PHASE2_OUTPUT: 'This is the Phase 2 review from Gemini'
+        PHASE2_OUTPUT: 'This is the Phase 2 review from Gemini',
       };
 
       const result = fillPromptTemplate(template, data);
@@ -161,7 +164,7 @@ describe('Prompt Generator', () => {
 Review and improve the draft above.`;
 
       const data = {
-        PHASE1_OUTPUT: '# My Document\n\nThis is the initial draft.'
+        PHASE1_OUTPUT: '# My Document\n\nThis is the initial draft.',
       };
 
       const result = fillPromptTemplate(phase2Template, data);
@@ -189,7 +192,7 @@ Combine the best elements.`;
 
       const data = {
         PHASE1_OUTPUT: 'Claude generated this initial PRD draft with all sections.',
-        PHASE2_OUTPUT: 'Gemini reviewed and suggested these improvements.'
+        PHASE2_OUTPUT: 'Gemini reviewed and suggested these improvements.',
       };
 
       const result = fillPromptTemplate(phase3Template, data);
@@ -206,8 +209,8 @@ Combine the best elements.`;
       // Mock window.location for getBasePath
       global.window = {
         location: {
-          pathname: '/assistant/'
-        }
+          pathname: '/assistant/',
+        },
       };
 
       // Mock fetch
@@ -219,7 +222,7 @@ Combine the best elements.`;
         if (url.includes('phase1.md')) {
           return {
             ok: true,
-            text: async () => '# Phase 1 Template\n\n{{TITLE}}'
+            text: async () => '# Phase 1 Template\n\n{{TITLE}}',
           };
         }
         return { ok: false };
@@ -274,22 +277,22 @@ Combine the best elements.`;
     beforeEach(() => {
       global.window = {
         location: {
-          pathname: '/assistant/'
-        }
+          pathname: '/assistant/',
+        },
       };
     });
 
     it('should generate prompt with form data and previous responses', async () => {
       global.fetch = async () => ({
         ok: true,
-        text: async () => '# Phase 3\n\n{{TITLE}}\n\n{{PHASE1_OUTPUT}}\n\n{{PHASE2_OUTPUT}}'
+        text: async () => '# Phase 3\n\n{{TITLE}}\n\n{{PHASE1_OUTPUT}}\n\n{{PHASE2_OUTPUT}}',
       });
 
       const plugin = { id: 'one-pager' };
       const formData = { title: 'Test Project' };
       const previousResponses = {
         1: 'Phase 1 draft content',
-        2: 'Phase 2 review content'
+        2: 'Phase 2 review content',
       };
 
       const prompt = await generatePrompt(plugin, 3, formData, previousResponses);
@@ -302,7 +305,7 @@ Combine the best elements.`;
     it('should handle empty previous responses', async () => {
       global.fetch = async () => ({
         ok: true,
-        text: async () => '# Phase 1\n\n{{TITLE}}'
+        text: async () => '# Phase 1\n\n{{TITLE}}',
       });
 
       const plugin = { id: 'prd' };
@@ -314,4 +317,3 @@ Combine the best elements.`;
     });
   });
 });
-

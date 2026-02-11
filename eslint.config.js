@@ -55,16 +55,19 @@ export default [
       // Allow named exports (this codebase uses them extensively)
       'import-x/prefer-default-export': 'off',
       // Config/test files can use devDependencies
-      'import-x/no-extraneous-dependencies': ['error', {
-        devDependencies: [
-          'eslint.config.js',
-          'jest.config.js',
-          'jest.setup.js',
-          'playwright.config.js',
-          'tests/**/*.js',
-          'e2e/**/*.js',
-        ],
-      }],
+      'import-x/no-extraneous-dependencies': [
+        'error',
+        {
+          devDependencies: [
+            'eslint.config.js',
+            'jest.config.js',
+            'jest.setup.js',
+            'playwright.config.js',
+            'tests/**/*.js',
+            'e2e/**/*.js',
+          ],
+        },
+      ],
 
       // === CODE STYLE ===
       // Allow console (user-facing tool)
@@ -82,7 +85,8 @@ export default [
         'error',
         {
           selector: 'ForInStatement',
-          message: 'for..in loops iterate over the entire prototype chain, use Object.keys() instead.',
+          message:
+            'for..in loops iterate over the entire prototype chain, use Object.keys() instead.',
         },
         {
           selector: 'LabeledStatement',
@@ -113,7 +117,7 @@ export default [
       // Allow return assignment in arrow functions
       'no-return-assign': 'off',
       // parseInt without radix is fine for decimal
-      'radix': 'off',
+      radix: 'off',
     },
   },
 
@@ -160,4 +164,3 @@ export default [
     },
   },
 ];
-

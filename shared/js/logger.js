@@ -13,7 +13,7 @@ const LOG_LEVELS = {
   info: 1,
   warn: 2,
   error: 3,
-  none: 4
+  none: 4,
 };
 
 /**
@@ -107,4 +107,3 @@ export const logger = {
 };
 
 export default logger;
-

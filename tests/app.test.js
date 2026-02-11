@@ -7,7 +7,12 @@
  */
 
 import { saveProject, getAllProjects, deleteProject } from '../shared/js/storage.js';
-import { renderListView, renderNewView, renderProjectView, renderPhaseContent } from '../shared/js/views.js';
+import {
+  renderListView,
+  renderNewView,
+  renderProjectView,
+  renderPhaseContent,
+} from '../shared/js/views.js';
 
 // Mock plugin for testing
 const mockPlugin = {
@@ -18,16 +23,16 @@ const mockPlugin = {
   dbName: 'test-app-db',
   formFields: [
     { id: 'title', label: 'Title', type: 'text', required: true },
-    { id: 'description', label: 'Description', type: 'textarea', required: false }
+    { id: 'description', label: 'Description', type: 'textarea', required: false },
   ],
   workflowConfig: {
     phaseCount: 3,
     phases: [
       { number: 1, name: 'Draft', icon: '📝', aiModel: 'Claude', description: 'Create draft' },
       { number: 2, name: 'Review', icon: '🔍', aiModel: 'Gemini', description: 'Review' },
-      { number: 3, name: 'Final', icon: '✨', aiModel: 'Claude', description: 'Finalize' }
-    ]
-  }
+      { number: 3, name: 'Final', icon: '✨', aiModel: 'Claude', description: 'Finalize' },
+    ],
+  },
 };
 
 describe('App Module Integration', () => {
@@ -85,7 +90,7 @@ describe('App Module Integration', () => {
       const project = await saveProject(mockPlugin.dbName, {
         title: 'Integration Test Project',
         formData: { title: 'Integration Test Project', description: 'Test' },
-        currentPhase: 1
+        currentPhase: 1,
       });
 
       const projects = await getAllProjects(mockPlugin.dbName);
@@ -100,7 +105,7 @@ describe('App Module Integration', () => {
       await saveProject(mockPlugin.dbName, {
         title: 'Delete Test',
         formData: { title: 'Delete Test' },
-        currentPhase: 1
+        currentPhase: 1,
       });
 
       const projects = await getAllProjects(mockPlugin.dbName);
@@ -121,9 +126,7 @@ describe('App Module Integration', () => {
     });
 
     test('should render template selector with templates', () => {
-      const templates = [
-        { id: 'blank', name: 'Blank', icon: '📝', description: 'Start fresh' }
-      ];
+      const templates = [{ id: 'blank', name: 'Blank', icon: '📝', description: 'Start fresh' }];
       const container = document.getElementById('app-container');
       container.innerHTML = renderNewView(mockPlugin, {}, templates);
 
@@ -137,7 +140,7 @@ describe('App Module Integration', () => {
         title: 'View Test Project',
         formData: { title: 'View Test Project' },
         currentPhase: 1,
-        phases: { 1: { prompt: '', response: '', completed: false } }
+        phases: { 1: { prompt: '', response: '', completed: false } },
       });
 
       const container = document.getElementById('app-container');
@@ -151,7 +154,7 @@ describe('App Module Integration', () => {
         title: 'Phase Content Test',
         formData: { title: 'Phase Content Test' },
         currentPhase: 1,
-        phases: {}
+        phases: {},
       });
 
       const container = document.getElementById('app-container');
@@ -163,4 +166,3 @@ describe('App Module Integration', () => {
     });
   });
 });
-

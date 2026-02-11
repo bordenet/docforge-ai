@@ -15,17 +15,16 @@ coverage:
         informational: false
 
 comment:
-  layout: "reach,diff,flags,files,footer"
+  layout: 'reach,diff,flags,files,footer'
   behavior: default
   require_changes: false
 
 ignore:
-  - "tests/**/*"
-  - "e2e/**/*"
-  - "scripts/**/*"
-  - "docs/**/*"
-  - "node_modules/**/*"
-  - "*.config.js"
-  - "*.setup.js"
-  - "shared/js/lib/**/*"
-
+  - 'tests/**/*'
+  - 'e2e/**/*'
+  - 'scripts/**/*'
+  - 'docs/**/*'
+  - 'node_modules/**/*'
+  - '*.config.js'
+  - '*.setup.js'
+  - 'shared/js/lib/**/*'

@@ -8,13 +8,20 @@
  */
 export const onePagerFormData = {
   projectName: 'Smart Home Energy Monitor',
-  problemStatement: 'Homeowners waste 20-30% of their energy due to lack of visibility into consumption patterns. Existing solutions are either too expensive or too complex for average users.',
-  targetAudience: 'Environmentally-conscious homeowners aged 30-55 who want to reduce energy bills and carbon footprint without technical expertise.',
-  proposedSolution: 'A plug-and-play device that connects to the electrical panel and provides real-time energy insights via a mobile app, with AI-powered recommendations for reducing consumption.',
-  keyBenefits: '1. Reduce energy bills by 15-25%\n2. Easy 10-minute installation\n3. Personalized recommendations\n4. Carbon footprint tracking',
-  successMetrics: '- 50,000 units sold in Year 1\n- Average customer saves $300/year\n- 4.5+ star app rating\n- 80% monthly active users',
-  timeline: 'Q1: Hardware finalization\nQ2: Beta testing with 500 homes\nQ3: Public launch\nQ4: Expand to commercial buildings',
-  resourcesNeeded: '- $2M seed funding\n- 5 engineers (2 hardware, 3 software)\n- Manufacturing partner\n- UL certification'
+  problemStatement:
+    'Homeowners waste 20-30% of their energy due to lack of visibility into consumption patterns. Existing solutions are either too expensive or too complex for average users.',
+  targetAudience:
+    'Environmentally-conscious homeowners aged 30-55 who want to reduce energy bills and carbon footprint without technical expertise.',
+  proposedSolution:
+    'A plug-and-play device that connects to the electrical panel and provides real-time energy insights via a mobile app, with AI-powered recommendations for reducing consumption.',
+  keyBenefits:
+    '1. Reduce energy bills by 15-25%\n2. Easy 10-minute installation\n3. Personalized recommendations\n4. Carbon footprint tracking',
+  successMetrics:
+    '- 50,000 units sold in Year 1\n- Average customer saves $300/year\n- 4.5+ star app rating\n- 80% monthly active users',
+  timeline:
+    'Q1: Hardware finalization\nQ2: Beta testing with 500 homes\nQ3: Public launch\nQ4: Expand to commercial buildings',
+  resourcesNeeded:
+    '- $2M seed funding\n- 5 engineers (2 hardware, 3 software)\n- Manufacturing partner\n- UL certification',
 };
 
 /**
@@ -224,8 +231,8 @@ export function getDemoData(docType) {
       phases: {
         1: onePagerPhase1Output,
         2: onePagerPhase2Output,
-        3: onePagerPhase3Output
-      }
+        3: onePagerPhase3Output,
+      },
     };
   }
   // Return null for other doc types (not yet implemented)
@@ -240,4 +247,3 @@ export function getDemoData(docType) {
 export function hasDemoData(docType) {
   return docType === 'one-pager';
 }
-

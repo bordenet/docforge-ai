@@ -59,10 +59,10 @@ const plugins = [
   acceptanceCriteriaPlugin,
   jdPlugin,
   businessJustificationPlugin,
-  strategicProposalPlugin
+  strategicProposalPlugin,
 ];
 
-plugins.forEach(plugin => {
+plugins.forEach((plugin) => {
   if (registry.has(plugin.id)) {
     throw new Error(`Duplicate plugin ID: ${plugin.id}`);
   }
@@ -110,4 +110,3 @@ export function hasPlugin(id) {
 export function getPluginIds() {
   return Array.from(registry.keys());
 }
-

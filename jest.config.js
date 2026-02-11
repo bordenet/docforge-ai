@@ -6,16 +6,15 @@ export default {
   testMatch: ['**/tests/**/*.test.js'],
   transform: {},
   moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1'
+    '^(\\.{1,2}/.*)\\.js$': '$1',
   },
   collectCoverageFrom: [
     'shared/js/**/*.js',
     'plugins/**/*.js',
     '!**/node_modules/**',
-    '!shared/js/lib/**'
+    '!shared/js/lib/**',
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
-  verbose: true
+  verbose: true,
 };
-

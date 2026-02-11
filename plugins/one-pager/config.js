@@ -15,7 +15,7 @@ export const onePagerPlugin = {
       label: 'Project Title',
       type: 'text',
       required: true,
-      placeholder: 'e.g., Mobile App Performance Optimization'
+      placeholder: 'e.g., Mobile App Performance Optimization',
     },
     {
       id: 'problemStatement',
@@ -23,7 +23,7 @@ export const onePagerPlugin = {
       type: 'textarea',
       required: true,
       rows: 3,
-      placeholder: 'What problem are you solving? Be specific...'
+      placeholder: 'What problem are you solving? Be specific...',
     },
     {
       id: 'costOfDoingNothing',
@@ -32,7 +32,7 @@ export const onePagerPlugin = {
       required: false,
       rows: 2,
       placeholder: 'e.g., $50K/month lost revenue, 10% customer churn...',
-      helpText: 'What happens if this isn\'t solved? Include business impact, revenue loss, etc.'
+      helpText: "What happens if this isn't solved? Include business impact, revenue loss, etc.",
     },
     {
       id: 'context',
@@ -40,7 +40,7 @@ export const onePagerPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'Any background, constraints, or considerations...'
+      placeholder: 'Any background, constraints, or considerations...',
     },
     {
       id: 'proposedSolution',
@@ -48,7 +48,7 @@ export const onePagerPlugin = {
       type: 'textarea',
       required: false,
       rows: 3,
-      placeholder: 'High-level description of the proposed solution...'
+      placeholder: 'High-level description of the proposed solution...',
     },
     {
       id: 'keyGoals',
@@ -56,7 +56,7 @@ export const onePagerPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'List the main goals and expected benefits...'
+      placeholder: 'List the main goals and expected benefits...',
     },
     {
       id: 'scopeInScope',
@@ -64,7 +64,7 @@ export const onePagerPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'What\'s included...'
+      placeholder: "What's included...",
     },
     {
       id: 'scopeOutOfScope',
@@ -72,7 +72,7 @@ export const onePagerPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'What\'s explicitly excluded...'
+      placeholder: "What's explicitly excluded...",
     },
     {
       id: 'successMetrics',
@@ -80,7 +80,7 @@ export const onePagerPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'How will you measure success?'
+      placeholder: 'How will you measure success?',
     },
     {
       id: 'keyStakeholders',
@@ -88,7 +88,7 @@ export const onePagerPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'Who needs to be involved or informed?'
+      placeholder: 'Who needs to be involved or informed?',
     },
     {
       id: 'timelineEstimate',
@@ -96,7 +96,7 @@ export const onePagerPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'Rough timeline or milestones...'
+      placeholder: 'Rough timeline or milestones...',
     },
     {
       id: 'theInvestment',
@@ -104,7 +104,7 @@ export const onePagerPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'e.g., 2 engineers, 3 sprints, $50K budget...'
+      placeholder: 'e.g., 2 engineers, 3 sprints, $50K budget...',
     },
     {
       id: 'risksAssumptions',
@@ -112,15 +112,31 @@ export const onePagerPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'Key risks and assumptions that must hold true...'
-    }
+      placeholder: 'Key risks and assumptions that must hold true...',
+    },
   ],
 
   scoringDimensions: [
-    { name: 'Problem Clarity', maxPoints: 30, description: 'Problem statement, cost of inaction, customer focus' },
-    { name: 'Solution Quality', maxPoints: 25, description: 'Solution addresses problem, measurable goals, high-level' },
-    { name: 'Scope Discipline', maxPoints: 25, description: 'In/out scope, success metrics, SMART criteria' },
-    { name: 'Completeness', maxPoints: 20, description: 'Required sections, stakeholders, timeline' }
+    {
+      name: 'Problem Clarity',
+      maxPoints: 30,
+      description: 'Problem statement, cost of inaction, customer focus',
+    },
+    {
+      name: 'Solution Quality',
+      maxPoints: 25,
+      description: 'Solution addresses problem, measurable goals, high-level',
+    },
+    {
+      name: 'Scope Discipline',
+      maxPoints: 25,
+      description: 'In/out scope, success metrics, SMART criteria',
+    },
+    {
+      name: 'Completeness',
+      maxPoints: 20,
+      description: 'Required sections, stakeholders, timeline',
+    },
   ],
 
   // Validation will be imported from validator.js
@@ -129,10 +145,27 @@ export const onePagerPlugin = {
   workflowConfig: {
     phaseCount: 3,
     phases: [
-      { number: 1, name: 'Initial Draft', icon: '📝', aiModel: 'Claude', description: 'Generate the first draft using Claude' },
-      { number: 2, name: 'Alternative Perspective', icon: '🔍', aiModel: 'Gemini', description: 'Get improvements from Gemini' },
-      { number: 3, name: 'Final Synthesis', icon: '✨', aiModel: 'Claude', description: 'Combine into polished final version' }
-    ]
-  }
+      {
+        number: 1,
+        name: 'Initial Draft',
+        icon: '📝',
+        aiModel: 'Claude',
+        description: 'Generate the first draft using Claude',
+      },
+      {
+        number: 2,
+        name: 'Alternative Perspective',
+        icon: '🔍',
+        aiModel: 'Gemini',
+        description: 'Get improvements from Gemini',
+      },
+      {
+        number: 3,
+        name: 'Final Synthesis',
+        icon: '✨',
+        aiModel: 'Claude',
+        description: 'Combine into polished final version',
+      },
+    ],
+  },
 };
-

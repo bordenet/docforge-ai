@@ -9,7 +9,7 @@ import {
   getProject,
   getAllProjects,
   deleteProject,
-  clearAllProjects
+  clearAllProjects,
 } from '../shared/js/storage.js';
 
 // Use a unique database name for testing to avoid conflicts
@@ -62,7 +62,7 @@ describe('Storage Module', () => {
         title: 'Test Project',
         description: 'Test Description',
         currentPhase: 1,
-        formData: { title: 'Form Title' }
+        formData: { title: 'Form Title' },
       };
 
       await saveProject(TEST_DB_NAME, project);
@@ -78,7 +78,7 @@ describe('Storage Module', () => {
     test('should auto-generate ID if not provided', async () => {
       const project = {
         title: 'Project Without ID',
-        description: 'Description'
+        description: 'Description',
       };
 
       const saved = await saveProject(TEST_DB_NAME, project);
@@ -90,7 +90,7 @@ describe('Storage Module', () => {
     test('should add createdAt timestamp on first save', async () => {
       const project = {
         id: generateId(),
-        title: 'New Project'
+        title: 'New Project',
       };
 
       const saved = await saveProject(TEST_DB_NAME, project);
@@ -102,14 +102,14 @@ describe('Storage Module', () => {
     test('should update updatedAt timestamp on each save', async () => {
       const project = {
         id: generateId(),
-        title: 'Test Project'
+        title: 'Test Project',
       };
 
       const saved1 = await saveProject(TEST_DB_NAME, project);
       const originalUpdatedAt = saved1.updatedAt;
 
       // Wait a bit and save again
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
       const saved2 = await saveProject(TEST_DB_NAME, { ...project });
 
       expect(saved2.updatedAt).not.toBe(originalUpdatedAt);
@@ -118,14 +118,14 @@ describe('Storage Module', () => {
     test('should preserve createdAt on subsequent saves', async () => {
       const project = {
         id: generateId(),
-        title: 'Test Project'
+        title: 'Test Project',
       };
 
       const saved1 = await saveProject(TEST_DB_NAME, project);
       const originalCreatedAt = saved1.createdAt;
 
       // Save again
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
       const saved2 = await saveProject(TEST_DB_NAME, { ...saved1, title: 'Updated Title' });
 
       expect(saved2.createdAt).toBe(originalCreatedAt);
@@ -164,13 +164,13 @@ describe('Storage Module', () => {
       await saveProject(TEST_DB_NAME, project1);
 
       // Wait to ensure different timestamp
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 50));
 
       await saveProject(TEST_DB_NAME, project2);
 
       const projects = await getAllProjects(TEST_DB_NAME);
-      const project2Index = projects.findIndex(p => p.id === project2.id);
-      const project1Index = projects.findIndex(p => p.id === project1.id);
+      const project2Index = projects.findIndex((p) => p.id === project2.id);
+      const project1Index = projects.findIndex((p) => p.id === project1.id);
 
       // Newest (project2) should come first
       expect(project2Index).toBeLessThan(project1Index);
@@ -181,7 +181,7 @@ describe('Storage Module', () => {
     test('should delete a project', async () => {
       const project = {
         id: generateId(),
-        title: 'Project to Delete'
+        title: 'Project to Delete',
       };
 
       await saveProject(TEST_DB_NAME, project);
@@ -261,9 +261,9 @@ describe('Storage Module', () => {
           title: 'Form Title',
           nested: {
             field1: 'value1',
-            field2: ['a', 'b', 'c']
-          }
-        }
+            field2: ['a', 'b', 'c'],
+          },
+        },
       };
 
       await saveProject(TEST_DB_NAME, project);
@@ -279,7 +279,7 @@ describe('Storage Module', () => {
         title: 'Project with Outputs',
         phase1_output: '# Phase 1 Markdown',
         phase2_output: '# Phase 2 Critique',
-        phase3_output: '# Phase 3 Final'
+        phase3_output: '# Phase 3 Final',
       };
 
       await saveProject(TEST_DB_NAME, project);
@@ -291,4 +291,3 @@ describe('Storage Module', () => {
     });
   });
 });
-

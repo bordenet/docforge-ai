@@ -15,14 +15,14 @@ export const prFaqPlugin = {
       label: 'Product/Feature Name',
       type: 'text',
       required: true,
-      placeholder: 'e.g., Smart Home Energy Dashboard'
+      placeholder: 'e.g., Smart Home Energy Dashboard',
     },
     {
       id: 'companyName',
       label: 'Company Name',
       type: 'text',
       required: true,
-      placeholder: 'e.g., Acme Corp'
+      placeholder: 'e.g., Acme Corp',
     },
     {
       id: 'targetCustomer',
@@ -30,7 +30,7 @@ export const prFaqPlugin = {
       type: 'textarea',
       required: true,
       rows: 2,
-      placeholder: 'Who is the target customer? Be specific about their role and context.'
+      placeholder: 'Who is the target customer? Be specific about their role and context.',
     },
     {
       id: 'problem',
@@ -38,7 +38,7 @@ export const prFaqPlugin = {
       type: 'textarea',
       required: true,
       rows: 3,
-      placeholder: 'What customer problem are you solving? Start with the customer.'
+      placeholder: 'What customer problem are you solving? Start with the customer.',
     },
     {
       id: 'theAlternative',
@@ -46,7 +46,7 @@ export const prFaqPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'What do customers do today? Manual process? Competitor product?'
+      placeholder: 'What do customers do today? Manual process? Competitor product?',
     },
     {
       id: 'solution',
@@ -54,7 +54,7 @@ export const prFaqPlugin = {
       type: 'textarea',
       required: true,
       rows: 3,
-      placeholder: 'How does this product/feature solve the problem?'
+      placeholder: 'How does this product/feature solve the problem?',
     },
     {
       id: 'benefits',
@@ -62,7 +62,7 @@ export const prFaqPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'Top 3-5 benefits for the customer...'
+      placeholder: 'Top 3-5 benefits for the customer...',
     },
     {
       id: 'metrics',
@@ -70,7 +70,7 @@ export const prFaqPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'How will success be measured? Key metrics...'
+      placeholder: 'How will success be measured? Key metrics...',
     },
     {
       id: 'priceAndAvailability',
@@ -78,14 +78,14 @@ export const prFaqPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'Launch date, pricing, regional availability...'
+      placeholder: 'Launch date, pricing, regional availability...',
     },
     {
       id: 'releaseDate',
       label: 'Release Date',
       type: 'text',
       required: false,
-      placeholder: 'e.g., Q2 2026'
+      placeholder: 'e.g., Q2 2026',
     },
     {
       id: 'executiveVision',
@@ -93,7 +93,7 @@ export const prFaqPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'High-level "Why" from company perspective...'
+      placeholder: 'High-level "Why" from company perspective...',
     },
     {
       id: 'internalRisks',
@@ -101,22 +101,34 @@ export const prFaqPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'Biggest reason this might fail...'
+      placeholder: 'Biggest reason this might fail...',
     },
     {
       id: 'location',
       label: 'Location',
       type: 'text',
       required: false,
-      placeholder: 'e.g., Seattle, WA'
-    }
+      placeholder: 'e.g., Seattle, WA',
+    },
   ],
 
   scoringDimensions: [
-    { name: 'Customer Focus', maxPoints: 25, description: 'Clear customer problem, working backwards mindset' },
-    { name: 'Press Release Quality', maxPoints: 25, description: 'Compelling narrative, clear benefits, quotable' },
+    {
+      name: 'Customer Focus',
+      maxPoints: 25,
+      description: 'Clear customer problem, working backwards mindset',
+    },
+    {
+      name: 'Press Release Quality',
+      maxPoints: 25,
+      description: 'Compelling narrative, clear benefits, quotable',
+    },
     { name: 'FAQ Completeness', maxPoints: 25, description: 'Addresses key stakeholder questions' },
-    { name: 'Business Case', maxPoints: 25, description: 'Metrics, feasibility, risk acknowledgment' }
+    {
+      name: 'Business Case',
+      maxPoints: 25,
+      description: 'Metrics, feasibility, risk acknowledgment',
+    },
   ],
 
   validateDocument: null,
@@ -124,10 +136,27 @@ export const prFaqPlugin = {
   workflowConfig: {
     phaseCount: 3,
     phases: [
-      { number: 1, name: 'Initial PR-FAQ', icon: '📝', aiModel: 'Claude', description: 'Generate the first PR-FAQ draft' },
-      { number: 2, name: 'Stakeholder Perspective', icon: '🔍', aiModel: 'Gemini', description: 'Challenge assumptions with Gemini' },
-      { number: 3, name: 'Final PR-FAQ', icon: '✨', aiModel: 'Claude', description: 'Combine into polished PR-FAQ' }
-    ]
-  }
+      {
+        number: 1,
+        name: 'Initial PR-FAQ',
+        icon: '📝',
+        aiModel: 'Claude',
+        description: 'Generate the first PR-FAQ draft',
+      },
+      {
+        number: 2,
+        name: 'Stakeholder Perspective',
+        icon: '🔍',
+        aiModel: 'Gemini',
+        description: 'Challenge assumptions with Gemini',
+      },
+      {
+        number: 3,
+        name: 'Final PR-FAQ',
+        icon: '✨',
+        aiModel: 'Claude',
+        description: 'Combine into polished PR-FAQ',
+      },
+    ],
+  },
 };
-

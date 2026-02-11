@@ -15,14 +15,14 @@ export const jdPlugin = {
       label: 'Job Title',
       type: 'text',
       required: true,
-      placeholder: 'e.g., Senior Software Engineer'
+      placeholder: 'e.g., Senior Software Engineer',
     },
     {
       id: 'companyName',
       label: 'Company Name',
       type: 'text',
       required: true,
-      placeholder: 'e.g., Acme Corp'
+      placeholder: 'e.g., Acme Corp',
     },
     {
       id: 'roleLevel',
@@ -36,15 +36,15 @@ export const jdPlugin = {
         { value: 'staff', label: 'Staff' },
         { value: 'principal', label: 'Principal' },
         { value: 'manager', label: 'Manager' },
-        { value: 'director', label: 'Director' }
-      ]
+        { value: 'director', label: 'Director' },
+      ],
     },
     {
       id: 'location',
       label: 'Location / Remote',
       type: 'text',
       required: false,
-      placeholder: 'e.g., San Francisco, CA (Hybrid) or Remote'
+      placeholder: 'e.g., San Francisco, CA (Hybrid) or Remote',
     },
     {
       id: 'postingType',
@@ -54,8 +54,8 @@ export const jdPlugin = {
       options: [
         { value: 'external', label: 'External Posting' },
         { value: 'internal', label: 'Internal Posting' },
-        { value: 'both', label: 'Both Internal & External' }
-      ]
+        { value: 'both', label: 'Both Internal & External' },
+      ],
     },
     {
       id: 'responsibilities',
@@ -63,7 +63,7 @@ export const jdPlugin = {
       type: 'textarea',
       required: false,
       rows: 3,
-      placeholder: 'What will this person do day-to-day?'
+      placeholder: 'What will this person do day-to-day?',
     },
     {
       id: 'requiredQualifications',
@@ -71,7 +71,7 @@ export const jdPlugin = {
       type: 'textarea',
       required: false,
       rows: 3,
-      placeholder: 'Must-have skills, experience, qualifications...'
+      placeholder: 'Must-have skills, experience, qualifications...',
     },
     {
       id: 'preferredQualifications',
@@ -79,14 +79,14 @@ export const jdPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'Nice-to-have but not required skills...'
+      placeholder: 'Nice-to-have but not required skills...',
     },
     {
       id: 'compensationRange',
       label: 'Compensation Range',
       type: 'text',
       required: false,
-      placeholder: 'e.g., $150K-$200K + equity'
+      placeholder: 'e.g., $150K-$200K + equity',
     },
     {
       id: 'benefits',
@@ -94,7 +94,7 @@ export const jdPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'Health, 401k, PTO, etc...'
+      placeholder: 'Health, 401k, PTO, etc...',
     },
     {
       id: 'techStack',
@@ -102,14 +102,14 @@ export const jdPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'e.g., Python, TypeScript, AWS, Kubernetes...'
+      placeholder: 'e.g., Python, TypeScript, AWS, Kubernetes...',
     },
     {
       id: 'teamSize',
       label: 'Team Size / Structure',
       type: 'text',
       required: false,
-      placeholder: 'e.g., 8-person team, 2 pods'
+      placeholder: 'e.g., 8-person team, 2 pods',
     },
     {
       id: 'aiSpecifics',
@@ -117,7 +117,7 @@ export const jdPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'For AI roles: models used, infrastructure, research focus...'
+      placeholder: 'For AI roles: models used, infrastructure, research focus...',
     },
     {
       id: 'careerLadder',
@@ -125,7 +125,7 @@ export const jdPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'Growth path, leveling expectations...'
+      placeholder: 'Growth path, leveling expectations...',
     },
     {
       id: 'companyPreamble',
@@ -133,7 +133,7 @@ export const jdPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'Standard company intro and equal opportunity statement...'
+      placeholder: 'Standard company intro and equal opportunity statement...',
     },
     {
       id: 'companyLegalText',
@@ -141,15 +141,23 @@ export const jdPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'Any required legal disclosures...'
-    }
+      placeholder: 'Any required legal disclosures...',
+    },
   ],
 
   scoringDimensions: [
     { name: 'Clarity', maxPoints: 25, description: 'Clear role, responsibilities, requirements' },
-    { name: 'Inclusivity', maxPoints: 25, description: 'Gender-neutral language, reasonable requirements' },
-    { name: 'Completeness', maxPoints: 25, description: 'All sections present, team context, growth opportunity' },
-    { name: 'Appeal', maxPoints: 25, description: 'Compelling, authentic, differentiating' }
+    {
+      name: 'Inclusivity',
+      maxPoints: 25,
+      description: 'Gender-neutral language, reasonable requirements',
+    },
+    {
+      name: 'Completeness',
+      maxPoints: 25,
+      description: 'All sections present, team context, growth opportunity',
+    },
+    { name: 'Appeal', maxPoints: 25, description: 'Compelling, authentic, differentiating' },
   ],
 
   validateDocument: null,
@@ -157,10 +165,27 @@ export const jdPlugin = {
   workflowConfig: {
     phaseCount: 3,
     phases: [
-      { number: 1, name: 'Draft JD', icon: '📝', aiModel: 'Claude', description: 'Generate job description draft' },
-      { number: 2, name: 'Inclusivity Review', icon: '🔍', aiModel: 'Gemini', description: 'Check inclusivity with Gemini' },
-      { number: 3, name: 'Final JD', icon: '✨', aiModel: 'Claude', description: 'Combine into polished JD' }
-    ]
-  }
+      {
+        number: 1,
+        name: 'Draft JD',
+        icon: '📝',
+        aiModel: 'Claude',
+        description: 'Generate job description draft',
+      },
+      {
+        number: 2,
+        name: 'Inclusivity Review',
+        icon: '🔍',
+        aiModel: 'Gemini',
+        description: 'Check inclusivity with Gemini',
+      },
+      {
+        number: 3,
+        name: 'Final JD',
+        icon: '✨',
+        aiModel: 'Claude',
+        description: 'Combine into polished JD',
+      },
+    ],
+  },
 };
-

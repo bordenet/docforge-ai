@@ -18,15 +18,17 @@ import {
   getProgress,
   getFinalMarkdown,
   exportFinalDocument,
-  getExportFilename
+  getExportFilename,
 } from '../shared/js/workflow.js';
 
 // Mock fetch for prompt template loading
 beforeAll(() => {
-  global.fetch = jest.fn(() => Promise.resolve({
-    ok: true,
-    text: () => Promise.resolve('Mock prompt template with {{TITLE}} and {{DESCRIPTION}}')
-  }));
+  global.fetch = jest.fn(() =>
+    Promise.resolve({
+      ok: true,
+      text: () => Promise.resolve('Mock prompt template with {{TITLE}} and {{DESCRIPTION}}'),
+    })
+  );
 });
 
 describe('WORKFLOW_CONFIG', () => {
@@ -97,7 +99,7 @@ describe('Workflow class', () => {
       phase: 1,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      formData: {}
+      formData: {},
     };
     workflow = new Workflow(project);
   });
@@ -386,7 +388,9 @@ describe('isProjectComplete', () => {
 
   it('should return true when all phases completed', () => {
     const project = createProject('Test', 'Desc');
-    project.phases.forEach(p => { p.completed = true; });
+    project.phases.forEach((p) => {
+      p.completed = true;
+    });
     expect(isProjectComplete(project)).toBe(true);
   });
 });
@@ -456,4 +460,3 @@ describe('getExportFilename', () => {
     expect(filename).not.toMatch(/[/:*!]/);
   });
 });
-

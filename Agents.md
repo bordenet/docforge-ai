@@ -86,7 +86,68 @@ prompts/        # phase1.md, phase2.md, phase3.md
 
 To add a new document type: create a folder in `plugins/`, define `config.js` and prompts, register in `plugin-registry.js`.
 
-### Quality Standards
+---
+
+## Agent Definitions
+
+### Agent: DraftGenerator (Phase 1)
+
+**Purpose**: Generate initial document draft from form inputs
+**Domain**: Document creation
+**LLM**: Claude (user's choice of model)
+
+| Capability | Allowed | Constraints |
+|------------|---------|-------------|
+| Read form data | ✅ | All fields from config.js |
+| Generate markdown | ✅ | Must follow template structure |
+| Access external APIs | ❌ | Prompt is copy-pasted by user |
+
+**Inputs**: Form field values (JSON), document type, template selection
+**Outputs**: Markdown document following plugin's template structure
+
+### Agent: AdversarialCritic (Phase 2)
+
+**Purpose**: Score and critique the draft on 5 dimensions
+**Domain**: Document quality assessment
+**LLM**: Gemini (different model for adversarial perspective)
+
+| Capability | Allowed | Constraints |
+|------------|---------|-------------|
+| Read Phase 1 output | ✅ | Full draft text |
+| Score dimensions | ✅ | 1-5 scale per dimension |
+| Identify gaps | ✅ | Must cite specific sections |
+| Rewrite content | ❌ | Critique only, no rewrites |
+
+**Inputs**: Phase 1 draft, scoring dimensions from config.js
+**Outputs**: Dimension scores (1-5), gap analysis, improvement suggestions
+
+### Agent: Synthesizer (Phase 3)
+
+**Purpose**: Incorporate critique into final document
+**Domain**: Document refinement
+**LLM**: Claude (same as Phase 1 for consistency)
+
+| Capability | Allowed | Constraints |
+|------------|---------|-------------|
+| Read Phase 1 + 2 | ✅ | Draft and critique |
+| Rewrite sections | ✅ | Address all critique points |
+| Add new content | ✅ | Only to fill identified gaps |
+| Remove content | ⚠️ | Only if critique flags as wrong |
+
+**Inputs**: Phase 1 draft, Phase 2 critique
+**Outputs**: Final document with all critique points addressed
+
+---
+
+## Operating Constraints
+
+**Privacy**: All data stays in browser (IndexedDB). No server transmission.
+**Cost**: User controls LLM costs (copy-paste workflow, not API).
+**Token Limits**: Prompts designed for 8K-32K context windows.
+
+---
+
+## Quality Standards
 
 - **Coverage target**: 80% (currently 84%)
 - **Lint clean**: `npm run lint` must pass with zero warnings

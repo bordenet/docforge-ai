@@ -1,6 +1,24 @@
 /**
  * Workflow Module - 3-phase document workflow engine
  * @module workflow
+ *
+ * This module provides two complementary APIs:
+ *
+ * 1. **Workflow Class** (OOP API) - For runtime workflow orchestration:
+ *    - Phase navigation (getCurrentPhase, advancePhase, previousPhase)
+ *    - Output management (getPhaseOutput, savePhaseOutput)
+ *    - Prompt generation (requires plugin)
+ *    - Export (exportAsMarkdown)
+ *
+ * 2. **Standalone Functions** (Functional API) - For project data manipulation:
+ *    - createProject, updateFormData - Project lifecycle
+ *    - advancePhase, getCurrentPhase - Phase state management
+ *    - validatePhase, isProjectComplete - Validation
+ *    - getProgress, getExportFilename - Utilities
+ *    - getFinalMarkdown, exportFinalDocument - Delegates to Workflow class
+ *
+ * The Workflow class wraps a project object for stateful operations.
+ * The standalone functions operate directly on project data.
  */
 
 import { generateId } from './storage.js';
@@ -18,7 +36,7 @@ export const WORKFLOW_CONFIG = {
       description: 'Create initial draft with AI assistance',
       aiModel: 'Claude',
       icon: '✨',
-      type: 'generate'
+      type: 'generate',
     },
     {
       number: 2,
@@ -26,7 +44,7 @@ export const WORKFLOW_CONFIG = {
       description: 'Get alternative perspective and identify weaknesses',
       aiModel: 'Gemini',
       icon: '🔍',
-      type: 'critique'
+      type: 'critique',
     },
     {
       number: 3,
@@ -34,9 +52,9 @@ export const WORKFLOW_CONFIG = {
       description: 'Combine perspectives into final polished document',
       aiModel: 'Claude',
       icon: '🎯',
-      type: 'synthesize'
-    }
-  ]
+      type: 'synthesize',
+    },
+  ],
 };
 
 // Legacy alias for backward compatibility
@@ -48,7 +66,7 @@ export const PHASES = WORKFLOW_CONFIG.phases;
  * @returns {Object|undefined} Phase metadata
  */
 export function getPhaseMetadata(phaseNumber) {
-  return WORKFLOW_CONFIG.phases.find(p => p.number === phaseNumber);
+  return WORKFLOW_CONFIG.phases.find((p) => p.number === phaseNumber);
 }
 
 /**
@@ -99,7 +117,7 @@ export class Workflow {
     if (this.currentPhase > WORKFLOW_CONFIG.phaseCount) {
       return WORKFLOW_CONFIG.phases[WORKFLOW_CONFIG.phaseCount - 1];
     }
-    return WORKFLOW_CONFIG.phases.find(p => p.number === this.currentPhase);
+    return WORKFLOW_CONFIG.phases.find((p) => p.number === this.currentPhase);
   }
 
   /**
@@ -110,7 +128,7 @@ export class Workflow {
     if (this.currentPhase >= WORKFLOW_CONFIG.phaseCount) {
       return null;
     }
-    return WORKFLOW_CONFIG.phases.find(p => p.number === this.currentPhase + 1);
+    return WORKFLOW_CONFIG.phases.find((p) => p.number === this.currentPhase + 1);
   }
 
   /**
@@ -185,7 +203,7 @@ export class Workflow {
     const formData = this.project.formData || {};
     const previousResponses = {
       1: this.getPhaseOutput(1),
-      2: this.getPhaseOutput(2)
+      2: this.getPhaseOutput(2),
     };
 
     return generatePromptFromTemplate(this.plugin, this.currentPhase, formData, previousResponses);
@@ -224,7 +242,9 @@ export class Workflow {
 }
 
 // ============================================================================
-// Standalone Helper Functions
+// Standalone Functions (Functional API)
+// These functions operate directly on project data objects without requiring
+// a Workflow instance. Used for project CRUD operations and data manipulation.
 // ============================================================================
 
 /**
@@ -242,14 +262,14 @@ export function createProject(name, description) {
     modified: Date.now(),
     currentPhase: 1,
     formData: {},
-    phases: PHASES.map(phase => ({
+    phases: PHASES.map((phase) => ({
       number: phase.number,
       name: phase.name,
       type: phase.type,
       prompt: '',
       response: '',
-      completed: false
-    }))
+      completed: false,
+    })),
   };
 }
 
@@ -338,9 +358,9 @@ export function advancePhase(project) {
  */
 export function isProjectComplete(project) {
   if (Array.isArray(project.phases)) {
-    return project.phases.every(phase => phase.completed);
+    return project.phases.every((phase) => phase.completed);
   }
-  return [1, 2, 3].every(num => getPhaseData(project, num).completed);
+  return [1, 2, 3].every((num) => getPhaseData(project, num).completed);
 }
 
 /**
@@ -372,7 +392,7 @@ export function updatePhaseResponse(project, response) {
  */
 export function getProgress(project) {
   if (!project.phases) return 0;
-  const completedPhases = project.phases.filter(p => p.completed).length;
+  const completedPhases = project.phases.filter((p) => p.completed).length;
   return Math.round((completedPhases / PHASES.length) * 100);
 }
 
@@ -412,4 +432,3 @@ export function getExportFilename(project) {
   const title = project.title || project.name || 'document';
   return `${title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.md`;
 }
-

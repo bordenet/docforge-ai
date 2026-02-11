@@ -6,7 +6,12 @@
 import { getCurrentDocumentType } from '../../shared/js/router.js';
 import { getPlugin } from '../../shared/js/plugin-registry.js';
 import { showToast, escapeHtml } from '../../shared/js/ui.js';
-import { validateDocument, getGrade, getScoreColor, getScoreLabel } from '../../shared/js/validator.js';
+import {
+  validateDocument,
+  getGrade,
+  getScoreColor,
+  getScoreLabel,
+} from '../../shared/js/validator.js';
 import { logger } from '../../shared/js/logger.js';
 
 let currentPlugin = null;
@@ -55,7 +60,9 @@ function renderDimensionScores(plugin) {
   const container = document.getElementById('dimension-scores');
   if (!container) return;
 
-  const html = plugin.scoringDimensions.map(dim => `
+  const html = plugin.scoringDimensions
+    .map(
+      (dim) => `
     <div class="dimension-row">
       <div class="flex justify-between items-center mb-1">
         <span class="text-sm font-medium text-slate-300">${escapeHtml(dim.name)}</span>
@@ -68,7 +75,9 @@ function renderDimensionScores(plugin) {
       </div>
       <p class="text-xs text-slate-500 mt-1">${escapeHtml(dim.description)}</p>
     </div>
-  `).join('');
+  `
+    )
+    .join('');
 
   container.innerHTML = html;
 }
@@ -180,7 +189,7 @@ function updateBadge(score) {
     green: 'bg-green-600',
     yellow: 'bg-yellow-600',
     orange: 'bg-orange-600',
-    red: 'bg-red-600'
+    red: 'bg-red-600',
   };
 
   badge.textContent = `${grade} - ${label}`;
@@ -199,7 +208,7 @@ function renderSlopDetection(slopData) {
     light: 'text-yellow-400',
     moderate: 'text-orange-400',
     heavy: 'text-red-400',
-    severe: 'text-red-600'
+    severe: 'text-red-600',
   };
 
   container.innerHTML = `
@@ -210,11 +219,15 @@ function renderSlopDetection(slopData) {
           ${slopData.severity?.toUpperCase() || 'N/A'} (${slopData.penalty || 0} pt penalty)
         </span>
       </div>
-      ${slopData.issues?.length > 0 ? `
+      ${
+        slopData.issues?.length > 0
+          ? `
         <ul class="text-xs text-slate-400 space-y-1">
-          ${slopData.issues.map(issue => `<li>• ${escapeHtml(issue)}</li>`).join('')}
+          ${slopData.issues.map((issue) => `<li>• ${escapeHtml(issue)}</li>`).join('')}
         </ul>
-      ` : '<p class="text-xs text-green-400">No AI slop detected</p>'}
+      `
+          : '<p class="text-xs text-green-400">No AI slop detected</p>'
+      }
     </div>
   `;
 }
@@ -235,7 +248,10 @@ function renderIssues(issues) {
     <div class="mt-4 p-3 bg-slate-800 rounded-lg">
       <span class="text-sm font-medium text-slate-300">Suggestions</span>
       <ul class="mt-2 text-xs text-slate-400 space-y-1">
-        ${issues.slice(0, 5).map(issue => `<li>• ${escapeHtml(issue)}</li>`).join('')}
+        ${issues
+          .slice(0, 5)
+          .map((issue) => `<li>• ${escapeHtml(issue)}</li>`)
+          .join('')}
       </ul>
     </div>
   `;
@@ -245,8 +261,8 @@ function clearEditor() {
   const editor = document.getElementById('editor');
   if (editor) editor.value = '';
   document.getElementById('score-total').textContent = '--';
-  document.querySelectorAll('.dim-score').forEach(el => el.textContent = '--');
-  document.querySelectorAll('.dim-bar').forEach(el => el.style.width = '0%');
+  document.querySelectorAll('.dim-score').forEach((el) => (el.textContent = '--'));
+  document.querySelectorAll('.dim-bar').forEach((el) => (el.style.width = '0%'));
   document.getElementById('score-badge').textContent = 'Paste a document to score';
 }
 
@@ -262,4 +278,3 @@ if (document.readyState === 'loading') {
 } else {
   initValidator();
 }
-

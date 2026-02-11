@@ -17,16 +17,36 @@ export { calculateSlopScore };
 // ============================================================================
 
 const COMMON_SECTIONS = [
-  { pattern: /^#+\s*(problem|challenge|pain.?point|context)/im, name: 'Problem/Challenge', weight: 2 },
-  { pattern: /^#+\s*(solution|proposal|approach|recommendation)/im, name: 'Solution/Proposal', weight: 2 },
+  {
+    pattern: /^#+\s*(problem|challenge|pain.?point|context)/im,
+    name: 'Problem/Challenge',
+    weight: 2,
+  },
+  {
+    pattern: /^#+\s*(solution|proposal|approach|recommendation)/im,
+    name: 'Solution/Proposal',
+    weight: 2,
+  },
   { pattern: /^#+\s*(goal|objective|benefit|outcome)/im, name: 'Goals/Benefits', weight: 2 },
-  { pattern: /^#+\s*(scope|in.scope|out.of.scope|boundary)/im, name: 'Scope Definition', weight: 2 },
+  {
+    pattern: /^#+\s*(scope|in.scope|out.of.scope|boundary)/im,
+    name: 'Scope Definition',
+    weight: 2,
+  },
   { pattern: /^#+\s*(success|metric|kpi|measure)/im, name: 'Success Metrics', weight: 1 },
   { pattern: /^#+\s*(stakeholder|team|owner|raci)/im, name: 'Stakeholders/Team', weight: 1 },
-  { pattern: /^#+\s*(timeline|milestone|phase|schedule)/im, name: 'Timeline/Milestones', weight: 1 },
-  { pattern: /^#+\s*(risk|assumption|mitigation|dependency)/im, name: 'Risks/Assumptions', weight: 1 },
+  {
+    pattern: /^#+\s*(timeline|milestone|phase|schedule)/im,
+    name: 'Timeline/Milestones',
+    weight: 1,
+  },
+  {
+    pattern: /^#+\s*(risk|assumption|mitigation|dependency)/im,
+    name: 'Risks/Assumptions',
+    weight: 1,
+  },
   { pattern: /^#+\s*(background|context|why)/im, name: 'Background/Context', weight: 1 },
-  { pattern: /^#+\s*(requirement|acceptance|criteria)/im, name: 'Requirements', weight: 1 }
+  { pattern: /^#+\s*(requirement|acceptance|criteria)/im, name: 'Requirements', weight: 1 },
 ];
 
 // Content quality patterns
@@ -34,7 +54,7 @@ const QUALITY_PATTERNS = {
   quantified: /\d+\s*(%|million|thousand|hour|day|week|month|year|\$|dollar|user|customer)/gi,
   businessFocus: /\b(business|customer|user|market|revenue|profit|competitive|strategic|value)\b/gi,
   actionable: /\b(will|shall|must|should|enable|provide|deliver|implement|build|create)\b/gi,
-  measurable: /\b(measure|metric|kpi|track|monitor|achieve|target|goal)\b/gi
+  measurable: /\b(measure|metric|kpi|track|monitor|achieve|target|goal)\b/gi,
 };
 
 // ============================================================================
@@ -72,7 +92,7 @@ export function analyzeContentQuality(text) {
   const actionable = (text.match(QUALITY_PATTERNS.actionable) || []).length;
   const measurable = (text.match(QUALITY_PATTERNS.measurable) || []).length;
   const headingCount = (text.match(/^#+\s+.+$/gm) || []).length;
-  const wordCount = text.split(/\s+/).filter(w => w.length > 0).length;
+  const wordCount = text.split(/\s+/).filter((w) => w.length > 0).length;
 
   return {
     quantified,
@@ -82,7 +102,7 @@ export function analyzeContentQuality(text) {
     headingCount,
     wordCount,
     hasStructure: headingCount >= 3,
-    hasSubstance: wordCount >= 100
+    hasSubstance: wordCount >= 100,
   };
 }
 
@@ -133,13 +153,18 @@ function scoreDimension(text, dimension) {
     score += Math.floor(maxPoints * 0.2);
   } else if (sections.found.length >= 3) {
     score += Math.floor(maxPoints * 0.1);
-    issues.push(`Missing sections: ${sections.missing.slice(0, 3).map(s => s.name).join(', ')}`);
+    issues.push(
+      `Missing sections: ${sections.missing
+        .slice(0, 3)
+        .map((s) => s.name)
+        .join(', ')}`
+    );
   }
 
   return {
     score: Math.min(score, maxPoints),
     maxScore: maxPoints,
-    issues
+    issues,
   };
 }
 
@@ -185,9 +210,9 @@ export function validateDocument(text, plugin) {
       score: slopResult.score,
       severity: slopResult.severity,
       penalty: slopPenalty,
-      issues: slopPenaltyResult.issues || []
+      issues: slopPenaltyResult.issues || [],
     },
-    issues: allIssues
+    issues: allIssues,
   };
 }
 
@@ -215,7 +240,7 @@ function getDefaultDimensions() {
     { name: 'Content Quality', maxPoints: 25, description: 'Overall content quality' },
     { name: 'Structure', maxPoints: 25, description: 'Document organization' },
     { name: 'Completeness', maxPoints: 25, description: 'Coverage of key topics' },
-    { name: 'Clarity', maxPoints: 25, description: 'Clear and actionable content' }
+    { name: 'Clarity', maxPoints: 25, description: 'Clear and actionable content' },
   ];
 }
 
@@ -260,4 +285,3 @@ export function getScoreLabel(score) {
   if (score >= 30) return 'Draft';
   return 'Incomplete';
 }
-

@@ -1,12 +1,39 @@
 /**
  * Main Application Module for DocForgeAI Assistant
  * @module app
+ *
+ * This is the application entry point that orchestrates the UI.
+ *
+ * ## Structure
+ *
+ * 1. **Initialization** - Plugin loading, router setup, event binding
+ * 2. **Routing** - Hash-based navigation between list/new/project views
+ * 3. **View Rendering** - Delegates to views.js for HTML generation
+ * 4. **Event Handlers** - User interaction handlers for each view:
+ *    - List view: project cards, delete, preview
+ *    - New view: form submission, template selection, import
+ *    - Project view: phase navigation, prompt copy, response save
+ *
+ * ## Data Flow
+ *
+ * URL hash → Router → handleRouteChange → render[View] → attachEventListeners
+ *
+ * ## State
+ *
+ * - `currentPlugin` - Active document type plugin (from URL ?type=)
+ * - `currentTemplates` - Templates for the current plugin
+ * - Projects stored in IndexedDB via storage.js
  */
 
 import { getCurrentPlugin, initRouter } from '../../shared/js/router.js';
 import { saveProject, getProject, getAllProjects, deleteProject } from '../../shared/js/storage.js';
 import { extractFormData, validateFormData } from '../../shared/js/form-generator.js';
-import { renderListView, renderNewView, renderProjectView, renderPhaseContent } from '../../shared/js/views.js';
+import {
+  renderListView,
+  renderNewView,
+  renderProjectView,
+  renderPhaseContent,
+} from '../../shared/js/views.js';
 import { showToast, showLoading, hideLoading, copyToClipboard } from '../../shared/js/ui.js';
 import { generatePrompt } from '../../shared/js/prompt-generator.js';
 import { showImportModal } from '../../shared/js/import-document.js';
@@ -215,17 +242,17 @@ async function handleRouteChange(view, params) {
 
   try {
     switch (view) {
-    case 'list':
-      await renderList(container);
-      break;
-    case 'new':
-      await renderNew(container);
-      break;
-    case 'project':
-      await renderProject(container, params.projectId);
-      break;
-    default:
-      await renderList(container);
+      case 'list':
+        await renderList(container);
+        break;
+      case 'new':
+        await renderNew(container);
+        break;
+      case 'project':
+        await renderProject(container, params.projectId);
+        break;
+      default:
+        await renderList(container);
     }
   } catch (error) {
     logger.error('Route change error', error, 'app');
@@ -275,7 +302,7 @@ async function renderProject(container, projectId) {
 
 function setupListEventHandlers() {
   // Project card clicks - navigate to project
-  document.querySelectorAll('[data-project-id]').forEach(card => {
+  document.querySelectorAll('[data-project-id]').forEach((card) => {
     card.addEventListener('click', (e) => {
       // Don't navigate if clicking delete or preview buttons
       if (!e.target.closest('.delete-project-btn') && !e.target.closest('.preview-project-btn')) {
@@ -286,7 +313,7 @@ function setupListEventHandlers() {
   });
 
   // Delete button clicks
-  document.querySelectorAll('.delete-project-btn').forEach(btn => {
+  document.querySelectorAll('.delete-project-btn').forEach((btn) => {
     btn.addEventListener('click', async (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -304,7 +331,7 @@ function setupListEventHandlers() {
   });
 
   // Preview button clicks (for completed projects)
-  document.querySelectorAll('.preview-project-btn').forEach(btn => {
+  document.querySelectorAll('.preview-project-btn').forEach((btn) => {
     btn.addEventListener('click', async (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -330,19 +357,23 @@ function setupNewFormEventHandlers() {
       showToast(validation.errors[0], 'error');
       return;
     }
-    const project = await saveProject(currentPlugin.dbName, { formData, title: formData.title, currentPhase: 1 });
+    const project = await saveProject(currentPlugin.dbName, {
+      formData,
+      title: formData.title,
+      currentPhase: 1,
+    });
     showToast('Project created!', 'success');
     window.location.hash = `project/${project.id}`;
   });
 
   // Template selection handlers
-  document.querySelectorAll('.template-btn').forEach(btn => {
+  document.querySelectorAll('.template-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
       const templateId = btn.dataset.templateId;
-      const template = currentTemplates.find(t => t.id === templateId);
+      const template = currentTemplates.find((t) => t.id === templateId);
 
       // Update button styling
-      document.querySelectorAll('.template-btn').forEach(b => {
+      document.querySelectorAll('.template-btn').forEach((b) => {
         b.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
         b.classList.add('border-gray-200', 'dark:border-gray-600');
       });
@@ -351,7 +382,7 @@ function setupNewFormEventHandlers() {
 
       // Pre-fill form fields from template
       if (template && template.fields) {
-        Object.keys(template.fields).forEach(fieldId => {
+        Object.keys(template.fields).forEach((fieldId) => {
           const input = document.getElementById(fieldId);
           if (input) {
             input.value = template.fields[fieldId];
@@ -375,7 +406,7 @@ function setupNewFormEventHandlers() {
  */
 function attachProjectEventListeners(project, phase) {
   // Phase tab navigation
-  document.querySelectorAll('.phase-tab').forEach(tab => {
+  document.querySelectorAll('.phase-tab').forEach((tab) => {
     tab.addEventListener('click', async () => {
       const targetPhase = parseInt(tab.dataset.phase);
       const freshProject = await getProject(currentPlugin.dbName, project.id);
@@ -385,14 +416,21 @@ function attachProjectEventListeners(project, phase) {
         const priorPhase = targetPhase - 1;
         const priorPhaseComplete = freshProject.phases?.[priorPhase]?.completed;
         if (!priorPhaseComplete) {
-          showToast(`Complete Phase ${priorPhase} before proceeding to Phase ${targetPhase}`, 'warning');
+          showToast(
+            `Complete Phase ${priorPhase} before proceeding to Phase ${targetPhase}`,
+            'warning'
+          );
           return;
         }
       }
 
       freshProject.currentPhase = targetPhase;
       updatePhaseTabStyles(targetPhase);
-      document.getElementById('phase-content').innerHTML = renderPhaseContent(currentPlugin, freshProject, targetPhase);
+      document.getElementById('phase-content').innerHTML = renderPhaseContent(
+        currentPlugin,
+        freshProject,
+        targetPhase
+      );
       attachPhaseEventListeners(freshProject, targetPhase);
     });
   });
@@ -404,14 +442,24 @@ function attachProjectEventListeners(project, phase) {
  * Update phase tab styles
  */
 function updatePhaseTabStyles(activePhase) {
-  document.querySelectorAll('.phase-tab').forEach(tab => {
+  document.querySelectorAll('.phase-tab').forEach((tab) => {
     const tabPhase = parseInt(tab.dataset.phase);
     if (tabPhase === activePhase) {
-      tab.classList.remove('text-gray-600', 'dark:text-gray-400', 'hover:text-gray-900', 'dark:hover:text-gray-200');
+      tab.classList.remove(
+        'text-gray-600',
+        'dark:text-gray-400',
+        'hover:text-gray-900',
+        'dark:hover:text-gray-200'
+      );
       tab.classList.add('border-b-2', 'border-blue-600', 'text-blue-600', 'dark:text-blue-400');
     } else {
       tab.classList.remove('border-b-2', 'border-blue-600', 'text-blue-600', 'dark:text-blue-400');
-      tab.classList.add('text-gray-600', 'dark:text-gray-400', 'hover:text-gray-900', 'dark:hover:text-gray-200');
+      tab.classList.add(
+        'text-gray-600',
+        'dark:text-gray-400',
+        'hover:text-gray-900',
+        'dark:hover:text-gray-200'
+      );
     }
   });
 }
@@ -433,16 +481,22 @@ function attachPhaseEventListeners(project, phase) {
         // Build previous responses for prompt generation
         const previousResponses = {
           1: project.phases?.[1]?.response || '',
-          2: project.phases?.[2]?.response || ''
+          2: project.phases?.[2]?.response || '',
         };
 
-        const prompt = await generatePrompt(currentPlugin, phase, project.formData, previousResponses);
+        const prompt = await generatePrompt(
+          currentPlugin,
+          phase,
+          project.formData,
+          previousResponses
+        );
         await copyToClipboard(prompt);
         showToast('Prompt copied to clipboard!', 'success');
 
         // Save prompt to phase data
         if (!project.phases) project.phases = {};
-        if (!project.phases[phase]) project.phases[phase] = { prompt: '', response: '', completed: false };
+        if (!project.phases[phase])
+          project.phases[phase] = { prompt: '', response: '', completed: false };
         project.phases[phase].prompt = prompt;
         await saveProject(currentPlugin.dbName, project);
 
@@ -493,7 +547,8 @@ function attachPhaseEventListeners(project, phase) {
         // Re-fetch project to get fresh data
         const freshProject = await getProject(currentPlugin.dbName, project.id);
         if (!freshProject.phases) freshProject.phases = {};
-        if (!freshProject.phases[phase]) freshProject.phases[phase] = { prompt: '', response: '', completed: false };
+        if (!freshProject.phases[phase])
+          freshProject.phases[phase] = { prompt: '', response: '', completed: false };
 
         freshProject.phases[phase].response = response;
         freshProject.phases[phase].completed = true;
@@ -505,7 +560,11 @@ function attachPhaseEventListeners(project, phase) {
           showToast('Response saved! Moving to next phase...', 'success');
 
           updatePhaseTabStyles(phase + 1);
-          document.getElementById('phase-content').innerHTML = renderPhaseContent(currentPlugin, freshProject, phase + 1);
+          document.getElementById('phase-content').innerHTML = renderPhaseContent(
+            currentPlugin,
+            freshProject,
+            phase + 1
+          );
           attachPhaseEventListeners(freshProject, phase + 1);
 
           // Update tab checkmark for completed phase
@@ -519,7 +578,11 @@ function attachPhaseEventListeners(project, phase) {
           showToast('Your document is complete!', 'success');
 
           // Re-render to show completion banner
-          document.getElementById('phase-content').innerHTML = renderPhaseContent(currentPlugin, freshProject, phase);
+          document.getElementById('phase-content').innerHTML = renderPhaseContent(
+            currentPlugin,
+            freshProject,
+            phase
+          );
           attachPhaseEventListeners(freshProject, phase);
 
           // Update tab checkmark
@@ -543,7 +606,11 @@ function attachPhaseEventListeners(project, phase) {
       freshProject.currentPhase = nextPhase;
 
       updatePhaseTabStyles(nextPhase);
-      document.getElementById('phase-content').innerHTML = renderPhaseContent(currentPlugin, freshProject, nextPhase);
+      document.getElementById('phase-content').innerHTML = renderPhaseContent(
+        currentPlugin,
+        freshProject,
+        nextPhase
+      );
       attachPhaseEventListeners(freshProject, nextPhase);
     });
   }
@@ -565,7 +632,10 @@ function attachPhaseEventListeners(project, phase) {
 
 function toggleTheme() {
   document.documentElement.classList.toggle('dark');
-  localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+  localStorage.setItem(
+    'theme',
+    document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+  );
 }
 
 async function updateStorageInfo() {
@@ -575,7 +645,10 @@ async function updateStorageInfo() {
 }
 
 // Load theme
-if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+if (
+  localStorage.getItem('theme') === 'dark' ||
+  (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)
+) {
   document.documentElement.classList.add('dark');
 }
 
@@ -585,4 +658,3 @@ if (document.readyState === 'loading') {
 } else {
   initApp();
 }
-

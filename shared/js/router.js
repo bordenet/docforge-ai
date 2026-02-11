@@ -83,20 +83,20 @@ export function navigateTo(view, params = {}) {
   let hash = '';
 
   switch (view) {
-  case 'list':
-    hash = '';
-    break;
-  case 'new':
-    hash = 'new';
-    break;
-  case 'project':
-    hash = `project/${params.projectId}`;
-    break;
-  case 'phase':
-    hash = `phase/${params.projectId}/${params.phase}`;
-    break;
-  default:
-    hash = '';
+    case 'list':
+      hash = '';
+      break;
+    case 'new':
+      hash = 'new';
+      break;
+    case 'project':
+      hash = `project/${params.projectId}`;
+      break;
+    case 'phase':
+      hash = `phase/${params.projectId}/${params.phase}`;
+      break;
+    default:
+      hash = '';
   }
 
   window.location.hash = hash;
@@ -122,14 +122,13 @@ export function initRouter(onRouteChange) {
   window.addEventListener('hashchange', () => {
     onRouteChange(getCurrentView(), {
       projectId: getProjectIdFromHash(),
-      phase: getPhaseFromHash()
+      phase: getPhaseFromHash(),
     });
   });
 
   // Trigger initial route
   onRouteChange(getCurrentView(), {
     projectId: getProjectIdFromHash(),
-    phase: getPhaseFromHash()
+    phase: getPhaseFromHash(),
   });
 }
-

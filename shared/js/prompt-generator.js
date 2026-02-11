@@ -18,7 +18,9 @@ export function fillPromptTemplate(template, formData) {
 
   return template.replace(/\{\{(\w+)\}\}/g, (match, fieldId) => {
     // Convert from UPPER_CASE to camelCase for lookup
-    const camelCase = fieldId.toLowerCase().replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+    const camelCase = fieldId
+      .toLowerCase()
+      .replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
     return formData[camelCase] || formData[fieldId] || match;
   });
 }
@@ -68,8 +70,8 @@ function getBasePath() {
  */
 function getFallbackPrompt(phase) {
   switch (phase) {
-  case 1:
-    return `# Phase 1: Initial Draft
+    case 1:
+      return `# Phase 1: Initial Draft
 
 You are an expert assistant helping to create a high-quality document.
 
@@ -80,8 +82,8 @@ You are an expert assistant helping to create a high-quality document.
 Generate a well-structured first draft based on the provided context.
 `;
 
-  case 2:
-    return `# Phase 2: Alternative Perspective
+    case 2:
+      return `# Phase 2: Alternative Perspective
 
 Review the draft and provide an alternative perspective.
 
@@ -92,8 +94,8 @@ Review the draft and provide an alternative perspective.
 Identify weaknesses and suggest improvements.
 `;
 
-  case 3:
-    return `# Phase 3: Final Synthesis
+    case 3:
+      return `# Phase 3: Final Synthesis
 
 Combine the original draft and alternative perspective into a polished final version.
 
@@ -107,8 +109,8 @@ Combine the original draft and alternative perspective into a polished final ver
 Create the final, polished document.
 `;
 
-  default:
-    return 'Unknown phase';
+    default:
+      return 'Unknown phase';
   }
 }
 
@@ -131,9 +133,8 @@ export async function generatePrompt(plugin, phase, formData, previousResponses 
     PHASE1_OUTPUT: previousResponses[1] || '',
     PHASE2_OUTPUT: previousResponses[2] || '',
     PHASE1_RESPONSE: previousResponses[1] || '',
-    PHASE2_RESPONSE: previousResponses[2] || ''
+    PHASE2_RESPONSE: previousResponses[2] || '',
   };
 
   return fillPromptTemplate(template, data);
 }
-

@@ -80,7 +80,9 @@ function tokenize(text) {
 function longestCommonSubsequence(a, b) {
   const m = a.length;
   const n = b.length;
-  const dp = Array(m + 1).fill(null).map(() => Array(n + 1).fill(0));
+  const dp = Array(m + 1)
+    .fill(null)
+    .map(() => Array(n + 1).fill(0));
 
   for (let i = 1; i <= m; i++) {
     for (let j = 1; j <= n; j++) {
@@ -94,7 +96,8 @@ function longestCommonSubsequence(a, b) {
 
   // Backtrack to find LCS
   const lcs = [];
-  let i = m, j = n;
+  let i = m,
+    j = n;
   while (i > 0 && j > 0) {
     if (a[i - 1] === b[j - 1]) {
       lcs.unshift(a[i - 1]);
@@ -116,17 +119,19 @@ function longestCommonSubsequence(a, b) {
  * @returns {string} HTML string with highlighted changes
  */
 export function renderDiffHtml(diff) {
-  return diff.map(item => {
-    const escaped = escapeHtml(item.text);
-    switch (item.type) {
-    case 'delete':
-      return `<span class="bg-red-200 dark:bg-red-900/50 text-red-800 dark:text-red-200 line-through">${escaped}</span>`;
-    case 'insert':
-      return `<span class="bg-green-200 dark:bg-green-900/50 text-green-800 dark:text-green-200">${escaped}</span>`;
-    default:
-      return escaped;
-    }
-  }).join('');
+  return diff
+    .map((item) => {
+      const escaped = escapeHtml(item.text);
+      switch (item.type) {
+        case 'delete':
+          return `<span class="bg-red-200 dark:bg-red-900/50 text-red-800 dark:text-red-200 line-through">${escaped}</span>`;
+        case 'insert':
+          return `<span class="bg-green-200 dark:bg-green-900/50 text-green-800 dark:text-green-200">${escaped}</span>`;
+        default:
+          return escaped;
+      }
+    })
+    .join('');
 }
 
 /**
@@ -139,15 +144,20 @@ export function getDiffStats(diff) {
   let deletions = 0;
   let unchanged = 0;
 
-  diff.forEach(item => {
+  diff.forEach((item) => {
     const wordCount = item.text.trim() ? 1 : 0;
     switch (item.type) {
-    case 'insert': additions += wordCount; break;
-    case 'delete': deletions += wordCount; break;
-    default: unchanged += wordCount; break;
+      case 'insert':
+        additions += wordCount;
+        break;
+      case 'delete':
+        deletions += wordCount;
+        break;
+      default:
+        unchanged += wordCount;
+        break;
     }
   });
 
   return { additions, deletions, unchanged };
 }
-

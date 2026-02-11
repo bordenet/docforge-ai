@@ -20,12 +20,32 @@
  * Delete or replace with specific metrics
  */
 export const GENERIC_BOOSTERS = [
-  'incredibly', 'extremely', 'highly', 'very', 'truly', 'absolutely',
-  'definitely', 'really', 'quite', 'remarkably', 'exceptionally',
-  'particularly', 'especially', 'significantly', 'substantially',
-  'considerably', 'dramatically', 'tremendously', 'immensely', 'profoundly',
+  'incredibly',
+  'extremely',
+  'highly',
+  'very',
+  'truly',
+  'absolutely',
+  'definitely',
+  'really',
+  'quite',
+  'remarkably',
+  'exceptionally',
+  'particularly',
+  'especially',
+  'significantly',
+  'substantially',
+  'considerably',
+  'dramatically',
+  'tremendously',
+  'immensely',
+  'profoundly',
   // Classic AI markers
-  'delve', 'tapestry', 'multifaceted', 'myriad', 'plethora'
+  'delve',
+  'tapestry',
+  'multifaceted',
+  'myriad',
+  'plethora',
 ];
 
 /**
@@ -34,86 +54,211 @@ export const GENERIC_BOOSTERS = [
  */
 export const BUZZWORDS = [
   // Classic AI buzzwords
-  'robust', 'seamless', 'comprehensive', 'elegant', 'powerful',
-  'flexible', 'intuitive', 'user-friendly', 'streamlined', 'optimized',
-  'efficient', 'scalable', 'reliable', 'secure', 'modern',
-  'innovative', 'sophisticated', 'advanced', 'state-of-the-art',
-  'best-in-class', 'world-class', 'enterprise-ready', 'production-grade',
-  'battle-tested', 'industry-leading', 'game-changing', 'revolutionary',
-  'transformative', 'disruptive', 'cutting-edge', 'next-generation',
-  'bleeding-edge', 'groundbreaking', 'paradigm-shifting',
+  'robust',
+  'seamless',
+  'comprehensive',
+  'elegant',
+  'powerful',
+  'flexible',
+  'intuitive',
+  'user-friendly',
+  'streamlined',
+  'optimized',
+  'efficient',
+  'scalable',
+  'reliable',
+  'secure',
+  'modern',
+  'innovative',
+  'sophisticated',
+  'advanced',
+  'state-of-the-art',
+  'best-in-class',
+  'world-class',
+  'enterprise-ready',
+  'production-grade',
+  'battle-tested',
+  'industry-leading',
+  'game-changing',
+  'revolutionary',
+  'transformative',
+  'disruptive',
+  'cutting-edge',
+  'next-generation',
+  'bleeding-edge',
+  'groundbreaking',
+  'paradigm-shifting',
   // Verb-form buzzwords
-  'synergy', 'holistic', 'ecosystem', 'leverage', 'utilize',
-  'facilitate', 'enable', 'empower', 'optimize', 'accelerate',
-  'amplify', 'unlock', 'drive', 'spearhead', 'champion',
-  'pivot', 'actionable',
+  'synergy',
+  'holistic',
+  'ecosystem',
+  'leverage',
+  'utilize',
+  'facilitate',
+  'enable',
+  'empower',
+  'optimize',
+  'accelerate',
+  'amplify',
+  'unlock',
+  'drive',
+  'spearhead',
+  'champion',
+  'pivot',
+  'actionable',
   // Document-specific vague qualifiers (legacy compatibility)
-  'easy to use', 'fast', 'quick', 'responsive', 'good performance',
-  'high quality', 'optimal', 'minimal', 'sufficient', 'reasonable',
-  'appropriate', 'adequate'
+  'easy to use',
+  'fast',
+  'quick',
+  'responsive',
+  'good performance',
+  'high quality',
+  'optimal',
+  'minimal',
+  'sufficient',
+  'reasonable',
+  'appropriate',
+  'adequate',
 ];
 
 /**
  * Filler phrases - delete entirely, add no meaning
  */
 export const FILLER_PHRASES = [
-  'it\'s important to note that', 'it\'s worth mentioning that',
-  'it should be noted that', 'it goes without saying that',
-  'needless to say', 'as you may know', 'as we all know',
-  'in today\'s world', 'in today\'s digital age',
-  'in today\'s fast-paced environment', 'in the modern era',
-  'at the end of the day', 'when all is said and done',
-  'having said that', 'that said', 'that being said',
-  'with that in mind', 'with that being said',
-  'let me explain', 'let me walk you through',
-  'let\'s dive in', 'let\'s explore', 'let\'s take a look at',
-  'let\'s break this down', 'here\'s the thing', 'the thing is',
-  'the fact of the matter is', 'at this point in time',
-  'in order to', 'due to the fact that', 'for the purpose of',
-  'in the event that', 'in light of', 'with regard to',
-  'in terms of', 'on a daily basis', 'first and foremost',
-  'last but not least', 'each and every', 'one and only',
-  'plain and simple', 'pure and simple'
+  "it's important to note that",
+  "it's worth mentioning that",
+  'it should be noted that',
+  'it goes without saying that',
+  'needless to say',
+  'as you may know',
+  'as we all know',
+  "in today's world",
+  "in today's digital age",
+  "in today's fast-paced environment",
+  'in the modern era',
+  'at the end of the day',
+  'when all is said and done',
+  'having said that',
+  'that said',
+  'that being said',
+  'with that in mind',
+  'with that being said',
+  'let me explain',
+  'let me walk you through',
+  "let's dive in",
+  "let's explore",
+  "let's take a look at",
+  "let's break this down",
+  "here's the thing",
+  'the thing is',
+  'the fact of the matter is',
+  'at this point in time',
+  'in order to',
+  'due to the fact that',
+  'for the purpose of',
+  'in the event that',
+  'in light of',
+  'with regard to',
+  'in terms of',
+  'on a daily basis',
+  'first and foremost',
+  'last but not least',
+  'each and every',
+  'one and only',
+  'plain and simple',
+  'pure and simple',
 ];
 
 /**
  * Hedge patterns - weasel words that avoid commitment
  */
 export const HEDGE_PATTERNS = [
-  'of course', 'naturally', 'obviously', 'clearly', 'certainly',
-  'undoubtedly', 'in many ways', 'to some extent', 'in some cases',
-  'it depends', 'it varies', 'generally speaking', 'for the most part',
-  'more or less', 'kind of', 'sort of', 'somewhat', 'relatively',
-  'arguably', 'potentially', 'possibly', 'might',
-  'may or may not', 'could potentially', 'tends to',
-  'seems to', 'appears to'
+  'of course',
+  'naturally',
+  'obviously',
+  'clearly',
+  'certainly',
+  'undoubtedly',
+  'in many ways',
+  'to some extent',
+  'in some cases',
+  'it depends',
+  'it varies',
+  'generally speaking',
+  'for the most part',
+  'more or less',
+  'kind of',
+  'sort of',
+  'somewhat',
+  'relatively',
+  'arguably',
+  'potentially',
+  'possibly',
+  'might',
+  'may or may not',
+  'could potentially',
+  'tends to',
+  'seems to',
+  'appears to',
 ];
 
 /**
  * Sycophantic phrases - should never appear in professional documents
  */
 export const SYCOPHANTIC_PHRASES = [
-  'great question', 'excellent question', 'that\'s a great point',
-  'good thinking', 'i love that idea', 'what a fascinating topic',
-  'happy to help', 'i\'d be happy to help', 'i\'m glad you asked',
-  'thanks for asking', 'absolutely!', 'definitely!', 'of course!',
-  'sure thing', 'no problem', 'you\'re welcome', 'my pleasure',
-  'i appreciate you sharing', 'that\'s an interesting perspective',
-  'i understand your concern'
+  'great question',
+  'excellent question',
+  "that's a great point",
+  'good thinking',
+  'i love that idea',
+  'what a fascinating topic',
+  'happy to help',
+  "i'd be happy to help",
+  "i'm glad you asked",
+  'thanks for asking',
+  'absolutely!',
+  'definitely!',
+  'of course!',
+  'sure thing',
+  'no problem',
+  "you're welcome",
+  'my pleasure',
+  'i appreciate you sharing',
+  "that's an interesting perspective",
+  'i understand your concern',
 ];
 
 /**
  * Transitional filler - overused transitions that pad word count
  */
 export const TRANSITIONAL_FILLER = [
-  'furthermore', 'moreover', 'additionally', 'in addition',
-  'nevertheless', 'nonetheless', 'on the other hand', 'conversely',
-  'in contrast', 'similarly', 'likewise', 'consequently',
-  'therefore', 'thus', 'hence', 'accordingly', 'as a result',
-  'for this reason', 'to that end', 'with this in mind',
-  'given the above', 'based on the above', 'as mentioned earlier',
-  'as previously stated', 'as noted above', 'moving forward',
-  'going forward'
+  'furthermore',
+  'moreover',
+  'additionally',
+  'in addition',
+  'nevertheless',
+  'nonetheless',
+  'on the other hand',
+  'conversely',
+  'in contrast',
+  'similarly',
+  'likewise',
+  'consequently',
+  'therefore',
+  'thus',
+  'hence',
+  'accordingly',
+  'as a result',
+  'for this reason',
+  'to that end',
+  'with this in mind',
+  'given the above',
+  'based on the above',
+  'as mentioned earlier',
+  'as previously stated',
+  'as noted above',
+  'moving forward',
+  'going forward',
 ];
 
 // ============================================================================
@@ -125,23 +270,25 @@ export const TRANSITIONAL_FILLER = [
  */
 export const STRUCTURAL_PATTERNS = {
   // Formulaic introductions
-  formulaicIntro: /^(in today's|in this (document|section|prd|spec)|this (document|prd|spec) (will|aims|seeks))/im,
+  formulaicIntro:
+    /^(in today's|in this (document|section|prd|spec)|this (document|prd|spec) (will|aims|seeks))/im,
 
   // Over-signposting
   overSignposting: [
     'in this section, we will',
     'as mentioned earlier',
-    'let\'s now turn to',
+    "let's now turn to",
     'before we proceed',
     'as discussed above',
-    'we will now explore'
+    'we will now explore',
   ],
 
   // Template section progression
   templateSections: /overview.{0,500}key points.{0,500}(best practices|conclusion)/is,
 
   // Symmetric coverage (balanced to a fault)
-  symmetricCoverage: /(on one hand|on the other hand|pros and cons|advantages and disadvantages|both.*have (merit|value))/gi
+  symmetricCoverage:
+    /(on one hand|on the other hand|pros and cons|advantages and disadvantages|both.*have (merit|value))/gi,
 };
 
 // ============================================================================
@@ -198,7 +345,7 @@ export function detectAISlop(text) {
     sycophantic: detectPatterns(text, SYCOPHANTIC_PHRASES),
     transitionalFiller: detectPatterns(text, TRANSITIONAL_FILLER),
     emDashes: detectEmDashes(text),
-    structural: detectStructuralPatterns(text)
+    structural: detectStructuralPatterns(text),
   };
 
   results.totalPatterns =
@@ -249,7 +396,7 @@ export function detectStructuralPatterns(text) {
 
   return {
     patterns: found,
-    count: found.length
+    count: found.length,
   };
 }
 
@@ -283,14 +430,20 @@ const MIN_TTR_THRESHOLD = 0.45;
  */
 export function analyzeSentenceVariance(text) {
   // Split into sentences (period, question, exclamation)
-  const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+  const sentences = text.split(/[.!?]+/).filter((s) => s.trim().length > 0);
 
   if (sentences.length < MIN_SENTENCES_FOR_ANALYSIS) {
     return { variance: null, flag: false, reason: 'Too few sentences' };
   }
 
   // Count words in each sentence
-  const lengths = sentences.map(s => s.trim().split(/\s+/).filter(w => w.length > 0).length);
+  const lengths = sentences.map(
+    (s) =>
+      s
+        .trim()
+        .split(/\s+/)
+        .filter((w) => w.length > 0).length
+  );
 
   // Calculate mean and standard deviation
   const mean = lengths.reduce((a, b) => a + b, 0) / lengths.length;
@@ -305,7 +458,9 @@ export function analyzeSentenceVariance(text) {
     meanLength: Math.round(mean * 10) / 10,
     stdDev: Math.round(stdDev * 10) / 10,
     flag,
-    reason: flag ? `Low sentence variance (σ=${stdDev.toFixed(1)}, target >${MIN_SENTENCE_VARIANCE_THRESHOLD})` : null
+    reason: flag
+      ? `Low sentence variance (σ=${stdDev.toFixed(1)}, target >${MIN_SENTENCE_VARIANCE_THRESHOLD})`
+      : null,
   };
 }
 
@@ -317,7 +472,7 @@ export function analyzeSentenceVariance(text) {
 export function analyzeTypeTokenRatio(text) {
   // Normalize: lowercase, remove punctuation
   const normalized = text.toLowerCase().replace(/[^\w\s]/g, '');
-  const words = normalized.split(/\s+/).filter(w => w.length > 0);
+  const words = normalized.split(/\s+/).filter((w) => w.length > 0);
 
   if (words.length < MIN_WORDS_FOR_TTR) {
     return { ttr: null, flag: false, reason: 'Too few words' };
@@ -339,7 +494,7 @@ export function analyzeTypeTokenRatio(text) {
     return {
       ttr: Math.round(ttr * 100) / 100,
       flag: ttr < MIN_TTR_THRESHOLD,
-      reason: ttr < MIN_TTR_THRESHOLD ? `Low vocabulary diversity (TTR=${ttr.toFixed(2)})` : null
+      reason: ttr < MIN_TTR_THRESHOLD ? `Low vocabulary diversity (TTR=${ttr.toFixed(2)})` : null,
     };
   }
 
@@ -352,7 +507,9 @@ export function analyzeTypeTokenRatio(text) {
     ttr: Math.round(avgTTR * 100) / 100,
     wordCount: words.length,
     flag,
-    reason: flag ? `Low vocabulary diversity (TTR=${avgTTR.toFixed(2)}, target >${MIN_TTR_THRESHOLD})` : null
+    reason: flag
+      ? `Low vocabulary diversity (TTR=${avgTTR.toFixed(2)}, target >${MIN_TTR_THRESHOLD})`
+      : null,
   };
 }
 
@@ -409,21 +566,26 @@ export function calculateSlopScore(text) {
   const topOffenders = [];
 
   // Add most impactful patterns first
-  slop.fillerPhrases.slice(0, 3).forEach(p =>
-    topOffenders.push({ pattern: p, category: 'filler-phrase' }));
-  slop.genericBoosters.slice(0, 3).forEach(p =>
-    topOffenders.push({ pattern: p, category: 'generic-booster' }));
-  slop.buzzwords.slice(0, 3).forEach(p =>
-    topOffenders.push({ pattern: p, category: 'buzzword' }));
-  slop.sycophantic.slice(0, 2).forEach(p =>
-    topOffenders.push({ pattern: p, category: 'sycophantic' }));
+  slop.fillerPhrases
+    .slice(0, 3)
+    .forEach((p) => topOffenders.push({ pattern: p, category: 'filler-phrase' }));
+  slop.genericBoosters
+    .slice(0, 3)
+    .forEach((p) => topOffenders.push({ pattern: p, category: 'generic-booster' }));
+  slop.buzzwords
+    .slice(0, 3)
+    .forEach((p) => topOffenders.push({ pattern: p, category: 'buzzword' }));
+  slop.sycophantic
+    .slice(0, 2)
+    .forEach((p) => topOffenders.push({ pattern: p, category: 'sycophantic' }));
 
   if (slop.emDashes > 0) {
     topOffenders.push({ pattern: `${slop.emDashes} em-dash(es)`, category: 'em-dash' });
   }
 
-  slop.structural.patterns.slice(0, 2).forEach(p =>
-    topOffenders.push({ pattern: p, category: 'structural' }));
+  slop.structural.patterns
+    .slice(0, 2)
+    .forEach((p) => topOffenders.push({ pattern: p, category: 'structural' }));
 
   return {
     score: totalScore,
@@ -434,23 +596,23 @@ export function calculateSlopScore(text) {
         score: lexicalScore,
         maxScore: 40,
         patterns: lexicalPatternCount,
-        emDashes: slop.emDashes
+        emDashes: slop.emDashes,
       },
       structural: {
         score: structuralScore,
         maxScore: 25,
-        patterns: slop.structural.patterns
+        patterns: slop.structural.patterns,
       },
       stylometric: {
         score: stylometricScore,
         maxScore: 15,
         issues: stylometricIssues,
         sentenceVariance: sentenceAnalysis.stdDev,
-        ttr: ttrAnalysis.ttr
-      }
+        ttr: ttrAnalysis.ttr,
+      },
     },
     topOffenders: topOffenders.slice(0, 10),
-    details: slop
+    details: slop,
   };
 }
 
@@ -488,8 +650,9 @@ export function getSlopPenalty(text) {
 
   // Add specific examples
   if (slopResult.topOffenders.length > 0) {
-    const examples = slopResult.topOffenders.slice(0, 3)
-      .map(o => `"${o.pattern}"`)
+    const examples = slopResult.topOffenders
+      .slice(0, 3)
+      .map((o) => `"${o.pattern}"`)
       .join(', ');
     issues.push(`Examples: ${examples}`);
   }
@@ -499,7 +662,6 @@ export function getSlopPenalty(text) {
     issues,
     slopScore: slopResult.score,
     severity: slopResult.severity,
-    details: slopResult
+    details: slopResult,
   };
 }
-

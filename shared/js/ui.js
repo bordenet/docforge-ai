@@ -16,13 +16,13 @@ export function showToast(message, type = 'info', duration = 3000) {
   const colors = {
     success: 'bg-green-600',
     error: 'bg-red-600',
-    info: 'bg-blue-600'
+    info: 'bg-blue-600',
   };
 
   const icons = {
     success: '✓',
     error: '✕',
-    info: 'ℹ'
+    info: 'ℹ',
   };
 
   const toast = document.createElement('div');
@@ -70,13 +70,17 @@ export function hideLoading() {
  */
 export function escapeHtml(str) {
   if (!str) return '';
-  return str.replace(/[&<>"']/g, char => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    '\'': '&#039;'
-  })[char]);
+  return str.replace(
+    /[&<>"']/g,
+    (char) =>
+      ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;',
+      })[char]
+  );
 }
 
 /**
@@ -91,7 +95,7 @@ export function formatDate(date) {
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   });
 }
 
@@ -153,4 +157,3 @@ export function downloadFile(content, filename, mimeType = 'text/plain') {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
-

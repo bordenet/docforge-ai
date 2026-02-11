@@ -15,7 +15,7 @@ export const powerStatementPlugin = {
       label: 'Product/Service Name',
       type: 'text',
       required: true,
-      placeholder: 'e.g., Acme DataSync Pro'
+      placeholder: 'e.g., Acme DataSync Pro',
     },
     {
       id: 'customerType',
@@ -27,8 +27,8 @@ export const powerStatementPlugin = {
         { value: 'smb', label: 'SMB' },
         { value: 'consumer', label: 'Consumer' },
         { value: 'developer', label: 'Developer' },
-        { value: 'other', label: 'Other' }
-      ]
+        { value: 'other', label: 'Other' },
+      ],
     },
     {
       id: 'problem',
@@ -36,7 +36,7 @@ export const powerStatementPlugin = {
       type: 'textarea',
       required: true,
       rows: 3,
-      placeholder: 'What specific problem does your customer face?'
+      placeholder: 'What specific problem does your customer face?',
     },
     {
       id: 'outcome',
@@ -44,7 +44,7 @@ export const powerStatementPlugin = {
       type: 'textarea',
       required: true,
       rows: 2,
-      placeholder: 'What outcome does the customer want to achieve?'
+      placeholder: 'What outcome does the customer want to achieve?',
     },
     {
       id: 'proofPoints',
@@ -52,7 +52,7 @@ export const powerStatementPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'Metrics, case studies, testimonials that prove value...'
+      placeholder: 'Metrics, case studies, testimonials that prove value...',
     },
     {
       id: 'differentiators',
@@ -60,7 +60,7 @@ export const powerStatementPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'What makes your solution unique vs. alternatives?'
+      placeholder: 'What makes your solution unique vs. alternatives?',
     },
     {
       id: 'objections',
@@ -68,15 +68,31 @@ export const powerStatementPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'What objections do you typically hear? How do you address them?'
-    }
+      placeholder: 'What objections do you typically hear? How do you address them?',
+    },
   ],
 
   scoringDimensions: [
-    { name: 'Clarity', maxPoints: 25, description: 'Plain language, conversational tone, no jargon' },
-    { name: 'Impact', maxPoints: 25, description: 'Customer outcomes, quantified results, credible proof' },
-    { name: 'Action', maxPoints: 25, description: 'Problem clarity, solution specificity, differentiation' },
-    { name: 'Specificity', maxPoints: 25, description: 'Metrics, customer type clarity, objection handling' }
+    {
+      name: 'Clarity',
+      maxPoints: 25,
+      description: 'Plain language, conversational tone, no jargon',
+    },
+    {
+      name: 'Impact',
+      maxPoints: 25,
+      description: 'Customer outcomes, quantified results, credible proof',
+    },
+    {
+      name: 'Action',
+      maxPoints: 25,
+      description: 'Problem clarity, solution specificity, differentiation',
+    },
+    {
+      name: 'Specificity',
+      maxPoints: 25,
+      description: 'Metrics, customer type clarity, objection handling',
+    },
   ],
 
   validateDocument: null,
@@ -84,10 +100,27 @@ export const powerStatementPlugin = {
   workflowConfig: {
     phaseCount: 3,
     phases: [
-      { number: 1, name: 'Initial Draft', icon: '📝', aiModel: 'Claude', description: 'Generate power statement draft' },
-      { number: 2, name: 'Sales Perspective', icon: '🔍', aiModel: 'Gemini', description: 'Sharpen with Gemini' },
-      { number: 3, name: 'Final Statement', icon: '✨', aiModel: 'Claude', description: 'Combine into polished statement' }
-    ]
-  }
+      {
+        number: 1,
+        name: 'Initial Draft',
+        icon: '📝',
+        aiModel: 'Claude',
+        description: 'Generate power statement draft',
+      },
+      {
+        number: 2,
+        name: 'Sales Perspective',
+        icon: '🔍',
+        aiModel: 'Gemini',
+        description: 'Sharpen with Gemini',
+      },
+      {
+        number: 3,
+        name: 'Final Statement',
+        icon: '✨',
+        aiModel: 'Claude',
+        description: 'Combine into polished statement',
+      },
+    ],
+  },
 };
-

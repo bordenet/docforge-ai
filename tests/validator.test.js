@@ -11,7 +11,7 @@ import {
   getGrade,
   getScoreColor,
   getScoreLabel,
-  calculateSlopScore
+  calculateSlopScore,
 } from '../shared/js/validator.js';
 
 describe('Validator Module', () => {
@@ -19,13 +19,13 @@ describe('Validator Module', () => {
     test('detects problem section', () => {
       const text = '# Problem\nWe have a challenge with X.';
       const result = detectSections(text);
-      expect(result.found.some(s => s.name === 'Problem/Challenge')).toBe(true);
+      expect(result.found.some((s) => s.name === 'Problem/Challenge')).toBe(true);
     });
 
     test('detects solution section', () => {
       const text = '## Solution\nWe will implement Y.';
       const result = detectSections(text);
-      expect(result.found.some(s => s.name === 'Solution/Proposal')).toBe(true);
+      expect(result.found.some((s) => s.name === 'Solution/Proposal')).toBe(true);
     });
 
     test('detects multiple sections', () => {
@@ -87,8 +87,8 @@ We will fix it.
     const mockPlugin = {
       scoringDimensions: [
         { name: 'Quality', maxPoints: 50, description: 'Quality' },
-        { name: 'Structure', maxPoints: 50, description: 'Structure' }
-      ]
+        { name: 'Structure', maxPoints: 50, description: 'Structure' },
+      ],
     };
 
     test('returns zero score for empty text', () => {
@@ -244,4 +244,3 @@ Phase 2: Q2 2024
     });
   });
 });
-

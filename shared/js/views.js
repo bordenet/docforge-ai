@@ -14,13 +14,15 @@ import { escapeHtml, formatDate } from './ui.js';
  */
 export function getPhaseMetadata(plugin, phaseNumber) {
   const phases = plugin.workflowConfig?.phases || [];
-  return phases.find(p => p.number === phaseNumber) || {
-    number: phaseNumber,
-    name: `Phase ${phaseNumber}`,
-    icon: '📝',
-    aiModel: 'Claude',
-    description: `Complete phase ${phaseNumber}`
-  };
+  return (
+    phases.find((p) => p.number === phaseNumber) || {
+      number: phaseNumber,
+      name: `Phase ${phaseNumber}`,
+      icon: '📝',
+      aiModel: 'Claude',
+      description: `Complete phase ${phaseNumber}`,
+    }
+  );
 }
 
 /**
@@ -30,15 +32,16 @@ export function getPhaseMetadata(plugin, phaseNumber) {
  * @returns {string} HTML
  */
 export function renderListView(plugin, projects) {
-  const projectCards = projects.length === 0
-    ? `<div class="text-center py-12 text-gray-500 dark:text-gray-400">
+  const projectCards =
+    projects.length === 0
+      ? `<div class="text-center py-12 text-gray-500 dark:text-gray-400">
         <p class="text-lg mb-4">No ${plugin.name} projects yet</p>
         <a href="#new" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
           <span class="mr-2">+</span> Create Your First ${plugin.name}
         </a>
       </div>`
-    : `<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        ${projects.map(p => renderProjectCard(p)).join('')}
+      : `<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        ${projects.map((p) => renderProjectCard(p)).join('')}
       </div>`;
 
   return `
@@ -63,27 +66,35 @@ function renderProjectCard(project) {
   const title = project.title || project.formData?.title || 'Untitled';
 
   // Calculate phase completion
-  const isComplete = project.phases &&
+  const isComplete =
+    project.phases &&
     project.phases[1]?.completed &&
     project.phases[2]?.completed &&
     project.phases[3]?.completed;
 
-  const completedPhases = [1, 2, 3].filter(p => project.phases?.[p]?.completed).length;
+  const completedPhases = [1, 2, 3].filter((p) => project.phases?.[p]?.completed).length;
 
   // Get a description from form data if available
-  const description = project.formData?.problemStatement ||
+  const description =
+    project.formData?.problemStatement ||
     project.formData?.description ||
     project.formData?.context ||
     '';
 
   // Progress bar segments
-  const progressBar = [1, 2, 3].map(phase => {
-    const isPhaseComplete = project.phases?.[phase]?.completed;
-    const currentPhase = project.currentPhase || 1;
-    const isCurrent = phase === currentPhase && !isPhaseComplete;
-    const colorClass = isPhaseComplete ? 'bg-green-500' : isCurrent ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600';
-    return `<div class="flex-1 h-1.5 rounded ${colorClass}"></div>`;
-  }).join('');
+  const progressBar = [1, 2, 3]
+    .map((phase) => {
+      const isPhaseComplete = project.phases?.[phase]?.completed;
+      const currentPhase = project.currentPhase || 1;
+      const isCurrent = phase === currentPhase && !isPhaseComplete;
+      const colorClass = isPhaseComplete
+        ? 'bg-green-500'
+        : isCurrent
+          ? 'bg-blue-500'
+          : 'bg-gray-300 dark:bg-gray-600';
+      return `<div class="flex-1 h-1.5 rounded ${colorClass}"></div>`;
+    })
+    .join('');
 
   return `
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow cursor-pointer" data-project-id="${project.id}">
@@ -93,14 +104,18 @@ function renderProjectCard(project) {
             ${escapeHtml(title)}
           </h3>
           <div class="flex items-center space-x-2">
-            ${isComplete ? `
+            ${
+              isComplete
+                ? `
             <button class="preview-project-btn text-gray-400 hover:text-blue-600 transition-colors" data-project-id="${project.id}" title="Preview & Copy">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
               </svg>
             </button>
-            ` : ''}
+            `
+                : ''
+            }
             <button class="delete-project-btn text-gray-400 hover:text-red-600 transition-colors" data-delete="${project.id}" title="Delete">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
@@ -117,11 +132,15 @@ function renderProjectCard(project) {
           <span class="text-xs text-gray-500 dark:text-gray-400">${completedPhases}/3 phases complete</span>
         </div>
 
-        ${description ? `
+        ${
+          description
+            ? `
         <p class="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
           ${escapeHtml(description)}
         </p>
-        ` : ''}
+        `
+            : ''
+        }
 
         <div class="text-xs text-gray-500 dark:text-gray-400">
           Updated ${formatDate(project.updatedAt)}
@@ -153,13 +172,17 @@ export function renderNewView(plugin, existingData = {}, templates = []) {
     </button>
   `;
 
-  const templateSelector = templates.length > 0 ? `
+  const templateSelector =
+    templates.length > 0
+      ? `
     <div class="mb-6">
       <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
         Choose a Template
       </label>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="template-selector">
-        ${templates.map(t => `
+        ${templates
+          .map(
+            (t) => `
           <button type="button"
             class="template-btn p-3 border-2 rounded-lg text-center transition-all hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 ${t.id === 'blank' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-600'}"
             data-template-id="${t.id}">
@@ -167,11 +190,14 @@ export function renderNewView(plugin, existingData = {}, templates = []) {
             <span class="text-sm font-medium text-gray-900 dark:text-white block">${escapeHtml(t.name)}</span>
             <span class="text-xs text-gray-500 dark:text-gray-400">${escapeHtml(t.description)}</span>
           </button>
-        `).join('')}
+        `
+          )
+          .join('')}
         ${importTile}
       </div>
     </div>
-  ` : '';
+  `
+      : '';
 
   return `
     <div class="max-w-3xl mx-auto">
@@ -212,21 +238,23 @@ export function renderProjectView(plugin, project) {
   const phases = plugin.workflowConfig?.phases || [];
 
   // Generate phase tabs
-  const phaseTabs = phases.map((phase) => {
-    const num = phase.number;
-    const isComplete = project.phases?.[num]?.completed || false;
-    const isActive = currentPhase === num;
-    const activeClass = isActive
-      ? 'border-b-2 border-blue-600 text-blue-600 dark:text-blue-400'
-      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200';
-    return `
+  const phaseTabs = phases
+    .map((phase) => {
+      const num = phase.number;
+      const isComplete = project.phases?.[num]?.completed || false;
+      const isActive = currentPhase === num;
+      const activeClass = isActive
+        ? 'border-b-2 border-blue-600 text-blue-600 dark:text-blue-400'
+        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200';
+      return `
       <button class="phase-tab px-6 py-3 font-medium transition-colors ${activeClass}" data-phase="${num}">
         <span class="mr-2">${phase.icon}</span>
         Phase ${num}
         ${isComplete ? '<span class="ml-2 text-green-500">✓</span>' : ''}
       </button>
     `;
-  }).join('');
+    })
+    .join('');
 
   return `
     <div class="max-w-4xl mx-auto">
@@ -344,15 +372,21 @@ export function renderPhaseContent(plugin, project, phase) {
         >${escapeHtml(phaseData.response || '')}</textarea>
 
         <div class="mt-3 flex justify-between items-center">
-          ${phaseData.completed && phase < 3 ? `
+          ${
+            phaseData.completed && phase < 3
+              ? `
             <button id="next-phase-btn" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
               Next Phase →
             </button>
-          ` : phase < 3 ? `
+          `
+              : phase < 3
+                ? `
             <span class="text-sm text-gray-600 dark:text-gray-400">
               ${phaseData.prompt ? 'Paste response to complete this phase' : 'Copy prompt first, then paste response'}
             </span>
-          ` : '<span></span>'}
+          `
+                : '<span></span>'
+          }
           <button id="save-response-btn" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" ${!phaseData.prompt ? 'disabled' : ''}>
             Save Response
           </button>
@@ -361,4 +395,3 @@ export function renderPhaseContent(plugin, project, phase) {
     </div>
   `;
 }
-

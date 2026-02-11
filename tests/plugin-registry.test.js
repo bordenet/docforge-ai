@@ -8,11 +8,10 @@ import {
   getAllPlugins,
   getDefaultPlugin,
   hasPlugin,
-  getPluginIds
+  getPluginIds,
 } from '../shared/js/plugin-registry.js';
 
 describe('Plugin Registry', () => {
-
   describe('getPluginIds', () => {
     it('should return all 9 document type IDs', () => {
       const ids = getPluginIds();
@@ -57,10 +56,18 @@ describe('Plugin Registry', () => {
     });
 
     it('should have required properties on all plugins', () => {
-      const requiredProps = ['id', 'name', 'icon', 'description', 'dbName', 'formFields', 'scoringDimensions'];
+      const requiredProps = [
+        'id',
+        'name',
+        'icon',
+        'description',
+        'dbName',
+        'formFields',
+        'scoringDimensions',
+      ];
 
-      getAllPlugins().forEach(plugin => {
-        requiredProps.forEach(prop => {
+      getAllPlugins().forEach((plugin) => {
+        requiredProps.forEach((prop) => {
           expect(plugin).toHaveProperty(prop);
         });
       });
@@ -76,14 +83,14 @@ describe('Plugin Registry', () => {
 
     it('should return plugins with unique IDs', () => {
       const plugins = getAllPlugins();
-      const ids = plugins.map(p => p.id);
+      const ids = plugins.map((p) => p.id);
       const uniqueIds = [...new Set(ids)];
       expect(ids).toEqual(uniqueIds);
     });
 
     it('should return plugins with unique dbNames', () => {
       const plugins = getAllPlugins();
-      const dbNames = plugins.map(p => p.dbName);
+      const dbNames = plugins.map((p) => p.dbName);
       const uniqueDbNames = [...new Set(dbNames)];
       expect(dbNames).toEqual(uniqueDbNames);
     });
@@ -99,16 +106,16 @@ describe('Plugin Registry', () => {
 
   describe('Plugin formFields', () => {
     it('should have at least one required field per plugin', () => {
-      getAllPlugins().forEach(plugin => {
-        const requiredFields = plugin.formFields.filter(f => f.required);
+      getAllPlugins().forEach((plugin) => {
+        const requiredFields = plugin.formFields.filter((f) => f.required);
         expect(requiredFields.length).toBeGreaterThan(0);
       });
     });
 
     it('should have valid field types', () => {
       const validTypes = ['text', 'textarea', 'select'];
-      getAllPlugins().forEach(plugin => {
-        plugin.formFields.forEach(field => {
+      getAllPlugins().forEach((plugin) => {
+        plugin.formFields.forEach((field) => {
           expect(validTypes).toContain(field.type);
         });
       });
@@ -117,17 +124,16 @@ describe('Plugin Registry', () => {
 
   describe('Plugin scoringDimensions', () => {
     it('should have dimensions that sum to 100 points', () => {
-      getAllPlugins().forEach(plugin => {
+      getAllPlugins().forEach((plugin) => {
         const total = plugin.scoringDimensions.reduce((sum, d) => sum + d.maxPoints, 0);
         expect(total).toBe(100);
       });
     });
 
     it('should have at least 3 dimensions per plugin', () => {
-      getAllPlugins().forEach(plugin => {
+      getAllPlugins().forEach((plugin) => {
         expect(plugin.scoringDimensions.length).toBeGreaterThanOrEqual(3);
       });
     });
   });
 });
-

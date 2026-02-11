@@ -15,7 +15,7 @@ import {
   GENERIC_BOOSTERS,
   BUZZWORDS,
   FILLER_PHRASES,
-  HEDGE_PATTERNS
+  HEDGE_PATTERNS,
 } from '../shared/js/slop-detection.js';
 
 // ============================================================================
@@ -51,9 +51,9 @@ describe('detectPatterns', () => {
   });
 
   test('detects phrase patterns', () => {
-    const text = 'It\'s important to note that this is easy to use.';
-    const patterns = detectPatterns(text, ['it\'s important to note that', 'easy to use']);
-    expect(patterns).toContain('it\'s important to note that');
+    const text = "It's important to note that this is easy to use.";
+    const patterns = detectPatterns(text, ["it's important to note that", 'easy to use']);
+    expect(patterns).toContain("it's important to note that");
     expect(patterns).toContain('easy to use');
   });
 
@@ -106,21 +106,24 @@ describe('detectAISlop', () => {
 // ============================================================================
 describe('detectStructuralPatterns', () => {
   test('detects formulaic introduction', () => {
-    const text = 'In today\'s fast-paced world, we need to be agile. This document will outline our approach.';
+    const text =
+      "In today's fast-paced world, we need to be agile. This document will outline our approach.";
     const result = detectStructuralPatterns(text);
 
     expect(result.patterns).toContain('formulaic-introduction');
   });
 
   test('detects over-signposting', () => {
-    const text = 'As mentioned earlier, we need to consider this. In this section, we will explore more.';
+    const text =
+      'As mentioned earlier, we need to consider this. In this section, we will explore more.';
     const result = detectStructuralPatterns(text);
 
-    expect(result.patterns.some(p => p.includes('over-signposting'))).toBe(true);
+    expect(result.patterns.some((p) => p.includes('over-signposting'))).toBe(true);
   });
 
   test('returns empty for clean structure', () => {
-    const text = '## Purpose\nThis defines requirements.\n\n## Requirements\n- Feature A\n- Feature B';
+    const text =
+      '## Purpose\nThis defines requirements.\n\n## Requirements\n- Feature A\n- Feature B';
     const result = detectStructuralPatterns(text);
 
     expect(result.count).toBe(0);
@@ -140,7 +143,8 @@ describe('analyzeSentenceVariance', () => {
   });
 
   test('does not flag varied sentence lengths', () => {
-    const text = 'Short. This is a medium length sentence with more words. And here is a much longer sentence that contains many more words and provides significant variation in the document structure overall.';
+    const text =
+      'Short. This is a medium length sentence with more words. And here is a much longer sentence that contains many more words and provides significant variation in the document structure overall.';
     const result = analyzeSentenceVariance(text);
 
     // Varied lengths should have higher stdDev
@@ -185,7 +189,8 @@ describe('analyzeTypeTokenRatio', () => {
 // ============================================================================
 describe('calculateSlopScore', () => {
   test('returns clean score for good text', () => {
-    const text = 'Response time must be under 200ms. Support 10000 concurrent users. Uptime target is 99.9%.';
+    const text =
+      'Response time must be under 200ms. Support 10000 concurrent users. Uptime target is 99.9%.';
     const result = calculateSlopScore(text);
 
     expect(result.severity).toBe('clean');
@@ -221,7 +226,8 @@ describe('calculateSlopScore', () => {
 // ============================================================================
 describe('getSlopPenalty', () => {
   test('returns zero penalty for clean text', () => {
-    const text = 'Response time must be under 200ms. API supports 10000 concurrent requests per second.';
+    const text =
+      'Response time must be under 200ms. API supports 10000 concurrent requests per second.';
     const result = getSlopPenalty(text);
 
     expect(result.penalty).toBe(0);
@@ -252,7 +258,7 @@ describe('getSlopPenalty', () => {
     const text = 'The system is robust, seamless, and powerful.';
     const result = getSlopPenalty(text);
 
-    expect(result.issues.some(i => i.includes('Examples:'))).toBe(true);
+    expect(result.issues.some((i) => i.includes('Examples:'))).toBe(true);
   });
 });
 
@@ -275,8 +281,8 @@ describe('Pattern lists', () => {
   });
 
   test('FILLER_PHRASES includes common AI phrases', () => {
-    expect(FILLER_PHRASES).toContain('it\'s important to note that');
-    expect(FILLER_PHRASES).toContain('let\'s explore');
+    expect(FILLER_PHRASES).toContain("it's important to note that");
+    expect(FILLER_PHRASES).toContain("let's explore");
     expect(FILLER_PHRASES).toContain('in order to');
   });
 
@@ -286,4 +292,3 @@ describe('Pattern lists', () => {
     expect(HEDGE_PATTERNS).toContain('seems to');
   });
 });
-

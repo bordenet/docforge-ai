@@ -9,7 +9,7 @@ import {
   renderListView,
   renderNewView,
   renderProjectView,
-  renderPhaseContent
+  renderPhaseContent,
 } from '../shared/js/views.js';
 
 // Mock plugin configuration for testing
@@ -20,17 +20,48 @@ const mockPlugin = {
   description: 'Test plugin for unit tests',
   dbName: 'test-docforge-db',
   formFields: [
-    { id: 'title', label: 'Project Title', type: 'text', required: true, placeholder: 'Enter title' },
-    { id: 'description', label: 'Description', type: 'textarea', required: false, rows: 3, placeholder: 'Enter description' }
+    {
+      id: 'title',
+      label: 'Project Title',
+      type: 'text',
+      required: true,
+      placeholder: 'Enter title',
+    },
+    {
+      id: 'description',
+      label: 'Description',
+      type: 'textarea',
+      required: false,
+      rows: 3,
+      placeholder: 'Enter description',
+    },
   ],
   workflowConfig: {
     phaseCount: 3,
     phases: [
-      { number: 1, name: 'Initial Draft', icon: '📝', aiModel: 'Claude', description: 'Generate the first draft' },
-      { number: 2, name: 'Review', icon: '🔍', aiModel: 'Gemini', description: 'Get improvements from Gemini' },
-      { number: 3, name: 'Final Synthesis', icon: '✨', aiModel: 'Claude', description: 'Create final version' }
-    ]
-  }
+      {
+        number: 1,
+        name: 'Initial Draft',
+        icon: '📝',
+        aiModel: 'Claude',
+        description: 'Generate the first draft',
+      },
+      {
+        number: 2,
+        name: 'Review',
+        icon: '🔍',
+        aiModel: 'Gemini',
+        description: 'Get improvements from Gemini',
+      },
+      {
+        number: 3,
+        name: 'Final Synthesis',
+        icon: '✨',
+        aiModel: 'Claude',
+        description: 'Create final version',
+      },
+    ],
+  },
 };
 
 // Mock project data
@@ -41,7 +72,7 @@ const mockProject = {
   currentPhase: 1,
   phases: {},
   createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString()
+  updatedAt: new Date().toISOString(),
 };
 
 const completedProject = {
@@ -52,10 +83,10 @@ const completedProject = {
   phases: {
     1: { prompt: 'Phase 1 prompt', response: 'Phase 1 response', completed: true },
     2: { prompt: 'Phase 2 prompt', response: 'Phase 2 response', completed: true },
-    3: { prompt: 'Phase 3 prompt', response: 'Phase 3 response', completed: true }
+    3: { prompt: 'Phase 3 prompt', response: 'Phase 3 response', completed: true },
   },
   createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString()
+  updatedAt: new Date().toISOString(),
 };
 
 describe('Views Module', () => {
@@ -187,7 +218,7 @@ describe('Views Module', () => {
     test('should render template selector when templates provided', () => {
       const templates = [
         { id: 'blank', name: 'Blank', icon: '📝', description: 'Start fresh' },
-        { id: 'example', name: 'Example', icon: '💡', description: 'Use example' }
+        { id: 'example', name: 'Example', icon: '💡', description: 'Use example' },
       ];
       const html = renderNewView(mockPlugin, {}, templates);
       expect(html).toContain('template-selector');
@@ -307,7 +338,7 @@ describe('Views Module', () => {
     test('should render next phase button for completed non-final phases', () => {
       const phaseComplete = {
         ...mockProject,
-        phases: { 1: { prompt: 'p', response: 'r', completed: true } }
+        phases: { 1: { prompt: 'p', response: 'r', completed: true } },
       };
       const html = renderPhaseContent(mockPlugin, phaseComplete, 1);
       expect(html).toContain('next-phase-btn');
@@ -329,7 +360,7 @@ describe('Views Module', () => {
     test('should not render completion banner for incomplete phase 3', () => {
       const incompletePhase3 = {
         ...mockProject,
-        phases: { 1: { completed: true }, 2: { completed: true }, 3: { completed: false } }
+        phases: { 1: { completed: true }, 2: { completed: true }, 3: { completed: false } },
       };
       const html = renderPhaseContent(mockPlugin, incompletePhase3, 3);
       expect(html).not.toContain('Your Test Document is Complete');
@@ -362,4 +393,3 @@ describe('Views Module', () => {
     });
   });
 });
-

@@ -8,7 +8,7 @@ import {
   convertHtmlToMarkdown,
   getImportModalHtml,
   showImportModal,
-  normalizeMarkdown
+  normalizeMarkdown,
 } from '../shared/js/import-document.js';
 
 describe('Import Document Module', () => {
@@ -58,7 +58,8 @@ describe('Import Document Module', () => {
 
     test('should preserve plain markdown without escaping', () => {
       // When user pastes markdown, browser wraps it in divs
-      const html = '<div># My Document Title</div><div></div><div>## Section 1</div><div>Some content here.</div>';
+      const html =
+        '<div># My Document Title</div><div></div><div>## Section 1</div><div>Some content here.</div>';
       const result = convertHtmlToMarkdown(html);
       // Should NOT escape the # character
       expect(result).toContain('# My Document Title');
@@ -81,7 +82,8 @@ describe('Import Document Module', () => {
     });
 
     test('should preserve markdown code blocks', () => {
-      const html = '<div>Here is `inline code` and:</div><div>```javascript</div><div>const x = 1;</div><div>```</div>';
+      const html =
+        '<div>Here is `inline code` and:</div><div>```javascript</div><div>const x = 1;</div><div>```</div>';
       const result = convertHtmlToMarkdown(html);
       expect(result).toContain('`inline code`');
       expect(result).toContain('```');
@@ -110,7 +112,8 @@ describe('Import Document Module', () => {
     });
 
     test('should preserve markdown tables', () => {
-      const html = '<div>| Option | Price |</div><div>|----|----|</div><div>| Framework | $1,500 |</div>';
+      const html =
+        '<div>| Option | Price |</div><div>|----|----|</div><div>| Framework | $1,500 |</div>';
       const result = convertHtmlToMarkdown(html);
       expect(result).toContain('| Option | Price |');
       expect(result).toContain('| Framework | $1,500 |');
@@ -236,7 +239,7 @@ Current development hardware (5-year-old Surface 4 with i7-11185G7, 16GB RAM) ca
     test('should include save button', () => {
       const html = getImportModalHtml('PR-FAQ');
       expect(html).toContain('import-save-btn');
-      expect(html).toContain('Save & Continue to Phase 2');  // Import skips to Phase 2 for review
+      expect(html).toContain('Save & Continue to Phase 2'); // Import skips to Phase 2 for review
     });
 
     test('should include cancel button', () => {
@@ -318,14 +321,14 @@ Current development hardware (5-year-old Surface 4 with i7-11185G7, 16GB RAM) ca
       await saveBtn.click();
 
       // Wait for async save
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
 
       // Verify save was called with correct structure
       expect(saveProject).toHaveBeenCalled();
       const savedData = saveProject.mock.calls[0][1];
-      expect(savedData.currentPhase).toBe(2);  // Should skip to Phase 2
-      expect(savedData.phases[1].completed).toBe(true);  // Phase 1 should be complete
-      expect(savedData.phases[1].response).toContain('My Document Title');  // Content saved
+      expect(savedData.currentPhase).toBe(2); // Should skip to Phase 2
+      expect(savedData.phases[1].completed).toBe(true); // Phase 1 should be complete
+      expect(savedData.phases[1].response).toContain('My Document Title'); // Content saved
       expect(savedData.isImported).toBe(true);
     });
 
@@ -357,13 +360,13 @@ Current development hardware (5-year-old Surface 4 with i7-11185G7, 16GB RAM) ca
       await saveBtn.click();
 
       // Wait for async save
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
 
       // normalizeMarkdown adds "# One-Pager" when no H1 is present
       // extractTitleFromMarkdown then extracts "One-Pager" from that H1
       expect(saveProject).toHaveBeenCalled();
       const savedData = saveProject.mock.calls[0][1];
-      expect(savedData.title).toBe('One-Pager');  // Title extracted from auto-added H1
+      expect(savedData.title).toBe('One-Pager'); // Title extracted from auto-added H1
       expect(savedData.currentPhase).toBe(2);
       expect(savedData.phases[1].completed).toBe(true);
     });
@@ -398,7 +401,7 @@ We will use React Query for all API state management.`;
       await saveBtn.click();
 
       // Wait for async save
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
 
       // Verify title is extracted from H1
       expect(saveProject).toHaveBeenCalled();
@@ -407,4 +410,3 @@ We will use React Query for all API state management.`;
     });
   });
 });
-

@@ -1,9 +1,9 @@
 /**
  * Template/Form Field Alignment Tests
- * 
+ *
  * These tests verify that ALL template variables in prompt templates
  * have corresponding form field IDs in plugin configs.
- * 
+ *
  * This prevents the critical bug where prompts are generated with
  * unsubstituted {{VARIABLE}} placeholders.
  */
@@ -22,16 +22,11 @@ const PLUGIN_IDS = [
   'acceptance-criteria',
   'jd',
   'business-justification',
-  'strategic-proposal'
+  'strategic-proposal',
 ];
 
 // Reserved template variables that don't come from form fields
-const RESERVED_VARIABLES = [
-  'PHASE1_OUTPUT',
-  'PHASE2_OUTPUT',
-  'PHASE1_RESPONSE',
-  'PHASE2_RESPONSE'
-];
+const RESERVED_VARIABLES = ['PHASE1_OUTPUT', 'PHASE2_OUTPUT', 'PHASE1_RESPONSE', 'PHASE2_RESPONSE'];
 
 /**
  * Convert UPPER_SNAKE_CASE to camelCase
@@ -46,7 +41,7 @@ function toCamelCase(str) {
  */
 function extractTemplateVariables(template) {
   const matches = template.match(/\{\{(\w+)\}\}/g) || [];
-  return [...new Set(matches.map(m => m.replace(/[{}]/g, '')))];
+  return [...new Set(matches.map((m) => m.replace(/[{}]/g, '')))];
 }
 
 /**
@@ -57,12 +52,10 @@ async function getFormFieldIds(pluginId) {
   if (!existsSync(configPath)) {
     throw new Error(`Config not found: ${configPath}`);
   }
-  
+
   const configContent = readFileSync(configPath, 'utf-8');
   const idMatches = configContent.match(/id:\s*['"]([^'"]+)['"]/g) || [];
-  return idMatches
-    .map(m => m.match(/id:\s*['"]([^'"]+)['"]/)[1])
-    .filter(id => id !== pluginId); // Exclude the plugin ID itself
+  return idMatches.map((m) => m.match(/id:\s*['"]([^'"]+)['"]/)[1]).filter((id) => id !== pluginId); // Exclude the plugin ID itself
 }
 
 /**
@@ -77,111 +70,112 @@ function loadPromptTemplate(pluginId, phase) {
 }
 
 describe('Template/Form Field Alignment', () => {
-  
   describe('Phase 1 templates must have matching form fields', () => {
-    PLUGIN_IDS.forEach(pluginId => {
+    PLUGIN_IDS.forEach((pluginId) => {
       test(`${pluginId}: all Phase 1 template variables have matching form fields`, async () => {
         const template = loadPromptTemplate(pluginId, 1);
         if (!template) {
           console.warn(`No phase1.md found for ${pluginId}`);
           return;
         }
-        
+
         const templateVars = extractTemplateVariables(template);
         const formFieldIds = await getFormFieldIds(pluginId);
-        
+
         const missingVars = [];
-        
+
         for (const varName of templateVars) {
           if (RESERVED_VARIABLES.includes(varName)) continue;
-          
+
           const camelCase = toCamelCase(varName);
-          const hasMatch = formFieldIds.includes(camelCase) || 
-                          formFieldIds.includes(varName) ||
-                          formFieldIds.includes(varName.toLowerCase());
-          
+          const hasMatch =
+            formFieldIds.includes(camelCase) ||
+            formFieldIds.includes(varName) ||
+            formFieldIds.includes(varName.toLowerCase());
+
           if (!hasMatch) {
             missingVars.push({
               templateVar: varName,
               expectedFormField: camelCase,
-              availableFields: formFieldIds
+              availableFields: formFieldIds,
             });
           }
         }
-        
+
         expect(missingVars).toEqual([]);
       });
     });
   });
 
   describe('Phase 2 templates must have matching form fields or phase outputs', () => {
-    PLUGIN_IDS.forEach(pluginId => {
+    PLUGIN_IDS.forEach((pluginId) => {
       test(`${pluginId}: all Phase 2 template variables are valid`, async () => {
         const template = loadPromptTemplate(pluginId, 2);
         if (!template) {
           console.warn(`No phase2.md found for ${pluginId}`);
           return;
         }
-        
+
         const templateVars = extractTemplateVariables(template);
         const formFieldIds = await getFormFieldIds(pluginId);
-        
+
         const missingVars = [];
-        
+
         for (const varName of templateVars) {
           if (RESERVED_VARIABLES.includes(varName)) continue;
-          
+
           const camelCase = toCamelCase(varName);
-          const hasMatch = formFieldIds.includes(camelCase) || 
-                          formFieldIds.includes(varName) ||
-                          formFieldIds.includes(varName.toLowerCase());
-          
+          const hasMatch =
+            formFieldIds.includes(camelCase) ||
+            formFieldIds.includes(varName) ||
+            formFieldIds.includes(varName.toLowerCase());
+
           if (!hasMatch) {
             missingVars.push({
               templateVar: varName,
-              expectedFormField: camelCase
+              expectedFormField: camelCase,
             });
           }
         }
-        
+
         expect(missingVars).toEqual([]);
       });
     });
   });
 
   describe('Phase 3 templates must have matching form fields or phase outputs', () => {
-    PLUGIN_IDS.forEach(pluginId => {
+    PLUGIN_IDS.forEach((pluginId) => {
       test(`${pluginId}: all Phase 3 template variables are valid`, async () => {
         const template = loadPromptTemplate(pluginId, 3);
         if (!template) {
           console.warn(`No phase3.md found for ${pluginId}`);
           return;
         }
-        
+
         const templateVars = extractTemplateVariables(template);
         const formFieldIds = await getFormFieldIds(pluginId);
-        
+
         const missingVars = [];
-        
+
         for (const varName of templateVars) {
           if (RESERVED_VARIABLES.includes(varName)) continue;
-          
+
           const camelCase = toCamelCase(varName);
-          const hasMatch = formFieldIds.includes(camelCase) || 
-                          formFieldIds.includes(varName) ||
-                          formFieldIds.includes(varName.toLowerCase());
-          
+          const hasMatch =
+            formFieldIds.includes(camelCase) ||
+            formFieldIds.includes(varName) ||
+            formFieldIds.includes(varName.toLowerCase());
+
           if (!hasMatch) {
             missingVars.push({
               templateVar: varName,
-              expectedFormField: camelCase
+              expectedFormField: camelCase,
             });
           }
         }
-        
+
         expect(missingVars).toEqual([]);
       });
     });
   });
 });
-

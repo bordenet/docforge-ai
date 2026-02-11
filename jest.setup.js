@@ -16,8 +16,10 @@ const originalConsoleError = console.error;
 console.error = (...args) => {
   const message = args[0]?.toString?.() || '';
   // Suppress known jsdom limitations
-  if (message.includes('Not implemented: navigation') ||
-      message.includes('Error: Not implemented')) {
+  if (
+    message.includes('Not implemented: navigation') ||
+    message.includes('Error: Not implemented')
+  ) {
     return;
   }
   originalConsoleError.apply(console, args);
@@ -27,7 +29,7 @@ console.error = (...args) => {
 Object.defineProperty(globalThis, 'crypto', {
   value: webcrypto,
   writable: true,
-  configurable: true
+  configurable: true,
 });
 
 // Polyfill structuredClone for Node.js < 17
@@ -36,7 +38,7 @@ if (typeof global.structuredClone === 'undefined') {
 }
 
 // Global test utilities
-global.sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+global.sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Mock localStorage
 const localStorageMock = {
@@ -90,4 +92,3 @@ beforeEach(() => {
 afterEach(() => {
   jest.restoreAllMocks();
 });
-

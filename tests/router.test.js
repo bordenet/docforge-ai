@@ -9,7 +9,7 @@ const mockLocation = {
   search: '',
   hash: '',
   href: 'http://localhost/',
-  pathname: '/assistant/'
+  pathname: '/assistant/',
 };
 
 // Mock will be set up in beforeEach
@@ -43,7 +43,6 @@ import {
 } from '../shared/js/router.js';
 
 describe('Router', () => {
-
   describe('getCurrentDocumentType', () => {
     it('should return one-pager as default', () => {
       mockLocation.search = '';
@@ -215,4 +214,3 @@ describe('Router', () => {
     });
   });
 });
-

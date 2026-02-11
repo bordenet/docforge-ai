@@ -13,10 +13,9 @@ const DOC_TYPES = [
 ];
 
 test.describe('Validator', () => {
-
   test('loads without JavaScript errors', async ({ page }) => {
     const errors = [];
-    page.on('pageerror', error => errors.push(error.message));
+    page.on('pageerror', (error) => errors.push(error.message));
 
     await page.goto('/validator/?type=one-pager');
     await page.waitForLoadState('networkidle');
@@ -68,7 +67,9 @@ test.describe('Validator', () => {
 
     // Enter some content
     const editor = page.locator('#editor');
-    await editor.fill('# My One-Pager\\n\\n## Problem\\nThis is a test problem.\\n\\n## Solution\\nThis is a test solution.');
+    await editor.fill(
+      '# My One-Pager\\n\\n## Problem\\nThis is a test problem.\\n\\n## Solution\\nThis is a test solution.'
+    );
 
     // Click validate
     const validateBtn = page.locator('#btn-validate');
@@ -95,7 +96,7 @@ test.describe('Validator', () => {
   for (const docType of DOC_TYPES) {
     test(`loads ${docType.name} validator without errors`, async ({ page }) => {
       const errors = [];
-      page.on('pageerror', error => errors.push(error.message));
+      page.on('pageerror', (error) => errors.push(error.message));
 
       await page.goto(`/validator/?type=${docType.id}`);
       await page.waitForLoadState('networkidle');
@@ -103,6 +104,4 @@ test.describe('Validator', () => {
       expect(errors).toHaveLength(0);
     });
   }
-
 });
-

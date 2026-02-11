@@ -10,13 +10,17 @@
  */
 function escapeHtml(str) {
   if (!str) return '';
-  return str.replace(/[&<>"']/g, char => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    '\'': '&#039;'
-  })[char]);
+  return str.replace(
+    /[&<>"']/g,
+    (char) =>
+      ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;',
+      })[char]
+  );
 }
 
 /**
@@ -36,8 +40,8 @@ export function generateField(field, existingData = {}) {
   let inputHtml = '';
 
   switch (field.type) {
-  case 'text':
-    inputHtml = `
+    case 'text':
+      inputHtml = `
         <input
           type="text"
           id="${field.id}"
@@ -47,10 +51,10 @@ export function generateField(field, existingData = {}) {
           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
           placeholder="${escapeHtml(field.placeholder || '')}"
         >`;
-    break;
+      break;
 
-  case 'textarea':
-    inputHtml = `
+    case 'textarea':
+      inputHtml = `
         <textarea
           id="${field.id}"
           name="${field.id}"
@@ -59,13 +63,16 @@ export function generateField(field, existingData = {}) {
           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
           placeholder="${escapeHtml(field.placeholder || '')}"
         >${escapedValue}</textarea>`;
-    break;
+      break;
 
-  case 'select': {
-    const options = (field.options || []).map(opt =>
-      `<option value="${escapeHtml(opt.value)}" ${value === opt.value ? 'selected' : ''}>${escapeHtml(opt.label)}</option>`
-    ).join('');
-    inputHtml = `
+    case 'select': {
+      const options = (field.options || [])
+        .map(
+          (opt) =>
+            `<option value="${escapeHtml(opt.value)}" ${value === opt.value ? 'selected' : ''}>${escapeHtml(opt.label)}</option>`
+        )
+        .join('');
+      inputHtml = `
         <select
           id="${field.id}"
           name="${field.id}"
@@ -75,11 +82,11 @@ export function generateField(field, existingData = {}) {
           <option value="">Select...</option>
           ${options}
         </select>`;
-    break;
-  }
+      break;
+    }
 
-  default:
-    inputHtml = `<p class="text-red-500">Unknown field type: ${field.type}</p>`;
+    default:
+      inputHtml = `<p class="text-red-500">Unknown field type: ${field.type}</p>`;
   }
 
   return `
@@ -100,7 +107,7 @@ export function generateField(field, existingData = {}) {
  * @returns {string} HTML string for the form fields
  */
 export function generateFormFields(fields, existingData = {}) {
-  return fields.map(field => generateField(field, existingData)).join('\n');
+  return fields.map((field) => generateField(field, existingData)).join('\n');
 }
 
 /**
@@ -110,7 +117,7 @@ export function generateFormFields(fields, existingData = {}) {
  */
 export function extractFormData(fields) {
   const data = {};
-  fields.forEach(field => {
+  fields.forEach((field) => {
     const element = document.getElementById(field.id);
     if (element) {
       data[field.id] = element.value.trim();
@@ -127,11 +134,10 @@ export function extractFormData(fields) {
  */
 export function validateFormData(fields, data) {
   const errors = [];
-  fields.forEach(field => {
+  fields.forEach((field) => {
     if (field.required && !data[field.id]) {
       errors.push(`${field.label} is required`);
     }
   });
   return { valid: errors.length === 0, errors };
 }
-

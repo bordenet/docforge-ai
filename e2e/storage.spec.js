@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Storage (IndexedDB)', () => {
-
   test('can navigate to new project', async ({ page }) => {
     await page.goto('/assistant/?type=one-pager');
     await page.waitForLoadState('networkidle');
@@ -61,7 +60,7 @@ test.describe('Storage (IndexedDB)', () => {
     // Verify the plugin system correctly assigns different dbNames
     // by checking the expected names exist in the plugin configs
     const errors = [];
-    page.on('pageerror', error => errors.push(error.message));
+    page.on('pageerror', (error) => errors.push(error.message));
 
     // Visit multiple doc types - if dbNames were the same, there would be conflicts
     await page.goto('/assistant/?type=prd');
@@ -72,6 +71,4 @@ test.describe('Storage (IndexedDB)', () => {
 
     expect(errors).toHaveLength(0);
   });
-
 });
-

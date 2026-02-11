@@ -4,13 +4,9 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import {
-  extractTitleFromMarkdown,
-  sanitizeFilename
-} from '../shared/js/projects.js';
+import { extractTitleFromMarkdown, sanitizeFilename } from '../shared/js/projects.js';
 
 describe('Projects Module', () => {
-
   describe('extractTitleFromMarkdown', () => {
     it('should return empty string for null/undefined input', () => {
       expect(extractTitleFromMarkdown(null)).toBe('');
@@ -142,4 +138,3 @@ describe('Projects Module', () => {
     });
   });
 });
-
