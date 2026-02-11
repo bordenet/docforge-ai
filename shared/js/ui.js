@@ -159,3 +159,53 @@ export function downloadFile(content, filename, mimeType = 'text/plain') {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
+
+/**
+ * Show a modal with prompt content
+ * @param {string} text - Prompt text to display
+ * @param {string} title - Modal title
+ */
+export function showPromptModal(text, title = 'Prompt') {
+  // Remove existing modal if any
+  const existing = document.getElementById('prompt-modal');
+  if (existing) existing.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'prompt-modal';
+  modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
+  modal.innerHTML = `
+    <div class="bg-slate-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[80vh] flex flex-col">
+      <div class="flex items-center justify-between p-4 border-b border-slate-700">
+        <h3 class="text-lg font-semibold text-white">${escapeHtml(title)}</h3>
+        <button id="modal-close" class="text-slate-400 hover:text-white text-xl">&times;</button>
+      </div>
+      <div class="p-4 overflow-auto flex-1">
+        <pre class="text-sm text-slate-300 whitespace-pre-wrap font-mono">${escapeHtml(text)}</pre>
+      </div>
+      <div class="p-4 border-t border-slate-700 flex justify-end gap-2">
+        <button id="modal-copy" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg">
+          Copy
+        </button>
+        <button id="modal-close-btn" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white font-medium rounded-lg">
+          Close
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  const close = () => modal.remove();
+  document.getElementById('modal-close').addEventListener('click', close);
+  document.getElementById('modal-close-btn').addEventListener('click', close);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) close();
+  });
+
+  document.getElementById('modal-copy').addEventListener('click', async () => {
+    const success = await copyToClipboard(text);
+    if (success) {
+      showToast('Copied to clipboard!', 'success');
+    }
+  });
+}

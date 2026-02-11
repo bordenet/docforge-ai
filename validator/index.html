@@ -125,8 +125,27 @@
 
             <!-- Right: Scorecard -->
             <div class="w-80 flex flex-col gap-3">
+              <!-- Scoring Mode Toggle -->
+              <div class="flex items-center justify-between bg-slate-800 rounded-lg px-4 py-2">
+                <span class="text-sm font-medium text-slate-300">Scoring Mode</span>
+                <div class="flex items-center gap-2">
+                  <span id="mode-label-quick" class="text-xs text-white font-medium">Quick</span>
+                  <button
+                    id="btn-toggle-mode"
+                    class="relative w-12 h-6 bg-slate-500 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    role="switch"
+                    aria-checked="false"
+                    aria-label="Toggle between Quick and LLM scoring"
+                  >
+                    <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform"></span>
+                  </button>
+                  <span id="mode-label-llm" class="text-xs text-slate-400">LLM</span>
+                </div>
+              </div>
+
+              <!-- Quick Score Panel -->
               <div
-                id="scorecard"
+                id="quick-score-panel"
                 class="bg-slate-900 border border-slate-800 rounded-lg p-6 shadow-sm"
               >
                 <div class="mb-6">
@@ -163,7 +182,102 @@
                 Clear
               </button>
             </div>
+
+            <!-- LLM Score Panel (hidden by default) -->
+            <div id="llm-score-panel" class="hidden bg-slate-900 border border-slate-800 rounded-lg p-6 shadow-sm">
+              <h3 class="text-lg font-semibold text-white mb-3">LLM Scoring</h3>
+              <p class="text-sm text-slate-400 mb-4">
+                Get detailed, context-aware scoring from an LLM. More accurate than pattern matching.
+              </p>
+              <div class="space-y-3 text-sm text-slate-300 mb-4">
+                <div class="flex items-start gap-2">
+                  <span class="text-emerald-500">✓</span>
+                  <span>Understands context and nuance</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <span class="text-emerald-500">✓</span>
+                  <span>Detailed justifications for each score</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <span class="text-emerald-500">✓</span>
+                  <span>Actionable improvement suggestions</span>
+                </div>
+              </div>
+              <div class="space-y-2">
+                <button
+                  id="btn-copy-llm-prompt"
+                  class="w-full px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors"
+                >
+                  📋 Copy Scoring Prompt
+                </button>
+                <button
+                  id="btn-view-llm-prompt"
+                  class="w-full px-4 py-2 bg-slate-600 text-slate-400 font-medium rounded-lg transition-colors cursor-not-allowed"
+                  disabled
+                  aria-disabled="true"
+                >
+                  👁️ View Prompt
+                </button>
+                <a
+                  id="btn-open-claude-llm"
+                  href="https://claude.ai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="block w-full px-4 py-2 bg-slate-600 text-slate-400 font-medium rounded-lg transition-colors text-center cursor-not-allowed pointer-events-none"
+                  aria-disabled="true"
+                >
+                  Open Claude.ai →
+                </a>
+              </div>
+            </div>
           </div>
+        </div>
+
+        <!-- AI Power-ups Section (hidden by default) -->
+        <div
+          id="ai-powerups"
+          class="hidden bg-slate-900 border border-slate-800 rounded-lg p-6 shadow-sm"
+        >
+          <h2 class="text-lg font-semibold text-white mb-2">AI Power-ups</h2>
+          <ol class="text-sm text-slate-400 mb-4 list-decimal list-inside space-y-1">
+            <li>Click a button below to copy a prompt to your clipboard</li>
+            <li>Paste into Claude.ai and submit</li>
+            <li>Copy the revised document from Claude's response</li>
+            <li>Select all text in the editor above (Cmd+A) and paste to replace</li>
+          </ol>
+          <div class="flex gap-3 mb-6 flex-wrap">
+            <button
+              id="btn-critique"
+              class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+            >
+              📋 Copy Critique Prompt
+            </button>
+            <button
+              id="btn-rewrite"
+              class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors"
+            >
+              📋 Copy Rewrite Prompt
+            </button>
+            <button
+              id="btn-view-prompt"
+              class="px-4 py-2 bg-slate-600 text-slate-400 font-medium rounded-lg transition-colors cursor-not-allowed"
+              disabled
+              aria-disabled="true"
+            >
+              👁️ View Prompt
+            </button>
+            <a
+              id="btn-open-claude"
+              href="https://claude.ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="px-4 py-2 bg-slate-600 text-slate-400 font-medium rounded-lg transition-colors inline-flex items-center gap-2 cursor-not-allowed pointer-events-none"
+              aria-disabled="true"
+            >
+              Open Claude.ai →
+            </a>
+          </div>
+        </div>
 
           <!-- Feedback Panel -->
           <div

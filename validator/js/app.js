@@ -5,7 +5,7 @@
 
 import { getCurrentDocumentType } from '../../shared/js/router.js';
 import { getPlugin } from '../../shared/js/plugin-registry.js';
-import { showToast, escapeHtml } from '../../shared/js/ui.js';
+import { showToast, escapeHtml, copyToClipboard, showPromptModal } from '../../shared/js/ui.js';
 import {
   validateDocument,
   getGrade,
@@ -13,8 +13,16 @@ import {
   getScoreLabel,
 } from '../../shared/js/validator.js';
 import { logger } from '../../shared/js/logger.js';
+import {
+  generateLLMScoringPrompt,
+  generateCritiquePrompt,
+  generateRewritePrompt,
+} from '../../shared/js/validator-prompts.js';
 
 let currentPlugin = null;
+let currentResult = null;
+let currentPrompt = null;
+let isLLMMode = false;
 
 /**
  * Initialize the validator
@@ -99,6 +107,19 @@ function setupEventListeners() {
   editor?.addEventListener('paste', () => {
     setTimeout(() => runValidation(), 100);
   });
+
+  // AI Power-ups
+  document.getElementById('btn-critique')?.addEventListener('click', handleCritique);
+  document.getElementById('btn-rewrite')?.addEventListener('click', handleRewrite);
+  document.getElementById('btn-view-prompt')?.addEventListener('click', handleViewPrompt);
+
+  // LLM Scoring Mode
+  document.getElementById('btn-toggle-mode')?.addEventListener('click', toggleScoringMode);
+  document.getElementById('btn-copy-llm-prompt')?.addEventListener('click', handleCopyLLMPrompt);
+  document.getElementById('btn-view-llm-prompt')?.addEventListener('click', handleViewLLMPrompt);
+
+  // Initialize scoring mode from localStorage
+  initScoringMode();
 }
 
 /**
@@ -130,10 +151,17 @@ function runValidation() {
   }
 
   // Use the shared validator module
-  const result = validateDocument(content, currentPlugin);
-  updateScoreDisplay(result);
-  renderSlopDetection(result.slopDetection);
-  renderIssues(result.issues);
+  currentResult = validateDocument(content, currentPlugin);
+  updateScoreDisplay(currentResult);
+  renderSlopDetection(currentResult.slopDetection);
+  renderIssues(currentResult.issues);
+
+  // Show AI power-ups if content is substantial
+  const aiPowerups = document.getElementById('ai-powerups');
+  if (aiPowerups && content.length > 200) {
+    aiPowerups.classList.remove('hidden');
+  }
+
   showToast('Document validated!', 'success');
 }
 
@@ -264,10 +292,159 @@ function clearEditor() {
   document.querySelectorAll('.dim-score').forEach((el) => (el.textContent = '--'));
   document.querySelectorAll('.dim-bar').forEach((el) => (el.style.width = '0%'));
   document.getElementById('score-badge').textContent = 'Paste a document to score';
+  currentResult = null;
+  currentPrompt = null;
+  document.getElementById('ai-powerups')?.classList.add('hidden');
 }
 
 function toggleDarkMode() {
   document.documentElement.classList.toggle('dark');
+}
+
+// ============================================================================
+// AI Power-ups
+// ============================================================================
+
+function enableButton(btn, colorClass = 'bg-teal-600 hover:bg-teal-700') {
+  if (!btn) return;
+  btn.classList.remove('bg-slate-600', 'text-slate-400', 'cursor-not-allowed', 'pointer-events-none');
+  btn.classList.add(...colorClass.split(' '), 'text-white');
+  btn.disabled = false;
+  btn.removeAttribute('aria-disabled');
+}
+
+function handleCritique() {
+  const editor = document.getElementById('editor');
+  const content = editor?.value || '';
+  if (!content || !currentResult) {
+    showToast('Add some content first', 'warning');
+    return;
+  }
+
+  const prompt = generateCritiquePrompt(content, currentPlugin, currentResult);
+  currentPrompt = { text: prompt, type: 'Critique' };
+
+  enableButton(document.getElementById('btn-view-prompt'));
+  enableButton(document.getElementById('btn-open-claude'), 'bg-orange-600 hover:bg-orange-700');
+
+  copyToClipboard(prompt).then((success) => {
+    if (success) {
+      showToast('Critique prompt copied! Open Claude.ai and paste.', 'success');
+    } else {
+      showToast('Prompt ready. Use View Prompt to copy manually.', 'warning');
+    }
+  });
+}
+
+function handleRewrite() {
+  const editor = document.getElementById('editor');
+  const content = editor?.value || '';
+  if (!content || !currentResult) {
+    showToast('Add some content first', 'warning');
+    return;
+  }
+
+  const prompt = generateRewritePrompt(content, currentPlugin, currentResult);
+  currentPrompt = { text: prompt, type: 'Rewrite' };
+
+  enableButton(document.getElementById('btn-view-prompt'));
+  enableButton(document.getElementById('btn-open-claude'), 'bg-orange-600 hover:bg-orange-700');
+
+  copyToClipboard(prompt).then((success) => {
+    if (success) {
+      showToast('Rewrite prompt copied! Open Claude.ai and paste.', 'success');
+    } else {
+      showToast('Prompt ready. Use View Prompt to copy manually.', 'warning');
+    }
+  });
+}
+
+function handleViewPrompt() {
+  if (!currentPrompt?.text) {
+    showToast('Copy a prompt first', 'warning');
+    return;
+  }
+  showPromptModal(currentPrompt.text, `${currentPrompt.type} Prompt`);
+}
+
+// ============================================================================
+// LLM Scoring Mode
+// ============================================================================
+
+function toggleScoringMode() {
+  isLLMMode = !isLLMMode;
+
+  const btnToggle = document.getElementById('btn-toggle-mode');
+  const toggleKnob = btnToggle?.querySelector('span');
+  const modeLabelQuick = document.getElementById('mode-label-quick');
+  const modeLabelLLM = document.getElementById('mode-label-llm');
+  const quickPanel = document.getElementById('quick-score-panel');
+  const llmPanel = document.getElementById('llm-score-panel');
+
+  if (isLLMMode) {
+    btnToggle?.classList.remove('bg-slate-500');
+    btnToggle?.classList.add('bg-indigo-600');
+    if (toggleKnob) toggleKnob.style.transform = 'translateX(24px)';
+    btnToggle?.setAttribute('aria-checked', 'true');
+    modeLabelQuick?.classList.remove('text-white');
+    modeLabelQuick?.classList.add('text-slate-400');
+    modeLabelLLM?.classList.remove('text-slate-400');
+    modeLabelLLM?.classList.add('text-white');
+    quickPanel?.classList.add('hidden');
+    llmPanel?.classList.remove('hidden');
+  } else {
+    btnToggle?.classList.remove('bg-indigo-600');
+    btnToggle?.classList.add('bg-slate-500');
+    if (toggleKnob) toggleKnob.style.transform = 'translateX(0)';
+    btnToggle?.setAttribute('aria-checked', 'false');
+    modeLabelQuick?.classList.remove('text-slate-400');
+    modeLabelQuick?.classList.add('text-white');
+    modeLabelLLM?.classList.remove('text-white');
+    modeLabelLLM?.classList.add('text-slate-400');
+    quickPanel?.classList.remove('hidden');
+    llmPanel?.classList.add('hidden');
+  }
+
+  localStorage.setItem('docforge-scoring-mode', isLLMMode ? 'llm' : 'quick');
+}
+
+function initScoringMode() {
+  const saved = localStorage.getItem('docforge-scoring-mode');
+  if (saved === 'llm') {
+    isLLMMode = false;
+    toggleScoringMode();
+  }
+}
+
+function handleCopyLLMPrompt() {
+  const editor = document.getElementById('editor');
+  const content = editor?.value?.trim() || '';
+  if (!content) {
+    showToast('Add some content first', 'warning');
+    return;
+  }
+
+  const prompt = generateLLMScoringPrompt(content, currentPlugin);
+  currentPrompt = { text: prompt, type: 'LLM Scoring' };
+
+  enableButton(document.getElementById('btn-view-llm-prompt'));
+  enableButton(document.getElementById('btn-open-claude-llm'), 'bg-orange-600 hover:bg-orange-700');
+
+  copyToClipboard(prompt).then((success) => {
+    if (success) {
+      showToast('LLM scoring prompt copied! Paste into Claude.ai.', 'success');
+    } else {
+      showToast('Prompt ready. Use View Prompt to copy manually.', 'warning');
+    }
+  });
+}
+
+function handleViewLLMPrompt() {
+  if (!currentPrompt || currentPrompt.type !== 'LLM Scoring') {
+    showToast('Copy the scoring prompt first', 'warning');
+    return;
+  }
+  showPromptModal(currentPrompt.text, 'LLM Scoring Prompt');
 }
 
 // Initialize
