@@ -57,18 +57,63 @@ function extractTitleFromMarkdown(markdown, docType) {
 }
 
 /**
+ * Check if content appears to be plain Markdown (not rich HTML)
+ * @param {string} html - HTML content from paste
+ * @returns {boolean} True if content is likely plain Markdown
+ */
+function isPlainMarkdown(html) {
+  // If it contains rich HTML tags (not just browser wrapper tags), it's not plain markdown
+  const richHtmlTags = /<(h[1-6]|strong|em|b|i|ul|ol|li|table|tr|td|th|a|img|blockquote|pre|code)[^>]*>/i;
+  if (richHtmlTags.test(html)) {
+    return false;
+  }
+
+  // Extract text content
+  const temp = document.createElement('div');
+  temp.innerHTML = html;
+  const text = temp.textContent || temp.innerText || '';
+
+  // Check for markdown patterns
+  const markdownPatterns = [
+    /^#{1,6}\s+/m,           // Headers: # ## ### etc
+    /^\s*[-*+]\s+/m,         // Unordered lists
+    /^\s*\d+\.\s+/m,         // Ordered lists
+    /\*\*[^*]+\*\*/,         // Bold
+    /\*[^*]+\*/,             // Italic
+    /`[^`]+`/,               // Inline code
+    /```[\s\S]*```/,         // Code blocks
+    /^\s*>/m,                // Blockquotes
+    /\[.+\]\(.+\)/           // Links
+  ];
+
+  // If text has markdown patterns, it's likely plain markdown
+  return markdownPatterns.some(pattern => pattern.test(text));
+}
+
+/**
  * Convert HTML to Markdown using Turndown (if available)
+ * If content is already plain Markdown, return it as-is
  * @param {string} html - HTML content from paste
  * @returns {string} Markdown content
  */
 export function convertHtmlToMarkdown(html) {
-  if (typeof TurndownService === 'undefined') {
-    console.warn('Turndown not loaded, returning plain text');
-    const temp = document.createElement('div');
-    temp.innerHTML = html;
-    return temp.textContent || temp.innerText || '';
+  // First, extract plain text to check if it's already markdown
+  const temp = document.createElement('div');
+  temp.innerHTML = html;
+  const plainText = temp.textContent || temp.innerText || '';
+
+  // If the content looks like plain markdown, return it directly
+  if (isPlainMarkdown(html)) {
+    return plainText.trim();
   }
 
+  // If Turndown isn't available, return plain text
+  if (typeof TurndownService === 'undefined') {
+    console.warn('Turndown not loaded, returning plain text');
+    return plainText;
+  }
+
+  // Use Turndown for rich HTML content
   const turndownService = new TurndownService({
     headingStyle: 'atx',
     codeBlockStyle: 'fenced',

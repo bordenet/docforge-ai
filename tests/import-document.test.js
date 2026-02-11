@@ -54,6 +54,37 @@ describe('Import Document Module', () => {
       expect(result).toContain('<script>');
       expect(result).toContain('&');
     });
+
+    test('should preserve plain markdown without escaping', () => {
+      // When user pastes markdown, browser wraps it in divs
+      const html = '<div># My Document Title</div><div></div><div>## Section 1</div><div>Some content here.</div>';
+      const result = convertHtmlToMarkdown(html);
+      // Should NOT escape the # character
+      expect(result).toContain('# My Document Title');
+      expect(result).toContain('## Section 1');
+      expect(result).not.toContain('\\#');
+    });
+
+    test('should preserve markdown lists', () => {
+      const html = '<div>- Item 1</div><div>- Item 2</div><div>- Item 3</div>';
+      const result = convertHtmlToMarkdown(html);
+      expect(result).toContain('- Item 1');
+      expect(result).toContain('- Item 2');
+    });
+
+    test('should preserve markdown bold and italic', () => {
+      const html = '<div>This is **bold** and *italic* text.</div>';
+      const result = convertHtmlToMarkdown(html);
+      expect(result).toContain('**bold**');
+      expect(result).toContain('*italic*');
+    });
+
+    test('should preserve markdown code blocks', () => {
+      const html = '<div>Here is `inline code` and:</div><div>```javascript</div><div>const x = 1;</div><div>```</div>';
+      const result = convertHtmlToMarkdown(html);
+      expect(result).toContain('`inline code`');
+      expect(result).toContain('```');
+    });
   });
 
   describe('getImportModalHtml', () => {
