@@ -40,13 +40,19 @@ function extractTitleFromMarkdown(markdown, docType) {
   }
 
   // Strategy 3: First bold text at the top (**Title** or __Title__)
+  // But skip if it looks like a label (ends with :) or is a generic header
   const boldMatch = topContent.match(/^\*\*(.+?)\*\*|^__(.+?)__/m);
   if (boldMatch) {
     const title = (boldMatch[1] || boldMatch[2]).trim();
-    if (title && title.length > 0 && title.length <= 100) return title;
+    // Skip labels (end with :) and generic headers
+    if (title && title.length > 0 && title.length <= 100 &&
+        !title.endsWith(':') && !isGenericSectionHeader(title)) {
+      return title;
+    }
   }
 
-  // Strategy 4: First non-empty line that's not a section header (truncated)
+  // Strategy 4: First non-empty line that looks like a title
+  // Skip: section headers, labels, sentences (too long or contains periods)
   for (const line of lines) {
     const trimmed = line.trim();
     if (!trimmed || /^[-=*]{3,}$/.test(trimmed) || trimmed.length < 5) continue;
@@ -57,11 +63,21 @@ function extractTitleFromMarkdown(markdown, docType) {
       .replace(/\*/g, '')
       .replace(/_/g, ' ')
       .trim();
-    if (cleaned.length > 0 && !isGenericSectionHeader(cleaned)) {
-      return cleaned.length > 80 ? cleaned.substring(0, 77) + '...' : cleaned;
+    // Skip if:
+    // - Empty or too long (> 80 chars = probably a sentence)
+    // - Ends with : (label) or . (sentence ending)
+    // - Contains . followed by space (sentence with multiple clauses)
+    // - Is a generic section header
+    if (cleaned.length > 0 && cleaned.length <= 80 &&
+        !cleaned.endsWith(':') &&
+        !cleaned.endsWith('.') &&
+        !/\.\s/.test(cleaned) &&
+        !isGenericSectionHeader(cleaned)) {
+      return cleaned;
     }
   }
 
+  // No valid title found - return null to trigger fallback
   return null;
 }
 

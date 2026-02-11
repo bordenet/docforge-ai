@@ -236,6 +236,43 @@ describe('Import Document Module', () => {
       expect(savedData.phases[1].response).toContain('My Document Title');  // Content saved
       expect(savedData.isImported).toBe(true);
     });
+
+    test('should use fallback title when markdown has no real title (starts with section header)', async () => {
+      const plugin = { name: 'One-Pager', dbName: 'test-db' };
+      const saveProject = jest.fn().mockImplementation((dbName, data) => {
+        return Promise.resolve({ id: 'test-456', ...data });
+      });
+      const onComplete = jest.fn();
+
+      showImportModal(plugin, saveProject, onComplete);
+
+      // Simulate pasting markdown that starts with a section header (like user's actual doc)
+      // This markdown has NO title - just starts with ## Problem Statement
+      const pasteArea = document.getElementById('import-paste-area');
+      pasteArea.innerHTML = `## Problem Statement
+
+Current development hardware (5-year-old Surface 4 with i7-11185G7, 16GB RAM) cannot run multiple AI agents simultaneously. A single Cursor instance consumes 2–4GB RAM during active use.
+
+**Measured impact:** 30 minutes wasted per context switch.`;
+
+      // Click convert
+      const convertBtn = document.getElementById('import-convert-btn');
+      convertBtn.click();
+
+      // Click save
+      const saveBtn = document.getElementById('import-save-btn');
+      await saveBtn.click();
+
+      // Wait for async save
+      await new Promise(resolve => setTimeout(resolve, 10));
+
+      // Verify fallback title is used (not a garbage extraction)
+      expect(saveProject).toHaveBeenCalled();
+      const savedData = saveProject.mock.calls[0][1];
+      expect(savedData.title).toBe('Imported One-Pager');  // Should use fallback, not "Problem Statement" or sentence
+      expect(savedData.currentPhase).toBe(2);
+      expect(savedData.phases[1].completed).toBe(true);
+    });
   });
 });
 
