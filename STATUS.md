@@ -1,7 +1,7 @@
 # DocForgeAI - Status & Continuation Plan
 
-> **Last Updated:** 2026-02-10
-> **Status:** Local repo only (not on GitHub yet)
+> **Last Updated:** 2026-02-11
+> **Status:** [Live on GitHub](https://github.com/bordenet/docforge-ai)
 > **Location:** `genesis-tools/docforge-ai/`
 
 ## Quick Start (Resume Work)
@@ -9,8 +9,7 @@
 ```bash
 cd ~/GitHub/Personal/genesis-tools/docforge-ai
 npm install
-npm test              # 58 unit tests
-npm run test:e2e      # 39 E2E tests
+npm test              # 582 tests
 npm run serve         # Start local server on port 8080
 ```
 
@@ -35,9 +34,9 @@ Then open:
 | Storage | ✅ Complete | Per-plugin IndexedDB |
 | Prompt templates | ✅ Complete | 27 files (3 phases × 9 types) |
 | Demo data | ✅ Complete | One-pager sample with all 3 phases |
-| Unit tests | ✅ Complete | 58 tests passing |
-| E2E tests | ✅ Complete | 39 tests passing |
-| CI workflow | ✅ Complete | GitHub Actions ready |
+| Unit tests | ✅ Complete | 582 tests passing |
+| CI workflow | ✅ Complete | GitHub Actions with codecov |
+| Code coverage | ✅ 84% | Exceeds 80% target |
 
 ### What Does NOT Exist Yet
 

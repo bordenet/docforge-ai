@@ -117,7 +117,6 @@ function computeMarkdownConfidence(text) {
   if (!text) return 0;
 
   let score = 0;
-  const lines = text.split('\n');
 
   // Headers (# ## ### etc) - strong indicator
   const headerMatches = text.match(/^#{1,6}\s+/gm) || [];

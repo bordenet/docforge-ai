@@ -90,14 +90,6 @@ describe('Template/Form Field Alignment', () => {
         const templateVars = extractTemplateVariables(template);
         const formFieldIds = await getFormFieldIds(pluginId);
         
-        // Convert form field IDs to both formats for matching
-        const validIds = new Set([
-          ...formFieldIds,
-          ...formFieldIds.map(id => id.toUpperCase()),
-          ...formFieldIds.map(id => id.replace(/([A-Z])/g, '_$1').toUpperCase()),
-          ...RESERVED_VARIABLES
-        ]);
-        
         const missingVars = [];
         
         for (const varName of templateVars) {

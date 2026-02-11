@@ -60,7 +60,7 @@ export function renderListView(plugin, projects) {
  * @param {Object} plugin - Plugin config
  * @returns {string} HTML
  */
-function renderProjectCard(project, plugin) {
+function renderProjectCard(project, _plugin) {
   const title = project.title || project.formData?.title || 'Untitled';
 
   // Calculate phase completion
