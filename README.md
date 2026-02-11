@@ -6,6 +6,8 @@
 
 Generate business documents with AI critique. Claude drafts, Gemini critiques, Claude synthesizes.
 
+**🚀 Live:** [bordenet.github.io/docforge-ai](https://bordenet.github.io/docforge-ai/) — [Assistant](https://bordenet.github.io/docforge-ai/assistant/) | [Validator](https://bordenet.github.io/docforge-ai/validator/)
+
 ```bash
 git clone https://github.com/bordenet/docforge-ai && cd docforge-ai
 npm install && npm run serve
