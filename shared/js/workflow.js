@@ -236,8 +236,8 @@ export class Workflow {
 export function createProject(name, description) {
   return {
     id: generateId(),
-    name: name,
-    description: description,
+    name,
+    description,
     created: Date.now(),
     modified: Date.now(),
     currentPhase: 1,

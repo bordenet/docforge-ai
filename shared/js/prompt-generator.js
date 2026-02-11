@@ -3,6 +3,8 @@
  * @module prompt-generator
  */
 
+import { logger } from './logger.js';
+
 /**
  * Replace template variables in a prompt
  * Variables are in format {{FIELD_ID}}
@@ -34,12 +36,12 @@ export async function loadPromptTemplate(pluginId, phase) {
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      console.warn(`Prompt template not found: ${url}, using fallback`);
+      logger.warn(`Prompt template not found: ${url}, using fallback`, 'prompt-generator');
       return getFallbackPrompt(phase);
     }
     return await response.text();
   } catch (error) {
-    console.error(`Error loading prompt template: ${error}`);
+    logger.error('Error loading prompt template', error, 'prompt-generator');
     return getFallbackPrompt(phase);
   }
 }

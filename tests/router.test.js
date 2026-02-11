@@ -25,11 +25,12 @@ beforeEach(() => {
   global.window = {
     location: mockLocation,
     addEventListener: () => {},
-    URLSearchParams: URLSearchParams
+    URLSearchParams,
   };
 });
 
-// Import after mocking
+// Import after mocking - must be dynamic due to mock setup
+// eslint-disable-next-line import-x/first
 import {
   getCurrentDocumentType,
   getCurrentPlugin,
@@ -38,7 +39,7 @@ import {
   getPhaseFromHash,
   getDocTypeUrl,
   navigateTo,
-  initRouter
+  initRouter,
 } from '../shared/js/router.js';
 
 describe('Router', () => {

@@ -11,6 +11,7 @@ import { showToast, showLoading, hideLoading, copyToClipboard } from '../../shar
 import { generatePrompt } from '../../shared/js/prompt-generator.js';
 import { showImportModal } from '../../shared/js/import-document.js';
 import { exportAllProjects, importProjects } from '../../shared/js/projects.js';
+import { logger } from '../../shared/js/logger.js';
 
 let currentPlugin = null;
 let currentTemplates = [];
@@ -55,9 +56,9 @@ async function initApp() {
     // Update storage info
     updateStorageInfo();
 
-    console.log(`App initialized with plugin: ${currentPlugin.id}`);
+    logger.info(`App initialized with plugin: ${currentPlugin.id}`, 'app');
   } catch (error) {
-    console.error('Failed to initialize app:', error);
+    logger.error('Failed to initialize app', error, 'app');
     showToast('Failed to initialize app', 'error');
   } finally {
     hideLoading();
@@ -123,7 +124,7 @@ function setupGlobalEventListeners() {
       await exportAllProjects(currentPlugin.dbName, currentPlugin.id);
       showToast('All projects exported', 'success');
     } catch (error) {
-      console.error('Export failed:', error);
+      logger.error('Export failed', error, 'app');
       showToast('Export failed', 'error');
     }
   });
@@ -144,7 +145,7 @@ function setupGlobalEventListeners() {
             window.location.reload();
           }
         } catch (error) {
-          console.error('Import failed:', error);
+          logger.error('Import failed', error, 'app');
           showToast('Import failed: ' + error.message, 'error');
         }
       }
@@ -227,7 +228,7 @@ async function handleRouteChange(view, params) {
       await renderList(container);
     }
   } catch (error) {
-    console.error('Route change error:', error);
+    logger.error('Route change error', error, 'app');
     showToast('Error loading view', 'error');
   } finally {
     hideLoading();
@@ -465,7 +466,7 @@ function attachPhaseEventListeners(project, phase) {
           saveResponseBtn.disabled = false;
         }
       } catch (error) {
-        console.error('Failed to copy prompt:', error);
+        logger.error('Failed to copy prompt', error, 'app');
         showToast('Failed to copy prompt', 'error');
       }
     });
@@ -528,7 +529,7 @@ function attachPhaseEventListeners(project, phase) {
           }
         }
       } catch (error) {
-        console.error('Failed to save response:', error);
+        logger.error('Failed to save response', error, 'app');
         showToast('Failed to save response', 'error');
       }
     });

@@ -157,10 +157,10 @@ export async function exportAllProjects(dbName, pluginId = 'docforge') {
 
   const backup = {
     version: '1.0',
-    pluginId: pluginId,
+    pluginId,
     exportedAt: new Date().toISOString(),
     projectCount: projects.length,
-    projects: projects
+    projects
   };
 
   const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });

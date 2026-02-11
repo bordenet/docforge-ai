@@ -294,7 +294,7 @@ export function analyzeSentenceVariance(text) {
 
   // Calculate mean and standard deviation
   const mean = lengths.reduce((a, b) => a + b, 0) / lengths.length;
-  const variance = lengths.reduce((sum, len) => sum + Math.pow(len - mean, 2), 0) / lengths.length;
+  const variance = lengths.reduce((sum, len) => sum + (len - mean) ** 2, 0) / lengths.length;
   const stdDev = Math.sqrt(variance);
 
   // Flag if too uniform (AI tends to produce uniform sentence lengths)

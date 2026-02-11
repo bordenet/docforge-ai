@@ -7,6 +7,7 @@ import { getCurrentDocumentType } from '../../shared/js/router.js';
 import { getPlugin } from '../../shared/js/plugin-registry.js';
 import { showToast, escapeHtml } from '../../shared/js/ui.js';
 import { validateDocument, getGrade, getScoreColor, getScoreLabel } from '../../shared/js/validator.js';
+import { logger } from '../../shared/js/logger.js';
 
 let currentPlugin = null;
 
@@ -24,7 +25,7 @@ function initValidator() {
   setupEventListeners();
   setupDocTypeSelector();
 
-  console.log(`Validator initialized for: ${currentPlugin.id}`);
+  logger.info(`Validator initialized for: ${currentPlugin.id}`, 'validator');
 }
 
 /**

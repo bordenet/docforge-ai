@@ -5,6 +5,7 @@
  */
 
 import { showToast } from './ui.js';
+import { logger } from './logger.js';
 
 /**
  * Extract title from the BEGINNING of markdown (first 20 lines only)
@@ -221,7 +222,7 @@ export function convertHtmlToMarkdown(html) {
 
   // If Turndown isn't available, return plain text
   if (typeof TurndownService === 'undefined') {
-    console.warn('Turndown not loaded, returning plain text');
+    logger.warn('Turndown not loaded, returning plain text', 'import-document');
     return plainText;
   }
 

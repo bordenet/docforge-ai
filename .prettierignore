@@ -1,0 +1,7 @@
+node_modules/
+coverage/
+shared/js/lib/
+playwright-report/
+test-results/
+*.md
+
