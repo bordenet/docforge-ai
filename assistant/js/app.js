@@ -169,14 +169,43 @@ async function renderProject(container, projectId) {
 }
 
 function setupListEventHandlers() {
-  document.querySelectorAll('[data-delete]').forEach(btn => {
+  // Project card clicks - navigate to project
+  document.querySelectorAll('[data-project-id]').forEach(card => {
+    card.addEventListener('click', (e) => {
+      // Don't navigate if clicking delete or preview buttons
+      if (!e.target.closest('.delete-project-btn') && !e.target.closest('.preview-project-btn')) {
+        const projectId = card.dataset.projectId;
+        window.location.hash = `project/${projectId}`;
+      }
+    });
+  });
+
+  // Delete button clicks
+  document.querySelectorAll('.delete-project-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       e.preventDefault();
+      e.stopPropagation();
       const id = btn.dataset.delete;
       if (confirm('Delete this project?')) {
         await deleteProject(currentPlugin.dbName, id);
         showToast('Project deleted', 'success');
         window.location.hash = '';
+      }
+    });
+  });
+
+  // Preview button clicks (for completed projects)
+  document.querySelectorAll('.preview-project-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const projectId = btn.dataset.projectId;
+      const project = await getProject(currentPlugin.dbName, projectId);
+      if (project?.phases?.[3]?.response) {
+        await copyToClipboard(project.phases[3].response);
+        showToast('Final document copied to clipboard!', 'success');
+      } else {
+        showToast('No final document to copy', 'warning');
       }
     });
   });
