@@ -5,7 +5,7 @@
 
 import { getCurrentDocumentType } from '../../shared/js/router.js';
 import { getPlugin } from '../../shared/js/plugin-registry.js';
-import { showToast } from '../../shared/js/ui.js';
+import { showToast, escapeHtml } from '../../shared/js/ui.js';
 import { validateDocument, getGrade, getScoreColor, getScoreLabel } from '../../shared/js/validator.js';
 
 let currentPlugin = null;
@@ -253,10 +253,7 @@ function toggleDarkMode() {
   document.documentElement.classList.toggle('dark');
 }
 
-function escapeHtml(str) {
-  if (!str) return '';
-  return str.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#039;' })[c]);
-}
+// escapeHtml imported from ui.js
 
 // Initialize
 if (document.readyState === 'loading') {

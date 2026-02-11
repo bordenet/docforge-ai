@@ -97,7 +97,7 @@ export async function updatePhase(dbName, projectId, phase, prompt, response, op
     }
   }
 
-  return await saveProject(dbName, project);
+  return saveProject(dbName, project);
 }
 
 /**
@@ -112,7 +112,7 @@ export async function updateProject(dbName, projectId, updates) {
   if (!project) throw new Error('Project not found');
 
   Object.assign(project, updates);
-  return await saveProject(dbName, project);
+  return saveProject(dbName, project);
 }
 
 /**

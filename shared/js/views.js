@@ -38,7 +38,7 @@ export function renderListView(plugin, projects) {
         </a>
       </div>`
     : `<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        ${projects.map(p => renderProjectCard(p, plugin)).join('')}
+        ${projects.map(p => renderProjectCard(p)).join('')}
       </div>`;
 
   return `
@@ -57,10 +57,9 @@ export function renderListView(plugin, projects) {
 /**
  * Render a project card
  * @param {Object} project - Project data
- * @param {Object} plugin - Plugin config
  * @returns {string} HTML
  */
-function renderProjectCard(project, _plugin) {
+function renderProjectCard(project) {
   const title = project.title || project.formData?.title || 'Untitled';
 
   // Calculate phase completion

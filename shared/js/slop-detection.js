@@ -254,6 +254,25 @@ export function detectStructuralPatterns(text) {
 }
 
 // ============================================================================
+// Stylometric Analysis Constants
+// ============================================================================
+
+/** Minimum sentences required for variance analysis */
+const MIN_SENTENCES_FOR_ANALYSIS = 3;
+
+/** Minimum sentence length standard deviation (AI tends to be more uniform) */
+const MIN_SENTENCE_VARIANCE_THRESHOLD = 8.0;
+
+/** Minimum words required for Type-Token Ratio analysis */
+const MIN_WORDS_FOR_TTR = 50;
+
+/** Window size for TTR calculation */
+const TTR_WINDOW_SIZE = 100;
+
+/** Minimum acceptable Type-Token Ratio (vocabulary diversity) */
+const MIN_TTR_THRESHOLD = 0.45;
+
+// ============================================================================
 // Stylometric Analysis
 // ============================================================================
 
@@ -266,7 +285,7 @@ export function analyzeSentenceVariance(text) {
   // Split into sentences (period, question, exclamation)
   const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
 
-  if (sentences.length < 3) {
+  if (sentences.length < MIN_SENTENCES_FOR_ANALYSIS) {
     return { variance: null, flag: false, reason: 'Too few sentences' };
   }
 
@@ -279,14 +298,14 @@ export function analyzeSentenceVariance(text) {
   const stdDev = Math.sqrt(variance);
 
   // Flag if too uniform (AI tends to produce uniform sentence lengths)
-  const flag = stdDev < 8.0; // Research suggests human writing has σ > 15
+  const flag = stdDev < MIN_SENTENCE_VARIANCE_THRESHOLD;
 
   return {
     sentenceCount: sentences.length,
     meanLength: Math.round(mean * 10) / 10,
     stdDev: Math.round(stdDev * 10) / 10,
     flag,
-    reason: flag ? `Low sentence variance (σ=${stdDev.toFixed(1)}, target >8)` : null
+    reason: flag ? `Low sentence variance (σ=${stdDev.toFixed(1)}, target >${MIN_SENTENCE_VARIANCE_THRESHOLD})` : null
   };
 }
 
@@ -300,18 +319,17 @@ export function analyzeTypeTokenRatio(text) {
   const normalized = text.toLowerCase().replace(/[^\w\s]/g, '');
   const words = normalized.split(/\s+/).filter(w => w.length > 0);
 
-  if (words.length < 50) {
+  if (words.length < MIN_WORDS_FOR_TTR) {
     return { ttr: null, flag: false, reason: 'Too few words' };
   }
 
-  // Calculate TTR in 100-word windows
-  const windowSize = 100;
+  // Calculate TTR in fixed-size windows
   const ttrs = [];
 
-  for (let i = 0; i + windowSize <= words.length; i += windowSize) {
-    const window = words.slice(i, i + windowSize);
-    const unique = new Set(window).size;
-    ttrs.push(unique / windowSize);
+  for (let i = 0; i + TTR_WINDOW_SIZE <= words.length; i += TTR_WINDOW_SIZE) {
+    const windowWords = words.slice(i, i + TTR_WINDOW_SIZE);
+    const unique = new Set(windowWords).size;
+    ttrs.push(unique / TTR_WINDOW_SIZE);
   }
 
   if (ttrs.length === 0) {
@@ -320,21 +338,21 @@ export function analyzeTypeTokenRatio(text) {
     const ttr = unique / words.length;
     return {
       ttr: Math.round(ttr * 100) / 100,
-      flag: ttr < 0.45,
-      reason: ttr < 0.45 ? `Low vocabulary diversity (TTR=${ttr.toFixed(2)})` : null
+      flag: ttr < MIN_TTR_THRESHOLD,
+      reason: ttr < MIN_TTR_THRESHOLD ? `Low vocabulary diversity (TTR=${ttr.toFixed(2)})` : null
     };
   }
 
   const avgTTR = ttrs.reduce((a, b) => a + b, 0) / ttrs.length;
 
   // Flag if too low (limited vocabulary) or suspiciously consistent
-  const flag = avgTTR < 0.45;
+  const flag = avgTTR < MIN_TTR_THRESHOLD;
 
   return {
     ttr: Math.round(avgTTR * 100) / 100,
     wordCount: words.length,
     flag,
-    reason: flag ? `Low vocabulary diversity (TTR=${avgTTR.toFixed(2)}, target >0.45)` : null
+    reason: flag ? `Low vocabulary diversity (TTR=${avgTTR.toFixed(2)}, target >${MIN_TTR_THRESHOLD})` : null
   };
 }
 

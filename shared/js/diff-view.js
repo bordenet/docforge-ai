@@ -3,6 +3,8 @@
  * @module diff-view
  */
 
+import { escapeHtml } from './ui.js';
+
 /**
  * Simple word-level diff algorithm
  * Returns an array of { type: 'equal'|'insert'|'delete', text: string }
@@ -125,22 +127,6 @@ export function renderDiffHtml(diff) {
       return escaped;
     }
   }).join('');
-}
-
-/**
- * Escape HTML special characters
- * @param {string} text - Text to escape
- * @returns {string} Escaped text
- */
-function escapeHtml(text) {
-  if (!text) return '';
-  return text.replace(/[&<>"']/g, char => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    '\'': '&#039;'
-  })[char]);
 }
 
 /**
