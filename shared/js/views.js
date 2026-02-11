@@ -12,6 +12,20 @@ import { renderPhaseContent } from './views-phase.js';
 export { renderProjectCard, renderPhaseContent };
 
 /**
+ * Render the plugin name with an optional hyperlink to documentation
+ * @param {Object} plugin - Plugin config
+ * @param {string} [displayText] - Optional custom display text (defaults to plugin.name)
+ * @returns {string} HTML - either a hyperlink or plain text
+ */
+function renderPluginNameLink(plugin, displayText = null) {
+  const text = displayText || plugin.name;
+  if (plugin.docsUrl) {
+    return `<a href="${plugin.docsUrl}" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline hover:text-blue-700 dark:hover:text-blue-300">${escapeHtml(text)}</a>`;
+  }
+  return escapeHtml(text);
+}
+
+/**
  * Get phase metadata from plugin config
  * @param {Object} plugin - Plugin config
  * @param {number} phaseNumber - Phase number
@@ -37,12 +51,13 @@ export function getPhaseMetadata(plugin, phaseNumber) {
  * @returns {string} HTML
  */
 export function renderListView(plugin, projects) {
+  const pluginNameLink = renderPluginNameLink(plugin);
   const projectCards =
     projects.length === 0
       ? `<div class="text-center py-12 text-gray-500 dark:text-gray-400">
-        <p class="text-lg mb-4">No ${plugin.name} projects yet</p>
+        <p class="text-lg mb-4">No ${pluginNameLink} projects yet</p>
         <a href="#new" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-          <span class="mr-2">+</span> Create Your First ${plugin.name}
+          <span class="mr-2">+</span> Create Your First ${pluginNameLink}
         </a>
       </div>`
       : `<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -52,10 +67,10 @@ export function renderListView(plugin, projects) {
   return `
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
-        ${plugin.icon} Your ${plugin.name} Projects
+        ${plugin.icon} Your ${pluginNameLink} Projects
       </h2>
       <a href="#new" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-        <span class="mr-2">+</span> New ${plugin.name}
+        <span class="mr-2">+</span> New ${pluginNameLink}
       </a>
     </div>
     ${projectCards}
@@ -111,11 +126,13 @@ export function renderNewView(plugin, existingData = {}, templates = []) {
   `
       : '';
 
+  const pluginNameLink = renderPluginNameLink(plugin);
+
   return `
     <div class="max-w-3xl mx-auto">
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
-          ${plugin.icon} New ${plugin.name}
+          ${plugin.icon} New ${pluginNameLink}
         </h2>
         <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-gray-800">← Back to list</a>
       </div>
@@ -130,7 +147,7 @@ export function renderNewView(plugin, existingData = {}, templates = []) {
         <div class="flex justify-end space-x-3 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
           <a href="#" class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 rounded-lg">Cancel</a>
           <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-            Start ${plugin.name} Workflow
+            Start ${pluginNameLink} Workflow
           </button>
         </div>
       </form>
@@ -148,6 +165,7 @@ export function renderProjectView(plugin, project) {
   const title = project.title || project.formData?.title || 'Untitled';
   const currentPhase = project.currentPhase || 1;
   const phases = plugin.workflowConfig?.phases || [];
+  const pluginNameLink = renderPluginNameLink(plugin);
 
   // Generate phase tabs
   const phaseTabs = phases
@@ -175,7 +193,7 @@ export function renderProjectView(plugin, project) {
           <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
           </svg>
-          Back to ${plugin.name} Projects
+          Back to ${pluginNameLink} Projects
         </a>
         <h2 class="text-lg font-semibold text-gray-900 dark:text-white">${escapeHtml(title)}</h2>
       </div>

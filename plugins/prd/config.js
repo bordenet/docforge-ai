@@ -4,9 +4,11 @@
 
 export const prdPlugin = {
   id: 'prd',
-  name: 'PRD',
+  name: 'Product Requirements Document (PRD)',
   icon: '📋',
   description: 'Product Requirements Document for engineering teams',
+  docsUrl:
+    'https://github.com/bordenet/Engineering_Culture/blob/main/SDLC/Project_Planning_Mechanisms%3A_Documents.md#prd-the-what-and-why',
   dbName: 'prd-docforge-db',
 
   formFields: [

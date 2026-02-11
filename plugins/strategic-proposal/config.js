@@ -11,25 +11,25 @@ export const strategicProposalPlugin = {
 
   formFields: [
     {
-      id: 'dealershipName',
-      label: 'Dealership Name',
+      id: 'organizationName',
+      label: 'Organization Name',
       type: 'text',
       required: true,
-      placeholder: 'e.g., Metro Auto Group',
+      placeholder: 'e.g., Acme Corporation',
     },
     {
-      id: 'dealershipLocation',
-      label: 'Dealership Location',
+      id: 'organizationLocation',
+      label: 'Organization Location',
       type: 'text',
       required: true,
       placeholder: 'e.g., Dallas, TX',
     },
     {
-      id: 'storeCount',
-      label: 'Number of Stores/Rooftops',
+      id: 'siteCount',
+      label: 'Number of Sites/Locations',
       type: 'text',
       required: false,
-      placeholder: 'e.g., 5 stores across DFW metro',
+      placeholder: 'e.g., 5 offices across the metro area',
     },
     {
       id: 'currentVendor',

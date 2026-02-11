@@ -4,9 +4,10 @@
 
 export const adrPlugin = {
   id: 'adr',
-  name: 'ADR',
+  name: 'Architecture Decision Record (ADR)',
   icon: '🏗️',
   description: 'Architecture Decision Record for technical decisions',
+  docsUrl: 'https://adr.github.io/',
   dbName: 'adr-docforge-db',
 
   formFields: [
