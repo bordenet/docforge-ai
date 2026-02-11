@@ -18,26 +18,15 @@ export const jdPlugin = {
       placeholder: 'e.g., Senior Software Engineer'
     },
     {
-      id: 'postingType',
-      label: 'Posting Type',
-      type: 'select',
-      required: true,
-      options: [
-        { value: 'external', label: 'External Posting' },
-        { value: 'internal', label: 'Internal Posting' },
-        { value: 'both', label: 'Both Internal & External' }
-      ]
-    },
-    {
-      id: 'department',
-      label: 'Department/Team',
+      id: 'companyName',
+      label: 'Company Name',
       type: 'text',
-      required: false,
-      placeholder: 'e.g., Platform Engineering'
+      required: true,
+      placeholder: 'e.g., Acme Corp'
     },
     {
-      id: 'level',
-      label: 'Level',
+      id: 'roleLevel',
+      label: 'Role Level',
       type: 'select',
       required: false,
       options: [
@@ -51,35 +40,108 @@ export const jdPlugin = {
       ]
     },
     {
-      id: 'teamContext',
-      label: 'Team Context',
+      id: 'location',
+      label: 'Location / Remote',
+      type: 'text',
+      required: false,
+      placeholder: 'e.g., San Francisco, CA (Hybrid) or Remote'
+    },
+    {
+      id: 'postingType',
+      label: 'Posting Type',
+      type: 'select',
+      required: true,
+      options: [
+        { value: 'external', label: 'External Posting' },
+        { value: 'internal', label: 'Internal Posting' },
+        { value: 'both', label: 'Both Internal & External' }
+      ]
+    },
+    {
+      id: 'responsibilities',
+      label: 'Key Responsibilities',
       type: 'textarea',
       required: false,
       rows: 3,
-      placeholder: 'What does the team do? What will this person work on?'
+      placeholder: 'What will this person do day-to-day?'
     },
     {
-      id: 'requirements',
-      label: 'Key Requirements',
+      id: 'requiredQualifications',
+      label: 'Required Qualifications',
       type: 'textarea',
       required: false,
       rows: 3,
       placeholder: 'Must-have skills, experience, qualifications...'
     },
     {
-      id: 'niceToHave',
-      label: 'Nice to Have',
+      id: 'preferredQualifications',
+      label: 'Preferred Qualifications',
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'Preferred but not required skills...'
+      placeholder: 'Nice-to-have but not required skills...'
     },
     {
-      id: 'compensation',
+      id: 'compensationRange',
       label: 'Compensation Range',
       type: 'text',
       required: false,
       placeholder: 'e.g., $150K-$200K + equity'
+    },
+    {
+      id: 'benefits',
+      label: 'Benefits',
+      type: 'textarea',
+      required: false,
+      rows: 2,
+      placeholder: 'Health, 401k, PTO, etc...'
+    },
+    {
+      id: 'techStack',
+      label: 'Tech Stack',
+      type: 'textarea',
+      required: false,
+      rows: 2,
+      placeholder: 'e.g., Python, TypeScript, AWS, Kubernetes...'
+    },
+    {
+      id: 'teamSize',
+      label: 'Team Size / Structure',
+      type: 'text',
+      required: false,
+      placeholder: 'e.g., 8-person team, 2 pods'
+    },
+    {
+      id: 'aiSpecifics',
+      label: 'AI Role Specifics',
+      type: 'textarea',
+      required: false,
+      rows: 2,
+      placeholder: 'For AI roles: models used, infrastructure, research focus...'
+    },
+    {
+      id: 'careerLadder',
+      label: 'Career Ladder Reference',
+      type: 'textarea',
+      required: false,
+      rows: 2,
+      placeholder: 'Growth path, leveling expectations...'
+    },
+    {
+      id: 'companyPreamble',
+      label: 'Company Preamble / EEO',
+      type: 'textarea',
+      required: false,
+      rows: 2,
+      placeholder: 'Standard company intro and equal opportunity statement...'
+    },
+    {
+      id: 'companyLegalText',
+      label: 'Legal Text',
+      type: 'textarea',
+      required: false,
+      rows: 2,
+      placeholder: 'Any required legal disclosures...'
     }
   ],
 

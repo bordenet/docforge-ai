@@ -11,67 +11,94 @@ export const strategicProposalPlugin = {
 
   formFields: [
     {
-      id: 'title',
-      label: 'Proposal Title',
+      id: 'dealershipName',
+      label: 'Dealership Name',
       type: 'text',
       required: true,
-      placeholder: 'e.g., Expand into European Market'
+      placeholder: 'e.g., Metro Auto Group'
     },
     {
-      id: 'problem',
-      label: 'Problem / Opportunity',
+      id: 'dealershipLocation',
+      label: 'Dealership Location',
+      type: 'text',
+      required: true,
+      placeholder: 'e.g., Dallas, TX'
+    },
+    {
+      id: 'storeCount',
+      label: 'Number of Stores/Rooftops',
+      type: 'text',
+      required: false,
+      placeholder: 'e.g., 5 stores across DFW metro'
+    },
+    {
+      id: 'currentVendor',
+      label: 'Current Vendor (if any)',
+      type: 'text',
+      required: false,
+      placeholder: 'e.g., CDK Global'
+    },
+    {
+      id: 'decisionMakerName',
+      label: 'Decision Maker Name',
+      type: 'text',
+      required: true,
+      placeholder: 'e.g., John Smith'
+    },
+    {
+      id: 'decisionMakerRole',
+      label: 'Decision Maker Role',
+      type: 'text',
+      required: true,
+      placeholder: 'e.g., VP of Operations'
+    },
+    {
+      id: 'conversationTranscripts',
+      label: 'Conversation Transcripts / Call Logs',
+      type: 'textarea',
+      required: false,
+      rows: 4,
+      placeholder: 'Paste relevant call transcripts or conversation notes...'
+    },
+    {
+      id: 'meetingNotes',
+      label: 'Meeting Notes',
+      type: 'textarea',
+      required: false,
+      rows: 3,
+      placeholder: 'Notes from discovery meetings...'
+    },
+    {
+      id: 'painPoints',
+      label: 'Known Pain Points',
       type: 'textarea',
       required: true,
       rows: 3,
-      placeholder: 'What strategic problem or opportunity are you addressing?'
+      placeholder: 'What problems are they trying to solve?'
     },
     {
-      id: 'context',
-      label: 'Strategic Context',
-      type: 'textarea',
-      required: true,
-      rows: 3,
-      placeholder: 'Market dynamics, competitive landscape, internal factors...'
-    },
-    {
-      id: 'proposedSolution',
-      label: 'Proposed Solution',
+      id: 'attachmentText',
+      label: 'Additional Context from Attachments',
       type: 'textarea',
       required: false,
       rows: 3,
-      placeholder: 'What is your recommended approach?'
+      placeholder: 'Paste any relevant content from documents or emails...'
     },
     {
-      id: 'businessImpact',
-      label: 'Expected Business Impact',
+      id: 'workingDraft',
+      label: 'Existing Working Draft (if any)',
+      type: 'textarea',
+      required: false,
+      rows: 3,
+      placeholder: 'If you have a draft started, paste it here...'
+    },
+    {
+      id: 'additionalContext',
+      label: 'Additional Context',
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'Revenue, market share, strategic positioning...'
-    },
-    {
-      id: 'timeline',
-      label: 'Implementation Timeline',
-      type: 'textarea',
-      required: false,
-      rows: 2,
-      placeholder: 'Key milestones and phases...'
-    },
-    {
-      id: 'resources',
-      label: 'Required Resources',
-      type: 'textarea',
-      required: false,
-      rows: 2,
-      placeholder: 'Budget, headcount, partnerships...'
-    },
-    {
-      id: 'risks',
-      label: 'Risks & Mitigations',
-      type: 'textarea',
-      required: false,
-      rows: 2,
-      placeholder: 'Key risks and how they will be addressed...'
+      placeholder: 'Any other relevant information...'
     }
   ],
 

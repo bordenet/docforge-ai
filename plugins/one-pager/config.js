@@ -97,6 +97,22 @@ export const onePagerPlugin = {
       required: false,
       rows: 2,
       placeholder: 'Rough timeline or milestones...'
+    },
+    {
+      id: 'theInvestment',
+      label: 'The Investment',
+      type: 'textarea',
+      required: false,
+      rows: 2,
+      placeholder: 'e.g., 2 engineers, 3 sprints, $50K budget...'
+    },
+    {
+      id: 'risksAssumptions',
+      label: 'Risks & Assumptions',
+      type: 'textarea',
+      required: false,
+      rows: 2,
+      placeholder: 'Key risks and assumptions that must hold true...'
     }
   ],
 

@@ -1,7 +1,7 @@
 # Phase 3: Final Synthesis (Claude Sonnet 4.5)
 
 <!--
-CUSTOMIZATION: Replace {{DOCUMENT_TYPE}}, {{PROJECT_TITLE}}, {{GITHUB_PAGES_URL}}.
+CUSTOMIZATION: This template uses DOCUMENT_TYPE form field and PHASE1_OUTPUT/PHASE2_OUTPUT.
 This phase synthesizes the best of Phase 1 + Phase 2.
 -->
 

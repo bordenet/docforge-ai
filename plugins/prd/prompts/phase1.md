@@ -8,7 +8,7 @@ The user has provided the following information:
 
 **Document Title:** {{TITLE}}
 
-**Problems to Address:** {{PROBLEMS}}
+**Problems to Address:** {{PROBLEM}}
 
 **Additional Context:** {{CONTEXT}}
 

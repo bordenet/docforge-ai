@@ -11,6 +11,13 @@ export const powerStatementPlugin = {
 
   formFields: [
     {
+      id: 'productName',
+      label: 'Product/Service Name',
+      type: 'text',
+      required: true,
+      placeholder: 'e.g., Acme DataSync Pro'
+    },
+    {
       id: 'customerType',
       label: 'Customer Type',
       type: 'select',
@@ -32,20 +39,12 @@ export const powerStatementPlugin = {
       placeholder: 'What specific problem does your customer face?'
     },
     {
-      id: 'solution',
-      label: 'Your Solution',
+      id: 'outcome',
+      label: 'Desired Outcome',
       type: 'textarea',
       required: true,
-      rows: 3,
-      placeholder: 'How does your product/service solve this problem?'
-    },
-    {
-      id: 'differentiation',
-      label: 'Differentiation',
-      type: 'textarea',
-      required: false,
       rows: 2,
-      placeholder: 'What makes your solution unique vs. alternatives?'
+      placeholder: 'What outcome does the customer want to achieve?'
     },
     {
       id: 'proofPoints',
@@ -54,6 +53,14 @@ export const powerStatementPlugin = {
       required: false,
       rows: 2,
       placeholder: 'Metrics, case studies, testimonials that prove value...'
+    },
+    {
+      id: 'differentiators',
+      label: 'Key Differentiators',
+      type: 'textarea',
+      required: false,
+      rows: 2,
+      placeholder: 'What makes your solution unique vs. alternatives?'
     },
     {
       id: 'objections',

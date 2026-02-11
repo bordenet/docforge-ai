@@ -1,7 +1,7 @@
 # Phase 1: Initial Draft (Claude Sonnet 4.5)
 
 <!--
-CUSTOMIZATION: Replace {{DOCUMENT_TYPE}}, {{TITLE}}, {{CONTEXT}}, {{PROBLEMS}} with your actual form fields.
+CUSTOMIZATION: This template uses form field IDs as template variables.
 REFERENCE: https://github.com/bordenet/product-requirements-assistant/blob/main/prompts/phase1.md
 -->
 
@@ -10,8 +10,12 @@ You are a principal-level expert helping create a {{DOCUMENT_TYPE}} document.
 ## Context
 
 **Document Title:** {{TITLE}}
-**Problems to Address:** {{PROBLEMS}}
-**Additional Context:** {{CONTEXT}}
+**Business Context:** {{CONTEXT}}
+**Current State:** {{CURRENT_STATE}}
+**Proposed Change:** {{PROPOSED_CHANGE}}
+**Alternatives Considered:** {{ALTERNATIVES}}
+**ROI / Business Impact:** {{ROI}}
+**Risks & Mitigations:** {{RISKS}}
 
 ## Your Task
 

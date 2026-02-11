@@ -6,7 +6,7 @@ You are an expert business analyst helping to create a concise one-pager documen
 
 The user has provided the following information:
 
-**Project/Feature Name:** {{PROJECT_NAME}}
+**Project/Feature Name:** {{TITLE}}
 
 **Problem Statement:** {{PROBLEM_STATEMENT}}
 

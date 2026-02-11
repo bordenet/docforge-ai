@@ -11,11 +11,26 @@ export const prFaqPlugin = {
 
   formFields: [
     {
-      id: 'title',
+      id: 'productName',
       label: 'Product/Feature Name',
       type: 'text',
       required: true,
       placeholder: 'e.g., Smart Home Energy Dashboard'
+    },
+    {
+      id: 'companyName',
+      label: 'Company Name',
+      type: 'text',
+      required: true,
+      placeholder: 'e.g., Acme Corp'
+    },
+    {
+      id: 'targetCustomer',
+      label: 'Target Customer',
+      type: 'textarea',
+      required: true,
+      rows: 2,
+      placeholder: 'Who is the target customer? Be specific about their role and context.'
     },
     {
       id: 'problem',
@@ -26,6 +41,14 @@ export const prFaqPlugin = {
       placeholder: 'What customer problem are you solving? Start with the customer.'
     },
     {
+      id: 'theAlternative',
+      label: 'The Alternative',
+      type: 'textarea',
+      required: false,
+      rows: 2,
+      placeholder: 'What do customers do today? Manual process? Competitor product?'
+    },
+    {
       id: 'solution',
       label: 'Proposed Solution',
       type: 'textarea',
@@ -34,21 +57,12 @@ export const prFaqPlugin = {
       placeholder: 'How does this product/feature solve the problem?'
     },
     {
-      id: 'customerQuote',
-      label: 'Customer Quote',
+      id: 'benefits',
+      label: 'Key Benefits',
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'Hypothetical customer quote celebrating the solution...'
-    },
-    {
-      id: 'internalFaq',
-      label: 'Internal FAQ Topics',
-      type: 'textarea',
-      required: false,
-      rows: 3,
-      placeholder: 'Key questions stakeholders will ask (cost, timeline, risks)...',
-      helpText: 'List the hard questions that need answers in the Internal FAQ'
+      placeholder: 'Top 3-5 benefits for the customer...'
     },
     {
       id: 'metrics',
@@ -57,6 +71,44 @@ export const prFaqPlugin = {
       required: false,
       rows: 2,
       placeholder: 'How will success be measured? Key metrics...'
+    },
+    {
+      id: 'priceAndAvailability',
+      label: 'Price and Availability',
+      type: 'textarea',
+      required: false,
+      rows: 2,
+      placeholder: 'Launch date, pricing, regional availability...'
+    },
+    {
+      id: 'releaseDate',
+      label: 'Release Date',
+      type: 'text',
+      required: false,
+      placeholder: 'e.g., Q2 2026'
+    },
+    {
+      id: 'executiveVision',
+      label: 'Executive Vision',
+      type: 'textarea',
+      required: false,
+      rows: 2,
+      placeholder: 'High-level "Why" from company perspective...'
+    },
+    {
+      id: 'internalRisks',
+      label: 'Internal Risks',
+      type: 'textarea',
+      required: false,
+      rows: 2,
+      placeholder: 'Biggest reason this might fail...'
+    },
+    {
+      id: 'location',
+      label: 'Location',
+      type: 'text',
+      required: false,
+      placeholder: 'e.g., Seattle, WA'
     }
   ],
 

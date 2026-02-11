@@ -11,27 +11,27 @@ export const acceptanceCriteriaPlugin = {
 
   formFields: [
     {
-      id: 'summary',
-      label: 'User Story Summary',
+      id: 'issueTitle',
+      label: 'Issue Title',
       type: 'text',
       required: true,
       placeholder: 'e.g., As a user, I want to reset my password'
     },
     {
-      id: 'context',
-      label: 'Context & Background',
+      id: 'whatNeedsToBeDone',
+      label: 'What Needs to Be Done',
       type: 'textarea',
       required: true,
       rows: 3,
-      placeholder: 'What context is needed to understand this story?'
+      placeholder: 'Describe what needs to be accomplished...'
     },
     {
-      id: 'userFlow',
-      label: 'User Flow / Happy Path',
+      id: 'relatedContext',
+      label: 'Related Context',
       type: 'textarea',
       required: false,
       rows: 3,
-      placeholder: 'Describe the main user flow or happy path...'
+      placeholder: 'What context is needed to understand this story?'
     },
     {
       id: 'edgeCases',
