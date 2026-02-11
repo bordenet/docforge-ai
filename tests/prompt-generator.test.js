@@ -83,7 +83,7 @@ describe('Prompt Generator', () => {
       expect(result).toContain('Build a better UX');
     });
 
-    it('should handle phase response variables', () => {
+    it('should handle phase response variables with RESPONSE suffix', () => {
       const template = `## Phase 1 Output
 {{PHASE1_RESPONSE}}
 
@@ -99,6 +99,105 @@ describe('Prompt Generator', () => {
 
       expect(result).toContain('Initial draft content');
       expect(result).toContain('Suggested improvements');
+    });
+
+    it('should handle phase output variables with OUTPUT suffix (actual template format)', () => {
+      // This is the ACTUAL format used in all plugin prompt templates
+      const template = `## Version 1: Initial Draft (Claude)
+
+{{PHASE1_OUTPUT}}
+
+---
+
+## Version 2: Gemini Review
+
+{{PHASE2_OUTPUT}}`;
+
+      const data = {
+        PHASE1_OUTPUT: 'This is the Phase 1 draft content from Claude',
+        PHASE2_OUTPUT: 'This is the Phase 2 review from Gemini'
+      };
+
+      const result = fillPromptTemplate(template, data);
+
+      expect(result).toContain('This is the Phase 1 draft content from Claude');
+      expect(result).toContain('This is the Phase 2 review from Gemini');
+      expect(result).not.toContain('{{PHASE1_OUTPUT}}');
+      expect(result).not.toContain('{{PHASE2_OUTPUT}}');
+    });
+
+    it('should NOT leave PHASE1_OUTPUT empty when data is provided', () => {
+      const template = '{{PHASE1_OUTPUT}}';
+      const data = { PHASE1_OUTPUT: 'Draft content' };
+
+      const result = fillPromptTemplate(template, data);
+
+      expect(result).toBe('Draft content');
+      expect(result).not.toBe('{{PHASE1_OUTPUT}}');
+    });
+
+    it('should NOT leave PHASE2_OUTPUT empty when data is provided', () => {
+      const template = '{{PHASE2_OUTPUT}}';
+      const data = { PHASE2_OUTPUT: 'Review content' };
+
+      const result = fillPromptTemplate(template, data);
+
+      expect(result).toBe('Review content');
+      expect(result).not.toBe('{{PHASE2_OUTPUT}}');
+    });
+  });
+
+  describe('Phase output variable naming', () => {
+    // These tests verify the CRITICAL requirement that phase outputs are substituted
+    // The templates use PHASE1_OUTPUT and PHASE2_OUTPUT (not RESPONSE)
+
+    it('should substitute PHASE1_OUTPUT in phase 2 templates', () => {
+      const phase2Template = `# Phase 2: Review
+
+## Original Draft
+{{PHASE1_OUTPUT}}
+
+## Your Task
+Review and improve the draft above.`;
+
+      const data = {
+        PHASE1_OUTPUT: '# My Document\n\nThis is the initial draft.'
+      };
+
+      const result = fillPromptTemplate(phase2Template, data);
+
+      expect(result).toContain('# My Document');
+      expect(result).toContain('This is the initial draft.');
+      expect(result).not.toContain('{{PHASE1_OUTPUT}}');
+    });
+
+    it('should substitute both PHASE1_OUTPUT and PHASE2_OUTPUT in phase 3 templates', () => {
+      const phase3Template = `# Phase 3: Synthesis
+
+## Version 1: Initial Draft (Claude)
+{{PHASE1_OUTPUT}}
+
+---
+
+## Version 2: Gemini Review
+{{PHASE2_OUTPUT}}
+
+---
+
+## Your Synthesis
+Combine the best elements.`;
+
+      const data = {
+        PHASE1_OUTPUT: 'Claude generated this initial PRD draft with all sections.',
+        PHASE2_OUTPUT: 'Gemini reviewed and suggested these improvements.'
+      };
+
+      const result = fillPromptTemplate(phase3Template, data);
+
+      expect(result).toContain('Claude generated this initial PRD draft');
+      expect(result).toContain('Gemini reviewed and suggested');
+      expect(result).not.toContain('{{PHASE1_OUTPUT}}');
+      expect(result).not.toContain('{{PHASE2_OUTPUT}}');
     });
   });
 });

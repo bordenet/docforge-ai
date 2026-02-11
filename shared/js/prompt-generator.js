@@ -84,7 +84,7 @@ Generate a well-structured first draft based on the provided context.
 Review the draft and provide an alternative perspective.
 
 ## Original Draft
-{{PHASE1_RESPONSE}}
+{{PHASE1_OUTPUT}}
 
 ## Your Task
 Identify weaknesses and suggest improvements.
@@ -96,10 +96,10 @@ Identify weaknesses and suggest improvements.
 Combine the original draft and alternative perspective into a polished final version.
 
 ## Original Draft
-{{PHASE1_RESPONSE}}
+{{PHASE1_OUTPUT}}
 
 ## Alternative Perspective
-{{PHASE2_RESPONSE}}
+{{PHASE2_OUTPUT}}
 
 ## Your Task
 Create the final, polished document.
@@ -122,8 +122,12 @@ export async function generatePrompt(plugin, phase, formData, previousResponses 
   const template = await loadPromptTemplate(plugin.id, phase);
 
   // Build combined data for template filling
+  // Templates use PHASE1_OUTPUT and PHASE2_OUTPUT (not RESPONSE)
   const data = {
     ...formData,
+    // Support both naming conventions for backwards compatibility
+    PHASE1_OUTPUT: previousResponses[1] || '',
+    PHASE2_OUTPUT: previousResponses[2] || '',
     PHASE1_RESPONSE: previousResponses[1] || '',
     PHASE2_RESPONSE: previousResponses[2] || ''
   };

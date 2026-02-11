@@ -157,3 +157,91 @@ test.describe('Assistant', () => {
 
 });
 
+// Phase output substitution tests
+// These tests verify that prior phase outputs are correctly included in prompts
+test.describe('Phase Output Substitution', () => {
+  // Use clipboard permissions for reading copied prompts
+  test.use({
+    permissions: ['clipboard-read', 'clipboard-write']
+  });
+
+  test('phase 2 prompt includes phase 1 response', async ({ page, context }) => {
+    // Grant clipboard permissions
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+
+    // Create a project and complete phase 1
+    await page.goto('/assistant/?type=one-pager#new');
+    await page.waitForLoadState('networkidle');
+    await page.fill('#title', 'Phase Output Test');
+    await page.fill('#problemStatement', 'Test problem');
+    await page.fill('#proposedSolution', 'Test solution');
+    await page.click('button[type="submit"]');
+    await page.waitForURL(/#project\//);
+
+    // Complete phase 1 - copy prompt first
+    await page.click('#copy-prompt-btn');
+    await page.waitForTimeout(500);
+
+    // Save a phase 1 response
+    const phase1Response = 'This is the Phase 1 draft output from Claude.';
+    await page.fill('#response-textarea', phase1Response);
+    await page.click('#save-response-btn');
+    await page.waitForTimeout(500);
+
+    // Now on phase 2 - copy the prompt
+    await page.click('#copy-prompt-btn');
+    await page.waitForTimeout(500);
+
+    // Read the clipboard content
+    const clipboardContent = await page.evaluate(async () => {
+      return await navigator.clipboard.readText();
+    });
+
+    // Verify phase 1 output is included in phase 2 prompt
+    expect(clipboardContent).toContain(phase1Response);
+  });
+
+  test('phase 3 prompt includes both phase 1 and phase 2 responses', async ({ page, context }) => {
+    // Grant clipboard permissions
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+
+    // Create a project and complete phases 1 and 2
+    await page.goto('/assistant/?type=one-pager#new');
+    await page.waitForLoadState('networkidle');
+    await page.fill('#title', 'Phase 3 Output Test');
+    await page.fill('#problemStatement', 'Test problem for phase 3');
+    await page.fill('#proposedSolution', 'Test solution for phase 3');
+    await page.click('button[type="submit"]');
+    await page.waitForURL(/#project\//);
+
+    // Complete phase 1
+    await page.click('#copy-prompt-btn');
+    await page.waitForTimeout(500);
+    const phase1Response = 'UNIQUE_PHASE1_CONTENT_12345';
+    await page.fill('#response-textarea', phase1Response);
+    await page.click('#save-response-btn');
+    await page.waitForTimeout(500);
+
+    // Complete phase 2
+    await page.click('#copy-prompt-btn');
+    await page.waitForTimeout(500);
+    const phase2Response = 'UNIQUE_PHASE2_CONTENT_67890';
+    await page.fill('#response-textarea', phase2Response);
+    await page.click('#save-response-btn');
+    await page.waitForTimeout(500);
+
+    // Now on phase 3 - copy the prompt
+    await page.click('#copy-prompt-btn');
+    await page.waitForTimeout(500);
+
+    // Read the clipboard content
+    const clipboardContent = await page.evaluate(async () => {
+      return await navigator.clipboard.readText();
+    });
+
+    // Verify BOTH phase 1 and phase 2 outputs are included
+    expect(clipboardContent).toContain(phase1Response);
+    expect(clipboardContent).toContain(phase2Response);
+  });
+});
+
