@@ -6,7 +6,7 @@
 /**
  * Show a toast notification
  * @param {string} message - Message to display
- * @param {'success'|'error'|'info'} [type='info'] - Toast type
+ * @param {'success'|'error'|'warning'|'info'} [type='info'] - Toast type
  * @param {number} [duration=3000] - Duration in ms
  */
 export function showToast(message, type = 'info', duration = 3000) {
@@ -16,12 +16,14 @@ export function showToast(message, type = 'info', duration = 3000) {
   const colors = {
     success: 'bg-green-600',
     error: 'bg-red-600',
+    warning: 'bg-yellow-600',
     info: 'bg-blue-600',
   };
 
   const icons = {
     success: '✓',
     error: '✕',
+    warning: '⚠',
     info: 'ℹ',
   };
 

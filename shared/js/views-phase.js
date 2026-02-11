@@ -5,6 +5,14 @@
 
 import { escapeHtml } from './ui.js';
 
+// Phase accent colors for visual differentiation
+const PHASE_ACCENT_COLORS = {
+  1: 'blue',
+  2: 'green',
+  3: 'purple',
+};
+const DEFAULT_PHASE_COLOR = 'blue';
+
 /**
  * Get phase metadata from plugin config
  * @param {Object} plugin - Plugin config
@@ -34,8 +42,7 @@ function getPhaseMetadata(plugin, phaseNumber) {
 export function renderPhaseContent(plugin, project, phase) {
   const meta = getPhaseMetadata(plugin, phase);
   const phaseData = project.phases?.[phase] || { prompt: '', response: '', completed: false };
-  const colorMap = { 1: 'blue', 2: 'green', 3: 'purple' };
-  const color = colorMap[phase] || 'blue';
+  const color = PHASE_ACCENT_COLORS[phase] || DEFAULT_PHASE_COLOR;
 
   // Completion banner for Phase 3
   let completionBanner = '';

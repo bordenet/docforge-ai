@@ -96,8 +96,8 @@ function longestCommonSubsequence(a, b) {
 
   // Backtrack to find LCS
   const lcs = [];
-  let i = m,
-    j = n;
+  let i = m;
+  let j = n;
   while (i > 0 && j > 0) {
     if (a[i - 1] === b[j - 1]) {
       lcs.unshift(a[i - 1]);

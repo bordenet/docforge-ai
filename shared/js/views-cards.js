@@ -5,6 +5,25 @@
 
 import { escapeHtml, formatDate } from './ui.js';
 
+// Phase progress bar color classes
+const PHASE_COLORS = {
+  complete: 'bg-green-500',
+  current: 'bg-blue-500',
+  pending: 'bg-gray-300 dark:bg-gray-600',
+};
+
+/**
+ * Get the appropriate color class for a phase progress segment
+ * @param {boolean} isComplete - Whether the phase is complete
+ * @param {boolean} isCurrent - Whether this is the current active phase
+ * @returns {string} Tailwind color class
+ */
+function getPhaseColorClass(isComplete, isCurrent) {
+  if (isComplete) return PHASE_COLORS.complete;
+  if (isCurrent) return PHASE_COLORS.current;
+  return PHASE_COLORS.pending;
+}
+
 /**
  * Render a project card
  * @param {Object} project - Project data
@@ -35,11 +54,7 @@ export function renderProjectCard(project) {
       const isPhaseComplete = project.phases?.[phase]?.completed;
       const currentPhase = project.currentPhase || 1;
       const isCurrent = phase === currentPhase && !isPhaseComplete;
-      const colorClass = isPhaseComplete
-        ? 'bg-green-500'
-        : isCurrent
-          ? 'bg-blue-500'
-          : 'bg-gray-300 dark:bg-gray-600';
+      const colorClass = getPhaseColorClass(isPhaseComplete, isCurrent);
       return `<div class="flex-1 h-1.5 rounded ${colorClass}"></div>`;
     })
     .join('');

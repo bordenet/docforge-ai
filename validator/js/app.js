@@ -270,8 +270,6 @@ function toggleDarkMode() {
   document.documentElement.classList.toggle('dark');
 }
 
-// escapeHtml imported from ui.js
-
 // Initialize
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initValidator);
