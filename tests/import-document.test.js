@@ -201,6 +201,41 @@ describe('Import Document Module', () => {
       const pasteArea = document.getElementById('import-paste-area');
       expect(document.activeElement).toBe(pasteArea);
     });
+
+    test('should save with currentPhase 2 and phase 1 completed when importing', async () => {
+      const plugin = { name: 'One-Pager', dbName: 'test-db' };
+      let savedProject = null;
+      const saveProject = jest.fn().mockImplementation((dbName, data) => {
+        savedProject = { id: 'test-123', ...data };
+        return Promise.resolve(savedProject);
+      });
+      const onComplete = jest.fn();
+
+      showImportModal(plugin, saveProject, onComplete);
+
+      // Simulate pasting markdown
+      const pasteArea = document.getElementById('import-paste-area');
+      pasteArea.innerHTML = '# My Document Title\n\nSome content here.';
+
+      // Click convert
+      const convertBtn = document.getElementById('import-convert-btn');
+      convertBtn.click();
+
+      // Click save
+      const saveBtn = document.getElementById('import-save-btn');
+      await saveBtn.click();
+
+      // Wait for async save
+      await new Promise(resolve => setTimeout(resolve, 10));
+
+      // Verify save was called with correct structure
+      expect(saveProject).toHaveBeenCalled();
+      const savedData = saveProject.mock.calls[0][1];
+      expect(savedData.currentPhase).toBe(2);  // Should skip to Phase 2
+      expect(savedData.phases[1].completed).toBe(true);  // Phase 1 should be complete
+      expect(savedData.phases[1].response).toContain('My Document Title');  // Content saved
+      expect(savedData.isImported).toBe(true);
+    });
   });
 });
 
