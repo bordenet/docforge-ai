@@ -11,7 +11,6 @@ import {
   getPhaseMetadata,
   createProject,
   updateFormData,
-  validatePhase,
   advancePhase,
   isProjectComplete,
   getCurrentPhase,
@@ -22,12 +21,13 @@ import {
   getExportFilename
 } from '../shared/js/workflow.js';
 
-// Mock prompt-generator module
-jest.unstable_mockModule('../shared/js/prompt-generator.js', () => ({
-  generatePrompt: jest.fn((plugin, phase, formData) => 
-    Promise.resolve(`Mock prompt for phase ${phase}: ${formData.title || 'untitled'}`)
-  )
-}));
+// Mock fetch for prompt template loading
+beforeAll(() => {
+  global.fetch = jest.fn(() => Promise.resolve({
+    ok: true,
+    text: () => Promise.resolve('Mock prompt template with {{TITLE}} and {{DESCRIPTION}}')
+  }));
+});
 
 describe('WORKFLOW_CONFIG', () => {
   it('should have required structure', () => {
