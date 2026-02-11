@@ -6,6 +6,19 @@
 
 import { saveProject, getProject, getAllProjects } from './storage.js';
 
+// ============================================================================
+// Configuration Constants
+// ============================================================================
+
+/** Minimum title length to be considered valid (shorter is likely truncated or generic) */
+const MIN_TITLE_LENGTH = 10;
+
+/** Maximum title length before it's considered a sentence rather than a title */
+const MAX_TITLE_LENGTH = 150;
+
+/** Maximum length for sanitized filenames */
+const MAX_FILENAME_LENGTH = 50;
+
 /**
  * Extract title from final document markdown content
  * @param {string} markdown - Document markdown content
@@ -40,7 +53,11 @@ export function extractTitleFromMarkdown(markdown) {
   if (firstBoldMatch) {
     const title = firstBoldMatch[1].trim();
     // Only use if it looks like a headline (not too long, not a sentence)
-    if (title.length > 10 && title.length < 150 && !title.endsWith('.')) {
+    if (
+      title.length > MIN_TITLE_LENGTH &&
+      title.length < MAX_TITLE_LENGTH &&
+      !title.endsWith('.')
+    ) {
       return title;
     }
   }
@@ -126,7 +143,7 @@ export function sanitizeFilename(filename) {
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '')
     .toLowerCase()
-    .substring(0, 50);
+    .substring(0, MAX_FILENAME_LENGTH);
 }
 
 /**

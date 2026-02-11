@@ -7,8 +7,69 @@
 import { showToast } from './ui.js';
 import { logger } from './logger.js';
 
+// ============================================================================
+// Configuration Constants
+// ============================================================================
+
+/** Maximum lines to scan at the top of a document for title extraction */
+const TITLE_SCAN_LINE_LIMIT = 20;
+
+/** Maximum character length for a valid title */
+const MAX_TITLE_LENGTH = 100;
+
+/** Maximum length for first-line title candidates (shorter than full titles to filter sentences) */
+const MAX_FIRST_LINE_TITLE_LENGTH = 80;
+
+/** Minimum length for non-empty lines to be considered as title candidates */
+const MIN_LINE_LENGTH_FOR_TITLE = 5;
+
+// Markdown confidence scoring weights
+/** Points per header match (e.g., # ## ###) */
+const CONFIDENCE_HEADER_POINTS = 15;
+/** Maximum points for headers */
+const CONFIDENCE_HEADER_MAX = 40;
+/** Points per bold text match */
+const CONFIDENCE_BOLD_POINTS = 5;
+/** Maximum points for bold text */
+const CONFIDENCE_BOLD_MAX = 20;
+/** Points per italic match */
+const CONFIDENCE_ITALIC_POINTS = 3;
+/** Maximum points for italic */
+const CONFIDENCE_ITALIC_MAX = 10;
+/** Points per list item */
+const CONFIDENCE_LIST_POINTS = 2;
+/** Maximum points for lists */
+const CONFIDENCE_LIST_MAX = 15;
+/** Points per ordered list item */
+const CONFIDENCE_ORDERED_LIST_POINTS = 2;
+/** Maximum points for ordered lists */
+const CONFIDENCE_ORDERED_LIST_MAX = 10;
+/** Points for presence of code blocks */
+const CONFIDENCE_CODE_BLOCK_POINTS = 10;
+/** Points per inline code match */
+const CONFIDENCE_INLINE_CODE_POINTS = 2;
+/** Maximum points for inline code */
+const CONFIDENCE_INLINE_CODE_MAX = 10;
+/** Points per link match */
+const CONFIDENCE_LINK_POINTS = 3;
+/** Maximum points for links */
+const CONFIDENCE_LINK_MAX = 10;
+/** Points per table row match */
+const CONFIDENCE_TABLE_POINTS = 2;
+/** Maximum points for tables */
+const CONFIDENCE_TABLE_MAX = 10;
+/** Points per blockquote match */
+const CONFIDENCE_QUOTE_POINTS = 2;
+/** Maximum points for blockquotes */
+const CONFIDENCE_QUOTE_MAX = 5;
+
+/** Minimum confidence score to treat text as markdown */
+const MIN_MARKDOWN_CONFIDENCE = 10;
+/** Confidence threshold for adding H1 normalization */
+const H1_NORMALIZATION_THRESHOLD = 15;
+
 /**
- * Extract title from the BEGINNING of markdown (first 20 lines only)
+ * Extract title from the BEGINNING of markdown (first N lines only)
  * This prevents grabbing titles from appendices or other sections
  * @param {string} markdown - Markdown content
  * @param {string} docType - Document type name
@@ -17,8 +78,8 @@ import { logger } from './logger.js';
 function extractTitleFromMarkdown(markdown, docType) {
   if (!markdown) return null;
 
-  // Only look at the first 20 lines to avoid grabbing appendix titles
-  const lines = markdown.split('\n').slice(0, 20);
+  // Only look at the first N lines to avoid grabbing appendix titles
+  const lines = markdown.split('\n').slice(0, TITLE_SCAN_LINE_LIMIT);
   const topContent = lines.join('\n');
 
   // Strategy 1: H1 header at the top (# Title)
@@ -35,7 +96,12 @@ function extractTitleFromMarkdown(markdown, docType) {
   const h2Match = topContent.match(/^##\s+(.+?)(?:\n|$)/m);
   if (h2Match) {
     const title = h2Match[1].trim();
-    if (title && title.length > 0 && title.length <= 100 && !isGenericSectionHeader(title)) {
+    if (
+      title &&
+      title.length > 0 &&
+      title.length <= MAX_TITLE_LENGTH &&
+      !isGenericSectionHeader(title)
+    ) {
       return title;
     }
   }
@@ -49,7 +115,7 @@ function extractTitleFromMarkdown(markdown, docType) {
     if (
       title &&
       title.length > 0 &&
-      title.length <= 100 &&
+      title.length <= MAX_TITLE_LENGTH &&
       !title.endsWith(':') &&
       !isGenericSectionHeader(title)
     ) {
@@ -61,7 +127,8 @@ function extractTitleFromMarkdown(markdown, docType) {
   // Skip: section headers, labels, sentences (too long or contains periods)
   for (const line of lines) {
     const trimmed = line.trim();
-    if (!trimmed || /^[-=*]{3,}$/.test(trimmed) || trimmed.length < 5) continue;
+    if (!trimmed || /^[-=*]{3,}$/.test(trimmed) || trimmed.length < MIN_LINE_LENGTH_FOR_TITLE)
+      continue;
     const cleaned = trimmed
       .replace(/^#+\s*/, '')
       .replace(/\*\*/g, '')
@@ -70,13 +137,13 @@ function extractTitleFromMarkdown(markdown, docType) {
       .replace(/_/g, ' ')
       .trim();
     // Skip if:
-    // - Empty or too long (> 80 chars = probably a sentence)
+    // - Empty or too long (probably a sentence)
     // - Ends with : (label) or . (sentence ending)
     // - Contains . followed by space (sentence with multiple clauses)
     // - Is a generic section header
     if (
       cleaned.length > 0 &&
-      cleaned.length <= 80 &&
+      cleaned.length <= MAX_FIRST_LINE_TITLE_LENGTH &&
       !cleaned.endsWith(':') &&
       !cleaned.endsWith('.') &&
       !/\.\s/.test(cleaned) &&
@@ -129,40 +196,46 @@ function computeMarkdownConfidence(text) {
 
   // Headers (# ## ### etc) - strong indicator
   const headerMatches = text.match(/^#{1,6}\s+/gm) || [];
-  score += Math.min(headerMatches.length * 15, 40);
+  score += Math.min(headerMatches.length * CONFIDENCE_HEADER_POINTS, CONFIDENCE_HEADER_MAX);
 
   // Bold **text** - strong indicator
   const boldMatches = text.match(/\*\*[^*\n]+\*\*/g) || [];
-  score += Math.min(boldMatches.length * 5, 20);
+  score += Math.min(boldMatches.length * CONFIDENCE_BOLD_POINTS, CONFIDENCE_BOLD_MAX);
 
   // Italic *text* (but not list items)
   const italicMatches = text.match(/(?<!\*)\*[^*\n]+\*(?!\*)/g) || [];
-  score += Math.min(italicMatches.length * 3, 10);
+  score += Math.min(italicMatches.length * CONFIDENCE_ITALIC_POINTS, CONFIDENCE_ITALIC_MAX);
 
   // Unordered lists (- or * at start of line)
   const listMatches = text.match(/^\s*[-*+]\s+\S/gm) || [];
-  score += Math.min(listMatches.length * 2, 15);
+  score += Math.min(listMatches.length * CONFIDENCE_LIST_POINTS, CONFIDENCE_LIST_MAX);
 
   // Ordered lists (1. 2. etc)
   const orderedMatches = text.match(/^\s*\d+\.\s+/gm) || [];
-  score += Math.min(orderedMatches.length * 2, 10);
+  score += Math.min(
+    orderedMatches.length * CONFIDENCE_ORDERED_LIST_POINTS,
+    CONFIDENCE_ORDERED_LIST_MAX
+  );
 
   // Code blocks or inline code
-  if (/```/.test(text)) score += 10;
+  if (/```/.test(text)) score += CONFIDENCE_CODE_BLOCK_POINTS;
   const inlineCodeMatches = text.match(/`[^`\n]+`/g) || [];
-  score += Math.min(inlineCodeMatches.length * 2, 10);
+  score += Math.min(
+    inlineCodeMatches.length * CONFIDENCE_INLINE_CODE_POINTS,
+    CONFIDENCE_INLINE_CODE_MAX
+  );
 
   // Links [text](url)
   const linkMatches = text.match(/\[[^\]]+\]\([^)]+\)/g) || [];
-  score += Math.min(linkMatches.length * 3, 10);
+  score += Math.min(linkMatches.length * CONFIDENCE_LINK_POINTS, CONFIDENCE_LINK_MAX);
 
   // Tables |col|col|
   const tableMatches = text.match(/^\|.+\|$/gm) || [];
-  score += Math.min(tableMatches.length * 2, 10);
+  score += Math.min(tableMatches.length * CONFIDENCE_TABLE_POINTS, CONFIDENCE_TABLE_MAX);
 
   // Blockquotes
   const quoteMatches = text.match(/^\s*>/gm) || [];
-  score += Math.min(quoteMatches.length * 2, 5);
+  score += Math.min(quoteMatches.length * CONFIDENCE_QUOTE_POINTS, CONFIDENCE_QUOTE_MAX);
 
   return Math.min(score, 100);
 }
@@ -173,8 +246,7 @@ function computeMarkdownConfidence(text) {
  * @returns {boolean} True if text contains markdown patterns
  */
 function containsMarkdownSyntax(text) {
-  // Use confidence score - anything above 10 is likely markdown
-  return computeMarkdownConfidence(text) >= 10;
+  return computeMarkdownConfidence(text) >= MIN_MARKDOWN_CONFIDENCE;
 }
 
 /**
@@ -198,8 +270,7 @@ export function normalizeMarkdown(markdown, docType) {
   const confidence = computeMarkdownConfidence(markdown);
 
   // If confidence is high enough (has markdown syntax), add H1
-  // Threshold of 15 means at least one header OR a few other markdown elements
-  if (confidence >= 15) {
+  if (confidence >= H1_NORMALIZATION_THRESHOLD) {
     // Prepend H1 with document type
     return `# ${docType}\n\n${markdown}`;
   }

@@ -13,6 +13,57 @@ import { calculateSlopScore, getSlopPenalty } from './slop-detection.js';
 export { calculateSlopScore };
 
 // ============================================================================
+// Validation Constants
+// ============================================================================
+
+/** Minimum heading count for a document to be considered "structured" */
+const MIN_HEADINGS_FOR_STRUCTURE = 3;
+
+/** Minimum word count for a document to have "substance" */
+const MIN_WORDS_FOR_SUBSTANCE = 100;
+
+/** Minimum quantified metrics count for full points */
+const QUANTIFIED_FULL_POINTS_THRESHOLD = 3;
+
+/** Minimum word count for full substance points */
+const WORD_COUNT_FULL_POINTS = 200;
+
+/** Minimum word count for partial substance points */
+const WORD_COUNT_PARTIAL_POINTS = 100;
+
+/** Minimum section count for full section coverage points */
+const SECTION_COUNT_FULL_POINTS = 5;
+
+/** Minimum section count for partial section coverage points */
+const SECTION_COUNT_PARTIAL_POINTS = 3;
+
+// Grade thresholds
+const GRADE_A_THRESHOLD = 90;
+const GRADE_B_THRESHOLD = 80;
+const GRADE_C_THRESHOLD = 70;
+const GRADE_D_THRESHOLD = 60;
+
+// Score color thresholds
+const COLOR_GREEN_THRESHOLD = 70;
+const COLOR_YELLOW_THRESHOLD = 50;
+const COLOR_ORANGE_THRESHOLD = 30;
+
+// Score label thresholds
+const LABEL_EXCELLENT_THRESHOLD = 80;
+const LABEL_READY_THRESHOLD = 70;
+const LABEL_NEEDS_WORK_THRESHOLD = 50;
+const LABEL_DRAFT_THRESHOLD = 30;
+
+// Scoring percentages (as decimals)
+const STRUCTURE_SCORE_WEIGHT = 0.3;
+const QUANTIFIED_FULL_WEIGHT = 0.25;
+const QUANTIFIED_PARTIAL_WEIGHT = 0.15;
+const SUBSTANCE_FULL_WEIGHT = 0.25;
+const SUBSTANCE_PARTIAL_WEIGHT = 0.15;
+const COVERAGE_FULL_WEIGHT = 0.2;
+const COVERAGE_PARTIAL_WEIGHT = 0.1;
+
+// ============================================================================
 // Section Detection Patterns
 // ============================================================================
 
@@ -101,8 +152,8 @@ export function analyzeContentQuality(text) {
     measurable,
     headingCount,
     wordCount,
-    hasStructure: headingCount >= 3,
-    hasSubstance: wordCount >= 100,
+    hasStructure: headingCount >= MIN_HEADINGS_FOR_STRUCTURE,
+    hasSubstance: wordCount >= MIN_WORDS_FOR_SUBSTANCE,
   };
 }
 
@@ -123,36 +174,36 @@ function scoreDimension(text, dimension) {
 
   // Points for having structure
   if (quality.hasStructure) {
-    score += Math.floor(maxPoints * 0.3);
+    score += Math.floor(maxPoints * STRUCTURE_SCORE_WEIGHT);
   } else {
     issues.push('Add more section headings for clarity');
   }
 
   // Points for quantified content
-  if (quality.quantified >= 3) {
-    score += Math.floor(maxPoints * 0.25);
+  if (quality.quantified >= QUANTIFIED_FULL_POINTS_THRESHOLD) {
+    score += Math.floor(maxPoints * QUANTIFIED_FULL_WEIGHT);
   } else if (quality.quantified > 0) {
-    score += Math.floor(maxPoints * 0.15);
+    score += Math.floor(maxPoints * QUANTIFIED_PARTIAL_WEIGHT);
     issues.push('Add more quantified data (numbers, percentages, metrics)');
   } else {
     issues.push('Include specific numbers and metrics');
   }
 
   // Points for substance
-  if (quality.wordCount >= 200) {
-    score += Math.floor(maxPoints * 0.25);
-  } else if (quality.wordCount >= 100) {
-    score += Math.floor(maxPoints * 0.15);
+  if (quality.wordCount >= WORD_COUNT_FULL_POINTS) {
+    score += Math.floor(maxPoints * SUBSTANCE_FULL_WEIGHT);
+  } else if (quality.wordCount >= WORD_COUNT_PARTIAL_POINTS) {
+    score += Math.floor(maxPoints * SUBSTANCE_PARTIAL_WEIGHT);
     issues.push('Consider adding more detail');
   } else {
     issues.push('Content is too brief - add more substance');
   }
 
   // Points for section coverage
-  if (sections.found.length >= 5) {
-    score += Math.floor(maxPoints * 0.2);
-  } else if (sections.found.length >= 3) {
-    score += Math.floor(maxPoints * 0.1);
+  if (sections.found.length >= SECTION_COUNT_FULL_POINTS) {
+    score += Math.floor(maxPoints * COVERAGE_FULL_WEIGHT);
+  } else if (sections.found.length >= SECTION_COUNT_PARTIAL_POINTS) {
+    score += Math.floor(maxPoints * COVERAGE_PARTIAL_WEIGHT);
     issues.push(
       `Missing sections: ${sections.missing
         .slice(0, 3)
@@ -254,10 +305,10 @@ function getDefaultDimensions() {
  * @returns {string} Letter grade
  */
 export function getGrade(score) {
-  if (score >= 90) return 'A';
-  if (score >= 80) return 'B';
-  if (score >= 70) return 'C';
-  if (score >= 60) return 'D';
+  if (score >= GRADE_A_THRESHOLD) return 'A';
+  if (score >= GRADE_B_THRESHOLD) return 'B';
+  if (score >= GRADE_C_THRESHOLD) return 'C';
+  if (score >= GRADE_D_THRESHOLD) return 'D';
   return 'F';
 }
 
@@ -267,9 +318,9 @@ export function getGrade(score) {
  * @returns {string} Color name
  */
 export function getScoreColor(score) {
-  if (score >= 70) return 'green';
-  if (score >= 50) return 'yellow';
-  if (score >= 30) return 'orange';
+  if (score >= COLOR_GREEN_THRESHOLD) return 'green';
+  if (score >= COLOR_YELLOW_THRESHOLD) return 'yellow';
+  if (score >= COLOR_ORANGE_THRESHOLD) return 'orange';
   return 'red';
 }
 
@@ -279,9 +330,9 @@ export function getScoreColor(score) {
  * @returns {string} Score label
  */
 export function getScoreLabel(score) {
-  if (score >= 80) return 'Excellent';
-  if (score >= 70) return 'Ready';
-  if (score >= 50) return 'Needs Work';
-  if (score >= 30) return 'Draft';
+  if (score >= LABEL_EXCELLENT_THRESHOLD) return 'Excellent';
+  if (score >= LABEL_READY_THRESHOLD) return 'Ready';
+  if (score >= LABEL_NEEDS_WORK_THRESHOLD) return 'Needs Work';
+  if (score >= LABEL_DRAFT_THRESHOLD) return 'Draft';
   return 'Incomplete';
 }
