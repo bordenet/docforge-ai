@@ -54,7 +54,7 @@ test.describe('Demo Mode', () => {
     expect(phases[2]).toContain('Strengths');
     expect(phases[2]).toContain('Gaps');
 
-    // Phase 3 should be comprehensive
+    // Phase 3 should be the final synthesis with substantial content
     expect(phases[3].length).toBeGreaterThan(1000);
   });
 

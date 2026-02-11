@@ -59,7 +59,7 @@ Read `STATUS.md` for complete details on:
 ## Files Created This Session
 
 Key files in docforge-ai:
-- `STATUS.md` - Comprehensive continuation plan
+- `STATUS.md` - Continuation plan with metrics
 - `HANDOFF.md` - This file
 - `README.md` - Project overview
 - `.github/workflows/ci.yml` - GitHub Actions
