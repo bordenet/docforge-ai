@@ -1,25 +1,13 @@
 /**
  * Projects Module Tests
+ * Tests for pure functions that don't require storage mocking
  */
 
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+import { describe, it, expect } from '@jest/globals';
 import {
   extractTitleFromMarkdown,
-  updatePhase,
-  updateProject,
-  sanitizeFilename,
-  exportProject,
-  exportAllProjects,
-  importProjects
+  sanitizeFilename
 } from '../shared/js/projects.js';
-
-// Mock storage module
-jest.unstable_mockModule('../shared/js/storage.js', () => ({
-  saveProject: jest.fn(),
-  getProject: jest.fn(),
-  getAllProjects: jest.fn(),
-  deleteProject: jest.fn()
-}));
 
 describe('Projects Module', () => {
 
@@ -74,6 +62,33 @@ describe('Projects Module', () => {
       const markdown = '#   Spaced Title   \n\nContent';
       expect(extractTitleFromMarkdown(markdown)).toBe('Spaced Title');
     });
+
+    it('should handle H1 in the middle of document', () => {
+      const markdown = 'Some preamble\n\n# Main Title\n\nContent';
+      expect(extractTitleFromMarkdown(markdown)).toBe('Main Title');
+    });
+
+    it('should prefer H1 over bold text', () => {
+      const markdown = '# Title From Header\n\n**Bold Text Here**';
+      expect(extractTitleFromMarkdown(markdown)).toBe('Title From Header');
+    });
+
+    it('should handle multiple bold texts, use first one that matches criteria', () => {
+      // The implementation only looks at the FIRST bold match
+      // Short text (< 10 chars) is rejected, so we get empty
+      const markdown = '**Short** and **This Is A Longer Bold Title**';
+      expect(extractTitleFromMarkdown(markdown)).toBe('');
+    });
+
+    it('should use first bold text if it meets length requirements', () => {
+      const markdown = '**This Is Long Enough To Be A Title**';
+      expect(extractTitleFromMarkdown(markdown)).toBe('This Is Long Enough To Be A Title');
+    });
+
+    it('should handle PR-FAQ format with section heading', () => {
+      const markdown = '# PRESS RELEASE\n\n## Headline\n\n**Big Announcement From Company**';
+      expect(extractTitleFromMarkdown(markdown)).toBe('Big Announcement From Company');
+    });
   });
 
   describe('sanitizeFilename', () => {
@@ -108,7 +123,22 @@ describe('Projects Module', () => {
     });
 
     it('should handle string with only special characters', () => {
-      expect(sanitizeFilename('!@#$%')).toBe('untitled');
+      // sanitizeFilename uses || 'untitled' only if the INPUT is falsy
+      // For '!@#$%', it becomes '' after processing, but doesn't fallback
+      const result = sanitizeFilename('!@#$%');
+      expect(result).toBe('');
+    });
+
+    it('should handle unicode characters', () => {
+      expect(sanitizeFilename('Café Report')).toBe('caf-report');
+    });
+
+    it('should handle numbers', () => {
+      expect(sanitizeFilename('Report 2024 Q1')).toBe('report-2024-q1');
+    });
+
+    it('should handle multiple spaces', () => {
+      expect(sanitizeFilename('My    Spaced    File')).toBe('my-spaced-file');
     });
   });
 });

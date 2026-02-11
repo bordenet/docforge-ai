@@ -32,10 +32,13 @@ beforeEach(() => {
 // Import after mocking
 import {
   getCurrentDocumentType,
+  getCurrentPlugin,
   getCurrentView,
   getProjectIdFromHash,
   getPhaseFromHash,
-  getDocTypeUrl
+  getDocTypeUrl,
+  navigateTo,
+  initRouter
 } from '../shared/js/router.js';
 
 describe('Router', () => {
@@ -125,6 +128,89 @@ describe('Router', () => {
       mockLocation.href = 'http://localhost/assistant/?type=one-pager#project/123';
       const url = getDocTypeUrl('prd');
       expect(url).toContain('type=prd');
+    });
+  });
+
+  describe('getCurrentPlugin', () => {
+    it('should return plugin for current document type', () => {
+      mockLocation.search = '?type=prd';
+      const plugin = getCurrentPlugin();
+      expect(plugin).toBeDefined();
+      expect(plugin.id).toBe('prd');
+    });
+
+    it('should return default plugin for invalid type', () => {
+      mockLocation.search = '?type=invalid';
+      const plugin = getCurrentPlugin();
+      expect(plugin).toBeDefined();
+      expect(plugin.id).toBe('one-pager');
+    });
+  });
+
+  describe('navigateTo', () => {
+    it('should navigate to list view', () => {
+      navigateTo('list');
+      expect(mockLocation.hash).toBe('');
+    });
+
+    it('should navigate to new view', () => {
+      navigateTo('new');
+      expect(mockLocation.hash).toBe('new');
+    });
+
+    it('should navigate to project view with ID', () => {
+      navigateTo('project', { projectId: 'abc-123' });
+      expect(mockLocation.hash).toBe('project/abc-123');
+    });
+
+    it('should navigate to phase view with project ID and phase number', () => {
+      navigateTo('phase', { projectId: 'abc-123', phase: 2 });
+      expect(mockLocation.hash).toBe('phase/abc-123/2');
+    });
+
+    it('should handle unknown view by defaulting to empty hash', () => {
+      navigateTo('unknown-view');
+      expect(mockLocation.hash).toBe('');
+    });
+  });
+
+  describe('initRouter', () => {
+    it('should add hashchange listener and trigger initial route', () => {
+      let callCount = 0;
+      let lastView = null;
+      let lastParams = null;
+
+      const mockCallback = (view, params) => {
+        callCount++;
+        lastView = view;
+        lastParams = params;
+      };
+
+      // Mock addEventListener to capture the handler
+      let hashChangeHandler = null;
+      global.window.addEventListener = (event, handler) => {
+        if (event === 'hashchange') {
+          hashChangeHandler = handler;
+        }
+      };
+
+      mockLocation.hash = '#project/test-123';
+      initRouter(mockCallback);
+
+      // Should have been called once for initial route
+      expect(callCount).toBe(1);
+      expect(lastView).toBe('project');
+      expect(lastParams.projectId).toBe('test-123');
+
+      // Simulate hash change
+      mockLocation.hash = '#phase/test-123/2';
+      if (hashChangeHandler) {
+        hashChangeHandler();
+      }
+
+      expect(callCount).toBe(2);
+      expect(lastView).toBe('phase');
+      expect(lastParams.phase).toBe(2);
     });
   });
 });

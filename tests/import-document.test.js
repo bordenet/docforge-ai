@@ -273,6 +273,44 @@ Current development hardware (5-year-old Surface 4 with i7-11185G7, 16GB RAM) ca
       expect(savedData.currentPhase).toBe(2);
       expect(savedData.phases[1].completed).toBe(true);
     });
+
+    test('should extract proper title from H1 header', async () => {
+      const plugin = { name: 'ADR', dbName: 'test-db' };
+      const saveProject = jest.fn().mockImplementation((dbName, data) => {
+        return Promise.resolve({ id: 'test-789', ...data });
+      });
+      const onComplete = jest.fn();
+
+      showImportModal(plugin, saveProject, onComplete);
+
+      // Simulate pasting markdown with a proper H1 title
+      const pasteArea = document.getElementById('import-paste-area');
+      pasteArea.innerHTML = `# Use React Query for API State Management
+
+## Context
+
+We need a consistent way to handle API state in our React application.
+
+## Decision
+
+We will use React Query for all API state management.`;
+
+      // Click convert
+      const convertBtn = document.getElementById('import-convert-btn');
+      convertBtn.click();
+
+      // Click save
+      const saveBtn = document.getElementById('import-save-btn');
+      await saveBtn.click();
+
+      // Wait for async save
+      await new Promise(resolve => setTimeout(resolve, 10));
+
+      // Verify title is extracted from H1
+      expect(saveProject).toHaveBeenCalled();
+      const savedData = saveProject.mock.calls[0][1];
+      expect(savedData.title).toBe('Use React Query for API State Management');
+    });
   });
 });
 
