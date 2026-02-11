@@ -127,5 +127,33 @@ test.describe('Assistant', () => {
     expect(download.suggestedFilename()).toMatch(/one-pager-backup-.*\.json/);
   });
 
+  test('about link opens about modal', async ({ page }) => {
+    await page.goto('/assistant/?type=one-pager');
+    await page.waitForLoadState('networkidle');
+
+    // Click about link
+    await page.click('#about-link');
+
+    // Modal should appear with About content (use specific ID)
+    const modal = page.locator('#about-modal');
+    await expect(modal).toBeVisible({ timeout: 2000 });
+    await expect(modal).toContainText(/About.*Assistant/i);
+    await expect(modal).toContainText('Features');
+  });
+
+  test('about modal can be closed', async ({ page }) => {
+    await page.goto('/assistant/?type=one-pager');
+    await page.waitForLoadState('networkidle');
+
+    // Open modal
+    await page.click('#about-link');
+    const modal = page.locator('#about-modal');
+    await expect(modal).toBeVisible({ timeout: 2000 });
+
+    // Close modal by clicking close button
+    await page.click('.close-about-btn');
+    await expect(modal).not.toBeVisible({ timeout: 2000 });
+  });
+
 });
 
