@@ -143,6 +143,17 @@ export function renderNewView(plugin, existingData = {}, templates = []) {
   const formFields = generateFormFields(plugin.formFields, existingData);
 
   // Template selector (only if templates provided)
+  // Import tile is always shown when templates are available
+  const importTile = `
+    <button type="button"
+      id="import-doc-btn"
+      class="p-3 border-2 border-dashed rounded-lg text-center transition-all hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 border-gray-300 dark:border-gray-600">
+      <span class="text-2xl block mb-1">📥</span>
+      <span class="text-sm font-medium text-gray-900 dark:text-white block">Import Existing</span>
+      <span class="text-xs text-gray-500 dark:text-gray-400">Paste from Word/Docs</span>
+    </button>
+  `;
+
   const templateSelector = templates.length > 0 ? `
     <div class="mb-6">
       <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
@@ -158,6 +169,7 @@ export function renderNewView(plugin, existingData = {}, templates = []) {
             <span class="text-xs text-gray-500 dark:text-gray-400">${escapeHtml(t.description)}</span>
           </button>
         `).join('')}
+        ${importTile}
       </div>
     </div>
   ` : '';

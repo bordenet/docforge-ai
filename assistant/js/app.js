@@ -9,6 +9,7 @@ import { extractFormData, validateFormData } from '../../shared/js/form-generato
 import { renderListView, renderNewView, renderProjectView, renderPhaseContent } from '../../shared/js/views.js';
 import { showToast, showLoading, hideLoading, copyToClipboard } from '../../shared/js/ui.js';
 import { generatePrompt } from '../../shared/js/prompt-generator.js';
+import { showImportModal } from '../../shared/js/import-document.js';
 
 let currentPlugin = null;
 let currentTemplates = [];
@@ -266,6 +267,14 @@ function setupNewFormEventHandlers() {
           }
         });
       }
+    });
+  });
+
+  // Import button handler
+  const importBtn = document.getElementById('import-doc-btn');
+  importBtn?.addEventListener('click', () => {
+    showImportModal(currentPlugin, saveProject, (project) => {
+      window.location.hash = `project/${project.id}`;
     });
   });
 }
