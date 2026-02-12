@@ -4,6 +4,32 @@
  */
 
 import { escapeHtml } from './ui.js';
+import { validateDocument } from './validator.js';
+
+/**
+ * Get score color based on score value
+ * @param {number} score - Score value (0-100)
+ * @returns {string} Tailwind color name
+ */
+function getScoreColor(score) {
+  if (score >= 80) return 'green';
+  if (score >= 60) return 'yellow';
+  if (score >= 40) return 'orange';
+  return 'red';
+}
+
+/**
+ * Get score label based on score value
+ * @param {number} score - Score value (0-100)
+ * @returns {string} Human-readable label
+ */
+function getScoreLabel(score) {
+  if (score >= 90) return 'Excellent';
+  if (score >= 80) return 'Good';
+  if (score >= 70) return 'Fair';
+  if (score >= 60) return 'Needs Work';
+  return 'Poor';
+}
 
 // Phase accent colors for visual differentiation
 const PHASE_ACCENT_COLORS = {
@@ -47,6 +73,29 @@ export function renderPhaseContent(plugin, project, phase) {
   // Completion banner for Phase 3
   let completionBanner = '';
   if (phase === 3 && phaseData.completed) {
+    // Calculate quality score
+    const documentContent = phaseData.response || '';
+    const validationResult = validateDocument(documentContent, plugin);
+    const scoreColor = getScoreColor(validationResult.totalScore);
+    const scoreLabel = getScoreLabel(validationResult.totalScore);
+
+    // Get dimension scores for display
+    const dimensions = plugin.scoringDimensions || [];
+    const dimensionScoresHtml = dimensions
+      .map((dim, index) => {
+        const dimResult = validationResult[dim.name] || validationResult[`dimension${index + 1}`] || { score: 0, maxScore: dim.maxPoints };
+        return `
+          <div class="p-2 rounded bg-gray-50 dark:bg-gray-700/50">
+            <div class="text-gray-500 dark:text-gray-400 text-xs">${escapeHtml(dim.name)}</div>
+            <div class="font-semibold text-gray-900 dark:text-white">${dimResult.score}/${dimResult.maxScore}</div>
+          </div>
+        `;
+      })
+      .join('');
+
+    // Collect all issues
+    const allIssues = validationResult.issues || [];
+
     completionBanner = `
       <div class="mb-6 p-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
         <div class="flex items-center justify-between flex-wrap gap-4">
@@ -55,7 +104,7 @@ export function renderPhaseContent(plugin, project, phase) {
               <span class="mr-2">🎉</span> Your ${escapeHtml(plugin.name)} is Complete!
             </h4>
             <p class="text-green-700 dark:text-green-400 mt-1">
-              <strong>Next steps:</strong> Copy your document, then validate it for quality scoring.
+              <strong>Next steps:</strong> Copy your document, or validate for detailed feedback.
             </p>
           </div>
           <div class="flex gap-3 flex-wrap">
@@ -63,26 +112,46 @@ export function renderPhaseContent(plugin, project, phase) {
               📋 Copy Final Document
             </button>
             <a href="../validator/?type=${encodeURIComponent(plugin.type || '')}" target="_blank" rel="noopener noreferrer" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
-              📊 Validate Document ↗
+              📊 Full Validation ↗
             </a>
           </div>
         </div>
-        <details class="mt-4">
-          <summary class="cursor-pointer text-green-700 dark:text-green-400 font-medium hover:underline">
-            📝 What's next?
-          </summary>
-          <div class="mt-3 p-4 bg-white dark:bg-gray-800 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-            <ol class="list-decimal list-inside space-y-2">
-              <li>Click <strong>"Copy Final Document"</strong> to copy your markdown</li>
-              <li>Click <strong>"Validate Document"</strong> to open the validator</li>
-              <li>Paste your document in the validator to get quality scores</li>
-              <li>Use the feedback to improve your document</li>
-            </ol>
-            <p class="mt-3 text-gray-500 dark:text-gray-400 text-xs">
-              💡 The validator scores your document on multiple dimensions and detects AI slop patterns.
-            </p>
+
+        <!-- Inline Quality Score -->
+        <div class="mt-4 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div class="flex items-center justify-between mb-3">
+            <h5 class="font-semibold text-gray-900 dark:text-white flex items-center">
+              📊 Document Quality Rating
+            </h5>
+            <div class="flex items-center gap-2">
+              <span class="text-3xl font-bold text-${scoreColor}-600 dark:text-${scoreColor}-400">${validationResult.totalScore}</span>
+              <span class="text-gray-500 dark:text-gray-400">/100</span>
+              <span class="px-2 py-1 text-xs font-medium rounded-full bg-${scoreColor}-100 dark:bg-${scoreColor}-900/30 text-${scoreColor}-700 dark:text-${scoreColor}-300">${scoreLabel}</span>
+            </div>
           </div>
-        </details>
+
+          <!-- Score Breakdown -->
+          ${dimensionScoresHtml ? `
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+            ${dimensionScoresHtml}
+          </div>
+          ` : ''}
+
+          ${allIssues.length > 0 && validationResult.totalScore < 70 ? `
+          <!-- Improvement Suggestions -->
+          <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
+            <details>
+              <summary class="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer hover:text-gray-900 dark:hover:text-white">
+                💡 ${allIssues.length} suggestion${allIssues.length > 1 ? 's' : ''} to improve your score
+              </summary>
+              <ul class="mt-2 text-xs text-gray-600 dark:text-gray-400 space-y-1 list-disc list-inside">
+                ${allIssues.slice(0, 5).map((issue) => `<li>${escapeHtml(issue)}</li>`).join('')}
+                ${allIssues.length > 5 ? `<li class="text-gray-400 dark:text-gray-500">...and ${allIssues.length - 5} more</li>` : ''}
+              </ul>
+            </details>
+          </div>
+          ` : ''}
+        </div>
       </div>
     `;
   }
