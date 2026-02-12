@@ -7,6 +7,7 @@ import { describe, test, expect } from '@jest/globals';
 import {
   validateDocument,
   detectSections,
+  detectPrompt,
   analyzeContentQuality,
   getGrade,
   getScoreColor,
@@ -313,6 +314,75 @@ Phase 2: Q2 2024
       const result = calculateSlopScore(text);
       expect(result.severity).toBeDefined();
       expect(['clean', 'light', 'moderate', 'heavy', 'severe']).toContain(result.severity);
+    });
+  });
+
+  describe('detectPrompt', () => {
+    test('detects prompt with role assignment', () => {
+      const text = 'You are a management consultant. Your task is to draft a proposal.';
+      const result = detectPrompt(text);
+      expect(result.indicatorCount).toBeGreaterThan(0);
+      expect(result.indicators).toContain('Role assignment ("You are a...")');
+    });
+
+    test('detects prompt with template variables', () => {
+      const text = 'Organization: {{ORGANIZATION_NAME}}\nLocation: {{LOCATION}}';
+      const result = detectPrompt(text);
+      expect(result.indicators).toContain('Template variables ({{VAR}})');
+    });
+
+    test('detects prompt with instruction headers', () => {
+      const text = '## CRITICAL INSTRUCTIONS\n- Do not hallucinate\n- Use only provided info';
+      const result = detectPrompt(text);
+      expect(result.indicators).toContain('Instruction header');
+    });
+
+    test('returns isPrompt true for text with 3+ indicators', () => {
+      const promptText = `You are a consultant. Your task is to write a proposal.
+## CRITICAL INSTRUCTIONS
+- Use ONLY the information provided
+Organization: {{ORGANIZATION_NAME}}`;
+      const result = detectPrompt(promptText);
+      expect(result.isPrompt).toBe(true);
+      expect(result.indicatorCount).toBeGreaterThanOrEqual(3);
+    });
+
+    test('returns isPrompt false for normal document', () => {
+      const docText = `# Strategic Proposal for Acme Corp
+
+## Executive Summary
+This proposal outlines a partnership opportunity.
+
+## Financial Impact
+Expected ROI of 25% within 12 months.`;
+      const result = detectPrompt(docText);
+      expect(result.isPrompt).toBe(false);
+    });
+  });
+
+  describe('validateDocument with prompt detection', () => {
+    test('returns zero score and warning for detected prompts', () => {
+      const promptText = `You are a management consultant. Your task is to draft a proposal.
+## CRITICAL INSTRUCTIONS
+- Use ONLY the information provided
+Organization: {{ORGANIZATION_NAME}}
+<output_rules>Start immediately with the title</output_rules>`;
+      const result = validateDocument(promptText);
+      expect(result.totalScore).toBe(0);
+      expect(result.isPromptDetected).toBe(true);
+      expect(result.issues[0]).toContain('PROMPT');
+    });
+
+    test('validates normal documents without prompt warning', () => {
+      const docText = `# Strategic Proposal
+
+## Problem Statement
+The company faces challenges with customer retention.
+
+## Proposed Solution
+Implement a loyalty program with measurable KPIs.`;
+      const result = validateDocument(docText);
+      expect(result.isPromptDetected).toBeFalsy();
     });
   });
 });

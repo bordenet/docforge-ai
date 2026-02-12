@@ -157,6 +157,40 @@ function scoreDimension(text, dimension) {
 // ============================================================================
 
 /**
+ * Detect if text is a prompt/instructions rather than a document
+ * @param {string} text - Text to check
+ * @returns {Object} Detection result with isPrompt flag and indicators
+ */
+export function detectPrompt(text) {
+  const indicators = [];
+
+  // Check for common prompt patterns
+  const promptPatterns = [
+    { pattern: /^you are (a|an) /im, name: 'Role assignment ("You are a...")' },
+    { pattern: /your task is to/i, name: 'Task instruction' },
+    { pattern: /## (CRITICAL|IMPORTANT) INSTRUCTIONS/i, name: 'Instruction header' },
+    { pattern: /<output_rules>/i, name: 'Output rules tag' },
+    { pattern: /\{\{[A-Z_]+\}\}/g, name: 'Template variables ({{VAR}})' },
+    { pattern: /❌ \*\*NEVER use/i, name: 'Banned language section' },
+    { pattern: /## (Your Task|Context|Source Materials)/i, name: 'Prompt section headers' },
+    { pattern: /COPY-PASTE READY/i, name: 'Output format instruction' },
+    { pattern: /Ask me clarifying questions/i, name: 'Clarification request' },
+    { pattern: /Based on the materials above/i, name: 'Reference to input materials' },
+  ];
+
+  for (const { pattern, name } of promptPatterns) {
+    if (pattern.test(text)) {
+      indicators.push(name);
+    }
+  }
+
+  // If 3+ indicators, it's likely a prompt
+  const isPrompt = indicators.length >= 3;
+
+  return { isPrompt, indicators, indicatorCount: indicators.length };
+}
+
+/**
  * Validate a document using plugin dimensions
  * @param {string} text - Document text to validate
  * @param {Object} plugin - Plugin configuration with scoringDimensions
@@ -165,6 +199,12 @@ function scoreDimension(text, dimension) {
 export function validateDocument(text, plugin) {
   if (!text || !text.trim()) {
     return createEmptyResult(plugin);
+  }
+
+  // Check if this is a prompt rather than a document
+  const promptDetection = detectPrompt(text);
+  if (promptDetection.isPrompt) {
+    return createPromptDetectedResult(plugin, promptDetection);
   }
 
   const dimensions = plugin?.scoringDimensions || getDefaultDimensions();
@@ -206,6 +246,27 @@ export function validateDocument(text, plugin) {
 function createEmptyResult(plugin) {
   const dimensions = plugin?.scoringDimensions || getDefaultDimensions();
   const results = { totalScore: 0, issues: ['No content to validate'] };
+
+  dimensions.forEach((dim, index) => {
+    const empty = { score: 0, maxScore: dim.maxPoints, issues: [] };
+    results[dim.name] = empty;
+    results[`dimension${index + 1}`] = empty;
+  });
+
+  return results;
+}
+
+/**
+ * Create result when prompt is detected instead of document
+ */
+function createPromptDetectedResult(plugin, promptDetection) {
+  const dimensions = plugin?.scoringDimensions || getDefaultDimensions();
+  const mainIssue = `⚠️ This appears to be a PROMPT, not a document. Detected ${promptDetection.indicatorCount} prompt indicators: ${promptDetection.indicators.slice(0, 3).join(', ')}${promptDetection.indicators.length > 3 ? '...' : ''}`;
+  const results = {
+    totalScore: 0,
+    issues: [mainIssue, 'Paste the AI-generated OUTPUT, not the prompt you gave to the AI.'],
+    isPromptDetected: true,
+  };
 
   dimensions.forEach((dim, index) => {
     const empty = { score: 0, maxScore: dim.maxPoints, issues: [] };

@@ -91,6 +91,32 @@ export const COMMON_SECTIONS = [
   },
   { pattern: /^(#+\s*)?(background|context|why)/im, name: 'Background/Context', weight: 1 },
   { pattern: /^(#+\s*)?(requirement|acceptance|criteria)/im, name: 'Requirements', weight: 1 },
+  // Strategic Proposal specific sections
+  {
+    pattern: /^(#+\s*)?(strategic context|executive summary|overview)/im,
+    name: 'Strategic Context',
+    weight: 2,
+  },
+  {
+    pattern: /^(#+\s*)?(financial impact|roi|return on investment|cost.benefit)/im,
+    name: 'Financial Impact',
+    weight: 2,
+  },
+  {
+    pattern: /^(#+\s*)?(pricing|investment|cost|budget)/im,
+    name: 'Pricing/Investment',
+    weight: 1,
+  },
+  {
+    pattern: /^(#+\s*)?(next steps|action items|implementation|rollout)/im,
+    name: 'Next Steps',
+    weight: 1,
+  },
+  {
+    pattern: /^(#+\s*)?(conclusion|summary|recommendation)/im,
+    name: 'Conclusion',
+    weight: 1,
+  },
 ];
 
 // Content quality patterns
