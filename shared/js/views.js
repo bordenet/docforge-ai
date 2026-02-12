@@ -12,20 +12,6 @@ import { renderPhaseContent } from './views-phase.js';
 export { renderProjectCard, renderPhaseContent };
 
 /**
- * Render the plugin name with an optional hyperlink to documentation
- * @param {Object} plugin - Plugin config
- * @param {string} [displayText] - Optional custom display text (defaults to plugin.name)
- * @returns {string} HTML - either a hyperlink or plain text
- */
-function renderPluginNameLink(plugin, displayText = null) {
-  const text = displayText || plugin.name;
-  if (plugin.docsUrl) {
-    return `<a href="${plugin.docsUrl}" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline hover:text-blue-700 dark:hover:text-blue-300">${escapeHtml(text)}</a>`;
-  }
-  return escapeHtml(text);
-}
-
-/**
  * Get phase metadata from plugin config
  * @param {Object} plugin - Plugin config
  * @param {number} phaseNumber - Phase number
@@ -125,13 +111,11 @@ export function renderNewView(plugin, existingData = {}, templates = []) {
   `
       : '';
 
-  const pluginNameLink = renderPluginNameLink(plugin);
-
   return `
     <div class="max-w-3xl mx-auto">
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
-          ${plugin.icon} New ${pluginNameLink}
+          ${plugin.icon} New Project
         </h2>
         <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-gray-800">← Back to list</a>
       </div>
@@ -146,7 +130,7 @@ export function renderNewView(plugin, existingData = {}, templates = []) {
         <div class="flex justify-end space-x-3 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
           <a href="#" class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 rounded-lg">Cancel</a>
           <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-            Start ${pluginNameLink} Workflow
+            Start Workflow
           </button>
         </div>
       </form>
@@ -164,7 +148,6 @@ export function renderProjectView(plugin, project) {
   const title = project.title || project.formData?.title || 'Untitled';
   const currentPhase = project.currentPhase || 1;
   const phases = plugin.workflowConfig?.phases || [];
-  const pluginNameLink = renderPluginNameLink(plugin);
 
   // Generate phase tabs
   const phaseTabs = phases
@@ -192,7 +175,7 @@ export function renderProjectView(plugin, project) {
           <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
           </svg>
-          Back to ${pluginNameLink} Projects
+          Back to Projects
         </a>
         <h2 class="text-lg font-semibold text-gray-900 dark:text-white">${escapeHtml(title)}</h2>
       </div>
