@@ -112,8 +112,8 @@ describe('App Module Integration', () => {
       const container = document.getElementById('app-container');
       container.innerHTML = renderListView(mockPlugin, projects);
 
-      // Delete button was removed from cards - delete is now only via ... menu in phase view
-      expect(container.querySelectorAll('.delete-project-btn').length).toBe(0);
+      // Delete button should be present on each project card
+      expect(container.querySelectorAll('.delete-project-btn').length).toBe(1);
     });
   });
 

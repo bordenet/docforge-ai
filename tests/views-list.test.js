@@ -132,10 +132,10 @@ describe('Views List Module', () => {
       expect(html).toContain('/3 phases complete');
     });
 
-    test('should NOT render delete button on project cards (delete is in ... menu)', () => {
+    test('should render delete button on all project cards', () => {
       const html = renderListView(mockPlugin, [mockProject]);
-      expect(html).not.toContain('delete-project-btn');
-      expect(html).not.toContain('data-delete=');
+      expect(html).toContain('delete-project-btn');
+      expect(html).toContain('title="Delete"');
     });
 
     test('should render preview button for completed projects', () => {

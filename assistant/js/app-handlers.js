@@ -32,9 +32,9 @@ export function setupListEventHandlers(plugin, renderListFn) {
     btn.addEventListener('click', async (e) => {
       e.preventDefault();
       e.stopPropagation();
-      const id = btn.dataset.delete;
+      const projectId = btn.dataset.projectId;
       if (confirm('Delete this project?')) {
-        await deleteProject(plugin.dbName, id);
+        await deleteProject(plugin.dbName, projectId);
         showToast('Project deleted', 'success');
         const container = document.getElementById('app-container');
         if (container) {
