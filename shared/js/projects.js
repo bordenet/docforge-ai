@@ -105,8 +105,9 @@ export async function updatePhase(dbName, projectId, phase, prompt, response, op
     project.currentPhase = phase + 1;
   }
 
-  // Phase 3: Extract title from final document and update project title
-  if (phase === 3 && response) {
+  // Phase 3: Extract title from final document only if no title exists
+  // Don't overwrite user-provided title from form
+  if (phase === 3 && response && !project.title && !project.formData?.title) {
     const extractedTitle = extractTitleFromMarkdown(response);
     if (extractedTitle) {
       project.title = extractedTitle;
