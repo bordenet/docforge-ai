@@ -55,9 +55,9 @@ export function renderListView(plugin, projects) {
   const projectCards =
     projects.length === 0
       ? `<div class="text-center py-12 text-gray-500 dark:text-gray-400">
-        <p class="text-lg mb-4">No ${pluginNameLink} projects yet</p>
+        <p class="text-lg mb-4">No projects yet</p>
         <a href="#new" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-          <span class="mr-2">+</span> Create Your First ${pluginNameLink}
+          <span class="mr-2">+</span> Create Your First Project
         </a>
       </div>`
       : `<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
