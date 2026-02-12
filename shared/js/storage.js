@@ -90,7 +90,16 @@ export async function getProject(dbName, id) {
     const store = tx.objectStore(STORE_NAME);
     const request = store.get(id);
 
-    request.onsuccess = () => resolve(request.result || null);
+    request.onsuccess = () => {
+      const project = request.result;
+      if (project) {
+        // Fix corrupted titles that contain markdown content
+        if (project.title && (project.title.includes('##') || project.title.length > 100)) {
+          project.title = project.formData?.title || 'Untitled';
+        }
+      }
+      resolve(project || null);
+    };
     request.onerror = () => reject(request.error);
   });
 }
@@ -110,6 +119,12 @@ export async function getAllProjects(dbName) {
 
     request.onsuccess = () => {
       const projects = request.result || [];
+      // Fix corrupted titles that contain markdown content
+      projects.forEach((project) => {
+        if (project.title && (project.title.includes('##') || project.title.length > 100)) {
+          project.title = project.formData?.title || 'Untitled';
+        }
+      });
       // Sort by updatedAt descending
       projects.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
       resolve(projects);
