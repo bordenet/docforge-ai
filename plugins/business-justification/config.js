@@ -7,7 +7,7 @@ export const businessJustificationPlugin = {
   name: 'Business Justification',
   icon: '📊',
   description: 'Justify headcount, promotions, budget, or investments',
-  docsUrl: 'https://www.pmi.org/learning/library/pmo-business-case-solution-6054',
+  docsUrl: 'https://www.projectmanagementdocs.com/template/project-initiation/business-case/',
   dbName: 'business-justification-docforge-db',
 
   formFields: [

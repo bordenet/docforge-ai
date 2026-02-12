@@ -7,7 +7,7 @@ export const powerStatementPlugin = {
   name: 'Power Statement',
   icon: '💪',
   description: 'Compelling power statements for sales and marketing',
-  docsUrl: 'https://online.hbs.edu/blog/post/creating-a-value-proposition',
+  docsUrl: 'https://www.sellingforensics.com/sales-tools-the-power-statement/',
   dbName: 'power-statement-docforge-db',
 
   formFields: [
