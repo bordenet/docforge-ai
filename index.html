@@ -30,6 +30,12 @@
     </style>
   </head>
   <body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <!-- Status Banner -->
+    <div id="status-banner" class="bg-amber-500 dark:bg-amber-600 text-white px-4 py-3 text-center text-sm relative">
+      <span class="font-medium">🚧 Almost done!</span> Undergoing manual testing. Will replace the standalone genesis-based tools below.
+      <button onclick="document.getElementById('status-banner').style.display='none'" class="absolute right-4 top-1/2 -translate-y-1/2 hover:opacity-70" aria-label="Dismiss banner">✕</button>
+    </div>
+
     <div class="max-w-4xl mx-auto px-6 py-12">
       <!-- Header -->
       <header class="text-center mb-12">
