@@ -31,7 +31,7 @@ Copy each prompt to the respective LLM. Paste outputs back. The adversarial loop
 | `one-pager` | Executive summary for go/no-go decisions |
 | `prd` | Product requirements with acceptance criteria |
 | `adr` | Architecture decisions with tradeoff analysis |
-| `pr-faq` | Press release + FAQ for new features |
+| `pr-faq` | Amazon-style "Working Backwards" press release + FAQ |
 | `power-statement` | Role-based achievement statements |
 | `acceptance-criteria` | User story test conditions |
 | `jd` | Job descriptions with leveling criteria |
@@ -39,6 +39,18 @@ Copy each prompt to the respective LLM. Paste outputs back. The adversarial loop
 | `strategic-proposal` | Initiative proposals with success metrics |
 
 Switch types via URL: `?type=prd`, `?type=adr`, etc.
+
+### What's a PR-FAQ?
+
+A PR/FAQ (Press Release / Frequently Asked Questions) is Amazon's "Working Backwards" document format. You write a future press release announcing the finished product *as if it already shipped*, then answer anticipated customer and stakeholder questions. This forces clarity on customer benefit before building anything.
+
+The format has two sections:
+
+1. **Press Release** — A ~1 page announcement written from the customer's perspective. Includes headline, subheadline, problem statement, solution, customer quote, and call to action.
+
+2. **FAQs** — Questions stakeholders will ask, split into External (customer) and Internal (business) categories. Covers pricing, technical feasibility, risks, timeline, and success metrics.
+
+For background, see [The PR-FAQ](https://github.com/bordenet/Engineering_Culture/blob/main/SDLC/The_PR-FAQ.md) or watch [this explainer video](https://www.youtube.com/watch?v=T1HZM6ybORk).
 
 ## Why Adversarial Review?
 
