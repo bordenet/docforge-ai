@@ -4,7 +4,7 @@
 
 export const adrPlugin = {
   id: 'adr',
-  name: 'Architecture Decision Record (ADR)',
+  name: 'Architecture Decision Record',
   icon: '🏗️',
   description: 'Architecture Decision Record for technical decisions',
   docsUrl: 'https://adr.github.io/',

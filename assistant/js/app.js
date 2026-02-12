@@ -86,7 +86,15 @@ async function initApp() {
  */
 function updateHeader(plugin) {
   document.getElementById('header-icon').textContent = plugin.icon;
-  document.getElementById('header-title').textContent = `${plugin.name} Assistant`;
+
+  // Make title a hyperlink if docsUrl is available
+  const titleEl = document.getElementById('header-title');
+  if (plugin.docsUrl) {
+    titleEl.innerHTML = `<a href="${plugin.docsUrl}" target="_blank" rel="noopener noreferrer" class="hover:underline">${plugin.name}</a> Assistant`;
+  } else {
+    titleEl.textContent = `${plugin.name} Assistant`;
+  }
+
   document.title = `${plugin.name} Assistant - DocForgeAI`;
 
   // Update favicon

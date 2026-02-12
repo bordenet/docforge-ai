@@ -4,7 +4,7 @@
 
 export const prdPlugin = {
   id: 'prd',
-  name: 'Product Requirements Document (PRD)',
+  name: 'Product Requirements Document',
   icon: '📋',
   description: 'Product Requirements Document for engineering teams',
   docsUrl:

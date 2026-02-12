@@ -4,9 +4,10 @@
 
 export const prFaqPlugin = {
   id: 'pr-faq',
-  name: 'Press Release FAQ (PR-FAQ)',
+  name: 'Press Release FAQ',
   icon: '📰',
   description: 'Amazon-style PR-FAQ document for product launches',
+  docsUrl: 'https://github.com/bordenet/Engineering_Culture/blob/main/SDLC/The_PR-FAQ.md',
   dbName: 'pr-faq-docforge-db',
 
   // Help content shown at top of new project form
