@@ -52,7 +52,7 @@ export function renderListView(plugin, projects) {
   return `
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
-        ${plugin.icon} Your Projects
+        Your Projects
       </h2>
       <a href="#new" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
         <span class="mr-2">+</span> New Project
@@ -115,7 +115,7 @@ export function renderNewView(plugin, existingData = {}, templates = []) {
     <div class="max-w-3xl mx-auto">
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
-          ${plugin.icon} New Project
+          New Project
         </h2>
         <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-gray-800">← Back to list</a>
       </div>
