@@ -9,6 +9,14 @@ export const prFaqPlugin = {
   description: 'Amazon-style PR-FAQ document for product launches',
   dbName: 'pr-faq-docforge-db',
 
+  // Help content shown at top of new project form
+  helpContent: {
+    title: "What's a PR-FAQ?",
+    body: `A PR/FAQ (Press Release / Frequently Asked Questions) is Amazon's "Working Backwards" document format. You write a future press release announcing the finished product <em>as if it already shipped</em>, then answer anticipated customer and stakeholder questions. This forces clarity on customer benefit before building anything.`,
+    learnMoreUrl: 'https://github.com/bordenet/Engineering_Culture/blob/main/SDLC/The_PR-FAQ.md',
+    learnMoreText: 'Learn more about PR-FAQs',
+  },
+
   formFields: [
     {
       id: 'productName',

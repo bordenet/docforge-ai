@@ -118,6 +118,28 @@ export function renderNewView(plugin, existingData = {}, templates = [], editing
   const backLink = isEditing ? `#project/${editingProjectId}` : '#';
   const backText = isEditing ? '← Back to Project' : '← Back to list';
 
+  // Help content box (only shown for new projects, not editing)
+  const helpContent =
+    !isEditing && plugin.helpContent
+      ? `
+    <div class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+      <h3 class="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">
+        ${escapeHtml(plugin.helpContent.title)}
+      </h3>
+      <p class="text-sm text-blue-800 dark:text-blue-200 mb-2">
+        ${plugin.helpContent.body}
+      </p>
+      ${
+        plugin.helpContent.learnMoreUrl
+          ? `<a href="${escapeHtml(plugin.helpContent.learnMoreUrl)}" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+          ${escapeHtml(plugin.helpContent.learnMoreText || 'Learn more')} →
+        </a>`
+          : ''
+      }
+    </div>
+  `
+      : '';
+
   return `
     <div class="max-w-3xl mx-auto">
       <div class="flex items-center justify-between mb-6">
@@ -126,6 +148,8 @@ export function renderNewView(plugin, existingData = {}, templates = [], editing
         </h2>
         <a href="${backLink}" class="text-gray-600 dark:text-gray-400 hover:text-gray-800">${backText}</a>
       </div>
+
+      ${helpContent}
 
       <form id="new-project-form" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         ${isEditing ? '' : templateSelector}

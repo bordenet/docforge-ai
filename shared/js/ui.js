@@ -14,11 +14,13 @@ let activeActionMenu = null;
  * @param {string} [options.position='bottom-end'] - Menu position relative to trigger
  * @returns {Object} - Menu controller with open(), close(), toggle() methods
  */
-export function createActionMenu({ triggerElement, items, position = 'bottom-end' }) {
+export function createActionMenu({ triggerElement, items, position: _position = 'bottom-end' }) {
   const menuId = `action-menu-${Date.now()}`;
   let isOpen = false;
   let menu = null;
-  let focusedIndex = -1;
+
+  // Controller object - declared early so inner functions can reference it
+  let controller = null;
 
   // Set ARIA attributes on trigger
   triggerElement.setAttribute('aria-haspopup', 'menu');
@@ -131,7 +133,6 @@ export function createActionMenu({ triggerElement, items, position = 'bottom-end
       activeActionMenu = null;
     }
     triggerElement.setAttribute('aria-expanded', 'false');
-    focusedIndex = -1;
 
     document.removeEventListener('click', handleOutsideClick, true);
   }
@@ -150,7 +151,7 @@ export function createActionMenu({ triggerElement, items, position = 'bottom-end
     toggle();
   });
 
-  const controller = { open, close, toggle, isOpen: () => isOpen };
+  controller = { open, close, toggle, isOpen: () => isOpen };
   return controller;
 }
 
