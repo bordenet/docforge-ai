@@ -83,8 +83,8 @@ export function showAboutModal(plugin) {
         <p>A privacy-first tool for creating high-quality documents using AI assistance.</p>
         <p><strong>Features:</strong></p>
         <ul class="list-disc list-inside space-y-1 text-sm">
-          <li>100% client-side processing</li>
-          <li>No data sent to servers</li>
+          <li>Drafts stored locally in your browser</li>
+          <li>You control when prompts are sent to AI</li>
           <li>3-phase adversarial AI workflow</li>
           <li>Multiple project management</li>
           <li>Import/export capabilities</li>
