@@ -132,6 +132,7 @@ export function createActionMenu({ triggerElement, items, position = 'bottom-end
 
   // Trigger click handler
   triggerElement.addEventListener('click', (e) => {
+    console.log('[ui.js] Action menu trigger clicked, toggling menu');
     e.stopPropagation();
     toggle();
   });
