@@ -117,6 +117,27 @@ export function attachPhaseEventListeners(plugin, project, phase) {
     });
   }
 
+  // Copy & Validate button - copies document to clipboard AND opens validator
+  const validateBtn = document.getElementById('validate-btn');
+  if (validateBtn) {
+    validateBtn.addEventListener('click', async () => {
+      const freshProject = await getProject(plugin.dbName, project.id);
+      const finalResponse = freshProject.phases?.[3]?.response || '';
+      const validatorUrl = validateBtn.dataset.validatorUrl;
+
+      if (finalResponse) {
+        await copyToClipboard(finalResponse);
+        showToast('Document copied! Opening validator...', 'success');
+        // Small delay to ensure toast is visible before new tab opens
+        setTimeout(() => {
+          window.open(validatorUrl, '_blank', 'noopener,noreferrer');
+        }, 300);
+      } else {
+        showToast('No document to validate', 'warning');
+      }
+    });
+  }
+
   // Setup overflow "More" menu with secondary actions
   const moreActionsBtn = document.getElementById('more-actions-btn');
   if (moreActionsBtn) {
