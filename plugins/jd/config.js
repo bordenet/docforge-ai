@@ -7,6 +7,7 @@ export const jdPlugin = {
   name: 'Job Description',
   icon: '💼',
   description: 'Create inclusive, compelling job descriptions',
+  docsUrl: 'https://www.shrm.org/topics-tools/news/talent-acquisition/learn-how-to-write-inclusive-job-postings',
   dbName: 'jd-docforge-db',
 
   formFields: [

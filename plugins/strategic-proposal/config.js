@@ -7,6 +7,7 @@ export const strategicProposalPlugin = {
   name: 'Strategic Proposal',
   icon: '🎯',
   description: 'Strategic proposals for business initiatives',
+  docsUrl: 'https://hinzconsulting.com/strategic-proposal-planning/',
   dbName: 'strategic-proposal-docforge-db',
 
   formFields: [

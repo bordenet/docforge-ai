@@ -7,6 +7,7 @@ export const acceptanceCriteriaPlugin = {
   name: 'Acceptance Criteria',
   icon: '✅',
   description: 'Generate testable acceptance criteria for user stories',
+  docsUrl: 'https://www.productplan.com/glossary/acceptance-criteria/',
   dbName: 'acceptance-criteria-docforge-db',
 
   formFields: [
