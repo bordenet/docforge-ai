@@ -12,6 +12,7 @@ import { generatePrompt } from '../../shared/js/prompt-generator.js';
 import { renderPhaseContent } from '../../shared/js/views.js';
 import { logger } from '../../shared/js/logger.js';
 import { computeWordDiff, renderDiffHtml, getDiffStats } from '../../shared/js/diff-view.js';
+import { detectPrompt } from '../../shared/js/validator.js';
 
 /**
  * Update phase tab styles
@@ -196,6 +197,16 @@ async function handleSaveResponse(plugin, project, phase, responseTextarea) {
   const response = responseTextarea?.value?.trim();
   if (!response || response.length < 3) {
     showToast('Please enter a response', 'warning');
+    return;
+  }
+
+  // Check if user accidentally pasted the prompt instead of the AI response
+  const promptCheck = detectPrompt(response);
+  if (promptCheck.isPrompt) {
+    showToast(
+      `⚠️ This looks like a PROMPT, not AI output. Detected: ${promptCheck.indicators.slice(0, 2).join(', ')}. Paste the AI's response instead.`,
+      'error'
+    );
     return;
   }
 
