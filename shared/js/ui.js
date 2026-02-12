@@ -85,7 +85,6 @@ export function createActionMenu({ triggerElement, items, position = 'bottom-end
   }
 
   function open() {
-    console.log('[ui.js] open() called, isOpen:', isOpen);
     if (isOpen) return;
 
     // Close any other open menu
@@ -94,12 +93,13 @@ export function createActionMenu({ triggerElement, items, position = 'bottom-end
     }
 
     menu = createMenuElement();
-    console.log('[ui.js] Menu element created:', menu);
-    console.log('[ui.js] Menu innerHTML:', menu.innerHTML.substring(0, 200));
     document.body.appendChild(menu);
-    console.log('[ui.js] Menu appended to body');
     positionMenu();
-    console.log('[ui.js] Menu positioned, style:', menu.style.cssText);
+
+    // Trigger animation by adding open class after a frame
+    requestAnimationFrame(() => {
+      menu.classList.add('action-menu-open');
+    });
 
     isOpen = true;
     activeActionMenu = controller;
@@ -113,9 +113,18 @@ export function createActionMenu({ triggerElement, items, position = 'bottom-end
   function close() {
     if (!isOpen || !menu) return;
 
-    if (menu.parentNode) {
-      menu.parentNode.removeChild(menu);
-    }
+    // Animate out
+    menu.classList.remove('action-menu-open');
+    menu.classList.add('action-menu-closing');
+
+    // Remove after animation
+    const menuToRemove = menu;
+    setTimeout(() => {
+      if (menuToRemove.parentNode) {
+        menuToRemove.parentNode.removeChild(menuToRemove);
+      }
+    }, 150);
+
     menu = null;
     isOpen = false;
     if (activeActionMenu === controller) {
@@ -128,7 +137,6 @@ export function createActionMenu({ triggerElement, items, position = 'bottom-end
   }
 
   function toggle() {
-    console.log('[ui.js] toggle() called, isOpen:', isOpen);
     if (isOpen) {
       close();
     } else {
@@ -138,7 +146,6 @@ export function createActionMenu({ triggerElement, items, position = 'bottom-end
 
   // Trigger click handler
   triggerElement.addEventListener('click', (e) => {
-    console.log('[ui.js] Action menu trigger clicked, toggling menu');
     e.stopPropagation();
     toggle();
   });

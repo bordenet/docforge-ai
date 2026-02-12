@@ -118,7 +118,6 @@ export function attachPhaseEventListeners(plugin, project, phase) {
 
   // Setup overflow "More" menu with secondary actions
   const moreActionsBtn = document.getElementById('more-actions-btn');
-  logger.debug('More actions button found:', { found: !!moreActionsBtn, phase }, 'app-phases');
   if (moreActionsBtn) {
     const phaseData = project.phases?.[phase] || {};
     const hasPrompt = !!phaseData.prompt;
@@ -185,13 +184,11 @@ export function attachPhaseEventListeners(plugin, project, phase) {
       },
     });
 
-    logger.debug('Creating action menu with items:', { itemCount: menuItems.length }, 'app-phases');
     createActionMenu({
       triggerElement: moreActionsBtn,
       items: menuItems,
       position: 'bottom-end',
     });
-    logger.debug('Action menu created successfully', {}, 'app-phases');
   }
 }
 

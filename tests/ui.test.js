@@ -382,7 +382,9 @@ describe('UI Module', () => {
       const menuItem = document.querySelector('.action-menu-item');
       menuItem.click();
 
-      expect(document.querySelector('.action-menu')).toBeFalsy();
+      // Menu should have closing class (animating out)
+      const menu = document.querySelector('.action-menu');
+      expect(menu?.classList.contains('action-menu-closing')).toBeTruthy();
     });
 
     test('should toggle menu on repeated trigger clicks', () => {
@@ -395,9 +397,10 @@ describe('UI Module', () => {
       triggerElement.click();
       expect(document.querySelector('.action-menu')).toBeTruthy();
 
-      // Second click closes
+      // Second click closes (menu should have closing class)
       triggerElement.click();
-      expect(document.querySelector('.action-menu')).toBeFalsy();
+      const menu = document.querySelector('.action-menu');
+      expect(menu?.classList.contains('action-menu-closing')).toBeTruthy();
     });
   });
 });
