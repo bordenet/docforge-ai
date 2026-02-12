@@ -13,6 +13,7 @@ import {
   renderMarkdown,
   copyToClipboard,
   downloadFile,
+  createActionMenu,
 } from '../shared/js/ui.js';
 
 describe('UI Module', () => {
@@ -245,6 +246,158 @@ describe('UI Module', () => {
       // The Blob is created with 'text/plain' by default
       const blobArg = URL.createObjectURL.mock.calls[0][0];
       expect(blobArg.type).toBe('text/plain');
+    });
+  });
+
+  describe('createActionMenu', () => {
+    let triggerElement;
+
+    beforeEach(() => {
+      triggerElement = document.createElement('button');
+      triggerElement.textContent = '...';
+      document.body.appendChild(triggerElement);
+    });
+
+    afterEach(() => {
+      // Clean up any menus
+      document.querySelectorAll('.action-menu').forEach((m) => m.remove());
+      triggerElement.remove();
+    });
+
+    test('should set ARIA attributes on trigger element', () => {
+      createActionMenu({
+        triggerElement,
+        items: [{ label: 'Test', onClick: () => {} }],
+      });
+
+      expect(triggerElement.getAttribute('aria-haspopup')).toBe('menu');
+      expect(triggerElement.getAttribute('aria-expanded')).toBe('false');
+      expect(triggerElement.getAttribute('aria-controls')).toBeTruthy();
+    });
+
+    test('should open menu on trigger click', () => {
+      createActionMenu({
+        triggerElement,
+        items: [{ label: 'Test', onClick: () => {} }],
+      });
+
+      triggerElement.click();
+
+      const menu = document.querySelector('.action-menu');
+      expect(menu).toBeTruthy();
+      expect(triggerElement.getAttribute('aria-expanded')).toBe('true');
+    });
+
+    test('should render menu items with labels', () => {
+      createActionMenu({
+        triggerElement,
+        items: [
+          { label: 'Edit', onClick: () => {} },
+          { label: 'Delete', onClick: () => {} },
+        ],
+      });
+
+      triggerElement.click();
+
+      const menu = document.querySelector('.action-menu');
+      expect(menu.innerHTML).toContain('Edit');
+      expect(menu.innerHTML).toContain('Delete');
+    });
+
+    test('should render menu items with icons', () => {
+      createActionMenu({
+        triggerElement,
+        items: [{ label: 'Edit', icon: '✏️', onClick: () => {} }],
+      });
+
+      triggerElement.click();
+
+      const menu = document.querySelector('.action-menu');
+      expect(menu.innerHTML).toContain('✏️');
+    });
+
+    test('should render separator items', () => {
+      createActionMenu({
+        triggerElement,
+        items: [{ label: 'Edit', onClick: () => {} }, { separator: true }, { label: 'Delete', onClick: () => {} }],
+      });
+
+      triggerElement.click();
+
+      const menu = document.querySelector('.action-menu');
+      expect(menu.querySelector('[role="separator"]')).toBeTruthy();
+    });
+
+    test('should apply destructive styling to destructive items', () => {
+      createActionMenu({
+        triggerElement,
+        items: [{ label: 'Delete', destructive: true, onClick: () => {} }],
+      });
+
+      triggerElement.click();
+
+      const menu = document.querySelector('.action-menu');
+      const deleteBtn = menu.querySelector('.action-menu-item');
+      expect(deleteBtn.className).toContain('text-red-600');
+    });
+
+    test('should apply disabled styling to disabled items', () => {
+      createActionMenu({
+        triggerElement,
+        items: [{ label: 'Disabled', disabled: true, onClick: () => {} }],
+      });
+
+      triggerElement.click();
+
+      const menu = document.querySelector('.action-menu');
+      const disabledBtn = menu.querySelector('.action-menu-item');
+      expect(disabledBtn.className).toContain('opacity-50');
+      expect(disabledBtn.disabled).toBe(true);
+    });
+
+    test('should call onClick when menu item is clicked', () => {
+      const mockOnClick = jest.fn();
+      createActionMenu({
+        triggerElement,
+        items: [{ label: 'Test', onClick: mockOnClick }],
+      });
+
+      triggerElement.click();
+      const menu = document.querySelector('.action-menu');
+      const menuItem = menu.querySelector('.action-menu-item');
+      menuItem.click();
+
+      expect(mockOnClick).toHaveBeenCalled();
+    });
+
+    test('should close menu after item click', () => {
+      createActionMenu({
+        triggerElement,
+        items: [{ label: 'Test', onClick: () => {} }],
+      });
+
+      triggerElement.click();
+      expect(document.querySelector('.action-menu')).toBeTruthy();
+
+      const menuItem = document.querySelector('.action-menu-item');
+      menuItem.click();
+
+      expect(document.querySelector('.action-menu')).toBeFalsy();
+    });
+
+    test('should toggle menu on repeated trigger clicks', () => {
+      createActionMenu({
+        triggerElement,
+        items: [{ label: 'Test', onClick: () => {} }],
+      });
+
+      // First click opens
+      triggerElement.click();
+      expect(document.querySelector('.action-menu')).toBeTruthy();
+
+      // Second click closes
+      triggerElement.click();
+      expect(document.querySelector('.action-menu')).toBeFalsy();
     });
   });
 });

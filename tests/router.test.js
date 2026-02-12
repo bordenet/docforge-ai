@@ -87,6 +87,12 @@ describe('Router', () => {
       const view = getCurrentView();
       expect(view).toBe('phase');
     });
+
+    it('should return edit for #edit/id hash', () => {
+      mockLocation.hash = '#edit/123';
+      const view = getCurrentView();
+      expect(view).toBe('edit');
+    });
   });
 
   describe('getProjectIdFromHash', () => {
@@ -102,6 +108,11 @@ describe('Router', () => {
 
     it('should extract project ID from phase hash', () => {
       mockLocation.hash = '#phase/abc-123/2';
+      expect(getProjectIdFromHash()).toBe('abc-123');
+    });
+
+    it('should extract project ID from edit hash', () => {
+      mockLocation.hash = '#edit/abc-123';
       expect(getProjectIdFromHash()).toBe('abc-123');
     });
   });
@@ -166,6 +177,11 @@ describe('Router', () => {
     it('should navigate to phase view with project ID and phase number', () => {
       navigateTo('phase', { projectId: 'abc-123', phase: 2 });
       expect(mockLocation.hash).toBe('phase/abc-123/2');
+    });
+
+    it('should navigate to edit view with project ID', () => {
+      navigateTo('edit', { projectId: 'abc-123' });
+      expect(mockLocation.hash).toBe('edit/abc-123');
     });
 
     it('should handle unknown view by defaulting to empty hash', () => {

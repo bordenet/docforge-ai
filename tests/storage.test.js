@@ -290,4 +290,86 @@ describe('Storage Module', () => {
       expect(retrieved.phase3_output).toBe('# Phase 3 Final');
     });
   });
+
+  describe('Title sanitization', () => {
+    test('should sanitize corrupted title containing markdown headers', async () => {
+      const project = {
+        id: generateId(),
+        title: '## Problem Statement Current development hardware...',
+        formData: { title: 'Clean Title' },
+      };
+
+      await saveProject(TEST_DB_NAME, project);
+      const retrieved = await getProject(TEST_DB_NAME, project.id);
+
+      // Should use formData.title instead of corrupted title
+      expect(retrieved.title).toBe('Clean Title');
+    });
+
+    test('should sanitize title that is too long (>100 chars)', async () => {
+      const longTitle = 'A'.repeat(150);
+      const project = {
+        id: generateId(),
+        title: longTitle,
+        formData: { title: 'Short Title' },
+      };
+
+      await saveProject(TEST_DB_NAME, project);
+      const retrieved = await getProject(TEST_DB_NAME, project.id);
+
+      // Should use formData.title instead of too-long title
+      expect(retrieved.title).toBe('Short Title');
+    });
+
+    test('should fallback to Untitled when no valid title available', async () => {
+      const project = {
+        id: generateId(),
+        title: '## Markdown content that is not a title',
+        formData: {},
+      };
+
+      await saveProject(TEST_DB_NAME, project);
+      const retrieved = await getProject(TEST_DB_NAME, project.id);
+
+      expect(retrieved.title).toBe('Untitled');
+    });
+
+    test('should preserve valid titles', async () => {
+      const project = {
+        id: generateId(),
+        title: 'Valid Project Title',
+        formData: { title: 'Form Title' },
+      };
+
+      await saveProject(TEST_DB_NAME, project);
+      const retrieved = await getProject(TEST_DB_NAME, project.id);
+
+      // Should keep the original valid title
+      expect(retrieved.title).toBe('Valid Project Title');
+    });
+
+    test('should sanitize titles in getAllProjects', async () => {
+      const project1 = {
+        id: generateId(),
+        title: '## Corrupted Title 1',
+        formData: { title: 'Clean Title 1' },
+      };
+      const project2 = {
+        id: generateId(),
+        title: 'Valid Title 2',
+        formData: { title: 'Form Title 2' },
+      };
+
+      await saveProject(TEST_DB_NAME, project1);
+      await saveProject(TEST_DB_NAME, project2);
+
+      const projects = await getAllProjects(TEST_DB_NAME);
+
+      const p1 = projects.find((p) => p.id === project1.id);
+      const p2 = projects.find((p) => p.id === project2.id);
+
+      expect(p1.title).toBe('Clean Title 1');
+      expect(p2.title).toBe('Valid Title 2');
+    });
+  });
 });

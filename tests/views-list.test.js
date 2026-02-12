@@ -105,14 +105,14 @@ describe('Views List Module', () => {
   describe('renderListView', () => {
     test('should render empty state when no projects exist', () => {
       const html = renderListView(mockPlugin, []);
-      expect(html).toContain('No Test Document projects yet');
-      expect(html).toContain('Create Your First Test Document');
+      expect(html).toContain('No projects yet');
+      expect(html).toContain('Create Your First Project');
     });
 
     test('should render new project button', () => {
       const html = renderListView(mockPlugin, []);
       expect(html).toContain('href="#new"');
-      expect(html).toContain('New Test Document');
+      expect(html).toContain('New Project');
     });
 
     test('should render project cards when projects exist', () => {
@@ -132,10 +132,10 @@ describe('Views List Module', () => {
       expect(html).toContain('/3 phases complete');
     });
 
-    test('should render delete button for each project', () => {
+    test('should NOT render delete button on project cards (delete is in ... menu)', () => {
       const html = renderListView(mockPlugin, [mockProject]);
-      expect(html).toContain('delete-project-btn');
-      expect(html).toContain('data-delete="test-project-123"');
+      expect(html).not.toContain('delete-project-btn');
+      expect(html).not.toContain('data-delete=');
     });
 
     test('should render preview button for completed projects', () => {
@@ -148,9 +148,9 @@ describe('Views List Module', () => {
       expect(html).toContain('Updated');
     });
 
-    test('should use plugin icon in header', () => {
+    test('should use simplified header without plugin name', () => {
       const html = renderListView(mockPlugin, []);
-      expect(html).toContain('📄 Your Test Document Projects');
+      expect(html).toContain('Your Projects');
     });
 
     test('should show description snippet if available', () => {
@@ -160,10 +160,9 @@ describe('Views List Module', () => {
   });
 
   describe('renderNewView', () => {
-    test('should render new project form with plugin name', () => {
+    test('should render new project form with simplified header', () => {
       const html = renderNewView(mockPlugin);
-      expect(html).toContain('New Test Document');
-      expect(html).toContain('📄');
+      expect(html).toContain('New Project');
     });
 
     test('should render form fields from plugin config', () => {
@@ -179,9 +178,9 @@ describe('Views List Module', () => {
       expect(html).toContain('Back to list');
     });
 
-    test('should render submit button with plugin name', () => {
+    test('should render submit button with simplified text', () => {
       const html = renderNewView(mockPlugin);
-      expect(html).toContain('Start Test Document Workflow');
+      expect(html).toContain('Start Workflow');
     });
 
     test('should pre-fill form with existing data', () => {
@@ -210,6 +209,31 @@ describe('Views List Module', () => {
       const html = renderNewView(mockPlugin, {}, templates);
       expect(html).toContain('import-doc-btn');
       expect(html).toContain('Import Existing');
+    });
+
+    test('should render edit mode with different title when editingProjectId provided', () => {
+      const html = renderNewView(mockPlugin, { title: 'Existing Project' }, [], 'project-123');
+      expect(html).toContain('Edit Details');
+      expect(html).not.toContain('New Project');
+    });
+
+    test('should render Save Changes button in edit mode', () => {
+      const html = renderNewView(mockPlugin, {}, [], 'project-123');
+      expect(html).toContain('Save Changes');
+      expect(html).not.toContain('Start Workflow');
+    });
+
+    test('should render Back to Project link in edit mode', () => {
+      const html = renderNewView(mockPlugin, {}, [], 'project-123');
+      expect(html).toContain('Back to Project');
+      expect(html).toContain('#project/project-123');
+    });
+
+    test('should not render template selector in edit mode', () => {
+      const templates = [{ id: 'blank', name: 'Blank', icon: '📝', description: 'Start fresh' }];
+      const html = renderNewView(mockPlugin, {}, templates, 'project-123');
+      expect(html).not.toContain('template-selector');
+      expect(html).not.toContain('Choose a Template');
     });
   });
 });

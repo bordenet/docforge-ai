@@ -83,7 +83,7 @@ describe('App Module Integration', () => {
       const container = document.getElementById('app-container');
       container.innerHTML = renderListView(mockPlugin, []);
 
-      expect(container.innerHTML).toContain('No Test Document projects yet');
+      expect(container.innerHTML).toContain('No projects yet');
     });
 
     test('should render list with projects', async () => {
@@ -101,7 +101,7 @@ describe('App Module Integration', () => {
       expect(container.innerHTML).toContain(`data-project-id="${project.id}"`);
     });
 
-    test('should render delete button for each project', async () => {
+    test('should NOT render delete button on project cards (delete is in ... menu)', async () => {
       await saveProject(mockPlugin.dbName, {
         title: 'Delete Test',
         formData: { title: 'Delete Test' },
@@ -112,7 +112,8 @@ describe('App Module Integration', () => {
       const container = document.getElementById('app-container');
       container.innerHTML = renderListView(mockPlugin, projects);
 
-      expect(container.querySelectorAll('.delete-project-btn').length).toBe(1);
+      // Delete button was removed from cards - delete is now only via ... menu in phase view
+      expect(container.querySelectorAll('.delete-project-btn').length).toBe(0);
     });
   });
 

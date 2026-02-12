@@ -74,7 +74,7 @@ describe('Views Project Module', () => {
 
     test('should render back link', () => {
       const html = renderProjectView(mockPlugin, mockProject);
-      expect(html).toContain('Back to Test Document Projects');
+      expect(html).toContain('Back to Projects');
     });
 
     test('should mark completed phases with checkmark', () => {
