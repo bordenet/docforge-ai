@@ -11,6 +11,13 @@ export const strategicProposalPlugin = {
 
   formFields: [
     {
+      id: 'title',
+      label: 'Proposal Title',
+      type: 'text',
+      required: true,
+      placeholder: 'e.g., CallBox Partnership Proposal for Smith Auto Group',
+    },
+    {
       id: 'organizationName',
       label: 'Organization Name',
       type: 'text',
