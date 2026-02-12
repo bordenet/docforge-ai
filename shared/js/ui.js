@@ -85,6 +85,7 @@ export function createActionMenu({ triggerElement, items, position = 'bottom-end
   }
 
   function open() {
+    console.log('[ui.js] open() called, isOpen:', isOpen);
     if (isOpen) return;
 
     // Close any other open menu
@@ -93,8 +94,12 @@ export function createActionMenu({ triggerElement, items, position = 'bottom-end
     }
 
     menu = createMenuElement();
+    console.log('[ui.js] Menu element created:', menu);
+    console.log('[ui.js] Menu innerHTML:', menu.innerHTML.substring(0, 200));
     document.body.appendChild(menu);
+    console.log('[ui.js] Menu appended to body');
     positionMenu();
+    console.log('[ui.js] Menu positioned, style:', menu.style.cssText);
 
     isOpen = true;
     activeActionMenu = controller;
@@ -123,6 +128,7 @@ export function createActionMenu({ triggerElement, items, position = 'bottom-end
   }
 
   function toggle() {
+    console.log('[ui.js] toggle() called, isOpen:', isOpen);
     if (isOpen) {
       close();
     } else {
