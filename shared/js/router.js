@@ -32,13 +32,14 @@ export function getCurrentPlugin() {
 
 /**
  * Get the current view from URL hash
- * @returns {string} Current view ('list', 'new', 'project', 'phase')
+ * @returns {string} Current view ('list', 'new', 'edit', 'project', 'phase')
  */
 export function getCurrentView() {
   const hash = window.location.hash.slice(1);
   if (!hash) return 'list';
 
   if (hash === 'new') return 'new';
+  if (hash.startsWith('edit/')) return 'edit';
   if (hash.startsWith('project/')) return 'project';
   if (hash.startsWith('phase/')) return 'phase';
 
@@ -53,6 +54,9 @@ export function getProjectIdFromHash() {
   const hash = window.location.hash.slice(1);
   if (hash.startsWith('project/')) {
     return hash.replace('project/', '');
+  }
+  if (hash.startsWith('edit/')) {
+    return hash.replace('edit/', '');
   }
   if (hash.startsWith('phase/')) {
     const parts = hash.split('/');
@@ -88,6 +92,9 @@ export function navigateTo(view, params = {}) {
       break;
     case 'new':
       hash = 'new';
+      break;
+    case 'edit':
+      hash = `edit/${params.projectId}`;
       break;
     case 'project':
       hash = `project/${params.projectId}`;

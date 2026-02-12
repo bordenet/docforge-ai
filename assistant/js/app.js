@@ -133,6 +133,9 @@ async function handleRouteChange(view, params) {
       case 'new':
         await renderNew(container);
         break;
+      case 'edit':
+        await renderEdit(container, params.projectId);
+        break;
       case 'project':
         await renderProject(container, params.projectId);
         break;
@@ -157,6 +160,20 @@ async function renderNew(container) {
   currentTemplates = await loadPluginTemplates(currentPlugin.id);
   container.innerHTML = renderNewView(currentPlugin, {}, currentTemplates);
   setupNewFormEventHandlers(currentPlugin, currentTemplates);
+}
+
+async function renderEdit(container, projectId) {
+  const project = await getProject(currentPlugin.dbName, projectId);
+  if (!project) {
+    showToast('Project not found', 'error');
+    window.location.hash = '';
+    return;
+  }
+
+  currentTemplates = await loadPluginTemplates(currentPlugin.id);
+  // Pass existing form data to pre-populate the form
+  container.innerHTML = renderNewView(currentPlugin, project.formData || {}, currentTemplates, project.id);
+  setupNewFormEventHandlers(currentPlugin, currentTemplates, project.id);
 }
 
 async function renderProject(container, projectId) {

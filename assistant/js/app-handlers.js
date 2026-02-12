@@ -63,8 +63,11 @@ export function setupListEventHandlers(plugin, renderListFn) {
 
 /**
  * Setup event handlers for new project form
+ * @param {Object} plugin - Plugin config
+ * @param {Array} templates - Available templates
+ * @param {string} [editingProjectId] - If set, we're editing an existing project
  */
-export function setupNewFormEventHandlers(plugin, templates) {
+export function setupNewFormEventHandlers(plugin, templates, editingProjectId = null) {
   const form = document.getElementById('new-project-form');
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -74,13 +77,30 @@ export function setupNewFormEventHandlers(plugin, templates) {
       showToast(validation.errors[0], 'error');
       return;
     }
-    const project = await saveProject(plugin.dbName, {
-      formData,
-      title: formData.title,
-      currentPhase: 1,
-    });
-    showToast('Project created!', 'success');
-    window.location.hash = `project/${project.id}`;
+
+    if (editingProjectId) {
+      // Update existing project
+      const existing = await getProject(plugin.dbName, editingProjectId);
+      if (existing) {
+        existing.formData = formData;
+        existing.title = formData.title || existing.title;
+        await saveProject(plugin.dbName, existing);
+        showToast('Project updated!', 'success');
+        window.location.hash = `project/${editingProjectId}`;
+      } else {
+        showToast('Project not found', 'error');
+        window.location.hash = '';
+      }
+    } else {
+      // Create new project
+      const project = await saveProject(plugin.dbName, {
+        formData,
+        title: formData.title,
+        currentPhase: 1,
+      });
+      showToast('Project created!', 'success');
+      window.location.hash = `project/${project.id}`;
+    }
   });
 
   // Template selection handlers

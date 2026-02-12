@@ -67,9 +67,11 @@ export function renderListView(plugin, projects) {
  * @param {Object} plugin - Current plugin config
  * @param {Object} [existingData] - Existing form data (for editing)
  * @param {Object[]} [templates] - Optional array of templates for this plugin
+ * @param {string} [editingProjectId] - If set, we're editing an existing project
  * @returns {string} HTML
  */
-export function renderNewView(plugin, existingData = {}, templates = []) {
+export function renderNewView(plugin, existingData = {}, templates = [], editingProjectId = null) {
+  const isEditing = !!editingProjectId;
   const formFields = generateFormFields(plugin.formFields, existingData);
 
   // Template selector (only if templates provided)
@@ -111,26 +113,31 @@ export function renderNewView(plugin, existingData = {}, templates = []) {
   `
       : '';
 
+  const title = isEditing ? 'Edit Details' : 'New Project';
+  const submitText = isEditing ? 'Save Changes' : 'Start Workflow';
+  const backLink = isEditing ? `#project/${editingProjectId}` : '#';
+  const backText = isEditing ? '← Back to Project' : '← Back to list';
+
   return `
     <div class="max-w-3xl mx-auto">
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
-          New Project
+          ${title}
         </h2>
-        <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-gray-800">← Back to list</a>
+        <a href="${backLink}" class="text-gray-600 dark:text-gray-400 hover:text-gray-800">${backText}</a>
       </div>
 
       <form id="new-project-form" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-        ${templateSelector}
+        ${isEditing ? '' : templateSelector}
 
         <div id="form-fields-container">
           ${formFields}
         </div>
 
         <div class="flex justify-end space-x-3 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-          <a href="#" class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 rounded-lg">Cancel</a>
+          <a href="${backLink}" class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 rounded-lg">Cancel</a>
           <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-            Start Workflow
+            ${submitText}
           </button>
         </div>
       </form>
