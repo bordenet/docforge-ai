@@ -90,16 +90,31 @@ export function renderPhaseContent(plugin, project, phase) {
   return `
     ${completionBanner}
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-      <div class="mb-6">
-        <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-          ${meta.icon} ${meta.name}
-        </h3>
-        <p class="text-gray-600 dark:text-gray-400 mb-2">
-          ${meta.description}
-        </p>
-        <div class="inline-flex items-center px-3 py-1 bg-${color}-100 dark:bg-${color}-900/20 text-${color}-800 dark:text-${color}-300 rounded-full text-sm">
-          <span class="mr-2">🤖</span>
-          Use with ${meta.aiModel}
+      <div class="mb-6 flex justify-between items-start">
+        <div>
+          <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            ${meta.icon} ${meta.name}
+          </h3>
+          <p class="text-gray-600 dark:text-gray-400 mb-2">
+            ${meta.description}
+          </p>
+          <div class="inline-flex items-center px-3 py-1 bg-${color}-100 dark:bg-${color}-900/20 text-${color}-800 dark:text-${color}-300 rounded-full text-sm">
+            <span class="mr-2">🤖</span>
+            Use with ${meta.aiModel}
+          </div>
+        </div>
+        <!-- More Actions Menu -->
+        <div class="relative">
+          <button id="more-actions-btn" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" aria-label="More actions">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
+            </svg>
+          </button>
+          <div id="actions-menu" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-10">
+            <button id="delete-project-btn" class="w-full px-4 py-2 text-left text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center">
+              <span class="mr-2">🗑️</span> Delete Project
+            </button>
+          </div>
         </div>
       </div>
 

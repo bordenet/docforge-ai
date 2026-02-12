@@ -6,8 +6,8 @@
  * @module app-phases
  */
 
-import { getProject, saveProject } from '../../shared/js/storage.js';
-import { showToast, copyToClipboard } from '../../shared/js/ui.js';
+import { getProject, saveProject, deleteProject } from '../../shared/js/storage.js';
+import { showToast, copyToClipboard, confirm } from '../../shared/js/ui.js';
 import { generatePrompt } from '../../shared/js/prompt-generator.js';
 import { renderPhaseContent } from '../../shared/js/views.js';
 import { logger } from '../../shared/js/logger.js';
@@ -111,6 +111,34 @@ export function attachPhaseEventListeners(plugin, project, phase) {
         showToast('Final document copied to clipboard!', 'success');
       } else {
         showToast('No final document to copy', 'warning');
+      }
+    });
+  }
+
+  // More actions menu toggle
+  const moreActionsBtn = document.getElementById('more-actions-btn');
+  const actionsMenu = document.getElementById('actions-menu');
+  if (moreActionsBtn && actionsMenu) {
+    moreActionsBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      actionsMenu.classList.toggle('hidden');
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', () => {
+      actionsMenu.classList.add('hidden');
+    });
+  }
+
+  // Delete project button
+  const deleteProjectBtn = document.getElementById('delete-project-btn');
+  if (deleteProjectBtn) {
+    deleteProjectBtn.addEventListener('click', async () => {
+      const title = project.title || project.formData?.title || 'this project';
+      if (await confirm(`Are you sure you want to delete "${title}"?`, 'Delete Project')) {
+        await deleteProject(plugin.dbName, project.id);
+        showToast('Project deleted', 'success');
+        window.location.hash = '';
       }
     });
   }
