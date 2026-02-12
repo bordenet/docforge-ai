@@ -51,7 +51,6 @@ export function getPhaseMetadata(plugin, phaseNumber) {
  * @returns {string} HTML
  */
 export function renderListView(plugin, projects) {
-  const pluginNameLink = renderPluginNameLink(plugin);
   const projectCards =
     projects.length === 0
       ? `<div class="text-center py-12 text-gray-500 dark:text-gray-400">
@@ -70,7 +69,7 @@ export function renderListView(plugin, projects) {
         ${plugin.icon} Your Projects
       </h2>
       <a href="#new" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-        <span class="mr-2">+</span> New ${pluginNameLink}
+        <span class="mr-2">+</span> New Project
       </a>
     </div>
     ${projectCards}
