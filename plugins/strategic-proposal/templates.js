@@ -1,6 +1,10 @@
 /**
  * Templates for Strategic Proposal
  * Pre-filled content mapped to docforge-ai form field IDs
+ *
+ * Form fields: organizationName, organizationLocation, siteCount, currentVendor,
+ * decisionMakerName, decisionMakerRole, conversationTranscripts, meetingNotes,
+ * painPoints, attachmentText, workingDraft, additionalContext
  */
 
 export const TEMPLATES = [
@@ -12,93 +16,84 @@ export const TEMPLATES = [
     fields: {},
   },
   {
-    id: 'marketExpansion',
-    name: 'Market Expansion',
-    icon: '🌍',
-    description: 'Enter new market or geography',
+    id: 'vendorReplacement',
+    name: 'Vendor Replacement',
+    icon: '🔄',
+    description: 'Replace existing vendor/system',
     fields: {
-      title: 'Strategic Proposal: [Market/Geography] Expansion',
-      problem:
-        'Opportunity: [Market] represents $[X]B TAM with [Y]% growth.\n\nCurrent position: We have [X]% market share in [existing markets] but no presence in [target market].\n\nCompetitive pressure: [Competitors] are already established in [target market].',
-      context:
-        'Market dynamics:\n- [Market size and growth]\n- [Key players and market share]\n- [Customer segments]\n\nOur strengths:\n- [Advantage 1]\n- [Advantage 2]\n\nChallenges:\n- [Challenge 1]\n- [Challenge 2]',
-      proposedSolution:
-        'Enter [market] through [approach]:\n1. [Phase 1]: [Description] - [Timeline]\n2. [Phase 2]: [Description] - [Timeline]\n3. [Phase 3]: [Description] - [Timeline]',
-      businessImpact:
-        'Revenue potential: $[X]M by Year [Y]\nMarket share target: [X]% in [timeframe]\nStrategic value: [Positioning, diversification, etc.]',
-      timeline:
-        'Q1: [Milestone]\nQ2: [Milestone]\nQ3: [Milestone]\nQ4: [Milestone]\nYear 2: [Milestone]',
-      resources:
-        'Investment required: $[X]M\n- Headcount: [X] FTEs\n- Marketing: $[X]\n- Operations: $[X]\n- Partnerships: [Description]',
-      risks:
-        '- Regulatory: [Risk and mitigation]\n- Competitive response: [Risk and mitigation]\n- Execution: [Risk and mitigation]\n- Currency/economic: [Risk and mitigation]',
+      organizationName: '[Organization Name]',
+      organizationLocation: '[City, State]',
+      siteCount: '[X] locations',
+      currentVendor: '[Current Vendor Name]',
+      decisionMakerName: '[Decision Maker Name]',
+      decisionMakerRole: '[Title/Role]',
+      painPoints:
+        '- Contract renewal coming up in [timeframe]\n- Current system lacks [capability]\n- Support response times are [issue]\n- Integration challenges with [system]',
+      meetingNotes:
+        'Discovery call [date]:\n- Discussed [topic 1]\n- Learned about [pain point]\n- Next steps: [action items]',
+      additionalContext: 'Budget cycle: [timing]\nDecision timeline: [date]\nOther stakeholders: [names/roles]',
     },
   },
   {
-    id: 'productStrategy',
-    name: 'Product Strategy',
+    id: 'newImplementation',
+    name: 'New Implementation',
     icon: '🚀',
-    description: 'New product line or pivot',
+    description: 'First-time solution implementation',
     fields: {
-      title: 'Strategic Proposal: [Product/Product Line]',
-      problem:
-        "Market opportunity: [Description of unmet need]\n\nCustomer pain: [What customers struggle with today]\n\nStrategic gap: [What we're missing in our portfolio]",
-      context:
-        'Market size: $[X]B, growing [Y]% annually\n\nCompetitive landscape:\n- [Competitor 1]: [Position]\n- [Competitor 2]: [Position]\n\nOur right to win:\n- [Asset 1]\n- [Asset 2]',
-      proposedSolution:
-        'Launch [Product] that [value proposition].\n\nProduct vision:\n- [Core capability 1]\n- [Core capability 2]\n- [Core capability 3]\n\nGo-to-market: [Approach]',
-      businessImpact:
-        'Revenue projection:\n- Year 1: $[X]M\n- Year 2: $[X]M\n- Year 3: $[X]M\n\nStrategic value:\n- [Benefit 1]\n- [Benefit 2]',
-      timeline: 'Phase 1 (MVP): [X] months\nPhase 2 (GA): [X] months\nPhase 3 (Scale): [X] months',
-      resources:
-        'Investment: $[X]M over [timeframe]\n- Engineering: [X] FTEs\n- Product/Design: [X] FTEs\n- GTM: [X] FTEs\n- Infrastructure: $[X]',
-      risks:
-        '- Build vs buy: [Analysis]\n- Cannibalization: [Risk and mitigation]\n- Technical feasibility: [Risk and mitigation]\n- Market timing: [Risk and mitigation]',
+      organizationName: '[Organization Name]',
+      organizationLocation: '[City, State]',
+      siteCount: '[X] locations',
+      currentVendor: 'None - manual processes',
+      decisionMakerName: '[Decision Maker Name]',
+      decisionMakerRole: '[Title/Role]',
+      painPoints:
+        '- Currently using manual processes for [task]\n- Scaling challenges as business grows\n- Lack of visibility into [metrics]\n- Compliance/reporting gaps',
+      meetingNotes:
+        'Initial meeting [date]:\n- Organization overview: [details]\n- Current state: [description]\n- Goals: [what they want to achieve]',
+      additionalContext:
+        'Growth trajectory: [details]\nTechnology readiness: [assessment]\nChange management considerations: [notes]',
     },
   },
   {
-    id: 'partnershipAlliance',
-    name: 'Partnership/Alliance',
-    icon: '🤝',
-    description: 'Strategic partnership proposal',
+    id: 'multiSiteExpansion',
+    name: 'Multi-Site Expansion',
+    icon: '🏢',
+    description: 'Expand solution across locations',
     fields: {
-      title: 'Strategic Proposal: Partnership with [Partner]',
-      problem:
-        'Strategic gap: We lack [capability/market access/technology] needed to [achieve goal].\n\nOrganic path: Building internally would take [X years] and $[Y]M.\n\nOpportunity: [Partner] has [what we need] and needs [what we have].',
-      context:
-        'Partner profile:\n- Company: [Description]\n- Relevant assets: [What they bring]\n- Strategic fit: [Why this makes sense]\n\nRelationship history: [Prior interactions if any]',
-      proposedSolution:
-        "Form [type of partnership] with [Partner]:\n\nStructure:\n- [Deal term 1]\n- [Deal term 2]\n- [Deal term 3]\n\nGovernance: [How we'll manage the relationship]",
-      businessImpact:
-        'Value creation:\n- Revenue synergies: $[X]M\n- Cost synergies: $[X]M\n- Strategic positioning: [Description]\n\nTimeline to value: [X] months',
-      timeline:
-        'Negotiation: [X] months\nLegal/diligence: [X] months\nIntegration: [X] months\nFull value: [X] months',
-      resources:
-        'Investment:\n- Deal costs: $[X]\n- Integration: $[X]\n- Ongoing: $[X] annually\n\nTeam: [X] FTEs dedicated to partnership',
-      risks:
-        '- Partner dependency: [Risk and mitigation]\n- Cultural fit: [Risk and mitigation]\n- Competitive response: [Risk and mitigation]\n- Execution: [Risk and mitigation]',
+      organizationName: '[Organization Name]',
+      organizationLocation: '[Headquarters City, State]',
+      siteCount: '[X] current locations, expanding to [Y]',
+      currentVendor: '[Existing vendor at some sites, if any]',
+      decisionMakerName: '[Decision Maker Name]',
+      decisionMakerRole: '[Title/Role - likely VP/Director level]',
+      painPoints:
+        '- Inconsistent processes across locations\n- Difficulty managing multiple systems\n- Reporting/consolidation challenges\n- Training burden for new sites',
+      meetingNotes:
+        'Site visits:\n- Location 1: [observations]\n- Location 2: [observations]\n\nCorporate meeting:\n- Standardization goals: [details]',
+      additionalContext:
+        'Expansion timeline: [dates]\nAcquisition vs organic growth: [details]\nRegional differences: [considerations]',
     },
   },
   {
-    id: 'operationalTransformation',
-    name: 'Operational Change',
-    icon: '⚙️',
-    description: 'Process or org transformation',
+    id: 'competitiveDisplacement',
+    name: 'Competitive Win-Back',
+    icon: '🎯',
+    description: 'Win back from competitor',
     fields: {
-      title: 'Strategic Proposal: [Transformation Initiative]',
-      problem:
-        'Current state inefficiency:\n- [Problem 1]: Costing $[X] annually\n- [Problem 2]: [Impact]\n\nCompetitive pressure: [Competitors] operate at [X]% better [metric].',
-      context:
-        "Scope: [What parts of organization affected]\n\nPrevious attempts: [What's been tried and why it failed/succeeded]\n\nExternal benchmarks: [Industry standards]",
-      proposedSolution:
-        'Implement [transformation] across [scope]:\n\n1. [Initiative 1]: [Description]\n2. [Initiative 2]: [Description]\n3. [Initiative 3]: [Description]\n\nChange management: [Approach]',
-      businessImpact:
-        'Efficiency gains: $[X]M annually\nCapacity freed: [X] FTE equivalent\nQuality improvement: [X]% reduction in [defects/errors]',
-      timeline: 'Design: [X] months\nPilot: [X] months\nRollout: [X] months\nOptimization: Ongoing',
-      resources:
-        'Investment: $[X]M\n- Consulting: $[X]\n- Technology: $[X]\n- Training: $[X]\n- Change management: $[X]',
-      risks:
-        '- Change resistance: [Risk and mitigation]\n- Business disruption: [Risk and mitigation]\n- Technology risk: [Risk and mitigation]\n- Talent retention: [Risk and mitigation]',
+      organizationName: '[Organization Name]',
+      organizationLocation: '[City, State]',
+      siteCount: '[X] locations',
+      currentVendor: '[Competitor Name]',
+      decisionMakerName: '[Decision Maker Name]',
+      decisionMakerRole: '[Title/Role]',
+      painPoints:
+        '- Competitor failing to deliver on [promise]\n- Price increases without value add\n- Missing features: [list]\n- Poor customer experience: [specifics]',
+      conversationTranscripts:
+        'Call with [name] on [date]:\n"[Key quote about frustration with current vendor]"\n\n"[Quote about what they wish they had]"',
+      meetingNotes:
+        'Competitive analysis:\n- Their contract terms: [details]\n- Switching costs: [assessment]\n- Our advantages: [list]',
+      additionalContext:
+        'Contract end date: [date]\nPrevious relationship with us: [history]\nCompetitor weaknesses to exploit: [list]',
     },
   },
 ];
