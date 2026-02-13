@@ -77,27 +77,66 @@ export function showAboutModal(plugin) {
   modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
   modal.id = 'about-modal';
 
-  // Plugin-specific descriptions that explain what the document type is FOR
-  const pluginDescriptions = {
-    'one-pager': 'A concise decision document that fits on one page. Used to get executive buy-in before investing in detailed planning.',
-    'prd': 'A Product Requirements Document defines WHAT to build and WHY. It bridges business goals and engineering implementation.',
-    'adr': 'Architecture Decision Records capture significant technical decisions, their context, and consequences. Essential for team knowledge sharing.',
-    'pr-faq': 'An Amazon-style internal planning document. NOT an actual press release—it\'s a thinking tool that forces customer-centric product definition.',
-    'power-statement': 'A sales technique for articulating value. Combines a customer pain point with quantified business impact to create compelling pitches.',
-    'acceptance-criteria': 'Testable conditions that define when a user story is complete. Bridges the gap between requirements and QA.',
-    'jd': 'Job descriptions that attract diverse candidates. Focuses on inclusive language and realistic requirements.',
-    'business-justification': 'A business case document for headcount, budget, or investment requests. Quantifies ROI and risk.',
-    'strategic-proposal': 'A sales-focused proposal for strategic initiatives. Structures the pitch around customer pain points and measurable outcomes.'
+  // Plugin-specific metadata for About modal
+  const pluginMeta = {
+    'one-pager': {
+      pluralName: 'One-Pagers',
+      learnMoreText: 'one-pagers',
+      description: 'A concise decision document that fits on one page. Used to get executive buy-in before investing in detailed planning.'
+    },
+    'prd': {
+      pluralName: 'Product Requirements Documents',
+      learnMoreText: 'PRDs',
+      description: 'A Product Requirements Document defines WHAT to build and WHY. It bridges business goals and engineering implementation.'
+    },
+    'adr': {
+      pluralName: 'Architecture Decision Records',
+      learnMoreText: 'ADRs',
+      description: 'Architecture Decision Records capture significant technical decisions, their context, and consequences. Essential for team knowledge sharing.'
+    },
+    'pr-faq': {
+      pluralName: 'PR-FAQs',
+      learnMoreText: 'PR-FAQs',
+      description: 'An Amazon-style internal planning document. NOT an actual press release—it\'s a thinking tool that forces customer-centric product definition.'
+    },
+    'power-statement': {
+      pluralName: 'Power Statements',
+      learnMoreText: 'power statements',
+      description: 'A sales technique for articulating value. Combines a customer pain point with quantified business impact to create compelling pitches.'
+    },
+    'acceptance-criteria': {
+      pluralName: 'Acceptance Criteria',
+      learnMoreText: 'acceptance criteria',
+      description: 'Testable conditions that define when a user story is complete. Bridges the gap between requirements and QA.'
+    },
+    'jd': {
+      pluralName: 'Job Descriptions',
+      learnMoreText: 'job descriptions',
+      description: 'Job descriptions that attract diverse candidates. Focuses on inclusive language and realistic requirements.'
+    },
+    'business-justification': {
+      pluralName: 'Business Justifications',
+      learnMoreText: 'business justifications',
+      description: 'A business case document for headcount, budget, or investment requests. Quantifies ROI and risk.'
+    },
+    'strategic-proposal': {
+      pluralName: 'Strategic Proposals',
+      learnMoreText: 'sales proposals',
+      description: 'A sales-focused proposal for strategic initiatives. Structures the pitch around customer pain points and measurable outcomes.'
+    }
   };
 
-  const description = pluginDescriptions[plugin?.id] || plugin?.description || 'Create high-quality documents.';
+  const meta = pluginMeta[plugin?.id] || {};
+  const description = meta.description || plugin?.description || 'Create high-quality documents.';
+  const pluralName = meta.pluralName || plugin?.name || 'Documents';
+  const learnMoreText = meta.learnMoreText || plugin?.name?.toLowerCase() || 'this document type';
   const docsLink = plugin?.docsUrl
-    ? `<p class="text-sm"><a href="${plugin.docsUrl}" target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-400 hover:underline">📚 Learn more about ${plugin.name} documents →</a></p>`
+    ? `<p class="text-sm"><a href="${plugin.docsUrl}" target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-400 hover:underline">📚 Learn more about ${learnMoreText} →</a></p>`
     : '';
 
   modal.innerHTML = `
     <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4">
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">${plugin?.icon || '📄'} About ${plugin?.name || 'DocForgeAI'}</h3>
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">${plugin?.icon || '📄'} About ${pluralName}</h3>
       <div class="text-gray-600 dark:text-gray-400 space-y-3">
         <p class="font-medium">${description}</p>
         ${docsLink}
