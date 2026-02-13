@@ -159,7 +159,7 @@ Homeowners waste 20-30% of energy due to invisible consumption patterns. Existin
 - **Sense/Emporia** ($299-$499): Require electrician, complex setup
 - **Smart plugs**: Only monitor individual devices
 
-**Our opportunity**: The "good enough" segment—users who want insights without complexity.
+**Our opportunity**: The "good enough" segment. Users who want insights without complexity.
 
 ## Solution
 

@@ -97,7 +97,7 @@ export function showAboutModal(plugin) {
     'pr-faq': {
       pluralName: 'PR-FAQs',
       learnMoreText: 'PR-FAQs',
-      description: 'An Amazon-style internal planning document. NOT an actual press release—it\'s a thinking tool that forces customer-centric product definition.'
+      description: 'An Amazon-style internal planning document. NOT an actual press release. It is a thinking tool that forces customer-centric product definition.'
     },
     'power-statement': {
       pluralName: 'Power Statements',
@@ -112,7 +112,7 @@ export function showAboutModal(plugin) {
     'jd': {
       pluralName: 'Job Descriptions',
       learnMoreText: 'job descriptions',
-      description: 'Job descriptions that attract diverse candidates. Focuses on inclusive language and realistic requirements.'
+      description: 'Structured job descriptions with clear responsibilities, realistic requirements, and compelling value propositions.'
     },
     'business-justification': {
       pluralName: 'Business Justifications',
@@ -148,7 +148,7 @@ export function showAboutModal(plugin) {
           <li>Paste AI responses back here</li>
           <li>3-phase workflow: generate → critique → synthesize</li>
         </ul>
-        <p class="text-xs text-gray-500 dark:text-gray-500"><strong>Note:</strong> Drafts stored locally. Human-controlled workflow—you review prompts before sending to AI.</p>
+        <p class="text-xs text-gray-500 dark:text-gray-500"><strong>Note:</strong> Drafts stored locally. Human-controlled workflow: you review prompts before sending to AI.</p>
       </div>
       <div class="flex justify-end mt-6">
         <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors close-about-btn">
