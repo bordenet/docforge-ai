@@ -203,6 +203,10 @@ describe('Views Project Module', () => {
       // Check that there's no standalone disabled attribute (not part of class name)
       expect(textareaMatch[0]).not.toMatch(/\sdisabled(?:\s|>)/);
     });
+
+    test('should render more-actions button for overflow menu', () => {
+      const html = renderPhaseContent(mockPlugin, mockProject, 1);
+      expect(html).toContain('more-actions-btn');
+    });
   });
 });
-
