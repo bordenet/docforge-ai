@@ -109,7 +109,7 @@ export function showAboutModal(plugin) {
           <li>Paste AI responses back here</li>
           <li>3-phase workflow: generate → critique → synthesize</li>
         </ul>
-        <p class="text-xs text-gray-500 dark:text-gray-500"><strong>Note:</strong> Drafts stored locally. Prompts sent to your chosen AI service.</p>
+        <p class="text-xs text-gray-500 dark:text-gray-500"><strong>Note:</strong> Drafts stored locally. You choose which AI services to use.</p>
       </div>
       <div class="flex justify-end mt-6">
         <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors close-about-btn">
