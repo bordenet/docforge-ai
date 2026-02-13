@@ -112,7 +112,7 @@ export function showAboutModal(plugin) {
     'jd': {
       pluralName: 'Job Descriptions',
       learnMoreText: 'job descriptions',
-      description: 'Structured job descriptions with clear responsibilities, realistic requirements, and compelling value propositions.'
+      description: 'Complete job descriptions with clear scope, leveling criteria, and realistic qualifications. Avoids common pitfalls that repel good candidates.'
     },
     'business-justification': {
       pluralName: 'Business Justifications',
