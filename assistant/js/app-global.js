@@ -90,7 +90,7 @@ export function showAboutModal(plugin) {
           <li>Import/export capabilities</li>
           <li>9 document types supported</li>
         </ul>
-        <p class="text-sm">All your data stays in your browser's local storage.</p>
+        <p class="text-sm">Drafts stored locally. You control when prompts are sent to AI.</p>
       </div>
       <div class="flex justify-end mt-6">
         <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors close-about-btn">

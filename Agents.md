@@ -141,8 +141,8 @@ To add a new document type: create a folder in `plugins/`, define `config.js` an
 
 ## Operating Constraints
 
-**Privacy**: All data stays in browser (IndexedDB). No server transmission.
-**Cost**: User controls LLM costs (copy-paste workflow, not API).
+**Privacy**: Drafts stored locally in browser (IndexedDB). User controls when prompts are sent to external AI services.
+**Cost**: User controls LLM costs (copy-paste workflow to external AI, not API).
 **Token Limits**: Prompts designed for 8K-32K context windows.
 
 ---
