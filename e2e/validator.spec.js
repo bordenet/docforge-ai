@@ -28,18 +28,24 @@ test.describe('Validator', () => {
     await page.waitForLoadState('networkidle');
 
     await expect(page).toHaveTitle(/Validator/);
-    await expect(page.locator('#header-title')).toContainText('Product Requirements Document (PRD) Validator');
+    await expect(page.locator('#header-title')).toContainText('Product Requirements Document Validator');
   });
 
   test('document type selector contains all 9 types', async ({ page }) => {
     await page.goto('/validator/?type=one-pager');
     await page.waitForLoadState('networkidle');
 
-    const selector = page.locator('#doc-type-selector');
-    await expect(selector).toBeVisible();
+    // Click button to open dropdown menu
+    const menuBtn = page.locator('#doc-type-btn');
+    await expect(menuBtn).toBeVisible();
+    await menuBtn.click();
 
-    const options = await selector.locator('option').allTextContents();
-    expect(options.length).toBe(9);
+    // Check menu is visible and contains 9 document type links
+    const menu = page.locator('#doc-type-menu');
+    await expect(menu).toBeVisible();
+
+    const links = await menu.locator('a[data-type]').all();
+    expect(links.length).toBe(9);
   });
 
   test('editor textarea is visible', async ({ page }) => {

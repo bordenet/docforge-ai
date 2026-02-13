@@ -35,14 +35,22 @@ test.describe('Assistant', () => {
     await page.goto('/assistant/?type=one-pager');
     await page.waitForLoadState('networkidle');
 
-    const selector = page.locator('#doc-type-selector');
-    await expect(selector).toBeVisible();
+    // Click button to open dropdown menu
+    const menuBtn = page.locator('#doc-type-btn');
+    await expect(menuBtn).toBeVisible();
+    await menuBtn.click();
 
-    const options = await selector.locator('option').allTextContents();
-    expect(options.length).toBe(9);
+    // Check menu is visible and contains 9 document type links
+    const menu = page.locator('#doc-type-menu');
+    await expect(menu).toBeVisible();
 
+    const links = await menu.locator('a[data-type]').all();
+    expect(links.length).toBe(9);
+
+    // Verify all doc types are present
     for (const docType of DOC_TYPES) {
-      expect(options.some((opt) => opt.includes(docType.name))).toBe(true);
+      const link = menu.locator(`a[data-type="${docType.id}"]`);
+      await expect(link).toBeVisible();
     }
   });
 
@@ -50,8 +58,13 @@ test.describe('Assistant', () => {
     await page.goto('/assistant/?type=one-pager');
     await page.waitForLoadState('networkidle');
 
-    const selector = page.locator('#doc-type-selector');
-    await selector.selectOption('prd');
+    // Click button to open dropdown menu
+    const menuBtn = page.locator('#doc-type-btn');
+    await menuBtn.click();
+
+    // Click on PRD link
+    const menu = page.locator('#doc-type-menu');
+    await menu.locator('a[data-type="prd"]').click();
 
     await page.waitForURL(/type=prd/);
     expect(page.url()).toContain('type=prd');
