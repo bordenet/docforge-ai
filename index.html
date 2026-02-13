@@ -27,6 +27,16 @@
           transform 0.2s,
           box-shadow 0.2s;
       }
+      .doc-type-btn {
+        cursor: pointer;
+      }
+      #how-it-works-content {
+        transition: opacity 0.15s ease-in-out;
+        min-height: 3.5rem;
+      }
+      #how-it-works-content.fade-out {
+        opacity: 0;
+      }
     </style>
   </head>
   <body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
@@ -83,60 +93,62 @@
 
       <!-- Document Types -->
       <section
+        id="doc-types-section"
         class="bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700 mb-12"
       >
         <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6">
           Supported Document Types
         </h3>
-        <div class="grid grid-cols-3 md:grid-cols-5 gap-4 text-center">
-          <a href="assistant/?type=one-pager" class="p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+        <div id="doc-types-grid" class="grid grid-cols-3 md:grid-cols-5 gap-4 text-center">
+          <a href="assistant/?type=one-pager" data-doc-type="one-pager" class="doc-type-btn p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
             <div class="text-2xl mb-1">📄</div>
             <div class="text-sm text-gray-600 dark:text-gray-400">One-Pager</div>
           </a>
-          <a href="assistant/?type=prd" class="p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+          <a href="assistant/?type=prd" data-doc-type="prd" class="doc-type-btn p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
             <div class="text-2xl mb-1">📋</div>
             <div class="text-sm text-gray-600 dark:text-gray-400">PRD</div>
           </a>
-          <a href="assistant/?type=adr" class="p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+          <a href="assistant/?type=adr" data-doc-type="adr" class="doc-type-btn p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
             <div class="text-2xl mb-1">🏗️</div>
             <div class="text-sm text-gray-600 dark:text-gray-400">ADR</div>
           </a>
-          <a href="assistant/?type=pr-faq" class="p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+          <a href="assistant/?type=pr-faq" data-doc-type="pr-faq" class="doc-type-btn p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
             <div class="text-2xl mb-1">📰</div>
             <div class="text-sm text-gray-600 dark:text-gray-400">PR-FAQ</div>
           </a>
-          <a href="assistant/?type=power-statement" class="p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+          <a href="assistant/?type=power-statement" data-doc-type="power-statement" class="doc-type-btn p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
             <div class="text-2xl mb-1">💪</div>
             <div class="text-sm text-gray-600 dark:text-gray-400">Power Statement</div>
           </a>
-          <a href="assistant/?type=acceptance-criteria" class="p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+          <a href="assistant/?type=acceptance-criteria" data-doc-type="acceptance-criteria" class="doc-type-btn p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
             <div class="text-2xl mb-1">✅</div>
             <div class="text-sm text-gray-600 dark:text-gray-400">Acceptance Criteria</div>
           </a>
-          <a href="assistant/?type=jd" class="p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+          <a href="assistant/?type=jd" data-doc-type="jd" class="doc-type-btn p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
             <div class="text-2xl mb-1">💼</div>
             <div class="text-sm text-gray-600 dark:text-gray-400">Job Description</div>
           </a>
-          <a href="assistant/?type=business-justification" class="p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+          <a href="assistant/?type=business-justification" data-doc-type="business-justification" class="doc-type-btn p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
             <div class="text-2xl mb-1">📊</div>
             <div class="text-sm text-gray-600 dark:text-gray-400">Business Justification</div>
           </a>
-          <a href="assistant/?type=strategic-proposal" class="p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+          <a href="assistant/?type=strategic-proposal" data-doc-type="strategic-proposal" class="doc-type-btn p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
             <div class="text-2xl mb-1">🎯</div>
             <div class="text-sm text-gray-600 dark:text-gray-400">Strategic Proposal</div>
           </a>
         </div>
       </section>
 
-      <!-- Privacy Notice -->
+      <!-- Privacy Notice / Document Info -->
       <section
+        id="how-it-works-section"
         class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800 mb-12"
       >
         <div class="flex items-start gap-4">
-          <div class="text-2xl">ℹ️</div>
+          <div id="how-it-works-icon" class="text-2xl">ℹ️</div>
           <div>
-            <h4 class="font-bold text-blue-900 dark:text-blue-200 mb-1">How It Works</h4>
-            <p class="text-blue-700 dark:text-blue-300 text-sm">
+            <h4 id="how-it-works-title" class="font-bold text-blue-900 dark:text-blue-200 mb-1">How It Works</h4>
+            <p id="how-it-works-content" class="text-blue-700 dark:text-blue-300 text-sm">
               Drafts stored locally in your browser. Human-controlled AI workflow: you review
               and send prompts to your chosen AI service. Nothing is sent automatically.
             </p>
@@ -183,6 +195,107 @@
             localStorage.setItem('docforge-status-banner-dismissed', 'true');
           });
         }
+      })();
+
+      // Document type hover definitions
+      (function() {
+        const docTypeDefinitions = {
+          'one-pager': {
+            icon: '📄',
+            name: 'One-Pager',
+            description: 'A concise decision document that fits on one page. Used to get executive buy-in before investing in detailed planning.'
+          },
+          'prd': {
+            icon: '📋',
+            name: 'PRD',
+            description: 'A Product Requirements Document defines WHAT to build and WHY. It bridges business goals and engineering implementation.'
+          },
+          'adr': {
+            icon: '🏗️',
+            name: 'ADR',
+            description: 'Architecture Decision Records capture significant technical decisions, their context, and consequences. Essential for team knowledge sharing.'
+          },
+          'pr-faq': {
+            icon: '📰',
+            name: 'PR-FAQ',
+            description: 'An Amazon-style internal planning document. NOT an actual press release. It is a thinking tool that forces customer-centric product definition.'
+          },
+          'power-statement': {
+            icon: '💪',
+            name: 'Power Statement',
+            description: 'A sales technique for articulating value. Combines a customer pain point with quantified business impact to create compelling pitches.'
+          },
+          'acceptance-criteria': {
+            icon: '✅',
+            name: 'Acceptance Criteria',
+            description: 'Testable conditions that define when a user story is complete. Bridges the gap between requirements and QA.'
+          },
+          'jd': {
+            icon: '💼',
+            name: 'Job Description',
+            description: 'Complete job descriptions with clear scope, leveling criteria, and realistic qualifications. Avoids common pitfalls that repel good candidates.'
+          },
+          'business-justification': {
+            icon: '📊',
+            name: 'Business Justification',
+            description: 'A business case document for headcount, budget, or investment requests. Quantifies ROI and risk.'
+          },
+          'strategic-proposal': {
+            icon: '🎯',
+            name: 'Strategic Proposal',
+            description: 'A sales-focused proposal for strategic initiatives. Structures the pitch around customer pain points and measurable outcomes.'
+          }
+        };
+
+        const defaultContent = {
+          icon: 'ℹ️',
+          title: 'How It Works',
+          description: 'Drafts stored locally in your browser. Human-controlled AI workflow: you review and send prompts to your chosen AI service. Nothing is sent automatically.'
+        };
+
+        const iconEl = document.getElementById('how-it-works-icon');
+        const titleEl = document.getElementById('how-it-works-title');
+        const contentEl = document.getElementById('how-it-works-content');
+        const docTypesSection = document.getElementById('doc-types-section');
+        const docTypeButtons = document.querySelectorAll('.doc-type-btn');
+
+        let isHovering = false;
+
+        function updateContent(icon, title, description) {
+          contentEl.classList.add('fade-out');
+          setTimeout(() => {
+            iconEl.textContent = icon;
+            titleEl.textContent = title;
+            contentEl.textContent = description;
+            contentEl.classList.remove('fade-out');
+          }, 100);
+        }
+
+        function showDefinition(docType) {
+          const def = docTypeDefinitions[docType];
+          if (def) {
+            isHovering = true;
+            updateContent(def.icon, def.name, def.description);
+          }
+        }
+
+        function resetToDefault() {
+          isHovering = false;
+          updateContent(defaultContent.icon, defaultContent.title, defaultContent.description);
+        }
+
+        docTypeButtons.forEach(btn => {
+          btn.addEventListener('mouseenter', () => {
+            const docType = btn.getAttribute('data-doc-type');
+            showDefinition(docType);
+          });
+        });
+
+        docTypesSection.addEventListener('mouseleave', () => {
+          if (isHovering) {
+            resetToDefault();
+          }
+        });
       })();
     </script>
   </body>
