@@ -7,7 +7,7 @@ export const onePagerPlugin = {
   name: 'One-Pager',
   icon: '📄',
   description: 'Concise one-page decision document',
-  docsUrl: 'https://github.com/bordenet/Engineering_Culture/blob/main/SDLC/The_One-Pager.md',
+  docsUrl: 'https://www.productplan.com/learn/product-one-pager/',
   dbName: 'one-pager-docforge-db',
 
   formFields: [

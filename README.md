@@ -50,7 +50,7 @@ The format has two sections:
 
 2. **FAQs** — Questions stakeholders will ask, split into External (customer) and Internal (business) categories. Covers pricing, technical feasibility, risks, timeline, and success metrics.
 
-For background, see [The PR-FAQ](https://github.com/bordenet/Engineering_Culture/blob/main/SDLC/The_PR-FAQ.md) or watch [this explainer video](https://www.youtube.com/watch?v=T1HZM6ybORk).
+For background, see [Working Backwards PR/FAQ](https://workingbackwards.com/resources/working-backwards-pr-faq/) or watch [this explainer video](https://www.youtube.com/watch?v=T1HZM6ybORk).
 
 ## Why Adversarial Review?
 

@@ -7,8 +7,7 @@ export const prdPlugin = {
   name: 'Product Requirements Document',
   icon: '📋',
   description: 'Product Requirements Document for engineering teams',
-  docsUrl:
-    'https://github.com/bordenet/Engineering_Culture/blob/main/SDLC/Project_Planning_Mechanisms%3A_Documents.md#prd-the-what-and-why',
+  docsUrl: 'https://www.productplan.com/glossary/product-requirements-document/',
   dbName: 'prd-docforge-db',
 
   formFields: [

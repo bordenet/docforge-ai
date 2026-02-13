@@ -7,14 +7,14 @@ export const prFaqPlugin = {
   name: 'Press Release FAQ',
   icon: '📰',
   description: 'Amazon-style PR-FAQ document for product launches',
-  docsUrl: 'https://github.com/bordenet/Engineering_Culture/blob/main/SDLC/The_PR-FAQ.md',
+  docsUrl: 'https://workingbackwards.com/resources/working-backwards-pr-faq/',
   dbName: 'pr-faq-docforge-db',
 
   // Help content shown at top of new project form
   helpContent: {
     title: "What's a PR-FAQ?",
     body: `A PR/FAQ (Press Release / Frequently Asked Questions) is Amazon's "Working Backwards" document format. You write a future press release announcing the finished product <em>as if it already shipped</em>, then answer anticipated customer and stakeholder questions. This forces clarity on customer benefit before building anything.`,
-    learnMoreUrl: 'https://github.com/bordenet/Engineering_Culture/blob/main/SDLC/The_PR-FAQ.md',
+    learnMoreUrl: 'https://workingbackwards.com/resources/working-backwards-pr-faq/',
     learnMoreText: 'Learn more about PR-FAQs',
   },
 
