@@ -76,21 +76,40 @@ export function showAboutModal(plugin) {
   const modal = document.createElement('div');
   modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
   modal.id = 'about-modal';
+
+  // Plugin-specific descriptions that explain what the document type is FOR
+  const pluginDescriptions = {
+    'one-pager': 'A concise decision document that fits on one page. Used to get executive buy-in before investing in detailed planning.',
+    'prd': 'A Product Requirements Document defines WHAT to build and WHY. It bridges business goals and engineering implementation.',
+    'adr': 'Architecture Decision Records capture significant technical decisions, their context, and consequences. Essential for team knowledge sharing.',
+    'pr-faq': 'An Amazon-style internal planning document. NOT an actual press release—it\'s a thinking tool that forces customer-centric product definition.',
+    'power-statement': 'A sales technique for articulating value. Combines a customer pain point with quantified business impact to create compelling pitches.',
+    'acceptance-criteria': 'Testable conditions that define when a user story is complete. Bridges the gap between requirements and QA.',
+    'jd': 'Job descriptions that attract diverse candidates. Focuses on inclusive language and realistic requirements.',
+    'business-justification': 'A business case document for headcount, budget, or investment requests. Quantifies ROI and risk.',
+    'strategic-proposal': 'A sales-focused proposal for strategic initiatives. Structures the pitch around customer pain points and measurable outcomes.'
+  };
+
+  const description = pluginDescriptions[plugin?.id] || plugin?.description || 'Create high-quality documents.';
+  const docsLink = plugin?.docsUrl
+    ? `<p class="text-sm"><a href="${plugin.docsUrl}" target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-400 hover:underline">📚 Learn more about ${plugin.name} documents →</a></p>`
+    : '';
+
   modal.innerHTML = `
     <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4">
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">About ${plugin?.name || 'DocForgeAI'} Assistant</h3>
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">${plugin?.icon || '📄'} About ${plugin?.name || 'DocForgeAI'}</h3>
       <div class="text-gray-600 dark:text-gray-400 space-y-3">
-        <p>Create high-quality documents using a 3-phase adversarial AI workflow.</p>
-        <p><strong>How it works:</strong></p>
+        <p class="font-medium">${description}</p>
+        ${docsLink}
+        <hr class="border-gray-200 dark:border-gray-700">
+        <p class="text-sm"><strong>How this tool works:</strong></p>
         <ul class="list-disc list-inside space-y-1 text-sm">
-          <li>Drafts stored locally in your browser</li>
-          <li>You copy prompts to external AI (Claude, Gemini, etc)</li>
+          <li>Fill out the form with your document details</li>
+          <li>Copy generated prompts to external AI (Claude, Gemini, etc)</li>
+          <li>Paste AI responses back here</li>
           <li>3-phase workflow: generate → critique → synthesize</li>
-          <li>Multiple project management</li>
-          <li>Import/export capabilities</li>
-          <li>9 document types supported</li>
         </ul>
-        <p class="text-sm"><strong>Note:</strong> We don't run AI servers. You use your own AI accounts.</p>
+        <p class="text-xs text-gray-500 dark:text-gray-500"><strong>Note:</strong> Drafts stored locally. Prompts sent to your chosen AI service.</p>
       </div>
       <div class="flex justify-end mt-6">
         <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors close-about-btn">
