@@ -141,24 +141,19 @@ export function attachPhaseEventListeners(plugin, project, phase) {
   // Setup overflow "More" menu with secondary actions
   const moreActionsBtn = document.getElementById('more-actions-btn');
   if (moreActionsBtn) {
-    const phaseData = project.phases?.[phase] || {};
-    const hasPrompt = !!phaseData.prompt;
-
     // Build menu items based on current state
     const menuItems = [];
 
-    // View Prompt (only if prompt exists)
-    if (hasPrompt) {
-      menuItems.push({
-        label: 'View Prompt',
-        icon: '👁️',
-        onClick: async () => {
-          const previousResponses = { 1: project.phases?.[1]?.response || '', 2: project.phases?.[2]?.response || '' };
-          const prompt = await generatePrompt(plugin, phase, project.formData, previousResponses);
-          showPromptModal(prompt, `Phase ${phase} Prompt`);
-        },
-      });
-    }
+    // Preview Prompt (always available - generates prompt on demand)
+    menuItems.push({
+      label: 'Preview Prompt',
+      icon: '👁️',
+      onClick: async () => {
+        const previousResponses = { 1: project.phases?.[1]?.response || '', 2: project.phases?.[2]?.response || '' };
+        const prompt = await generatePrompt(plugin, phase, project.formData, previousResponses);
+        showPromptModal(prompt, `Phase ${phase} Prompt`);
+      },
+    });
 
     // Edit Details (always available - go back to form)
     menuItems.push({
