@@ -80,17 +80,17 @@ export function showAboutModal(plugin) {
     <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4">
       <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">About ${plugin?.name || 'DocForgeAI'} Assistant</h3>
       <div class="text-gray-600 dark:text-gray-400 space-y-3">
-        <p>A privacy-first tool for creating high-quality documents using AI assistance.</p>
-        <p><strong>Features:</strong></p>
+        <p>Create high-quality documents using a 3-phase adversarial AI workflow.</p>
+        <p><strong>How it works:</strong></p>
         <ul class="list-disc list-inside space-y-1 text-sm">
           <li>Drafts stored locally in your browser</li>
-          <li>You control when prompts are sent to AI</li>
-          <li>3-phase adversarial AI workflow</li>
+          <li>You copy prompts to external AI (Claude, Gemini, etc)</li>
+          <li>3-phase workflow: generate → critique → synthesize</li>
           <li>Multiple project management</li>
           <li>Import/export capabilities</li>
           <li>9 document types supported</li>
         </ul>
-        <p class="text-sm">Drafts stored locally. You control when prompts are sent to AI.</p>
+        <p class="text-sm"><strong>Note:</strong> We don't run AI servers. You use your own AI accounts.</p>
       </div>
       <div class="flex justify-end mt-6">
         <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors close-about-btn">
