@@ -2,6 +2,8 @@
  * One-Pager Plugin Configuration
  */
 
+import { validateDocument } from './js/validator.js';
+
 export const onePagerPlugin = {
   id: 'one-pager',
   name: 'One-Pager',
@@ -140,8 +142,7 @@ export const onePagerPlugin = {
     },
   ],
 
-  // Validation will be imported from validator.js
-  validateDocument: null, // Set by plugin loader
+  validateDocument,
 
   workflowConfig: {
     phaseCount: 3,
