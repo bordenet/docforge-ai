@@ -1,7 +1,5 @@
 /**
- * Import Document Module
- * Handles importing existing documents from Word/Google Docs via paste
- * @module import-document
+ * Import Document Module - Handles importing existing documents from Word/Google Docs via paste
  */
 
 import { logger } from './logger.js';
@@ -34,13 +32,7 @@ import {
   isGenericSectionHeader,
 } from './import-config.js';
 
-/**
- * Extract title from the BEGINNING of markdown (first N lines only)
- * This prevents grabbing titles from appendices or other sections
- * @param {string} markdown - Markdown content
- * @param {string} docType - Document type name
- * @returns {string|null} Extracted title or null
- */
+/** Extract title from the BEGINNING of markdown (first N lines only) */
 export function extractTitleFromMarkdown(markdown, docType) {
   if (!markdown) return null;
 
