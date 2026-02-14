@@ -4,8 +4,26 @@
  * @module ui-modals
  */
 
-import { escapeHtml, copyToClipboard } from './ui.js';
-import { showToast } from './ui.js';
+import { escapeHtml, copyToClipboard } from './ui-base.js';
+
+/**
+ * Show a simple inline toast notification (to avoid circular import with ui.js)
+ * @param {string} message - Message to show
+ * @param {string} type - Toast type (success, error, etc.)
+ */
+function showInlineToast(message, type = 'success') {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+  const colors = { success: 'bg-green-600', error: 'bg-red-600', info: 'bg-blue-600' };
+  const toast = document.createElement('div');
+  toast.className = `notification ${colors[type] || colors.info} text-white px-4 py-3 rounded-lg shadow-lg flex items-center space-x-2`;
+  toast.innerHTML = `<span class="text-lg">✓</span><span>${escapeHtml(message)}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.classList.add('removing');
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
 
 /**
  * Show a confirmation dialog
@@ -98,7 +116,7 @@ export function showPromptModal(text, title = 'Prompt') {
   document.getElementById('modal-copy').addEventListener('click', async () => {
     const success = await copyToClipboard(text);
     if (success) {
-      showToast('Copied to clipboard!', 'success');
+      showInlineToast('Copied to clipboard!', 'success');
     }
   });
 }

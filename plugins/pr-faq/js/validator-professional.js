@@ -4,14 +4,13 @@
  */
 
 import { ALL_FLUFF_PATTERNS } from './validator-config.js';
-
-// Re-export analysis functions
-export {
+import {
   analyzeToneAndReadability,
   analyzeMarketingFluff
 } from './validator-professional-analysis.js';
 
-import {
+// Re-export analysis functions
+export {
   analyzeToneAndReadability,
   analyzeMarketingFluff
 } from './validator-professional-analysis.js';

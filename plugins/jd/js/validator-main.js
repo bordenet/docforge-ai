@@ -25,10 +25,7 @@ import {
 
 import {
   createEmptyResult,
-  assembleResult,
-  getGrade,
-  getScoreColor,
-  getScoreLabel
+  assembleResult
 } from './validator-results.js';
 
 // Re-export UI helper functions

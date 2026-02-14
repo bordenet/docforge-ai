@@ -4,9 +4,13 @@
  * @module ui
  */
 
+// Import base utilities for internal use
+import { escapeHtml as _escapeHtml } from './ui-base.js';
+
 // Re-export from sub-modules for backward compatibility
 export { createActionMenu } from './ui-menu.js';
 export { confirm, showPromptModal } from './ui-modals.js';
+export { escapeHtml, copyToClipboard } from './ui-base.js';
 
 /**
  * Show a toast notification
@@ -36,7 +40,7 @@ export function showToast(message, type = 'info', duration = 3000) {
   toast.className = `notification ${colors[type]} text-white px-4 py-3 rounded-lg shadow-lg flex items-center space-x-2`;
   toast.innerHTML = `
     <span class="text-lg">${icons[type]}</span>
-    <span>${escapeHtml(message)}</span>
+    <span>${_escapeHtml(message)}</span>
   `;
 
   container.appendChild(toast);
@@ -71,26 +75,6 @@ export function hideLoading() {
 }
 
 /**
- * Escape HTML to prevent XSS
- * @param {string} str - String to escape
- * @returns {string}
- */
-export function escapeHtml(str) {
-  if (!str) return '';
-  return str.replace(
-    /[&<>"']/g,
-    (char) =>
-      ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;',
-      })[char]
-  );
-}
-
-/**
  * Format a date for display
  * @param {string|Date} date - Date to format
  * @returns {string}
@@ -118,33 +102,7 @@ export function renderMarkdown(markdown) {
     return marked.parse(markdown);
   }
   // Fallback: just escape and preserve newlines
-  return escapeHtml(markdown).replace(/\n/g, '<br>');
-}
-
-/**
- * Copy text to clipboard
- * @param {string} text - Text to copy
- * @returns {Promise<boolean>}
- */
-export async function copyToClipboard(text) {
-  try {
-    await navigator.clipboard.writeText(text);
-    return true;
-  } catch {
-    // Fallback for older browsers
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    textarea.style.position = 'fixed';
-    textarea.style.opacity = '0';
-    document.body.appendChild(textarea);
-    textarea.select();
-    try {
-      document.execCommand('copy');
-      return true;
-    } finally {
-      document.body.removeChild(textarea);
-    }
-  }
+  return _escapeHtml(markdown).replace(/\n/g, '<br>');
 }
 
 /**
