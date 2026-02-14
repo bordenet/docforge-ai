@@ -207,6 +207,14 @@ export function validateDocument(text, plugin) {
     return createPromptDetectedResult(plugin, promptDetection);
   }
 
+  // USE PLUGIN-SPECIFIC VALIDATOR IF AVAILABLE
+  // Each plugin can define its own validateDocument function with domain-specific
+  // scoring patterns (e.g., PRD checks for metrics, JD checks for inclusivity)
+  if (plugin?.validateDocument && typeof plugin.validateDocument === 'function') {
+    return plugin.validateDocument(text);
+  }
+
+  // Fall back to generic dimension-based scoring if no plugin-specific validator
   const dimensions = plugin?.scoringDimensions || getDefaultDimensions();
   const results = {};
   let totalScore = 0;

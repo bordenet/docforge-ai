@@ -215,6 +215,42 @@ Phase 2: Q2 2024
       expect(result.dimension1).toBeDefined();
       expect(result.totalScore).toBeDefined();
     });
+
+    test('delegates to plugin.validateDocument when available', () => {
+      const customResult = {
+        totalScore: 85,
+        customField: 'from-plugin-validator',
+        issues: ['custom issue'],
+        slopDetection: { score: 10, severity: 'low', penalty: 0, issues: [] },
+      };
+      const pluginWithValidator = {
+        id: 'test-plugin',
+        validateDocument: (text) => customResult,
+        scoringDimensions: [
+          { name: 'Test', maxPoints: 100, description: 'Test' },
+        ],
+      };
+      const result = validateDocument('# Test\nContent', pluginWithValidator);
+      // Should get the result from the plugin validator, not generic scoring
+      expect(result.totalScore).toBe(85);
+      expect(result.customField).toBe('from-plugin-validator');
+    });
+
+    test('falls back to generic scoring when plugin.validateDocument is null', () => {
+      const pluginWithoutValidator = {
+        id: 'test-plugin',
+        validateDocument: null,
+        scoringDimensions: [
+          { name: 'Quality', maxPoints: 50, description: 'Quality' },
+          { name: 'Structure', maxPoints: 50, description: 'Structure' },
+        ],
+      };
+      const result = validateDocument('# Test\nSome content here with details.', pluginWithoutValidator);
+      // Should use generic scoring since validateDocument is null
+      expect(result.totalScore).toBeDefined();
+      expect(result.Quality).toBeDefined();
+      expect(result.Structure).toBeDefined();
+    });
   });
 
   describe('getGrade', () => {
