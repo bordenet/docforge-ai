@@ -148,6 +148,104 @@ Structure your proposal as a professional executive summary with clear section h
 - Keep the tone professional and consultative, not salesy
 - **Zero AI Slop**: No vague terms, no filler phrases, no buzzwords
 
+---
+
+## ⚠️ SCORING RUBRIC - How Your Strategic Proposal Will Be Evaluated
+
+Your proposal will be scored across **4 dimensions totaling 100 points**. Understanding this rubric helps you write a more compelling proposal.
+
+### Scoring Dimensions
+
+| Dimension | Max Points | What Gets Scored |
+|-----------|-----------|------------------|
+| **Problem Statement** | 25 pts | Clear problem definition, urgency established, quantified impact, strategic alignment |
+| **Proposed Solution** | 25 pts | Actionable approach, alternatives considered, justification with evidence |
+| **Business Impact** | 25 pts | Measurable outcomes, financial terms (ROI, savings, revenue), competitive positioning |
+| **Implementation Plan** | 25 pts | Timeline with phases, ownership defined, resource requirements |
+
+### Section Weights
+
+| Weight | Sections |
+|--------|----------|
+| **2 pts each (critical)** | Problem Statement, Proposed Solution, Business Impact, Implementation Plan |
+| **1 pt each (supporting)** | Resources/Budget, Risks/Assumptions, Success Metrics |
+
+### Score Calibration
+
+| Score Range | Meaning |
+|-------------|---------|
+| **0-40** | Incomplete - missing core sections or no quantification |
+| **41-55** | Weak - has structure but vague claims without evidence |
+| **56-70** | Average - covers basics, needs sharper financial justification |
+| **71-80** | Good - solid proposal, minor improvements to impact modeling |
+| **81-90** | Strong - compelling, quantified, would pass VP scrutiny |
+| **91-100** | Exceptional - board-ready, bulletproof financial case |
+
+### What Costs You Points (Penalties)
+
+**Missing Urgency (-5 pts):**
+- No mention of: urgent, critical, deadline, window, opportunity cost
+- Why NOW? What happens if we delay?
+
+**Unquantified Impact (-5 to -10 pts):**
+- Claims like "significant improvement" without numbers
+- Missing: %, $, hours saved, revenue impact, conversion rates
+
+**No Alternatives Considered (-5 pts):**
+- "This is the only option" is a red flag
+- Decision-makers want to see you evaluated alternatives
+
+**Missing Ownership (-3 pts):**
+- No clear owner, lead, or accountable party
+- RACI roles undefined
+
+**AI Slop Penalty (-0 to -5 pts):**
+- Buzzwords, filler phrases, hollow specificity
+
+### What Earns You Points (Strengths)
+
+**Problem Statement (+25 pts max):**
+- Clear problem/challenge/opportunity defined
+- Urgency established: "budget timing", "contract renewal", "Q3 window"
+- Quantified impact: "$X/month loss", "Y% conversion gap"
+- Strategic alignment: ties to organizational priorities/pillars
+
+**Proposed Solution (+25 pts max):**
+- Actionable verbs: implement, execute, deliver, launch, deploy
+- Alternatives considered with trade-offs explained
+- Evidence-based justification: "data shows", "research indicates"
+- Each pain point mapped to a specific capability
+
+**Business Impact (+25 pts max):**
+- Financial terms: revenue, cost, savings, profit, margin, ROI
+- Quantified outcomes: "additional $X gross profit per store per month"
+- Competitive positioning stated
+- Hedge statement included: "Even if estimates are 50% high..."
+- Dealership-specific impacts (if applicable): call conversion, appointment rate, missed opportunities
+
+**Implementation Plan (+25 pts max):**
+- Phases/milestones defined: Phase 1, Wave 1, Q1, etc.
+- Timeline with dates: "Week 1-2", "by Q3", "within 30 days"
+- Ownership clear: owner, lead, responsible party
+- Resource requirements: budget, headcount, capacity
+
+### Bonus Points
+
+**Stakeholder Analysis (+3 pts):**
+- RACI roles defined
+- FP&A/Finance concerns addressed
+- Approval path identified
+
+**Risk Mitigation (+2 pts):**
+- Risks identified with mitigations
+- Contingency/fallback plans included
+
+**Success Metrics (+2 pts):**
+- KPIs defined with baselines and targets
+- Timebound: "by Q4", "within 90 days"
+
+---
+
 <output_rules>
 CRITICAL - Your final proposal must be COPY-PASTE READY:
 - Start IMMEDIATELY with "[Vendor Name] — In Partnership With [Organization]" or the document title (no preamble like "Here's the proposal...")

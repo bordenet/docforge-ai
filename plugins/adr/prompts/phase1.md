@@ -143,4 +143,105 @@ Reference specific facts from the context in your Decision and Consequences:
 - ✅ **Subsequent ADRs section lists 2-3 triggered decisions** (e.g., "service mesh selection", "distributed tracing strategy")
 - ✅ **Recommended Review Timing specifies clear checkpoints** (not vague; e.g., "30 days" not "later")
 
+---
+
+## ⚠️ SCORING RUBRIC - How Your ADR Will Be Evaluated
+
+Your ADR will be scored across **4 dimensions totaling 100 points**. Understanding this rubric helps you write a higher-quality decision record.
+
+### Scoring Dimensions
+
+| Dimension | Max Points | What Gets Scored |
+|-----------|-----------|------------------|
+| **Context** | 25 pts | Clear problem/situation, constraints identified, quantified impact, business focus |
+| **Decision** | 25 pts | Specific choice stated, alternatives compared, action verbs used, no vague principles |
+| **Consequences** | 25 pts | Both positive AND negative listed, specific trade-offs, team factors addressed |
+| **Status** | 25 pts | Clear status value, date stamps, superseded-by links if applicable |
+
+### Section Weights
+
+| Weight | Sections |
+|--------|----------|
+| **2 pts each (critical)** | Context, Decision, Consequences, Status |
+| **1 pt each (supporting)** | Options Considered, Rationale |
+
+### Score Calibration
+
+| Score Range | Meaning |
+|-------------|---------|
+| **0-40** | Incomplete - missing core sections or vague decision |
+| **41-55** | Weak - has structure but "improve scalability" type decisions |
+| **56-70** | Average - specific decision but weak consequences |
+| **71-80** | Good - solid ADR, minor gaps in team factors or review timing |
+| **81-90** | Strong - comprehensive, honest trade-offs, actionable |
+| **91-100** | Exceptional - could guide team decisions for years |
+
+### What Costs You Points (Penalties)
+
+**Vague Decision Phrases (-10 to -15 pts):**
+- "strategic approach", "architectural intervention", "improve scalability"
+- "more maintainable", "better architecture", "enhance performance"
+- "optimize the system", "modernize the platform", "transform the infrastructure"
+
+**Vague Consequence Terms (-3 pts each):**
+- "complexity", "overhead", "difficult", "challenging", "problematic"
+- "issues", "concerns" without specifics
+- Replace with: specific latency, specific cost, specific migration effort
+
+**Missing Alternatives Comparison (-5 pts):**
+- Decision should include: "We considered X, Y, and Z, but chose [decision] because..."
+- Shows you evaluated options, not just picked one
+
+**Missing Team Factors (-5 pts):**
+- Training needs, skill gaps, hiring impact, team ramp-up
+- Learning curve, expertise required, onboarding effort, team structure changes
+
+**Missing Subsequent ADRs (-3 pts):**
+- What other decisions does this trigger?
+- "This triggers decisions on: [topic 1], [topic 2], [topic 3]"
+
+**Missing Review Timing (-3 pts):**
+- When will you revisit this decision?
+- "Review in 30 days", "Quarterly review", "After-action review in 60 days"
+
+**AI Slop Penalty (-0 to -5 pts):**
+- Buzzwords, filler phrases, hollow specificity
+
+### What Earns You Points (Strengths)
+
+**Context (+25 pts max):**
+- Clear problem/situation statement
+- Constraints identified: must, should, cannot, restriction
+- Quantified impact: "$X cost", "Y% growth", "Z hour outages"
+- Business focus: customer, revenue, competitive, strategic
+
+**Decision (+25 pts max):**
+- Specific architectural choice: microservices, monorepo, event-driven, etc.
+- Action verbs: use, adopt, implement, migrate, split, combine, establish, enforce
+- Alternatives comparison: "We considered X and Y, but chose Z because..."
+- Grounded in business drivers: cost, time-to-market, team capability
+
+**Consequences (+25 pts max):**
+- **3+ Positive**: concrete benefits with specific metrics
+- **3+ Negative**: honest trade-offs (latency added, training required, migration effort)
+- Team factors addressed: skill gaps, hiring needs, training requirements
+- Subsequent ADRs triggered: 2-3 follow-on decisions listed
+- Review timing specified: "Review in 30 days", "Quarterly reassessment"
+
+**Status (+25 pts max):**
+- Clear status value: Proposed, Accepted, Deprecated, Superseded
+- Date stamps included
+- If superseded: links to successor ADR
+
+### Bonus Patterns (Recognized by Validator)
+
+| Pattern | Example | Bonus |
+|---------|---------|-------|
+| Team factors | "team ramp-up", "skill gap", "hiring impact", "training need" | +2 pts |
+| Subsequent ADRs | "triggers ADR on...", "follow-on ADR for..." | +2 pts |
+| Review timing | "review in 30 days", "quarterly review", "after-action" | +2 pts |
+| Alternatives inline | "We considered X, Y, but chose Z because..." | +2 pts |
+
+---
+
 Return the complete ADR formatted as markdown above. Be specific and concrete throughout.

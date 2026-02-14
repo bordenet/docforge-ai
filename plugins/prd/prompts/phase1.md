@@ -370,6 +370,88 @@ Before finalizing your draft, ensure:
 - ✅ Each non-functional requirement must include measurable thresholds
 - ✅ Number all requirements (FR1, FR2, NFR1, NFR2, etc.) for traceability
 
+---
+
+## ⚠️ SCORING RUBRIC - How Your PRD Will Be Evaluated
+
+Your PRD will be scored across **5 dimensions totaling 100 points**. Understanding this rubric helps you write a higher-quality document.
+
+### Scoring Dimensions
+
+| Dimension | Max Points | What Gets Scored |
+|-----------|-----------|------------------|
+| **Document Structure** | 20 pts | Section presence, organization, formatting |
+| **Requirements Clarity** | 25 pts | Precision, completeness, no vague language |
+| **User Focus** | 20 pts | Personas, problem statement quality, customer alignment |
+| **Technical Quality** | 15 pts | Non-functional requirements, acceptance criteria, traceability |
+| **Strategic Viability** | 20 pts | Leading/lagging indicators, kill criteria, alternatives, dissenting opinions |
+
+### Section Weights (14 Required Sections)
+
+| Weight | Sections |
+|--------|----------|
+| **2 pts each (high priority)** | Executive Summary, Problem Statement, Value Proposition, Goals/Objectives, Customer FAQ, Proposed Solution, Requirements |
+| **1.5 pts each (medium)** | Scope, Stakeholders |
+| **1 pt each (standard)** | Timeline, Risks/Mitigation, Traceability Summary, Open Questions, Known Unknowns |
+
+### Score Calibration
+
+| Score Range | Meaning |
+|-------------|---------|
+| **0-40** | Incomplete - missing critical sections |
+| **41-55** | Weak - has structure but lacks specificity |
+| **56-70** | Average - covers basics, needs quantification |
+| **71-80** | Good - solid PRD, minor improvements needed |
+| **81-90** | Strong - would pass VP review |
+| **91-100** | Exceptional - exemplary PRD |
+
+### What Costs You Points (Penalties)
+
+**Vague Language Penalty (-1 to -5 pts):** Using terms without quantification:
+- Qualifiers: "user-friendly", "fast", "scalable", "robust", "efficient", "intuitive"
+- Quantifiers: "many", "several", "some", "a lot", "numerous"
+- Temporal: "soon", "quickly", "eventually", "ASAP"
+- Weasel words: "should be able to", "could potentially", "generally"
+- Marketing fluff: "best-in-class", "cutting-edge", "revolutionary", "innovative"
+- Unquantified comparatives: "better", "faster", "improved", "enhanced"
+
+**AI Slop Penalty (-0 to -5 pts):** Filler phrases, buzzwords, hollow specificity
+
+### What Earns You Points (Strengths)
+
+**Document Structure (+20 pts max):**
+- All 14 sections present with proper headers
+- Clear hierarchy and organization
+- Numbered sections for traceability
+
+**Requirements Clarity (+25 pts max):**
+- All claims quantified with baselines and targets
+- No vague language
+- Requirements numbered (FR1, FR2, NFR1)
+- Acceptance criteria for each requirement
+
+**User Focus (+20 pts max):**
+- Clear user personas identified
+- Problem statement with quantified impact
+- Customer quotes or research cited
+- Value proposition for BOTH customer AND company
+
+**Technical Quality (+15 pts max):**
+- Non-functional requirements with thresholds (e.g., "<100ms p95 latency")
+- Given/When/Then acceptance criteria for success AND failure
+- Door type marked (🚪 One-Way or 🔄 Two-Way)
+- Traceability: Problem → Requirement → Metric
+
+**Strategic Viability (+20 pts max):**
+- Leading AND lagging indicators defined
+- Counter-metrics to prevent perverse incentives
+- Kill switch/failure criteria specified
+- Alternatives considered with trade-offs
+- Dissenting opinions documented
+- Source of truth for each metric
+
+---
+
 ## Interactive Refinement
 
 After generating the initial draft, ask clarifying questions if:

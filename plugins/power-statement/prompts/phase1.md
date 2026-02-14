@@ -95,6 +95,99 @@ A more detailed version with clear sections:
 7. **NO BULLET POINTS** - Use flowing paragraphs and natural language
 8. **Zero AI Slop** - No vague terms, filler phrases, or buzzwords
 
+---
+
+## ⚠️ SCORING RUBRIC - How Your Power Statement Will Be Evaluated
+
+Your power statement will be scored across **4 dimensions totaling 100 points**. Understanding this rubric helps you write a more compelling statement.
+
+### Scoring Dimensions
+
+| Dimension | Max Points | What Gets Scored |
+|-----------|-----------|------------------|
+| **Clarity** | 25 pts | Plain language, conversational tone, no jargon, no buzzwords |
+| **Impact** | 25 pts | Customer outcomes quantified, proof points with real numbers |
+| **Action** | 25 pts | Strong action verbs, problem clearly stated, solution specific |
+| **Specificity** | 25 pts | Metrics present, customer type clearly identified, concrete examples |
+
+### Version Bonus (+2 to +5 pts)
+
+| Format | Bonus |
+|--------|-------|
+| Neither Version A nor B | +0 pts (penalty noted) |
+| Version A only OR Version B only | +2 pts |
+| Both versions but Version B lacks structure | +3 pts |
+| Both versions with all 4 Version B sections | +5 pts |
+
+### Score Calibration
+
+| Score Range | Meaning |
+|-------------|---------|
+| **0-40** | Incomplete - missing versions or no proof points |
+| **41-55** | Weak - generic language, no quantification |
+| **56-70** | Average - structure OK but lacks specific metrics |
+| **71-80** | Good - solid messaging, minor jargon issues |
+| **81-90** | Strong - compelling, quantified, conversational |
+| **91-100** | Exceptional - sales-ready, memorable, differentiated |
+
+### What Costs You Points (Penalties)
+
+**Weak Verbs (heavy penalty):**
+- "was", "were", "had", "has", "did", "does"
+- "helped", "assisted", "supported", "worked on"
+- "was responsible for", "participated in", "was involved in", "contributed to"
+- Replace with strong action verbs: "delivered", "achieved", "reduced", "accelerated"
+
+**Filler Words (-2 pts each):**
+- "very", "really", "quite", "somewhat", "basically", "essentially", "actually"
+- "in order to", "due to the fact that", "for the purpose of"
+- "a lot of", "thing", "stuff", "something"
+
+**Filler Phrases (-3 pts each):**
+- "It's worth noting that..."
+- "In today's competitive landscape..."
+- "Let's talk about..."
+- "The reality is..."
+
+**Jargon/Buzzwords (-2 pts each):**
+- "synergy", "leverage", "paradigm", "best-in-class", "cutting-edge", "state-of-the-art"
+- "move the needle", "low-hanging fruit", "boil the ocean", "circle back", "deep dive"
+
+**Vague Improvements (-3 pts each):**
+- Using "improve", "enhance", "optimize", "better results", "significant" without numbers
+- Must quantify: "reduced X from 10 to 3" not "significantly reduced X"
+
+**AI Slop Penalty (-0 to -5 pts):**
+- Hollow specificity, buzzwords, empty adjectives
+
+### What Earns You Points (Strengths)
+
+**Clarity (+25 pts max):**
+- Plain, conversational language (sounds like how people talk)
+- No jargon or buzzwords
+- Customer's words and pain points used
+- Active voice throughout
+
+**Impact (+25 pts max):**
+- Outcomes quantified: "48% appointment setting rate", "5x ROI"
+- Proof points with real numbers from customer data
+- "Before/after" contrasts with specific metrics
+- ROI clearly stated with timeframe
+
+**Action (+25 pts max):**
+- Strong action verbs: achieved, accelerated, delivered, reduced, eliminated, transformed
+- Problem stated in terms customers recognize
+- Solution described with specific capabilities
+- "Without" factor included (what customers avoid)
+
+**Specificity (+25 pts max):**
+- Customer type clearly identified (not "businesses" but "regional insurance agencies with 10-50 agents")
+- Metrics present: percentages, dollar amounts, timeframes
+- Concrete examples from real customer scenarios
+- Differentiators named specifically (not "best" but "only solution with X")
+
+---
+
 ### Output Format
 
 <output_rules>

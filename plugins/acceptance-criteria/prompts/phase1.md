@@ -101,6 +101,90 @@ Good questions to ask:
 
 ---
 
+## ⚠️ SCORING RUBRIC - How Your Acceptance Criteria Will Be Evaluated
+
+Your acceptance criteria will be scored across **4 dimensions totaling 100 points**. Understanding this rubric helps you write higher-quality criteria.
+
+### Scoring Dimensions
+
+| Dimension | Max Points | What Gets Scored |
+|-----------|-----------|------------------|
+| **Structure** | 25 pts | Summary present, AC checklist format, Out of Scope section |
+| **Clarity** | 30 pts | Action verbs used, measurable metrics, specific thresholds |
+| **Testability** | 25 pts | Binary verifiable, no vague terms, no compound criteria |
+| **Completeness** | 20 pts | 3-7 criteria, error/edge cases covered, permission scenarios |
+
+### Section Weights
+
+| Weight | Sections |
+|--------|----------|
+| **4 pts (critical)** | Acceptance Criteria checklist |
+| **3 pts (high)** | Summary |
+| **2 pts (standard)** | Out of Scope |
+
+### Score Calibration
+
+| Score Range | Meaning |
+|-------------|---------|
+| **0-40** | Incomplete - missing AC checklist or uses wrong format |
+| **41-55** | Weak - has structure but uses user stories or Gherkin |
+| **56-70** | Average - Linear-native but vague or compound criteria |
+| **71-80** | Good - testable and specific, minor improvements needed |
+| **81-90** | Strong - exemplary Linear AC, covers edge cases |
+| **91-100** | Exceptional - perfect testability, metrics, and completeness |
+
+### What Costs You Points (Penalties)
+
+**User Story Syntax (heavy penalty):**
+- "As a [role], I want [feature], so that [benefit]" ❌
+- This is NOT Linear-native. Use plain language checkboxes.
+
+**Gherkin Syntax (heavy penalty):**
+- "Given [context], When [action], Then [result]" ❌
+- Too verbose for Linear. Use concise checkbox items.
+
+**Vague Terms (-5 to -15 pts):**
+- "works correctly", "handles properly", "appropriate behavior"
+- "user-friendly", "seamless", "fast", "good"
+- "as expected", "as needed", "reasonable"
+
+**Compound Criteria (-2 pts each):**
+- Criteria containing "and" or "or" should be split
+- Each checkbox = ONE testable item
+
+**Implementation Details (-3 pts each):**
+- Tech stack references (PostgreSQL, React, AWS, Docker)
+- Belong in technical design, NOT acceptance criteria
+
+**AI Slop Penalty (-0 to -5 pts):**
+- Filler phrases, buzzwords, hollow specificity
+
+### What Earns You Points (Strengths)
+
+**Structure (+25 pts max):**
+- Summary section with one-sentence description
+- Acceptance Criteria using `- [ ]` checkbox format
+- Out of Scope section with clear boundaries
+
+**Clarity (+30 pts max):**
+- Action verbs: implement, create, display, validate, submit, delete, etc.
+- Measurable metrics with units: "≤100ms", "3 retries", "5 items max"
+- Specific thresholds: "at least 3", "maximum 10", "exactly 5"
+
+**Testability (+25 pts max):**
+- Binary yes/no verification possible
+- No vague adjectives or adverbs
+- Each criterion stands alone (no "and"/"or")
+- Plain language, no jargon
+
+**Completeness (+20 pts max):**
+- 3-7 criteria (optimal count)
+- Error cases covered: "error", "fail", "invalid", "timeout"
+- Edge cases addressed: "empty state", "no results", "maximum value"
+- Permission scenarios: "authenticated", "admin only", "guest user"
+
+---
+
 <output_rules>
 CRITICAL - Your output must be COPY-PASTE READY for Linear:
 - Start IMMEDIATELY with "## Summary" (no preamble like "Here's the acceptance criteria...")

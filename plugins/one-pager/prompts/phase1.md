@@ -117,6 +117,85 @@ Flag these issues BEFORE drafting:
 7. **ROI Sanity Check**: Does the Investment justify the Cost of Doing Nothing? Don't spend $100k to save $10k.
 8. **Zero AI Slop**: No vague terms, no filler phrases, no buzzwords, no superlative adjectives (revolutionary, seamless, groundbreaking)
 
+---
+
+## ⚠️ SCORING RUBRIC - How Your One-Pager Will Be Evaluated
+
+Your one-pager will be scored across **4 dimensions totaling 100 points**. Understanding this rubric helps you write a higher-quality document.
+
+### Scoring Dimensions
+
+| Dimension | Max Points | What Gets Scored |
+|-----------|-----------|------------------|
+| **Problem Clarity** | 30 pts | Problem statement quality, cost of inaction, customer focus, quantification |
+| **Solution Quality** | 25 pts | Solution addresses problem, measurable goals, high-level (not implementation), alternatives considered |
+| **Scope Discipline** | 25 pts | In/out scope clearly defined, success metrics with baselines/targets, SMART criteria |
+| **Completeness** | 20 pts | All 10 required sections present, stakeholders identified, timeline included |
+
+### Section Weights (10 Required Sections)
+
+| Weight | Sections |
+|--------|----------|
+| **2 pts each (high priority)** | Problem Statement, Cost of Doing Nothing, Proposed Solution, Goals/Benefits, Scope, Investment |
+| **1 pt each (standard)** | Success Metrics, Stakeholders, Timeline, Risks & Assumptions |
+
+### Score Calibration
+
+| Score Range | Meaning |
+|-------------|---------|
+| **0-40** | Incomplete - missing critical sections or Cost of Doing Nothing |
+| **41-55** | Weak - has structure but circular logic or vague metrics |
+| **56-70** | Average - covers basics, needs better quantification |
+| **71-80** | Good - solid one-pager, minor improvements needed |
+| **81-90** | Strong - crisp, actionable, would pass VP review |
+| **91-100** | Exceptional - exemplary clarity and strategic thinking |
+
+### What Costs You Points (Penalties)
+
+**Circular Logic Penalty (capped at 50):**
+- Solution is just the inverse of the problem (e.g., "Problem: No dashboard" → "Solution: Build dashboard")
+- Fix: Address the ROOT CAUSE, explain WHY a dashboard solves the underlying problem
+
+**Vague Metrics Penalty (-5 to -15 pts):**
+- Using "improve", "increase", "reduce" without baselines
+- Missing [Current] → [Target] → [Timeline] format
+- Unquantified cost of inaction
+
+**Word Count Penalty (-5 pts per 50 words over 450):**
+- Maximum 450 words enforced
+- Density is a proxy for clarity—if you can't be concise, you don't understand it
+
+**AI Slop Penalty (-0 to -5 pts):**
+- Filler phrases, buzzwords, hollow specificity
+
+### What Earns You Points (Strengths)
+
+**Problem Clarity (+30 pts max):**
+- Clear ROOT CAUSE identified (not symptoms)
+- Cost of Doing Nothing quantified in $ or %
+- Customer/business impact stated with data
+- Urgency established ("why now?")
+
+**Solution Quality (+25 pts max):**
+- Solution addresses the stated problem directly
+- High-level approach (no implementation details)
+- Alternatives considered ("Why this over X?")
+- Measurable goals with baselines
+
+**Scope Discipline (+25 pts max):**
+- In-scope AND Out-of-scope clearly stated
+- Success metrics in [Current] → [Target] by [Date] format
+- SMART criteria applied
+- No scope creep or vague boundaries
+
+**Completeness (+20 pts max):**
+- All 10 sections present
+- Stakeholders with clear ownership (RACI roles)
+- Timeline with milestones
+- Risks identified with mitigations
+
+---
+
 ## Interactive Refinement (Analyze-First)
 
 **Before drafting**, ask clarifying questions if:
