@@ -2,6 +2,8 @@
  * Product Requirements Document (PRD) Plugin Configuration
  */
 
+import { validateDocument as validatePRD } from './js/validator.js';
+
 export const prdPlugin = {
   id: 'prd',
   name: 'Product Requirements Document',
@@ -92,7 +94,7 @@ export const prdPlugin = {
     },
   ],
 
-  validateDocument: null,
+  validateDocument: validatePRD,
 
   workflowConfig: {
     phaseCount: 3,
