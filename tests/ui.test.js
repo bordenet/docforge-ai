@@ -3,7 +3,7 @@
  * Tests for toast notifications, loading overlays, and utility functions
  */
 
-import { describe, test, expect, beforeEach, jest } from '@jest/globals';
+import { describe, test, expect, beforeEach, jest, afterEach } from '@jest/globals';
 import {
   showToast,
   showLoading,
@@ -14,6 +14,8 @@ import {
   copyToClipboard,
   downloadFile,
   createActionMenu,
+  withErrorBoundary,
+  setupGlobalErrorHandler,
 } from '../shared/js/ui.js';
 
 describe('UI Module', () => {
@@ -401,6 +403,146 @@ describe('UI Module', () => {
       triggerElement.click();
       const menu = document.querySelector('.action-menu');
       expect(menu?.classList.contains('action-menu-closing')).toBeTruthy();
+    });
+  });
+
+  describe('withErrorBoundary', () => {
+    test('should execute function normally when no error', async () => {
+      const fn = jest.fn().mockResolvedValue('success');
+      const wrapped = withErrorBoundary(fn);
+
+      const result = await wrapped('arg1', 'arg2');
+
+      expect(fn).toHaveBeenCalledWith('arg1', 'arg2');
+      expect(result).toBe('success');
+    });
+
+    test('should catch errors and show toast', async () => {
+      const error = new Error('Test error');
+      const fn = jest.fn().mockRejectedValue(error);
+      const wrapped = withErrorBoundary(fn, 'Custom error message');
+
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      const result = await wrapped();
+
+      expect(result).toBeUndefined();
+      expect(consoleSpy).toHaveBeenCalledWith('[ErrorBoundary]', 'Custom error message', error);
+      const toast = document.querySelector('#toast-container > div');
+      expect(toast).toBeTruthy();
+      expect(toast.textContent).toContain('Custom error message');
+
+      consoleSpy.mockRestore();
+    });
+
+    test('should use error.message when no custom message provided', async () => {
+      const error = new Error('Original error');
+      const fn = jest.fn().mockRejectedValue(error);
+      const wrapped = withErrorBoundary(fn);
+
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      await wrapped();
+
+      expect(consoleSpy).toHaveBeenCalledWith('[ErrorBoundary]', 'Original error', error);
+
+      consoleSpy.mockRestore();
+    });
+
+    test('should call onError callback when provided', async () => {
+      const error = new Error('Test error');
+      const fn = jest.fn().mockRejectedValue(error);
+      const onError = jest.fn();
+      const wrapped = withErrorBoundary(fn, 'Error', { onError });
+
+      jest.spyOn(console, 'error').mockImplementation();
+
+      await wrapped();
+
+      expect(onError).toHaveBeenCalledWith(error);
+    });
+
+    test('should rethrow error when rethrow option is true', async () => {
+      const error = new Error('Test error');
+      const fn = jest.fn().mockRejectedValue(error);
+      const wrapped = withErrorBoundary(fn, 'Error', { rethrow: true });
+
+      jest.spyOn(console, 'error').mockImplementation();
+
+      await expect(wrapped()).rejects.toThrow('Test error');
+    });
+
+    test('should preserve this context', async () => {
+      const obj = {
+        value: 42,
+        async getValue() {
+          return this.value;
+        },
+      };
+      obj.getValue = withErrorBoundary(obj.getValue);
+
+      const result = await obj.getValue();
+      expect(result).toBe(42);
+    });
+  });
+
+  describe('setupGlobalErrorHandler', () => {
+    let originalAddEventListener;
+    let errorHandler;
+    let rejectionHandler;
+
+    beforeEach(() => {
+      // Capture the handlers when setupGlobalErrorHandler is called
+      originalAddEventListener = window.addEventListener;
+      window.addEventListener = jest.fn((event, handler) => {
+        if (event === 'error') errorHandler = handler;
+        if (event === 'unhandledrejection') rejectionHandler = handler;
+      });
+    });
+
+    afterEach(() => {
+      window.addEventListener = originalAddEventListener;
+    });
+
+    test('should register error and unhandledrejection handlers', () => {
+      setupGlobalErrorHandler();
+
+      expect(window.addEventListener).toHaveBeenCalledWith('error', expect.any(Function));
+      expect(window.addEventListener).toHaveBeenCalledWith('unhandledrejection', expect.any(Function));
+    });
+
+    test('error handler should show toast and log error', () => {
+      setupGlobalErrorHandler();
+
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+      const mockError = new Error('Global error');
+      const event = { error: mockError };
+
+      errorHandler(event);
+
+      expect(consoleSpy).toHaveBeenCalledWith('[GlobalError]', mockError);
+      const toast = document.querySelector('#toast-container > div');
+      expect(toast).toBeTruthy();
+
+      consoleSpy.mockRestore();
+    });
+
+    test('unhandledrejection handler should show toast and prevent default', () => {
+      setupGlobalErrorHandler();
+
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+      const mockReason = new Error('Unhandled rejection');
+      const event = {
+        reason: mockReason,
+        preventDefault: jest.fn(),
+      };
+
+      rejectionHandler(event);
+
+      expect(consoleSpy).toHaveBeenCalledWith('[UnhandledRejection]', mockReason);
+      expect(event.preventDefault).toHaveBeenCalled();
+
+      consoleSpy.mockRestore();
     });
   });
 });

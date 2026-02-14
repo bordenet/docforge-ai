@@ -372,4 +372,119 @@ describe('Storage Module', () => {
       expect(p2.title).toBe('Valid Title 2');
     });
   });
+
+  describe('Input sanitization', () => {
+    test('should remove null bytes from strings', async () => {
+      const project = {
+        id: generateId(),
+        title: 'Test\x00Project',
+        formData: { content: 'Hello\x00World' },
+      };
+
+      const saved = await saveProject(TEST_DB_NAME, project);
+
+      expect(saved.title).toBe('TestProject');
+      expect(saved.formData.content).toBe('HelloWorld');
+    });
+
+    test('should remove control characters except newlines and tabs', async () => {
+      const project = {
+        id: generateId(),
+        title: 'Test\x07Bell',
+        formData: { content: 'Line1\nLine2\tTabbed' },
+      };
+
+      const saved = await saveProject(TEST_DB_NAME, project);
+
+      expect(saved.title).toBe('TestBell');
+      expect(saved.formData.content).toBe('Line1\nLine2\tTabbed');
+    });
+
+    test('should truncate overly long titles', async () => {
+      const longTitle = 'A'.repeat(300);
+      const project = {
+        id: generateId(),
+        title: longTitle,
+      };
+
+      const saved = await saveProject(TEST_DB_NAME, project);
+
+      expect(saved.title.length).toBe(200);
+    });
+
+    test('should handle nested objects', async () => {
+      const project = {
+        id: generateId(),
+        title: 'Test',
+        formData: {
+          nested: {
+            deep: 'Value\x00Here',
+          },
+        },
+      };
+
+      const saved = await saveProject(TEST_DB_NAME, project);
+
+      expect(saved.formData.nested.deep).toBe('ValueHere');
+    });
+
+    test('should handle arrays in form data', async () => {
+      const project = {
+        id: generateId(),
+        title: 'Test',
+        formData: {
+          tags: ['tag1\x00', 'tag2', 'tag\x003'],
+        },
+      };
+
+      const saved = await saveProject(TEST_DB_NAME, project);
+
+      expect(saved.formData.tags).toEqual(['tag1', 'tag2', 'tag3']);
+    });
+
+    test('should preserve numbers and booleans', async () => {
+      const project = {
+        id: generateId(),
+        title: 'Test',
+        currentPhase: 2,
+        formData: {
+          count: 42,
+          active: true,
+        },
+      };
+
+      const saved = await saveProject(TEST_DB_NAME, project);
+
+      expect(saved.currentPhase).toBe(2);
+      expect(saved.formData.count).toBe(42);
+      expect(saved.formData.active).toBe(true);
+    });
+
+    test('should throw error for null project', async () => {
+      await expect(saveProject(TEST_DB_NAME, null)).rejects.toThrow('Project must be a non-null object');
+    });
+
+    test('should set default title if missing', async () => {
+      const project = {
+        id: generateId(),
+        formData: { content: 'test' },
+      };
+
+      const saved = await saveProject(TEST_DB_NAME, project);
+
+      expect(saved.title).toBe('Untitled');
+    });
+
+    test('should set default currentPhase if missing or invalid', async () => {
+      const project = {
+        id: generateId(),
+        title: 'Test',
+        currentPhase: 'invalid',
+      };
+
+      const saved = await saveProject(TEST_DB_NAME, project);
+
+      expect(saved.currentPhase).toBe(1);
+    });
+  });
 });

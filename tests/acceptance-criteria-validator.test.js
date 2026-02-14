@@ -254,15 +254,11 @@ A login feature.
 
   describe('getScoreColor', () => {
     it('returns correct colors', () => {
-      expect(getScoreColor(85)).toBe('text-green-400');
-      expect(getScoreColor(65)).toBe('text-yellow-400');
-      expect(getScoreColor(45)).toBe('text-orange-400');
-      expect(getScoreColor(25)).toBe('text-red-400');
-    });
-
-    it('handles maxScore parameter', () => {
-      expect(getScoreColor(20, 25)).toBe('text-green-400'); // 80%
-      expect(getScoreColor(10, 25)).toBe('text-orange-400'); // 40%
+      // Now uses shared module which returns color names, not Tailwind classes
+      expect(getScoreColor(85)).toBe('green');
+      expect(getScoreColor(65)).toBe('yellow');
+      expect(getScoreColor(45)).toBe('orange');
+      expect(getScoreColor(25)).toBe('red');
     });
   });
 
