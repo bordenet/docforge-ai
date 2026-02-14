@@ -58,63 +58,120 @@ export const COVERAGE_PARTIAL_WEIGHT = 0.1;
 // Section Detection Patterns
 // ============================================================================
 
-// Patterns use optional ^(#+\s*)? to match both markdown headings AND plain text headings
-// This allows detection of sections pasted from Word/Google Docs without # prefixes
+// Patterns use optional ^(#+\s*)? to match markdown headings AND plain text headings
+// AND optional (\d+\.?\d*\.?\s*)? to match numbered sections like "2. Problem Statement"
+// This allows detection of sections pasted from Word/Google Docs with or without # prefixes
 export const COMMON_SECTIONS = [
+  // PRD-specific sections (high priority)
   {
-    pattern: /^(#+\s*)?(problem|challenge|pain.?point|context)/im,
-    name: 'Problem/Challenge',
+    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(executive\s+summary|purpose|introduction)/im,
+    name: 'Executive Summary',
     weight: 2,
   },
   {
-    pattern: /^(#+\s*)?(solution|proposal|approach|recommendation)/im,
+    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(problem\s+statement|problem|challenge|pain.?point|current\s+state)/im,
+    name: 'Problem Statement',
+    weight: 2,
+  },
+  {
+    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(value\s+proposition)/im,
+    name: 'Value Proposition',
+    weight: 2,
+  },
+  {
+    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(proposed\s+solution|solution|proposal|approach|recommendation)/im,
     name: 'Solution/Proposal',
     weight: 2,
   },
-  { pattern: /^(#+\s*)?(goal|objective|benefit|outcome)/im, name: 'Goals/Benefits', weight: 2 },
   {
-    pattern: /^(#+\s*)?(scope|in.scope|out.of.scope|boundary)/im,
-    name: 'Scope Definition',
+    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(goal|objective|benefit|outcome|success\s+metric|kpi)/im,
+    name: 'Goals/Benefits',
     weight: 2,
   },
-  { pattern: /^(#+\s*)?(success|metric|kpi|measure)/im, name: 'Success Metrics', weight: 1 },
-  { pattern: /^(#+\s*)?(stakeholder|team|owner|raci)/im, name: 'Stakeholders/Team', weight: 1 },
   {
-    pattern: /^(#+\s*)?(timeline|milestone|phase|schedule)/im,
+    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(customer\s+faq|external\s+faq|working\s+backwards)/im,
+    name: 'Customer FAQ',
+    weight: 2,
+  },
+  {
+    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(requirement|functional\s+requirement|non.?functional)/im,
+    name: 'Requirements',
+    weight: 2,
+  },
+  {
+    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(scope|in.scope|out.of.scope|boundary)/im,
+    name: 'Scope Definition',
+    weight: 1.5,
+  },
+  {
+    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(stakeholder|team|owner|raci)/im,
+    name: 'Stakeholders/Team',
+    weight: 1.5,
+  },
+  {
+    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(timeline|milestone|schedule|roadmap)/im,
     name: 'Timeline/Milestones',
     weight: 1,
   },
   {
-    pattern: /^(#+\s*)?(risk|assumption|mitigation|dependency)/im,
-    name: 'Risks/Assumptions',
+    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(risk|mitigation)/im,
+    name: 'Risks/Mitigation',
     weight: 1,
   },
-  { pattern: /^(#+\s*)?(background|context|why)/im, name: 'Background/Context', weight: 1 },
-  { pattern: /^(#+\s*)?(requirement|acceptance|criteria)/im, name: 'Requirements', weight: 1 },
-  // Strategic Proposal specific sections
   {
-    pattern: /^(#+\s*)?(strategic context|executive summary|overview)/im,
+    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(constraint|dependencies)/im,
+    name: 'Constraints/Dependencies',
+    weight: 1,
+  },
+  {
+    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(traceability|requirement\s+mapping)/im,
+    name: 'Traceability Summary',
+    weight: 1,
+  },
+  {
+    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(open\s+question)/im,
+    name: 'Open Questions',
+    weight: 1,
+  },
+  {
+    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(known\s+unknown|dissenting\s+opinion|unresolved)/im,
+    name: 'Known Unknowns',
+    weight: 1,
+  },
+  // Strategic Proposal / general sections
+  {
+    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(strategic\s+context|overview)/im,
     name: 'Strategic Context',
     weight: 2,
   },
   {
-    pattern: /^(#+\s*)?(financial impact|roi|return on investment|cost.benefit)/im,
+    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(background|context|why)/im,
+    name: 'Background/Context',
+    weight: 1,
+  },
+  {
+    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(financial\s+impact|roi|return\s+on\s+investment|cost.benefit)/im,
     name: 'Financial Impact',
     weight: 2,
   },
   {
-    pattern: /^(#+\s*)?(pricing|investment|cost|budget)/im,
+    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(pricing|investment|cost|budget)/im,
     name: 'Pricing/Investment',
     weight: 1,
   },
   {
-    pattern: /^(#+\s*)?(next steps|action items|implementation|rollout)/im,
+    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(next\s+steps|action\s+items|implementation|rollout)/im,
     name: 'Next Steps',
     weight: 1,
   },
   {
-    pattern: /^(#+\s*)?(conclusion|summary|recommendation)/im,
+    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(conclusion|summary|recommendation)/im,
     name: 'Conclusion',
+    weight: 1,
+  },
+  {
+    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(acceptance|criteria|acceptance\s+criteria)/im,
+    name: 'Acceptance Criteria',
     weight: 1,
   },
 ];

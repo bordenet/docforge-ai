@@ -18,9 +18,9 @@ import {
 describe('Validator Module', () => {
   describe('detectSections', () => {
     test('detects problem section', () => {
-      const text = '# Problem\nWe have a challenge with X.';
+      const text = '# Problem Statement\nWe have a challenge with X.';
       const result = detectSections(text);
-      expect(result.found.some((s) => s.name === 'Problem/Challenge')).toBe(true);
+      expect(result.found.some((s) => s.name === 'Problem Statement')).toBe(true);
     });
 
     test('detects solution section', () => {
@@ -31,7 +31,7 @@ describe('Validator Module', () => {
 
     test('detects multiple sections', () => {
       const text = `
-# Problem
+# Problem Statement
 We have an issue.
 
 # Solution
@@ -46,7 +46,7 @@ We will fix it.
     });
 
     test('reports missing sections', () => {
-      const text = '# Problem\nJust a problem.';
+      const text = '# Problem Statement\nJust a problem.';
       const result = detectSections(text);
       expect(result.missing.length).toBeGreaterThan(0);
     });
@@ -55,9 +55,9 @@ We will fix it.
     // This is critical for documents imported from Word/Google Docs
     describe('Plain Text Heading Detection', () => {
       test('detects problem section without markdown prefix', () => {
-        const text = 'Problem\nWe have a challenge with X.';
+        const text = 'Problem Statement\nWe have a challenge with X.';
         const result = detectSections(text);
-        expect(result.found.some((s) => s.name === 'Problem/Challenge')).toBe(true);
+        expect(result.found.some((s) => s.name === 'Problem Statement')).toBe(true);
       });
 
       test('detects solution section without markdown prefix', () => {
@@ -73,7 +73,7 @@ We will fix it.
       });
 
       test('detects multiple plain text sections', () => {
-        const text = `Problem
+        const text = `Problem Statement
 We have an issue.
 
 Solution
@@ -87,7 +87,7 @@ Goals
       });
 
       test('detects mixed markdown and plain text headings', () => {
-        const text = `# Problem
+        const text = `# Problem Statement
 We have an issue.
 
 Solution
@@ -96,30 +96,30 @@ We will fix it.
 ## Goals
 - Goal 1`;
         const result = detectSections(text);
-        expect(result.found.some((s) => s.name === 'Problem/Challenge')).toBe(true);
+        expect(result.found.some((s) => s.name === 'Problem Statement')).toBe(true);
         expect(result.found.some((s) => s.name === 'Solution/Proposal')).toBe(true);
         expect(result.found.some((s) => s.name === 'Goals/Benefits')).toBe(true);
       });
 
       test('handles Word/Google Docs style document', () => {
         // Simulates a document pasted from Word with no markdown formatting
-        // Note: Section headings must start with the keyword (e.g., "Problem" not "The Problem")
+        // Uses explicit section names that match the updated COMMON_SECTIONS patterns
         const text = `Problem Statement
 Our current system is slow and unreliable.
 
-Solution Overview
+Proposed Solution
 We will migrate to a new architecture.
 
-Success Metrics
+Goals and Objectives
 - 50% faster response time
 - 99.9% uptime`;
         const result = detectSections(text);
-        // "Problem Statement" matches the problem pattern (starts with "Problem")
-        expect(result.found.some((s) => s.name === 'Problem/Challenge')).toBe(true);
-        // "Solution Overview" matches the solution pattern (starts with "Solution")
+        // "Problem Statement" matches the problem pattern
+        expect(result.found.some((s) => s.name === 'Problem Statement')).toBe(true);
+        // "Proposed Solution" matches the solution pattern
         expect(result.found.some((s) => s.name === 'Solution/Proposal')).toBe(true);
-        // "Success Metrics" matches the success/metric pattern
-        expect(result.found.some((s) => s.name === 'Success Metrics')).toBe(true);
+        // "Goals and Objectives" matches the goals pattern
+        expect(result.found.some((s) => s.name === 'Goals/Benefits')).toBe(true);
       });
     });
   });
