@@ -3,6 +3,11 @@
  * @module storage
  */
 
+import { sanitizeProject } from './storage-sanitization.js';
+
+// Re-export sanitization functions for external use
+export { sanitizeFormData, sanitizePhases } from './storage-sanitization.js';
+
 const DB_VERSION = 1;
 const STORE_NAME = 'projects';
 
@@ -59,10 +64,13 @@ export async function saveProject(dbName, project) {
   const db = await getDB(dbName);
   const now = new Date().toISOString();
 
+  // Sanitize project data before saving
+  const sanitized = sanitizeProject(project);
+
   const projectToSave = {
-    ...project,
-    id: project.id || generateId(),
-    createdAt: project.createdAt || now,
+    ...sanitized,
+    id: sanitized.id || generateId(),
+    createdAt: sanitized.createdAt || now,
     updatedAt: now,
   };
 

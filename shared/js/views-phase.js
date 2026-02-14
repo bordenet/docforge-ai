@@ -4,32 +4,7 @@
  */
 
 import { escapeHtml } from './ui.js';
-import { validateDocument } from './validator.js';
-
-/**
- * Get score color based on score value
- * @param {number} score - Score value (0-100)
- * @returns {string} Tailwind color name
- */
-function getScoreColor(score) {
-  if (score >= 80) return 'green';
-  if (score >= 60) return 'yellow';
-  if (score >= 40) return 'orange';
-  return 'red';
-}
-
-/**
- * Get score label based on score value
- * @param {number} score - Score value (0-100)
- * @returns {string} Human-readable label
- */
-function getScoreLabel(score) {
-  if (score >= 90) return 'Excellent';
-  if (score >= 80) return 'Good';
-  if (score >= 70) return 'Fair';
-  if (score >= 60) return 'Needs Work';
-  return 'Poor';
-}
+import { validateDocument, getScoreColor, getScoreLabel } from './validator.js';
 
 // Phase accent colors for visual differentiation
 const PHASE_ACCENT_COLORS = {

@@ -4,6 +4,8 @@
  * @module ui
  */
 
+/* global DOMPurify */
+
 // Import base utilities for internal use
 import { escapeHtml as _escapeHtml } from './ui-base.js';
 
@@ -91,16 +93,52 @@ export function formatDate(date) {
 }
 
 /**
- * Render markdown to HTML
+ * Allowed HTML tags for sanitized markdown output
+ * @type {string[]}
+ */
+const ALLOWED_TAGS = [
+  'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+  'p', 'br', 'hr',
+  'ul', 'ol', 'li',
+  'strong', 'em', 'b', 'i', 'u', 's', 'del',
+  'code', 'pre', 'blockquote',
+  'a', 'img',
+  'table', 'thead', 'tbody', 'tr', 'th', 'td',
+  'div', 'span',
+];
+
+/**
+ * Allowed HTML attributes for sanitized markdown output
+ * @type {string[]}
+ */
+const ALLOWED_ATTR = ['href', 'src', 'alt', 'title', 'target', 'rel', 'class'];
+
+/**
+ * Render markdown to HTML with XSS sanitization
  * @param {string} markdown - Markdown text
- * @returns {string} HTML
+ * @returns {string} Sanitized HTML
  */
 export function renderMarkdown(markdown) {
   if (!markdown) return '';
-  // marked is loaded globally via script tag
+
+  // marked and DOMPurify are loaded globally via script tags
   if (typeof marked !== 'undefined') {
-    return marked.parse(markdown);
+    const rawHtml = marked.parse(markdown);
+
+    // Sanitize HTML to prevent XSS attacks
+    if (typeof DOMPurify !== 'undefined') {
+      return DOMPurify.sanitize(rawHtml, {
+        ALLOWED_TAGS,
+        ALLOWED_ATTR,
+        ALLOW_DATA_ATTR: false,
+      });
+    }
+
+    // If DOMPurify not available, return raw (dev environment warning)
+    console.warn('[ui] DOMPurify not loaded - markdown not sanitized');
+    return rawHtml;
   }
+
   // Fallback: just escape and preserve newlines
   return _escapeHtml(markdown).replace(/\n/g, '<br>');
 }
@@ -121,4 +159,60 @@ export function downloadFile(content, filename, mimeType = 'text/plain') {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+/**
+ * Wrap an async function with error boundary that catches errors and shows toast
+ * @param {Function} fn - Async function to wrap
+ * @param {string} [errorMessage] - Custom error message (defaults to error.message)
+ * @param {Object} [options] - Options
+ * @param {boolean} [options.rethrow=false] - Re-throw error after handling
+ * @param {Function} [options.onError] - Custom error handler callback
+ * @returns {Function} Wrapped function that catches errors
+ * @example
+ * const safeSubmit = withErrorBoundary(handleSubmit, 'Failed to save');
+ * button.addEventListener('click', safeSubmit);
+ */
+export function withErrorBoundary(fn, errorMessage, options = {}) {
+  const { rethrow = false, onError } = options;
+
+  return async function (...args) {
+    try {
+      return await fn.apply(this, args);
+    } catch (error) {
+      const message = errorMessage || error.message || 'An unexpected error occurred';
+      console.error('[ErrorBoundary]', message, error);
+      showToast(message, 'error', 5000);
+
+      if (onError) {
+        onError(error);
+      }
+
+      if (rethrow) {
+        throw error;
+      }
+      return undefined;
+    }
+  };
+}
+
+/**
+ * Setup global error handlers for uncaught errors and unhandled promise rejections
+ * Should be called once during app initialization
+ */
+export function setupGlobalErrorHandler() {
+  // Handle uncaught errors
+  window.addEventListener('error', (event) => {
+    console.error('[GlobalError]', event.error || event.message);
+    showToast('An unexpected error occurred', 'error', 5000);
+    // Don't prevent default - let it also log to console
+  });
+
+  // Handle unhandled promise rejections
+  window.addEventListener('unhandledrejection', (event) => {
+    console.error('[UnhandledRejection]', event.reason);
+    showToast('An unexpected error occurred', 'error', 5000);
+    // Prevent the default browser behavior (console error)
+    event.preventDefault();
+  });
 }
