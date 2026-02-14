@@ -49,6 +49,100 @@ import { strategicProposalPlugin } from '../../plugins/strategic-proposal/config
 /** @type {Map<string, DocumentTypePlugin>} */
 const registry = new Map();
 
+/**
+ * Required plugin fields and their expected types
+ * @type {Object.<string, string>}
+ */
+const REQUIRED_FIELDS = {
+  id: 'string',
+  name: 'string',
+  icon: 'string',
+  description: 'string',
+  dbName: 'string',
+  formFields: 'array',
+  scoringDimensions: 'array',
+  validateDocument: 'function',
+};
+
+/**
+ * Validate a plugin configuration object
+ * @param {Object} plugin - Plugin object to validate
+ * @throws {Error} If plugin is missing required fields or has invalid types
+ * @returns {void}
+ */
+function validatePlugin(plugin) {
+  if (!plugin || typeof plugin !== 'object') {
+    throw new Error('Plugin must be a non-null object');
+  }
+
+  const errors = [];
+
+  // Check required fields
+  for (const [field, expectedType] of Object.entries(REQUIRED_FIELDS)) {
+    const value = plugin[field];
+
+    if (value === undefined || value === null) {
+      errors.push(`Missing required field: ${field}`);
+      continue;
+    }
+
+    // Type checking
+    if (expectedType === 'array') {
+      if (!Array.isArray(value)) {
+        errors.push(`Field '${field}' must be an array, got ${typeof value}`);
+      }
+    } else if (expectedType === 'string' && typeof value !== 'string') {
+      errors.push(`Field '${field}' must be a string, got ${typeof value}`);
+    } else if (expectedType === 'function' && typeof value !== 'function') {
+      errors.push(`Field '${field}' must be a function, got ${typeof value}`);
+    } else if (expectedType === 'object' && typeof value !== 'object') {
+      errors.push(`Field '${field}' must be an object, got ${typeof value}`);
+    }
+  }
+
+  // Validate id format (URL-safe slug)
+  if (plugin.id && !/^[a-z][a-z0-9-]*$/.test(plugin.id)) {
+    errors.push(`Plugin ID '${plugin.id}' must be a lowercase URL-safe slug (e.g., 'one-pager')`);
+  }
+
+  // Validate dbName format (pattern: {type}-docforge-db)
+  if (plugin.dbName && !/^[a-z][a-z0-9-]*-docforge-db$/.test(plugin.dbName)) {
+    errors.push(`dbName '${plugin.dbName}' must match pattern '{type}-docforge-db'`);
+  }
+
+  // Validate formFields structure
+  if (Array.isArray(plugin.formFields)) {
+    plugin.formFields.forEach((field, index) => {
+      if (!field.id || typeof field.id !== 'string') {
+        errors.push(`formFields[${index}]: missing or invalid 'id'`);
+      }
+      if (!field.label || typeof field.label !== 'string') {
+        errors.push(`formFields[${index}]: missing or invalid 'label'`);
+      }
+      if (!['text', 'textarea', 'select'].includes(field.type)) {
+        errors.push(`formFields[${index}]: type must be 'text', 'textarea', or 'select'`);
+      }
+    });
+  }
+
+  // Validate scoringDimensions structure
+  if (Array.isArray(plugin.scoringDimensions)) {
+    plugin.scoringDimensions.forEach((dim, index) => {
+      if (!dim.name || typeof dim.name !== 'string') {
+        errors.push(`scoringDimensions[${index}]: missing or invalid 'name'`);
+      }
+      if (typeof dim.maxPoints !== 'number' || dim.maxPoints <= 0) {
+        errors.push(`scoringDimensions[${index}]: maxPoints must be a positive number`);
+      }
+    });
+  }
+
+  if (errors.length > 0) {
+    const pluginName = plugin.id || plugin.name || 'unknown';
+    throw new Error(`Invalid plugin '${pluginName}':\n  - ${errors.join('\n  - ')}`);
+  }
+}
+
 // Register all plugins
 const plugins = [
   onePagerPlugin,
@@ -63,6 +157,9 @@ const plugins = [
 ];
 
 plugins.forEach((plugin) => {
+  // Validate plugin contract before registration
+  validatePlugin(plugin);
+
   if (registry.has(plugin.id)) {
     throw new Error(`Duplicate plugin ID: ${plugin.id}`);
   }

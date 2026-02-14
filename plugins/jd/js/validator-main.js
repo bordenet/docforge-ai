@@ -28,8 +28,8 @@ import {
   assembleResult
 } from './validator-results.js';
 
-// Re-export UI helper functions
-export { getGrade, getScoreColor, getScoreLabel } from './validator-results.js';
+// Re-export UI helper functions from shared module for consistency
+export { getGrade, getScoreColor, getScoreLabel } from '../../../shared/js/validator.js';
 
 /**
  * Validate JD content for inclusive language and red flags

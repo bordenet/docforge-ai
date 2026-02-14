@@ -165,37 +165,6 @@ export function validateDocument(text) {
 // Helper Functions for UI
 // ============================================================================
 
-/**
- * Get letter grade from numeric score
- * @param {number} score - Numeric score 0-100
- * @returns {string} Letter grade
- */
-export function getGrade(score) {
-  if (score >= 90) return 'A';
-  if (score >= 80) return 'B';
-  if (score >= 70) return 'C';
-  if (score >= 60) return 'D';
-  return 'F';
-}
-
-/**
- * Get color based on score for UI display
- */
-export function getScoreColor(score) {
-  if (score >= 70) return 'green';
-  if (score >= 50) return 'yellow';
-  if (score >= 30) return 'orange';
-  return 'red';
-}
-
-/**
- * Get label based on score for UI display
- */
-export function getScoreLabel(score) {
-  if (score >= 80) return 'Excellent';
-  if (score >= 70) return 'Ready';
-  if (score >= 50) return 'Needs Work';
-  if (score >= 30) return 'Draft';
-  return 'Incomplete';
-}
+// Re-export scoring helper functions from shared module for consistency
+export { getGrade, getScoreColor, getScoreLabel } from '../../../shared/js/validator.js';
 

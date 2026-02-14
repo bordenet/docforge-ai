@@ -4,6 +4,8 @@
  * Functions for building validation results and UI helpers.
  */
 
+import { getGrade as _getGrade } from '../../../shared/js/validator.js';
+
 /**
  * Create empty result when no text provided
  */
@@ -68,7 +70,7 @@ export function assembleResult(score, feedback, deductions, wordCountResult, jdV
   return {
     score,
     totalScore: score,
-    grade: getGrade(score),
+    grade: _getGrade(score),
     feedback,
     deductions,
     wordCount: wordCountResult.wordCount,
@@ -87,35 +89,6 @@ export function assembleResult(score, feedback, deductions, wordCountResult, jdV
   };
 }
 
-/**
- * Get letter grade from numeric score
- */
-export function getGrade(score) {
-  if (score >= 90) return 'A';
-  if (score >= 80) return 'B';
-  if (score >= 70) return 'C';
-  if (score >= 60) return 'D';
-  return 'F';
-}
-
-/**
- * Get Tailwind color class for score
- */
-export function getScoreColor(score) {
-  if (score >= 80) return 'text-green-400';
-  if (score >= 60) return 'text-yellow-400';
-  if (score >= 40) return 'text-orange-400';
-  return 'text-red-400';
-}
-
-/**
- * Get label based on score for UI display
- */
-export function getScoreLabel(score) {
-  if (score >= 80) return 'Excellent';
-  if (score >= 70) return 'Ready';
-  if (score >= 50) return 'Needs Work';
-  if (score >= 30) return 'Draft';
-  return 'Incomplete';
-}
+// Re-export scoring helper functions from shared module for consistency
+export { getGrade, getScoreColor, getScoreLabel } from '../../../shared/js/validator.js';
 
