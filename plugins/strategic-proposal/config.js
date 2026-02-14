@@ -2,6 +2,8 @@
  * Strategic Proposal Plugin Configuration
  */
 
+import { validateDocument } from './js/validator.js';
+
 export const strategicProposalPlugin = {
   id: 'strategic-proposal',
   name: 'Strategic Proposal',
@@ -117,7 +119,7 @@ export const strategicProposalPlugin = {
     { name: 'Implementation Plan', maxPoints: 25, description: 'Timeline and resources' },
   ],
 
-  validateDocument: null,
+  validateDocument,
 
   workflowConfig: {
     phaseCount: 3,

@@ -2,6 +2,8 @@
  * Job Description (JD) Plugin Configuration
  */
 
+import { validateDocument } from './js/validator.js';
+
 export const jdPlugin = {
   id: 'jd',
   name: 'Job Description',
@@ -161,7 +163,7 @@ export const jdPlugin = {
     { name: 'Appeal', maxPoints: 25, description: 'Compelling, authentic, differentiating' },
   ],
 
-  validateDocument: null,
+  validateDocument,
 
   workflowConfig: {
     phaseCount: 3,

@@ -2,6 +2,8 @@
  * Acceptance Criteria Plugin Configuration
  */
 
+import { validateDocument } from './js/validator.js';
+
 export const acceptanceCriteriaPlugin = {
   id: 'acceptance-criteria',
   name: 'Acceptance Criteria',
@@ -75,7 +77,7 @@ export const acceptanceCriteriaPlugin = {
     },
   ],
 
-  validateDocument: null,
+  validateDocument,
 
   workflowConfig: {
     phaseCount: 3,

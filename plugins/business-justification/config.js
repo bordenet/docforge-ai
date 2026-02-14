@@ -2,6 +2,8 @@
  * Business Justification Plugin Configuration
  */
 
+import { validateDocument } from './js/validator.js';
+
 export const businessJustificationPlugin = {
   id: 'business-justification',
   name: 'Business Justification',
@@ -104,7 +106,7 @@ export const businessJustificationPlugin = {
     },
   ],
 
-  validateDocument: null,
+  validateDocument,
 
   workflowConfig: {
     phaseCount: 3,

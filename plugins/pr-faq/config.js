@@ -2,6 +2,8 @@
  * PR-FAQ (Amazon-style) Plugin Configuration
  */
 
+import { validateDocument } from './js/validator.js';
+
 export const prFaqPlugin = {
   id: 'pr-faq',
   name: 'Press Release FAQ',
@@ -140,7 +142,7 @@ export const prFaqPlugin = {
     },
   ],
 
-  validateDocument: null,
+  validateDocument,
 
   workflowConfig: {
     phaseCount: 3,

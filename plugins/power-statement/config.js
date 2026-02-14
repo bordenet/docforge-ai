@@ -2,6 +2,8 @@
  * Power Statement Plugin Configuration
  */
 
+import { validateDocument } from './js/validator.js';
+
 export const powerStatementPlugin = {
   id: 'power-statement',
   name: 'Power Statement',
@@ -96,7 +98,7 @@ export const powerStatementPlugin = {
     },
   ],
 
-  validateDocument: null,
+  validateDocument,
 
   workflowConfig: {
     phaseCount: 3,
