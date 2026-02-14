@@ -6,13 +6,11 @@
 
 import { getCurrentDocumentType } from '../../shared/js/router.js';
 import { getPlugin } from '../../shared/js/plugin-registry.js';
-import { showToast, escapeHtml } from '../../shared/js/ui.js';
+import { showToast, escapeHtml, setupGlobalErrorHandler } from '../../shared/js/ui.js';
 import { validateDocument } from '../../shared/js/validator.js';
 import { logger } from '../../shared/js/logger.js';
-
 // Display functions
 import { updateScoreDisplay, renderSlopDetection, renderIssues } from './app-display.js';
-
 // AI Power-ups functions
 import {
   initPowerups,
@@ -20,7 +18,6 @@ import {
   handleRewrite,
   handleViewPrompt,
 } from './app-powerups.js';
-
 // LLM Scoring Mode functions
 import {
   initLLMMode,
@@ -28,6 +25,9 @@ import {
   handleCopyLLMPrompt,
   handleViewLLMPrompt,
 } from './app-llm-mode.js';
+
+// Setup global error handler for uncaught errors
+setupGlobalErrorHandler();
 
 let currentPlugin = null;
 let currentResult = null;

@@ -24,10 +24,13 @@
 import { getCurrentPlugin, initRouter } from '../../shared/js/router.js';
 import { getProject, getAllProjects } from '../../shared/js/storage.js';
 import { renderListView, renderNewView, renderProjectView, renderPhaseContent } from '../../shared/js/views.js';
-import { showToast, showLoading, hideLoading } from '../../shared/js/ui.js';
+import { showToast, showLoading, hideLoading, setupGlobalErrorHandler } from '../../shared/js/ui.js';
 import { logger } from '../../shared/js/logger.js';
 import { setupListEventHandlers, setupNewFormEventHandlers, attachProjectEventListeners } from './app-handlers.js';
 import { setupGlobalEventListeners } from './app-global.js';
+
+// Setup global error handler for uncaught errors
+setupGlobalErrorHandler();
 
 let currentPlugin = null;
 let currentTemplates = [];
