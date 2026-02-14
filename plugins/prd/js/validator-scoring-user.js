@@ -154,7 +154,8 @@ export function scoreTechnicalQuality(text) {
   }
 
   // Dependencies and constraints (0-5 pts)
-  const hasDependencies = /^#+\s*(depend|risk|assumption|constraint)/im.test(text);
+  // Support both markdown # headings and numbered sections (e.g., "8.3 Constraints")
+  const hasDependencies = /^(?:#+\s*|\d+\.?\d*\.?\s*)(depend|risk|assumption|constraint)/im.test(text);
   const mentionsDependencies = /\b(depends.?on|requires|prerequisite|blocker|assumption)\b/i.test(text);
 
   if (hasDependencies && mentionsDependencies) {

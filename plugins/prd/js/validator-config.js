@@ -94,11 +94,18 @@ export const USER_STORY_PATTERN = /as\s+a[n]?\s+[\w\s]+,?\s+i\s+want/gi;
 export const FUNCTIONAL_REQ_PATTERN = /\bFR\d+\b/gi;
 export const DOOR_TYPE_PATTERN = /(?:🚪|🔄|one[- ]?way|two[- ]?way)\s*(?:door)?/gi;
 export const PROBLEM_LINK_PATTERN = /\bP\d+\b/gi;
+// Given/When/Then format for acceptance criteria
 export const ACCEPTANCE_CRITERIA_PATTERN = /(?:\*\*)?given(?:\*\*)?\s+.+?(?:\*\*)?when(?:\*\*)?\s+.+?(?:\*\*)?then(?:\*\*)?\s+/gi;
 export const AC_KEYWORD_PATTERN = /-\s*\*\*Given\*\*/gi;
+// Alternative AC formats: checkboxes, verify statements, numbered AC, success/failure labels
+export const AC_CHECKBOX_PATTERN = /\[[ x]\]\s+.{10,}/gi;
+export const AC_VERIFY_PATTERN = /(?:verify|confirm|validate|test)\s+that\s+/gi;
+export const AC_NUMBERED_PATTERN = /\bAC\s*\d+[.:]\s*/gi;
+export const AC_CASE_PATTERN = /(?:success|failure)\s*(?:case|criteria)[.:]/gi;
 export const MEASURABLE_PATTERN = /(?:≤|≥|<|>|=)?\s*\d+(?:\.\d+)?\s*(ms|millisecond|second|minute|hour|day|week|%|percent|\$|dollar|user|request|transaction|item|task|point|pt)/gi;
 
 // Strategic Viability detection patterns
+// Section patterns use (?:#+\s*|\d+\.?\d*\.?\s*) to match both markdown # and numbered sections
 export const STRATEGIC_VIABILITY_PATTERNS = {
   leadingIndicator: /\b(leading\s+indicator|predictive|early\s+signal|adoption\s+rate|activation|first\s+action|time\s+to\s+value|onboarding\s+completion)\b/gi,
   laggingIndicator: /\b(lagging\s+indicator|revenue|nps|churn|retention|ltv|arpu|conversion\s+rate)\b/gi,
@@ -106,13 +113,13 @@ export const STRATEGIC_VIABILITY_PATTERNS = {
   sourceOfTruth: /\b(source\s+of\s+truth|measured\s+(via|in|by|using)|tracked\s+in|mixpanel|amplitude|datadog|segment|google\s+analytics|salesforce|looker|tableau)\b/gi,
   killSwitch: /\b(kill\s+(switch|criteria)|pivot\s+or\s+persevere|failure\s+criteria|rollback\s+(plan|criteria)|prove.*(wrong|failure)|abort\s+criteria)\b/gi,
   traceability: /\b(traceability|traces?\s+to|maps?\s+to|linked\s+to\s+problem|requirement\s+id|fr\d+|nfr\d+|problem\s+id|p\d+\s*[-:→]|→|<-)\b/gi,
-  traceabilitySection: /^#+\s*(\d+\.?\d*\.?\s*)?(traceability|requirement\s+mapping|problem[\s-]requirement\s+matrix)/im,
-  alternativesConsidered: /^#+\s*(\d+\.?\d*\.?\s*)?(alternative|rejected\s+approach|other\s+option|we\s+considered)/im,
+  traceabilitySection: /^(?:#+\s*)?(\d+\.?\d*\.?\s*)?(traceability|requirement\s+mapping|problem[\s-]requirement\s+matrix)/im,
+  alternativesConsidered: /^(?:#+\s*)?(\d+\.?\d*\.?\s*)?(alternative|rejected\s+approach|other\s+option|we\s+considered)/im,
   alternativesContent: /\b(rejected\s+because|we\s+considered|alternative\s+(was|approach)|instead\s+of|trade[\s-]?off)\b/gi,
   doorType: /\b(one[\s-]?way\s+door|two[\s-]?way\s+door|irreversible|reversible|high\s+cost\s+of\s+change|easy\s+to\s+pivot|🚪|🔄)\b/gi,
-  dissentingOpinions: /^#+\s*(\d+\.?\d*\.?\s*)?(dissenting|disagree|known\s+unknown|unresolved\s+debate|open\s+question|trade[\s-]?off)/im,
+  dissentingOpinions: /^(?:#+\s*)?(\d+\.?\d*\.?\s*)?(dissenting|disagree|known\s+unknown|unresolved\s+debate|open\s+question|trade[\s-]?off)/im,
   dissentingContent: /\b(dissenting\s+opinion|unresolved\s+debate|stakeholder\s+disagree|we\s+disagree|different\s+view|known\s+unknown)\b/gi,
-  customerFAQ: /^#+\s*(\d+\.?\d*\.?\s*)?(customer\s+faq|external\s+faq|working\s+backwards|press\s+release|aha\s+moment)/im,
+  customerFAQ: /^(?:#+\s*)?(\d+\.?\d*\.?\s*)?(customer\s+faq|external\s+faq|working\s+backwards|press\s+release|aha\s+moment)/im,
   ahaQuote: /"[^"]{20,}".*—|before\s+\[.+\].*after|customer\s+quote/gi,
 };
 

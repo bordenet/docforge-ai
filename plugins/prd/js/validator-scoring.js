@@ -38,24 +38,30 @@ export function scoreDocumentStructure(text) {
   }
 
   // Document organization (0-5 pts)
-  const headings = text.match(/^#+\s+.+$/gm) || [];
-  const hasH1 = headings.some(h => h.startsWith('# '));
-  const hasH2 = headings.some(h => h.startsWith('## '));
+  // Match markdown headings (#), numbered sections (1. Title), or bold headings (**Title**)
+  const markdownHeadings = text.match(/^#+\s+.+$/gm) || [];
+  const numberedHeadings = text.match(/^\d+\.?\d*\.?\s+[A-Z][^\n]+$/gm) || [];
+  const boldHeadings = text.match(/^\*\*[A-Z][^*\n]+\*\*\s*$/gm) || [];
+  const headings = [...markdownHeadings, ...numberedHeadings, ...boldHeadings];
+
+  const hasH1 = markdownHeadings.some(h => h.startsWith('# ')) || numberedHeadings.some(h => /^\d+\.\s/.test(h));
+  const hasH2 = markdownHeadings.some(h => h.startsWith('## ')) || numberedHeadings.some(h => /^\d+\.\d+\.?\s/.test(h));
 
   if (hasH1 && hasH2) {
     score += 3;
     strengths.push('Good heading hierarchy');
   } else if (headings.length > 0) {
     score += 1;
+    strengths.push('Document has heading structure');
   } else {
     issues.push('No clear heading structure');
   }
 
-  // Logical flow check
-  const purposeIndex = text.search(/^#+\s*(purpose|introduction|overview)/im);
-  const featuresIndex = text.search(/^#+\s*(feature|requirement)/im);
+  // Logical flow check - support both markdown # and numbered sections
+  const purposeIndex = text.search(/^(?:#+\s*|\d+\.?\d*\.?\s*)(purpose|introduction|overview|executive\s+summary)/im);
+  const featuresIndex = text.search(/^(?:#+\s*|\d+\.?\d*\.?\s*)(feature|requirement)/im);
   const customerFAQIndex = text.search(STRATEGIC_VIABILITY_PATTERNS.customerFAQ);
-  const solutionIndex = text.search(/^#+\s*(\d+\.?\d*\.?\s*)?(proposed\s+solution|solution)/im);
+  const solutionIndex = text.search(/^(?:#+\s*|\d+\.?\d*\.?\s*)(proposed\s+solution|solution)/im);
   if (purposeIndex >= 0 && featuresIndex >= 0 && purposeIndex < featuresIndex) {
     score += 1;
     strengths.push('Logical document flow (context before requirements)');

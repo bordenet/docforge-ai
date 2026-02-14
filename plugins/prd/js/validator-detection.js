@@ -264,7 +264,8 @@ export function detectNonFunctionalRequirements(text) {
   return {
     categories,
     count: categories.length,
-    hasNFRSection: /^#+\s*(\d+\.?\d*\.?\s*)?(non.?functional|quality\s+attribute|nfr|performance|security|technical\s+requirement)/im.test(text),
+    // Support both markdown # headings and numbered sections (e.g., "8.2 Non Functional Requirements")
+    hasNFRSection: /^(?:#+\s*)?(\d+\.?\d*\.?\s*)?(non.?functional|quality\s+attribute|nfr|performance|security|technical\s+requirement)/im.test(text),
   };
 }
 

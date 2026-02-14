@@ -10,6 +10,10 @@ import {
   PROBLEM_LINK_PATTERN,
   ACCEPTANCE_CRITERIA_PATTERN,
   AC_KEYWORD_PATTERN,
+  AC_CHECKBOX_PATTERN,
+  AC_VERIFY_PATTERN,
+  AC_NUMBERED_PATTERN,
+  AC_CASE_PATTERN,
   MEASURABLE_PATTERN,
 } from './validator-config.js';
 
@@ -53,17 +57,36 @@ export function countFunctionalRequirements(text) {
 
 /**
  * Count acceptance criteria in text
- * Detects both inline "given...when...then" and markdown "**Given**" bullet format
+ * Detects multiple AC formats:
+ * - Given/When/Then inline format
+ * - **Given** bullet format
+ * - Checkboxes: [ ] or [x]
+ * - Verify/Confirm/Test statements
+ * - Numbered AC (AC1:, AC2:)
+ * - Success/Failure case labels
  * @param {string} text - Text to analyze
  * @returns {number} Number of acceptance criteria found
  */
 export function countAcceptanceCriteria(text) {
-  // Count inline given/when/then patterns
-  const inlineMatches = text.match(ACCEPTANCE_CRITERIA_PATTERN) || [];
-  // Count structured bullet-point Given keywords (each represents one AC)
-  const bulletMatches = text.match(AC_KEYWORD_PATTERN) || [];
+  // Count Given/When/Then patterns (inline and bullet)
+  const gwtInlineMatches = text.match(ACCEPTANCE_CRITERIA_PATTERN) || [];
+  const gwtBulletMatches = text.match(AC_KEYWORD_PATTERN) || [];
+  const gwtCount = Math.max(gwtInlineMatches.length, gwtBulletMatches.length);
+
+  // Count alternative AC formats
+  const checkboxMatches = text.match(AC_CHECKBOX_PATTERN) || [];
+  const verifyMatches = text.match(AC_VERIFY_PATTERN) || [];
+  const numberedMatches = text.match(AC_NUMBERED_PATTERN) || [];
+  const caseMatches = text.match(AC_CASE_PATTERN) || [];
+
   // Return max to avoid double-counting same criteria in different formats
-  return Math.max(inlineMatches.length, bulletMatches.length);
+  return Math.max(
+    gwtCount,
+    checkboxMatches.length,
+    verifyMatches.length,
+    numberedMatches.length,
+    caseMatches.length
+  );
 }
 
 /**
