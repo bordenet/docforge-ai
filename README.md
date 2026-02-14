@@ -80,10 +80,10 @@ docforge-ai/
 │   ├── form-generator.js
 │   ├── prompt-generator.js
 │   └── projects.js     # IndexedDB storage
-└── tests/              # 530+ tests (Jest + Playwright)
+└── tests/              # 900+ tests (Jest + Playwright)
 ```
 
-Each plugin is self-contained. Add a new document type by creating a folder in `plugins/` with `config.js` and prompt templates. No changes to core code required.
+Each plugin is self-contained. See [Adding Document Types](docs/ADDING-DOCUMENT-TYPES.md) for the step-by-step guide (includes validator implementation, test requirements, and LLM prompt templates).
 
 ## Development
 

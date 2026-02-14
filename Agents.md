@@ -79,12 +79,29 @@ DocForge is a plugin-based document generation platform:
 Each plugin in `plugins/{type}/` contains:
 
 ```
-config.js       # Form fields, scoring dimensions, metadata
-templates.js    # Quick-start templates
-prompts/        # phase1.md, phase2.md, phase3.md
+config.js           # Form fields, scoring dimensions, metadata
+templates.js        # Quick-start templates
+prompts/            # phase1.md, phase2.md, phase3.md
+js/
+  validator.js      # Main entry point (exports validateDocument)
+  validator-config.js    # Pattern definitions
+  validator-detection.js # Detection functions
+  validator-scoring.js   # Scoring functions
 ```
 
-To add a new document type: create a folder in `plugins/`, define `config.js` and prompts, register in `plugin-registry.js`.
+### Adding New Document Types
+
+> **REQUIRED READING:** See `docs/ADDING-DOCUMENT-TYPES.md` for step-by-step instructions.
+
+The guide covers:
+- Plugin config structure
+- Form field → prompt placeholder mapping
+- LLM prompt templates (all 3 phases)
+- Validator implementation patterns
+- Test requirements (20+ tests minimum)
+- Plugin registry wiring
+- Common mistakes to avoid
+- AI agent checklist
 
 ---
 
