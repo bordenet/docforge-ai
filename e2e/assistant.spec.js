@@ -149,8 +149,9 @@ test.describe('Assistant', () => {
     // Modal should appear with About content (use specific ID)
     const modal = page.locator('#about-modal');
     await expect(modal).toBeVisible({ timeout: 2000 });
-    await expect(modal).toContainText(/About.*Assistant/i);
-    await expect(modal).toContainText('Features');
+    // Modal shows "About [Document Type]" e.g. "About One-Pagers"
+    await expect(modal).toContainText(/About/i);
+    await expect(modal).toContainText('How this tool works');
   });
 
   test('about modal can be closed', async ({ page }) => {
