@@ -1,6 +1,7 @@
 /**
- * PRD Validator Tests
- * Tests for PRD-specific document validation and scoring
+ * PRD Validator Tests - Core Detection Functions
+ * Tests for basic PRD detection and scoring (sections, vague language, prioritization, structure)
+ * See prd-validator-main.test.js, prd-validator-detection.test.js, prd-validator-scoring.test.js for additional tests
  */
 
 import { describe, test, expect } from '@jest/globals';
@@ -169,4 +170,3 @@ FR1: Feature
     });
   });
 });
-

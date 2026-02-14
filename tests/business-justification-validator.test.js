@@ -15,8 +15,9 @@ import {
   scoreExecutionCompleteness,
   validateDocument,
   getScoreColor,
-  getScoreLabel
+  getScoreLabel,
 } from '../plugins/business-justification/js/validator.js';
+// Helper detection function tests are in business-justification-validator-helpers.test.js
 
 describe('Business Justification Validator', () => {
   describe('detectStrategicEvidence', () => {
@@ -281,5 +282,5 @@ ROI is 200% with 6 months payback.`;
       expect(getScoreLabel(20)).toBe('Incomplete');
     });
   });
+  // Helper detection function tests moved to business-justification-validator-helpers.test.js
 });
-
