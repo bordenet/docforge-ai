@@ -52,5 +52,8 @@
     ]
   },
   "author": "Matt J Bordenet",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "dompurify": "^3.3.1"
+  }
 }

@@ -1,7 +1,7 @@
 # DocForgeAI - Status & Continuation Plan
 
-> **Last Updated:** 2026-02-11
-> **Status:** [Live on GitHub](https://github.com/bordenet/docforge-ai)
+> **Last Updated:** 2026-02-14
+> **Status:** [Live on GitHub](https://github.com/bordenet/docforge-ai) | **v1.0.0**
 > **Location:** `genesis-tools/docforge-ai/`
 
 ## Quick Start (Resume Work)
@@ -9,7 +9,8 @@
 ```bash
 cd ~/GitHub/Personal/genesis-tools/docforge-ai
 npm install
-npm test              # 582 tests
+npm test              # 1101 unit tests
+npm run test:e2e      # 51 E2E tests
 npm run serve         # Start local server on port 8080
 ```
 
@@ -25,18 +26,22 @@ Then open:
 
 | Component | Status | Notes |
 |-----------|--------|-------|
-| Plugin registry | ✅ Complete | 9 document types registered |
+| Plugin registry | ✅ Complete | 9 document types, contract validation |
 | Assistant HTML | ✅ Complete | Unified UI with doc type selector |
 | Validator HTML | ✅ Complete | Unified UI with scorecard |
 | Form generator | ✅ Complete | Dynamic forms from plugin config |
 | Prompt generator | ✅ Complete | Template variable substitution |
 | Router | ✅ Complete | URL-based doc type + hash navigation |
-| Storage | ✅ Complete | Per-plugin IndexedDB |
+| Storage | ✅ Complete | Per-plugin IndexedDB with sanitization |
+| Security | ✅ Complete | DOMPurify XSS protection, input sanitization |
+| Error handling | ✅ Complete | Global error boundary with toast feedback |
 | Prompt templates | ✅ Complete | 27 files (3 phases × 9 types) |
 | Demo data | ✅ Complete | One-pager sample with all 3 phases |
-| Unit tests | ✅ Complete | 582 tests passing |
+| Unit tests | ✅ Complete | 1101 tests passing |
+| E2E tests | ✅ Complete | 51 Playwright tests |
 | CI workflow | ✅ Complete | GitHub Actions with codecov |
-| Code coverage | ✅ 84% | Exceeds 80% target |
+| Code coverage | ✅ ~87% | All 9 validators at 80%+ |
+| Lint | ✅ Zero errors | Airbnb ESLint config |
 
 ### What Does NOT Exist Yet
 
