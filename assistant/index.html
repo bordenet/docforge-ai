@@ -120,18 +120,6 @@
     />
   </head>
   <body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-    <!-- Status Banner -->
-    <div id="status-banner" class="bg-gray-800 dark:bg-gray-950 text-gray-200 text-center py-2 px-4 text-sm border-b-2 border-blue-500">
-      <div class="max-w-7xl mx-auto flex items-center justify-center gap-2 flex-wrap">
-        <span class="text-blue-400">→</span>
-        <span>
-          <strong class="text-white">Almost done!</strong> Undergoing manual testing. Will replace the standalone
-          <a href="https://github.com/bordenet/genesis?tab=readme-ov-file#projects" class="text-blue-400 underline font-medium hover:text-blue-300" target="_blank" rel="noopener">genesis-based tools</a>.
-        </span>
-        <button id="close-status-banner" class="ml-2 text-gray-400 hover:text-white text-lg leading-none" aria-label="Close banner">✕</button>
-      </div>
-    </div>
-
     <!-- Header -->
     <header
       class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700"
@@ -398,21 +386,6 @@
         const currentLink = menu.querySelector(`[data-type="${currentType}"]`);
         if (currentLink) {
           currentLink.classList.add('bg-blue-50', 'dark:bg-blue-900/20');
-        }
-      })();
-
-      // Status banner dismiss handler
-      (function() {
-        const banner = document.getElementById('status-banner');
-        const closeBtn = document.getElementById('close-status-banner');
-        if (banner && closeBtn) {
-          if (localStorage.getItem('docforge-status-banner-dismissed')) {
-            banner.style.display = 'none';
-          }
-          closeBtn.addEventListener('click', function() {
-            banner.style.display = 'none';
-            localStorage.setItem('docforge-status-banner-dismissed', 'true');
-          });
         }
       })();
     </script>
