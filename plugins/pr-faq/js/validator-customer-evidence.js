@@ -98,6 +98,9 @@ export function scoreQuote(metrics, metricTypes) {
       case 'score':
         score += 1;
         break;
+      default:
+        // Other metric types don't add bonus points
+        break;
       }
     }
   }

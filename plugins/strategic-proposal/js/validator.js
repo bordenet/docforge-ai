@@ -8,7 +8,7 @@
  * 4. Implementation Plan (25 pts) - Timeline and resources
  */
 
-import { getSlopPenalty } from '../../../shared/js/slop-detection.js';
+import { getSlopPenalty } from '../../../shared/js/slop-scoring.js';
 import {
   scoreProblemStatement,
   scoreProposedSolution,

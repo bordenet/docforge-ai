@@ -3,7 +3,7 @@
  * Sub-functions for tone, readability, and marketing fluff analysis
  */
 
-import { getSlopPenalty } from '../../../shared/js/slop-detection.js';
+import { getSlopPenalty } from '../../../shared/js/slop-scoring.js';
 import {
   HYPE_WORDS, EMOTIONAL_FLUFF, VAGUE_TERMS, TECH_JARGON,
   PASSIVE_INDICATORS

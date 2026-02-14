@@ -6,11 +6,10 @@
 import { STRATEGIC_VIABILITY_PATTERNS } from './validator-config.js';
 import {
   detectSections, detectScopeBoundaries, detectVagueQualifiers, detectVagueLanguage,
-  detectPrioritization, detectUserPersonas, detectProblemStatement, detectCustomerEvidence,
-  detectNonFunctionalRequirements,
+  detectPrioritization,
 } from './validator-detection.js';
-import { countUserStories, countFunctionalRequirements, countAcceptanceCriteria, countMeasurableRequirements } from './validator-requirements.js';
-import { getSlopPenalty } from '../../../shared/js/slop-detection.js';
+import { countUserStories, countFunctionalRequirements, countMeasurableRequirements } from './validator-requirements.js';
+import { getSlopPenalty } from '../../../shared/js/slop-scoring.js';
 
 /**
  * Score document structure (20 pts max)

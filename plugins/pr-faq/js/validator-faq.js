@@ -20,7 +20,7 @@ export function extractFAQs(markdown) {
   const externalMatch = markdown.match(/^##\s*(?:External\s+)?FAQ\s*$/im);
   if (externalMatch) {
     const startIdx = markdown.indexOf(externalMatch[0]) + externalMatch[0].length;
-    let content = markdown.slice(startIdx);
+    const content = markdown.slice(startIdx);
 
     // Stop at Internal FAQ if present
     const internalMatch = content.match(/^##\s*Internal\s+FAQ\s*$/im);
@@ -60,8 +60,7 @@ export function parseFAQQuestions(faqContent) {
   ];
 
   for (const pattern of patterns) {
-    let match;
-    while ((match = pattern.exec(faqContent)) !== null) {
+    for (const match of faqContent.matchAll(pattern)) {
       questions.push({
         question: match[1].trim(),
         answer: match[2].trim(),

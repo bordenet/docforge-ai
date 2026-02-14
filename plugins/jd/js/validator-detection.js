@@ -18,8 +18,7 @@ export function extractMandatedSections(text) {
 
   // Extract COMPANY_PREAMBLE sections
   const preambleRegex = /\[COMPANY_PREAMBLE\]([\s\S]*?)\[\/COMPANY_PREAMBLE\]/gi;
-  let match;
-  while ((match = preambleRegex.exec(text)) !== null) {
+  for (const match of text.matchAll(preambleRegex)) {
     mandatedSections.push({
       type: 'preamble',
       content: match[1]
@@ -28,7 +27,7 @@ export function extractMandatedSections(text) {
 
   // Extract COMPANY_LEGAL_TEXT sections
   const legalRegex = /\[COMPANY_LEGAL_TEXT\]([\s\S]*?)\[\/COMPANY_LEGAL_TEXT\]/gi;
-  while ((match = legalRegex.exec(text)) !== null) {
+  for (const match of text.matchAll(legalRegex)) {
     mandatedSections.push({
       type: 'legal',
       content: match[1]

@@ -242,5 +242,5 @@ export function analyzeTypeTokenRatio(text) {
   };
 }
 
-// Re-export scoring functions from slop-scoring.js for backward compatibility
-export { calculateSlopScore, getSlopPenalty } from './slop-scoring.js';
+// Note: calculateSlopScore and getSlopPenalty are available in slop-scoring.js
+// For convenience, import from slop-index.js to get both detection and scoring functions

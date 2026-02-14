@@ -9,7 +9,7 @@
  * 5. Strategic Viability (20 pts) - Metric validity, scope realism, traceability
  */
 
-import { getSlopPenalty, calculateSlopScore } from '../../../shared/js/slop-detection.js';
+import { getSlopPenalty, calculateSlopScore } from '../../../shared/js/slop-scoring.js';
 import { scoreDocumentStructure, scoreRequirementsClarity, scoreUserFocus, scoreTechnicalQuality } from './validator-scoring.js';
 import { scoreStrategicViability } from './validator-strategic.js';
 

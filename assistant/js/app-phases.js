@@ -6,7 +6,7 @@
  * @module app-phases
  */
 
-import { getProject, deleteProject } from '../../shared/js/storage.js';
+import { getProject, saveProject, deleteProject } from '../../shared/js/storage.js';
 import { showToast, copyToClipboard, confirm, createActionMenu, showPromptModal } from '../../shared/js/ui.js';
 import { generatePrompt } from '../../shared/js/prompt-generator.js';
 import { renderPhaseContent } from '../../shared/js/views.js';

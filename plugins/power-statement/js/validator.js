@@ -8,7 +8,7 @@
  * 4. Specificity (25 pts) - Metrics, customer type clarity
  */
 
-import { getSlopPenalty } from '../../../shared/js/slop-detection.js';
+import { getSlopPenalty } from '../../../shared/js/slop-scoring.js';
 import { scoreClarity, scoreImpact, scoreAction, scoreSpecificity } from './validator-scoring.js';
 import { detectVersions } from './validator-detection.js';
 

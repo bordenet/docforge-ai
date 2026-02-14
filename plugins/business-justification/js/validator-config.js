@@ -26,7 +26,7 @@ export const EVIDENCE_PATTERNS = {
 export const FINANCIAL_PATTERNS = {
   financialSection: /^(#+\s*)?(financial|roi|return|investment|cost|budget|tco|payback)/im,
   roiCalculation: /\b(roi|return.on.investment|benefit.?.cost|cost.?.benefit|net.present.value|npv)\b/gi,
-  roiFormula: /(\d+\s*[-−–]\s*\d+)\s*[\/÷]\s*\d+|roi\s*[=:]\s*\d+|\(.*benefit.*[-−–].*cost.*\)\s*[\/÷]|savings\s*[\/÷]\s*investment|\$[\d,]+\s*[\/÷]\s*\$[\d,]+|\([^)]+[-−–][^)]+\)\s*[\/÷]\s*\S+/gi,
+  roiFormula: /(\d+\s*[-−–]\s*\d+)\s*[/÷]\s*\d+|roi\s*[=:]\s*\d+|\(.*benefit.*[-−–].*cost.*\)\s*[/÷]|savings\s*[/÷]\s*investment|\$[\d,]+\s*[/÷]\s*\$[\d,]+|\([^)]+[-−–][^)]+\)\s*[/÷]\s*\S+/gi,
   paybackPeriod: /\b(payback|break.?even|recoup|recover.+investment|months?.to.recover)\b/gi,
   paybackTime: /\b(\d+\s*(month|year|week)s?)\b/gi,
   tcoAnalysis: /\b(tco|total.cost.of.ownership|3.?year|three.?year|implementation.cost|training.cost|operational.cost|opportunity.cost|hidden.cost)\b/gi,

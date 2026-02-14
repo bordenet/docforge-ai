@@ -16,13 +16,21 @@ import {
   SOLUTION_PATTERNS
 } from './validator-config.js';
 
+// Import pillar functions for internal use
+import {
+  detectStrategicEvidence,
+  detectFinancialJustification,
+  detectOptionsAnalysis,
+  detectExecutionCompleteness
+} from './validator-detection-pillars.js';
+
 // Re-export pillar detection functions for backward compatibility
 export {
   detectStrategicEvidence,
   detectFinancialJustification,
   detectOptionsAnalysis,
   detectExecutionCompleteness
-} from './validator-detection-pillars.js';
+};
 
 // Legacy detection function aliases
 export function detectProblemStatement(text) {

@@ -3,7 +3,7 @@
  * Validates PR-FAQ documents with 5 scoring dimensions
  */
 
-import { calculateSlopScore } from '../../../shared/js/slop-detection.js';
+import { calculateSlopScore } from '../../../shared/js/slop-scoring.js';
 import { stripMarkdown, extractTitle } from './validator-utils.js';
 import { scoreCustomerEvidence, detectMetricsInText } from './validator-customer-evidence.js';
 import { scoreStructureAndHook } from './validator-structure.js';

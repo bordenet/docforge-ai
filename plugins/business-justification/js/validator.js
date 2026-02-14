@@ -8,7 +8,7 @@
  * 4. Execution Completeness (20 pts)
  */
 
-import { getSlopPenalty } from '../../../shared/js/slop-detection.js';
+import { getSlopPenalty } from '../../../shared/js/slop-scoring.js';
 import {
   scoreStrategicEvidence,
   scoreFinancialJustification,

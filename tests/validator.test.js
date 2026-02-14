@@ -225,7 +225,7 @@ Phase 2: Q2 2024
       };
       const pluginWithValidator = {
         id: 'test-plugin',
-        validateDocument: (text) => customResult,
+        validateDocument: (_text) => customResult,
         scoringDimensions: [
           { name: 'Test', maxPoints: 100, description: 'Test' },
         ],

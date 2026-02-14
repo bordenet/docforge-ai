@@ -13,8 +13,7 @@ import {
   detectUrgency,
   detectSolution,
   detectBusinessImpact,
-  detectImplementation,
-  detectRisks
+  detectImplementation
 } from './validator-detection.js';
 
 /**

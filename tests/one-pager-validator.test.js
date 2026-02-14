@@ -10,21 +10,8 @@ import {
   detectSections,
   detectCircularLogic,
   detectBaselineTarget,
-  detectProblemStatement,
-  detectCostOfInaction,
-  detectSolution,
-  detectMeasurableGoals,
   detectScope,
-  detectSuccessMetrics,
-  detectStakeholders,
-  detectTimeline,
-  scoreProblemClarity,
-  scoreSolutionQuality,
-  scoreScopeDiscipline,
-  scoreCompleteness,
-  getGrade,
-  getScoreColor,
-  getScoreLabel
+  scoreProblemClarity
 } from '../plugins/one-pager/js/validator.js';
 
 describe('One-Pager Validator', () => {

@@ -5,23 +5,12 @@
 
 import { describe, test, expect } from '@jest/globals';
 import {
-  validateDocument,
   detectSections,
   detectVagueLanguage,
   detectPrioritization,
-  detectCustomerEvidence,
-  detectUserPersonas,
-  detectProblemStatement,
-  detectNonFunctionalRequirements,
-  countUserStories,
   countFunctionalRequirements,
   countAcceptanceCriteria,
   scoreDocumentStructure,
-  scoreRequirementsClarity,
-  scoreUserFocus,
-  scoreTechnicalQuality,
-  scoreStrategicViability,
-  getGrade,
 } from '../plugins/prd/js/validator.js';
 
 describe('PRD Validator', () => {

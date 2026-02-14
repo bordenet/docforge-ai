@@ -8,7 +8,7 @@
  * 4. Status (25 pts) - Clear status (proposed/accepted/deprecated/superseded)
  */
 
-import { getSlopPenalty } from '../../../shared/js/slop-detection.js';
+import { getSlopPenalty } from '../../../shared/js/slop-scoring.js';
 import { scoreContext, scoreDecision, scoreConsequences, scoreStatus } from './validator-scoring.js';
 
 // Re-export detection functions for testing

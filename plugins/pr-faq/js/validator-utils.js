@@ -20,8 +20,7 @@ export function extractQuotes(content) {
   ];
 
   for (const pattern of patterns) {
-    let match;
-    while ((match = pattern.exec(content)) !== null) {
+    for (const match of content.matchAll(pattern)) {
       const quote = match[1].trim();
       // Filter out very short quotes (likely not customer testimonials)
       if (quote.length > 20) {

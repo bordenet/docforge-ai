@@ -8,12 +8,11 @@
  * 4. Completeness (20 pts) - Required sections, stakeholders, timeline
  */
 
-import { getSlopPenalty, calculateSlopScore } from '../../../shared/js/slop-detection.js';
+import { getSlopPenalty, calculateSlopScore } from '../../../shared/js/slop-scoring.js';
 import { WORD_LIMIT } from './validator-config.js';
 import {
   detectCircularLogic,
-  detectBaselineTarget,
-  detectSections
+  detectBaselineTarget
 } from './validator-detection.js';
 import {
   scoreProblemClarity,
@@ -115,7 +114,7 @@ export function validateOnePager(text) {
     wordCountIssues.push(`Document is ${wordCount} words (max ${WORD_LIMIT}). Deducting ${wordCountDeduction} points.`);
   }
 
-  let rawScore = problemClarity.score + solution.score + scope.score + completeness.score - slopDeduction - wordCountDeduction;
+  const rawScore = problemClarity.score + solution.score + scope.score + completeness.score - slopDeduction - wordCountDeduction;
 
   // CRITICAL: Cap at 50 if circular logic detected (per prompts.js line 49)
   const isCircularCapped = circularLogic.isCircular && rawScore > 50;

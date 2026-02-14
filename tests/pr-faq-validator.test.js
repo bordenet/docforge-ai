@@ -6,10 +6,10 @@ import { describe, it, expect } from '@jest/globals';
 import {
   validatePRFAQ, validateDocument, getGrade, getScoreColor, getScoreLabel
 } from '../plugins/pr-faq/js/validator.js';
-import { extractQuotes, stripMarkdown, extractTitle } from '../plugins/pr-faq/js/validator-utils.js';
+import { extractQuotes } from '../plugins/pr-faq/js/validator-utils.js';
 import { detectMetricsInText, scoreCustomerEvidence } from '../plugins/pr-faq/js/validator-customer-evidence.js';
-import { analyzeHeadlineQuality, analyzeNewsworthyHook } from '../plugins/pr-faq/js/validator-structure.js';
-import { analyzeFiveWs, analyzeCredibility } from '../plugins/pr-faq/js/validator-content.js';
+import { analyzeHeadlineQuality } from '../plugins/pr-faq/js/validator-structure.js';
+import { analyzeFiveWs } from '../plugins/pr-faq/js/validator-content.js';
 import { extractFAQs, parseFAQQuestions, isSoftballQuestion, checkHardQuestions } from '../plugins/pr-faq/js/validator-faq.js';
 
 describe('PR-FAQ Validator', () => {

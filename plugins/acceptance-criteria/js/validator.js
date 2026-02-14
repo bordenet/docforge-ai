@@ -4,7 +4,14 @@
  * Validates acceptance criteria for Linear-style format.
  */
 
-import { getSlopPenalty, calculateSlopScore } from '../../../shared/js/slop-detection.js';
+import { getSlopPenalty, calculateSlopScore } from '../../../shared/js/slop-scoring.js';
+
+import {
+  scoreStructure,
+  scoreClarity,
+  scoreTestability,
+  scoreCompleteness
+} from './validator-scoring.js';
 
 // Re-export for direct access
 export { calculateSlopScore };
@@ -20,13 +27,6 @@ export {
 
 // Re-export scoring functions for testing
 export {
-  scoreStructure,
-  scoreClarity,
-  scoreTestability,
-  scoreCompleteness
-} from './validator-scoring.js';
-
-import {
   scoreStructure,
   scoreClarity,
   scoreTestability,

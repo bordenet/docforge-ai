@@ -4,8 +4,7 @@
  * JD uses penalty-based scoring (start at 100, deduct for issues)
  */
 
-import { getSlopPenalty } from '../../../shared/js/slop-detection.js';
-import { SCORING_WEIGHTS } from './validator-config.js';
+import { getSlopPenalty } from '../../../shared/js/slop-scoring.js';
 
 /**
  * Score word count - ideal range is 400-700 words
@@ -23,7 +22,7 @@ export function scoreWordCount(text) {
       feedback: `✅ Good length: ${wordCount} words (ideal: 400-700)`,
       deduction: null
     };
-  } else if (wordCount < 400) {
+  } if (wordCount < 400) {
     const penalty = Math.min(15, Math.floor((400 - wordCount) / 20));
     return {
       penalty,
@@ -32,7 +31,7 @@ export function scoreWordCount(text) {
       feedback: `⚠️ Short: ${wordCount} words (aim for 400-700)`,
       deduction: `-${penalty} pts: Too short (${wordCount} words, aim for 400+)`
     };
-  } else {
+  } 
     const penalty = Math.min(10, Math.floor((wordCount - 700) / 50));
     return {
       penalty,
@@ -41,7 +40,7 @@ export function scoreWordCount(text) {
       feedback: `⚠️ Long: ${wordCount} words (aim for ≤700)`,
       deduction: `-${penalty} pts: Too long (${wordCount} words, aim for ≤700)`
     };
-  }
+  
 }
 
 /**
