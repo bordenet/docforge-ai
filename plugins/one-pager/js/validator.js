@@ -36,7 +36,9 @@ export {
   detectScope,
   detectSuccessMetrics,
   detectStakeholders,
-  detectTimeline
+  detectTimeline,
+  detectAlternatives,
+  detectUrgency
 } from './validator-detection.js';
 
 export {

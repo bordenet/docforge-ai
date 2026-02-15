@@ -7,7 +7,9 @@
 
 import {
   PROBLEM_PATTERNS,
-  SOLUTION_PATTERNS
+  SOLUTION_PATTERNS,
+  ALTERNATIVES_PATTERNS,
+  URGENCY_PATTERNS
 } from './validator-config.js';
 
 // Re-export section-related detections from split file
@@ -212,6 +214,62 @@ export function detectMeasurableGoals(text) {
       measurableMatches.length > 0 && `${measurableMatches.length} measurable terms`,
       goalMatches.length > 0 && `${goalMatches.length} goal/objective mentions`,
       quantifiedMatches.length > 0 && 'Quantified metrics present'
+    ].filter(Boolean)
+  };
+}
+
+// ============================================================================
+// Alternatives Considered Detection
+// ============================================================================
+
+/**
+ * Detect alternatives/options considered in text
+ * Good one-pagers explain why THIS solution over alternatives (including doing nothing)
+ * @param {string} text - Text to analyze
+ * @returns {Object} Alternatives detection results
+ */
+export function detectAlternatives(text) {
+  const hasAlternativesSection = ALTERNATIVES_PATTERNS.alternativesSection.test(text);
+  const alternativesMatches = text.match(ALTERNATIVES_PATTERNS.alternativesLanguage) || [];
+  const doNothingMatches = text.match(ALTERNATIVES_PATTERNS.doNothingOption) || [];
+
+  return {
+    hasAlternativesSection,
+    hasAlternativesLanguage: alternativesMatches.length > 0,
+    alternativesCount: alternativesMatches.length,
+    hasDoNothingOption: doNothingMatches.length > 0,
+    indicators: [
+      hasAlternativesSection && 'Dedicated alternatives section',
+      alternativesMatches.length > 0 && `${alternativesMatches.length} alternative/comparison mentions`,
+      doNothingMatches.length > 0 && '"Do nothing" option addressed'
+    ].filter(Boolean)
+  };
+}
+
+// ============================================================================
+// Why Now / Urgency Detection
+// ============================================================================
+
+/**
+ * Detect urgency/timing justification in text
+ * Strong one-pagers explain WHY NOW - what's the urgency or window?
+ * @param {string} text - Text to analyze
+ * @returns {Object} Urgency detection results
+ */
+export function detectUrgency(text) {
+  const hasUrgencySection = URGENCY_PATTERNS.urgencySection.test(text);
+  const urgencyMatches = text.match(URGENCY_PATTERNS.urgencyLanguage) || [];
+  const timePressureMatches = text.match(URGENCY_PATTERNS.timePressure) || [];
+
+  return {
+    hasUrgencySection,
+    hasUrgencyLanguage: urgencyMatches.length > 0,
+    urgencyCount: urgencyMatches.length,
+    hasTimePressure: timePressureMatches.length > 0,
+    indicators: [
+      hasUrgencySection && 'Dedicated "Why Now" section',
+      urgencyMatches.length > 0 && `${urgencyMatches.length} urgency indicators`,
+      timePressureMatches.length > 0 && 'Time pressure/deadline mentioned'
     ].filter(Boolean)
   };
 }

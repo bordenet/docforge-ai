@@ -93,6 +93,26 @@ export const TIMELINE_PATTERNS = {
 };
 
 // ============================================================================
+// Alternatives Considered Patterns
+// ============================================================================
+
+export const ALTERNATIVES_PATTERNS = {
+  alternativesSection: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(alternative|option|why.?this|comparison|considered)/im,
+  alternativesLanguage: /\b(alternative|option|instead|compared|versus|vs\.?|over|rather.than|considered|rejected|evaluated|chose|chosen)\b/gi,
+  doNothingOption: /\b(do.?nothing|status.?quo|no.?change|maintain.?current|keep.?existing)\b/gi
+};
+
+// ============================================================================
+// Why Now / Urgency Patterns
+// ============================================================================
+
+export const URGENCY_PATTERNS = {
+  urgencySection: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(why.?now|urgency|timing|window)/im,
+  urgencyLanguage: /\b(why.?now|urgent|window|opportunity|deadline|expire|time.?sensitive|competitive|first.?mover|market.?timing)\b/gi,
+  timePressure: /\b(before|by|within|deadline|end.?of|q[1-4]|eoy|eoq|this.?quarter|this.?month|this.?year)\b/gi
+};
+
+// ============================================================================
 // Word Count Limits
 // ============================================================================
 

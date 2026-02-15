@@ -10,7 +10,19 @@ The user has provided the following information:
 
 **Problems to Address:** {{PROBLEM}}
 
-**Additional Context:** {{CONTEXT}}
+**Target User Persona:** {{USER_PERSONA}}
+
+**Background & Context:** {{CONTEXT}}
+
+**Competitors & Alternatives:** {{COMPETITORS}}
+
+**Customer Evidence & Research:** {{CUSTOMER_EVIDENCE}}
+
+**Goals & Success Metrics:** {{GOALS}}
+
+**High-Level Requirements:** {{REQUIREMENTS}}
+
+**Constraints & Dependencies:** {{CONSTRAINTS}}
 
 ## Your Task
 
@@ -184,23 +196,54 @@ Answer the top 3 questions a customer would ask:
 2. **"How is this different from alternatives?"** → {Specific differentiation}
 3. **"How do I get started?"** → {First 3 steps}
 
-### 5.2 Customer "Aha!" Moment
-If the user provided customer quotes or interview data, include a real quote here. Otherwise, ask the user:
+### 5.2 Customer Evidence & Research
 
-> **ASK THE USER:** "Do you have any customer quotes or interview feedback about this problem? If not, I'll skip this section and you can add quotes later."
+**REQUIRED: Ground your PRD in real customer data, not assumptions.**
 
-If the user provides a quote, format it as:
+Include at least ONE of the following evidence types:
+- **Customer Interviews:** "In 8 of 12 customer interviews, users cited X as their top frustration"
+- **Support Data:** "37% of support tickets in Q4 related to this problem (source: Zendesk)"
+- **Analytics Data:** "Only 23% of users complete the onboarding flow (source: Mixpanel)"
+- **NPS/Survey Feedback:** "This feature was the #2 request in our Q3 NPS follow-up survey"
+- **Competitive Loss Data:** "We lost 5 deals in Q4 citing lack of feature X (source: Salesforce)"
+
+> **ASK THE USER:** "What customer evidence do you have for this problem? (interviews, support tickets, analytics, surveys, competitive losses). If none yet, I'll mark this as 'TBD - pending research' and you should validate before development."
+
+### 5.3 Customer "Aha!" Moment
+If the user provided customer quotes or interview data, include a real quote here:
+
 > "[Actual customer quote about the problem or desired outcome]" — [Customer Name/Role], [Context: Interview/Survey/Support Ticket, Date]
 
 ⚠️ **DO NOT fabricate customer quotes.** Only include quotes the user provides or mark this section as "TBD - pending customer research."
 
-## 6. Proposed Solution
+## 6. Competitive Landscape
+
+**REQUIRED: Understand how this product/feature compares to alternatives.**
+
+### 6.1 Direct Competitors
+List 2-3 direct competitors or alternative solutions users currently use:
+
+| Competitor/Alternative | What They Offer | Our Differentiation |
+|------------------------|-----------------|---------------------|
+| {Competitor 1} | {Their approach} | {How we're different/better - be specific} |
+| {Competitor 2} | {Their approach} | {How we're different/better - be specific} |
+
+### 6.2 Why Users Choose Alternatives Today
+- What pain points drive users to competitors?
+- What would make them switch to us?
+
+### 6.3 Competitive Moat
+What makes our approach defensible? (e.g., data advantage, integration ecosystem, cost structure, UX)
+
+> **ASK THE USER:** "Who are the main competitors or alternatives your users consider? If you're not sure, I can help identify them based on the problem space."
+
+## 7. Proposed Solution
 {High-level description of what we're building}
 
-### 6.1 Core Functionality
+### 7.1 Core Functionality
 {Key features and capabilities}
 
-### 6.2 Alternatives Considered
+### 7.2 Alternatives Considered
 
 **REQUIRED: For every major feature, list at least one rejected approach.**
 
@@ -215,29 +258,29 @@ Example:
 | Build custom ML model | 6-month timeline vs 2-week API integration | Less customization, vendor dependency |
 | Manual review process | Doesn't scale past 100 requests/day | No 24/7 availability |
 
-### 6.3 User Experience
+### 7.3 User Experience
 {How will users interact with this?}
 
-### 6.4 Key Workflows
+### 7.4 Key Workflows
 {Main user journeys}
 
-## 7. Scope
+## 8. Scope
 {What's in and out of scope}
 
-### 7.1 In Scope
+### 8.1 In Scope
 {What we're building in this effort}
 
-### 7.2 Out of Scope
+### 8.2 Out of Scope
 {What we're explicitly NOT building}
 
-### 7.3 Future Considerations
+### 8.3 Future Considerations
 {What might come later}
 
-## 8. Requirements
+## 9. Requirements
 
 **CRITICAL: Tag each requirement for reversibility and traceability.**
 
-### 8.1 Functional Requirements
+### 9.1 Functional Requirements
 
 For EACH requirement, provide:
 - **ID:** FR1, FR2, etc.
@@ -255,7 +298,7 @@ Example:
 | FR1 | User can upload files up to 100MB | P1 | 🔄 Two-Way | Given a 50MB file, When uploaded, Then stored in <5s | Given a 150MB file, When uploaded, Then show "File exceeds 100MB limit" |
 | FR2 | API contract with PaymentCo | P2 | 🚪 One-Way | Given valid payment, When submitted, Then receive confirmation | Given network timeout, When submitted, Then retry 3x then fail gracefully |
 
-### 8.2 Non-Functional Requirements
+### 9.2 Non-Functional Requirements
 
 **REQUIRED: Address ALL 4 NFR categories with measurable thresholds:**
 
@@ -272,10 +315,10 @@ Each NFR must include:
 - **Threshold:** Specific measurable value
 - **Measurement:** How it will be verified (e.g., "Datadog p95 dashboard", "penetration test report")
 
-### 8.3 Constraints
+### 9.3 Constraints
 {Technical, business, or regulatory constraints - list specific dependencies, assumptions, blockers, and prerequisites}
 
-## 9. User Personas
+## 10. User Personas
 
 **REQUIRED: Define at least 2 distinct user types with depth.**
 
@@ -287,7 +330,7 @@ For EACH persona, provide:
 - **Scenarios:** 1-2 concrete usage scenarios
 
 Example:
-### 9.1 Primary Persona: Operations Manager
+### 10.1 Primary Persona: Operations Manager
 - **Description:** Mid-level manager overseeing 10-20 team members, uses system daily
 - **Pain Points:** Spends 3+ hours/week manually compiling reports; data is often stale by the time it reaches stakeholders
 - **Goals:** Reduce reporting time to <30 min/week; access real-time data
@@ -295,7 +338,7 @@ Example:
   - Monday morning: Pulls weekly performance dashboard for team standup
   - End of month: Generates executive summary for leadership review
 
-### 9.2 Secondary Persona: Executive Sponsor
+### 10.2 Secondary Persona: Executive Sponsor
 - **Description:** VP-level, reviews dashboards weekly, needs high-level insights
 - **Pain Points:** Too much detail, not enough actionable summary
 - **Goals:** Get key insights in <5 minutes; identify issues requiring intervention
@@ -303,7 +346,7 @@ Example:
   - Weekly: Reviews KPI dashboard on mobile during commute
   - Quarterly: Deep-dives into trend analysis for board presentation
 
-## 10. Stakeholders
+## 11. Stakeholders
 
 **Mutation 4: Stakeholder Impact Requirements**
 
@@ -314,13 +357,13 @@ For EACH stakeholder group, specify:
 - **Success Criteria:** How they'll measure success
 
 Example:
-### 10.1 Customer Support Team
+### 11.1 Customer Support Team
 - **Role:** Handle customer inquiries and feedback
 - **Impact:** Workload reduced from 200 emails/day to 50 emails/day (75% reduction)
 - **Needs:** Training on new feedback categorization system, access to analytics dashboard
 - **Success Criteria:** Average response time <2 hours, customer satisfaction >90%
 
-## 11. Timeline and Milestones
+## 12. Timeline and Milestones
 
 ⚠️ **Use relative timeframes, NOT specific calendar dates.**
 
@@ -342,7 +385,7 @@ If the user needs specific dates, ask:
 | Build | Week 5-10 | {activities} | {criteria} |
 | Pilot | Week 11-12 | {activities} | {criteria} |
 
-## 12. Risks and Mitigation
+## 13. Risks and Mitigation
 
 For EACH risk, provide:
 - **Risk:** Specific description (not generic "we might run late")
@@ -356,7 +399,7 @@ Example:
 |------|------|--------|------------|-------------|
 | Third-party API rate limits exceeded during peak | Medium | High | Pre-negotiate higher limits, implement request queuing | Fall back to batch processing mode |
 
-## 13. Traceability Summary
+## 14. Traceability Summary
 
 **REQUIRED: Map every requirement back to a problem and forward to a metric.**
 
@@ -367,19 +410,19 @@ Example:
 
 **Validation:** If a Problem has no Requirements, the PRD is incomplete. If a Requirement has no Metric, success cannot be measured.
 
-## 14. Open Questions
+## 15. Open Questions
 {What needs to be resolved}
 
-## 15. Known Unknowns & Dissenting Opinions
+## 16. Known Unknowns & Dissenting Opinions
 
 **REQUIRED: Document unresolved debates and disagreements.**
 
-### 15.1 Known Unknowns
+### 16.1 Known Unknowns
 What we don't know yet that could change the approach:
 - {Unknown 1}: How will we learn the answer? By when?
 - {Unknown 2}: What's our fallback if we can't resolve?
 
-### 15.2 Dissenting Opinions Log
+### 16.2 Dissenting Opinions Log
 Document the top 2 unresolved debates between stakeholders:
 
 | Topic | Position A | Position B | Decision | Rationale |
@@ -451,12 +494,12 @@ Your PRD will be scored across **5 dimensions totaling 100 points**. Understandi
 | **Technical Quality** | 15 pts | Non-functional requirements, acceptance criteria, traceability |
 | **Strategic Viability** | 20 pts | Leading/lagging indicators, kill criteria, alternatives, dissenting opinions |
 
-### Section Weights (14 Required Sections)
+### Section Weights (16 Required Sections)
 
 | Weight | Sections |
 |--------|----------|
-| **2 pts each (high priority)** | Executive Summary, Problem Statement, Value Proposition, Goals/Objectives, Customer FAQ, Proposed Solution, Requirements |
-| **1.5 pts each (medium)** | Scope, Stakeholders |
+| **2 pts each (high priority)** | Executive Summary, Problem Statement, Value Proposition, Goals/Objectives, Customer FAQ, Competitive Landscape, Proposed Solution, Requirements |
+| **1.5 pts each (medium)** | Scope, User Personas, Stakeholders |
 | **1 pt each (standard)** | Timeline, Risks/Mitigation, Traceability Summary, Open Questions, Known Unknowns |
 
 ### Score Calibration
@@ -485,7 +528,7 @@ Your PRD will be scored across **5 dimensions totaling 100 points**. Understandi
 ### What Earns You Points (Strengths)
 
 **Document Structure (+20 pts max):**
-- All 15 sections present with proper headers
+- All 16 sections present with proper headers
 - Clear hierarchy and organization (H1 for title, H2 for sections, H3 for subsections)
 - Numbered sections for traceability
 - Consistent bullet formatting (use dashes `-` consistently, NOT mixed with `*`)
@@ -521,20 +564,24 @@ Your PRD will be scored across **5 dimensions totaling 100 points**. Understandi
 - Door type marked (🚪 One-Way or 🔄 Two-Way)
 - Traceability: Problem → Requirement → Metric
 
-**Strategic Viability (+20 pts max):** Broken into 4 sub-dimensions:
-- **Metric Validity (0-6 pts):**
+**Strategic Viability (+20 pts max):** Broken into 5 sub-dimensions:
+- **Competitive Analysis (0-4 pts):**
+  - Competitive Landscape section present with 2+ competitors: +2 pts
+  - Clear differentiation articulated for each competitor: +1 pt
+  - Competitive moat/defensibility explained: +1 pt
+- **Metric Validity (0-5 pts):**
   - Leading indicators (predictive metrics like "adoption rate", "activation", "time to value"): +2 pts
   - Counter-metrics (guardrail metrics, "must not degrade", "no decrease in"): +2 pts
-  - Source of truth defined (Mixpanel, Amplitude, Datadog, Salesforce, "measured via"): +2 pts for 2+ sources
-- **Scope Realism (0-5 pts):**
+  - Source of truth defined (Mixpanel, Amplitude, Datadog, Salesforce, "measured via"): +1 pt for 2+ sources
+- **Scope Realism (0-4 pts):**
   - Kill switch/failure criteria ("kill criteria", "pivot or persevere", "rollback plan"): +2 pts
-  - Door type tagging (🚪 One-Way Door, 🔄 Two-Way Door, or "irreversible"/"reversible"): +2 pts
+  - Door type tagging (🚪 One-Way Door, 🔄 Two-Way Door, or "irreversible"/"reversible"): +1 pt
   - Alternatives considered section with rejected approaches: +1 pt
-- **Risk & Mitigation Quality (0-5 pts):**
-  - Risk section with specific mitigations (not just "risks"): +3 pts
+- **Risk & Mitigation Quality (0-4 pts):**
+  - Risk section with specific mitigations (not just "risks"): +2 pts
   - Dissenting opinions or known unknowns documented: +2 pts
-- **Traceability (0-4 pts):**
-  - Traceability section present: +2 pts
+- **Traceability (0-3 pts):**
+  - Traceability section present: +1 pt
   - Requirements link to Problem IDs (P1 → FR1) and Metric IDs (FR1 → M1): +2 pts for 3+ links
 
 ---
@@ -561,7 +608,7 @@ CRITICAL - Your PRD must be COPY-PASTE READY:
 - The user will paste your ENTIRE response directly into the tool
 </output_rules>
 
-### Required 15 Sections (in order)
+### Required 16 Sections (in order)
 
 | Section | Content | Format |
 |---------|---------|--------|
@@ -571,16 +618,17 @@ CRITICAL - Your PRD must be COPY-PASTE READY:
 | ## 3. Value Proposition | Customer AND company benefits, quantified | H2 + subsections |
 | ## 4. Goals and Objectives | Business/user goals, metrics with baselines/targets, kill switch | H2 + subsections |
 | ## 5. Customer FAQ | External FAQ + "Aha!" moment quote | H2 + subsections |
-| ## 6. Proposed Solution | Core functionality, alternatives considered, workflows | H2 + subsections |
-| ## 7. Scope | In scope, out of scope, future considerations | H2 + subsections |
-| ## 8. Requirements | FR/NFR with door type, success AND failure ACs | H2 + tables |
-| ## 9. User Personas | 2+ user types with pain points, goals, scenarios | H2 + subsections |
-| ## 10. Stakeholders | Role, impact, needs, success criteria | H2 + subsections |
-| ## 11. Timeline | High-level phases | H2 + table or list |
-| ## 12. Risks and Mitigation | Risk, probability, impact, mitigation, contingency | H2 + table |
-| ## 13. Traceability Summary | Problem → Requirements → Metrics mapping | H2 + table |
-| ## 14. Open Questions | Unresolved items | H2 + list |
-| ## 15. Known Unknowns & Dissenting Opinions | Unresolved debates, dissenting views | H2 + subsections |
+| ## 6. Competitive Landscape | Competitors, differentiation, competitive moat | H2 + subsections |
+| ## 7. Proposed Solution | Core functionality, alternatives considered, workflows | H2 + subsections |
+| ## 8. Scope | In scope, out of scope, future considerations | H2 + subsections |
+| ## 9. Requirements | FR/NFR with door type, success AND failure ACs | H2 + tables |
+| ## 10. User Personas | 2+ user types with pain points, goals, scenarios | H2 + subsections |
+| ## 11. Stakeholders | Role, impact, needs, success criteria | H2 + subsections |
+| ## 12. Timeline | High-level phases | H2 + table or list |
+| ## 13. Risks and Mitigation | Risk, probability, impact, mitigation, contingency | H2 + table |
+| ## 14. Traceability Summary | Problem → Requirements → Metrics mapping | H2 + table |
+| ## 15. Open Questions | Unresolved items | H2 + list |
+| ## 16. Known Unknowns & Dissenting Opinions | Unresolved debates, dissenting views | H2 + subsections |
 
 ---
 

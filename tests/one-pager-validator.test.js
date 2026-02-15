@@ -11,7 +11,10 @@ import {
   detectCircularLogic,
   detectBaselineTarget,
   detectScope,
-  scoreProblemClarity
+  scoreProblemClarity,
+  scoreSolutionQuality,
+  detectAlternatives,
+  detectUrgency
 } from '../plugins/one-pager/js/validator.js';
 
 describe('One-Pager Validator', () => {
@@ -153,6 +156,113 @@ Reduce churn to 10%.`;
       const r1 = validateOnePager(text);
       const r2 = validateDocument(text);
       expect(r1.totalScore).toBe(r2.totalScore);
+    });
+  });
+
+  describe('detectAlternatives', () => {
+    it('should detect alternatives section', () => {
+      const text = '## Alternatives Considered\nWe evaluated Option A, Option B, and doing nothing.';
+      const result = detectAlternatives(text);
+      expect(result.hasAlternativesSection).toBe(true);
+    });
+
+    it('should detect alternatives language', () => {
+      const text = 'We chose this approach instead of Option B because it is faster. Compared to the status quo, this saves 20%.';
+      const result = detectAlternatives(text);
+      expect(result.hasAlternativesLanguage).toBe(true);
+    });
+
+    it('should detect do-nothing option', () => {
+      const text = 'If we do nothing, we lose $1M annually. The status quo is not sustainable.';
+      const result = detectAlternatives(text);
+      expect(result.hasDoNothingOption).toBe(true);
+    });
+
+    it('should return false when no alternatives mentioned', () => {
+      const text = '## Solution\nBuild the system.';
+      const result = detectAlternatives(text);
+      expect(result.hasAlternativesSection).toBe(false);
+      expect(result.hasAlternativesLanguage).toBe(false);
+    });
+  });
+
+  describe('detectUrgency', () => {
+    it('should detect urgency section', () => {
+      const text = '## Why Now\nWe have a limited window of opportunity before the market shifts.';
+      const result = detectUrgency(text);
+      expect(result.hasUrgencySection).toBe(true);
+    });
+
+    it('should detect urgency language', () => {
+      const text = 'This is urgent because the deadline is Q4 2024. The window of opportunity closes soon.';
+      const result = detectUrgency(text);
+      expect(result.hasUrgencyLanguage).toBe(true);
+    });
+
+    it('should detect time pressure', () => {
+      const text = 'We must complete this before end of Q2. The deadline is June 30th.';
+      const result = detectUrgency(text);
+      expect(result.hasTimePressure).toBe(true);
+    });
+
+    it('should return false when no urgency mentioned', () => {
+      const text = '## Problem\nWe have a problem.';
+      const result = detectUrgency(text);
+      expect(result.hasUrgencySection).toBe(false);
+      expect(result.hasUrgencyLanguage).toBe(false);
+    });
+  });
+
+  describe('scoreSolutionQuality with alternatives', () => {
+    it('should give bonus points for alternatives considered', () => {
+      const textWithAlternatives = `## Problem
+Customer churn is 25% monthly.
+
+## Solution
+Implement retention program. We chose this over doing nothing because the status quo costs $500K/year.
+
+## Goals
+Reduce churn from 25% to 10%.`;
+
+      const textWithoutAlternatives = `## Problem
+Customer churn is 25% monthly.
+
+## Solution
+Implement retention program.
+
+## Goals
+Reduce churn from 25% to 10%.`;
+
+      const scoreWith = scoreSolutionQuality(textWithAlternatives);
+      const scoreWithout = scoreSolutionQuality(textWithoutAlternatives);
+
+      // Document with alternatives should score higher
+      expect(scoreWith.score).toBeGreaterThan(scoreWithout.score);
+    });
+  });
+
+  describe('scoreProblemClarity with urgency', () => {
+    it('should give bonus points for urgency/Why Now', () => {
+      const textWithUrgency = `## Problem Statement
+Customer churn is 25% monthly, causing $500K revenue loss.
+
+## Cost of Doing Nothing
+We lose $6M annually if we don't act.
+
+## Why Now
+The window to act is closing - competitors launch similar features in Q3.`;
+
+      const textWithoutUrgency = `## Problem Statement
+Customer churn is 25% monthly, causing $500K revenue loss.
+
+## Cost of Doing Nothing
+We lose $6M annually if we don't act.`;
+
+      const scoreWith = scoreProblemClarity(textWithUrgency);
+      const scoreWithout = scoreProblemClarity(textWithoutUrgency);
+
+      // Document with urgency should score higher
+      expect(scoreWith.score).toBeGreaterThan(scoreWithout.score);
     });
   });
 });

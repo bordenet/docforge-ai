@@ -74,7 +74,8 @@ CRITICAL - Your final document must be COPY-PASTE READY:
 |---------|-------------------|--------|
 | Problem Statement | Choose clearer root cause articulation | 2-3 sentences |
 | Cost of Doing Nothing | REQUIRED. Combine specific $ or % from both | Quantified impact |
-| Proposed Solution | Merge high-level approaches, add alternatives rationale | Strategic, no impl details |
+| Why Now | REQUIRED. Combine urgency/timing from both | 1-2 sentences |
+| Proposed Solution & Alternatives | Merge high-level approaches, include "do nothing" rationale | Strategic, no impl details |
 | Key Goals/Benefits | Select more measurable outcomes | [Baseline] → [Target] |
 | The Investment | Use more specific effort + cost | Quantified |
 | Risks & Assumptions | Combine key assumptions and risks | Bullets with mitigations |

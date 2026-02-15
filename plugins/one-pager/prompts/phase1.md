@@ -61,7 +61,8 @@ Flag these issues BEFORE drafting:
 | # Project/Feature Name | Clear, descriptive title | H1 heading |
 | ## Problem Statement | ROOT CAUSE, not symptoms | 2-3 sentences |
 | ## Cost of Doing Nothing | REQUIRED. Revenue loss, churn, productivity loss | Specific $ or % |
-| ## Proposed Solution & Alternatives | High-level solution + "Why this over alternatives?" | 2-3 sentences + rationale |
+| ## Why Now | REQUIRED. Window of opportunity, urgency, timing justification | 1-2 sentences |
+| ## Proposed Solution & Alternatives | High-level solution + "Why this over alternatives (including do nothing)?" | 2-3 sentences + rationale |
 | ## Key Goals/Benefits | Outcomes, not features (apply "So What?" test) | [Baseline] → [Target] bullets |
 | ## The Investment | Effort + Cost | e.g., "2 engineers, 3 sprints, $15k" |
 | ## Risks & Assumptions | Key assumption + Top risk with mitigation | Bullets |
@@ -133,16 +134,16 @@ Your one-pager will be scored across **4 dimensions totaling 100 points**. Under
 
 | Dimension | Max Points | What Gets Scored |
 |-----------|-----------|------------------|
-| **Problem Clarity** | 30 pts | Problem statement quality, cost of inaction, customer focus, quantification |
-| **Solution Quality** | 25 pts | Solution addresses problem, measurable goals, high-level (not implementation), alternatives considered |
+| **Problem Clarity** | 30 pts | Problem statement (8), cost of inaction (10), customer focus (8), **Why Now/urgency (4)** |
+| **Solution Quality** | 25 pts | Solution addresses problem (8), measurable goals (8), high-level (5), **alternatives considered (4)** |
 | **Scope Discipline** | 25 pts | In/out scope clearly defined, success metrics with baselines/targets, SMART criteria |
-| **Completeness** | 20 pts | All 10 required sections present, stakeholders identified, timeline included |
+| **Completeness** | 20 pts | All required sections present, stakeholders identified, timeline included |
 
-### Section Weights (10 Required Sections)
+### Section Weights (11 Required Sections)
 
 | Weight | Sections |
 |--------|----------|
-| **2 pts each (high priority)** | Problem Statement, Cost of Doing Nothing, Proposed Solution, Goals/Benefits, Scope, Investment |
+| **2 pts each (high priority)** | Problem Statement, Cost of Doing Nothing, Why Now, Proposed Solution & Alternatives, Goals/Benefits, Scope, Investment |
 | **1 pt each (standard)** | Success Metrics, Stakeholders, Timeline, Risks & Assumptions |
 
 ### Score Calibration
@@ -183,16 +184,16 @@ Your one-pager will be scored across **4 dimensions totaling 100 points**. Under
 ### What Earns You Points (Strengths)
 
 **Problem Clarity (+30 pts max):**
-- Clear ROOT CAUSE identified (not symptoms)
-- Cost of Doing Nothing quantified in $ or %
-- Customer/business impact stated with data
-- Urgency established ("why now?")
+- Clear ROOT CAUSE identified (not symptoms) - 8 pts
+- Cost of Doing Nothing quantified in $ or % - 10 pts
+- Customer/business impact stated with data - 8 pts
+- **Why Now section (+4 pts):** Urgency keywords (why now, urgent, window, opportunity, deadline, time-sensitive) + time pressure (before, by, deadline, Q1-Q4, EOY)
 
 **Solution Quality (+25 pts max):**
-- Solution addresses the stated problem directly
-- **High-level approach (no implementation details):** The validator penalizes these banned implementation terms: code, function, class, method, api, database, sql, algorithm, library, framework
-- Alternatives considered ("Why this over X?")
-- Measurable goals with baselines
+- Solution addresses the stated problem directly - 8 pts
+- **High-level approach (no implementation details) - 5 pts:** The validator penalizes banned implementation terms: code, function, class, method, api, database, sql, algorithm, library, framework
+- **Alternatives considered (+4 pts):** The validator detects: alternative, option, instead, compared, versus, vs, chose, rejected, evaluated, and "do nothing/status quo" mentions
+- Measurable goals with baselines - 8 pts
 
 **Scope Discipline (+25 pts max):**
 - In-scope AND Out-of-scope clearly stated
@@ -201,7 +202,7 @@ Your one-pager will be scored across **4 dimensions totaling 100 points**. Under
 - No scope creep or vague boundaries
 
 **Completeness (+20 pts max):**
-- All 10 sections present (with correct weights: Problem, Cost of DN, Solution, Goals, Scope, Investment = 2 pts; Metrics, Stakeholders, Timeline, Risks = 1 pt)
+- All 11 sections present (with correct weights: Problem, Cost of DN, Why Now, Solution & Alternatives, Goals, Scope, Investment = 2 pts; Metrics, Stakeholders, Timeline, Risks = 1 pt)
 - **Stakeholder Detection:** The validator looks for:
   - RACI roles: responsible, accountable, consulted, informed
   - Cross-functional concerns: finance, FP&A, financial.planning, HR, people.team, people.ops, legal, compliance, CFO, CTO, CEO, VP, Director

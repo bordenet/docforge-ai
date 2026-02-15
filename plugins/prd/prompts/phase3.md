@@ -43,8 +43,9 @@ Compare the two versions below and create a final PRD that:
 Before finalizing, verify:
 
 **Structure & Completeness (20 pts)**
-- ✅ All 14 required sections present (Executive Summary through Dissenting Opinions)
-- ✅ Customer FAQ section appears BEFORE Proposed Solution (Working Backwards)
+- ✅ All 16 required sections present (Executive Summary through Dissenting Opinions)
+- ✅ Customer FAQ section appears BEFORE Competitive Landscape and Proposed Solution (Working Backwards)
+- ✅ Competitive Landscape includes 2+ competitors with differentiation
 - ✅ Traceability Summary table links Problems → Requirements → Metrics
 
 **Requirements Quality (25 pts)**
@@ -54,6 +55,8 @@ Before finalizing, verify:
 - ✅ All requirements numbered (FR1, FR2, NFR1, etc.) for traceability
 
 **Strategic Viability (20 pts)**
+- ✅ Competitive Landscape section with 2+ competitors and differentiation
+- ✅ Competitive moat/defensibility articulated
 - ✅ Success metrics include Leading Indicators (not just Lagging)
 - ✅ Every metric has Counter-Metric to prevent perverse incentives
 - ✅ Every metric has defined Source of Truth (Mixpanel, Datadog, etc.)
@@ -128,7 +131,7 @@ CRITICAL - Your final PRD must be COPY-PASTE READY:
 - The user will paste your ENTIRE response directly into the tool
 </output_rules>
 
-### Required 14 Sections (in order)
+### Required 16 Sections (in order)
 
 | Section | Content | Format |
 |---------|---------|--------|
@@ -137,16 +140,18 @@ CRITICAL - Your final PRD must be COPY-PASTE READY:
 | ## 2. Problem Statement | Current state + impact | H2 + subsections |
 | ## 3. Value Proposition | Customer AND company benefits | H2 + subsections |
 | ## 4. Goals and Objectives | Metrics with baselines/targets, kill switch | H2 + subsections |
-| ## 5. Customer FAQ | External FAQ + "Aha!" moment | H2 + subsections |
-| ## 6. Proposed Solution | Core functionality, alternatives | H2 + subsections |
-| ## 7. Scope | In/out of scope | H2 + subsections |
-| ## 8. Requirements | FR/NFR with door type, ACs | H2 + tables |
-| ## 9. Stakeholders | Role, impact, needs | H2 + subsections |
-| ## 10. Timeline | Phases | H2 + table or list |
-| ## 11. Risks and Mitigation | Risk table | H2 + table |
-| ## 12. Traceability Summary | Problem → Requirements → Metrics | H2 + table |
-| ## 13. Open Questions | Unresolved items | H2 + list |
-| ## 14. Known Unknowns & Dissenting Opinions | Debates, dissenting views | H2 + subsections |
+| ## 5. Customer FAQ | External FAQ + customer evidence | H2 + subsections |
+| ## 6. Competitive Landscape | Competitors, differentiation, moat | H2 + subsections |
+| ## 7. Proposed Solution | Core functionality, alternatives | H2 + subsections |
+| ## 8. Scope | In/out of scope | H2 + subsections |
+| ## 9. Requirements | FR/NFR with door type, ACs | H2 + tables |
+| ## 10. User Personas | 2+ user types with pain points | H2 + subsections |
+| ## 11. Stakeholders | Role, impact, needs | H2 + subsections |
+| ## 12. Timeline | Phases | H2 + table or list |
+| ## 13. Risks and Mitigation | Risk table | H2 + table |
+| ## 14. Traceability Summary | Problem → Requirements → Metrics | H2 + table |
+| ## 15. Open Questions | Unresolved items | H2 + list |
+| ## 16. Known Unknowns & Dissenting Opinions | Debates, dissenting views | H2 + subsections |
 | Citation | Tool attribution | Horizontal rule + italic text |
 
 **End with:**

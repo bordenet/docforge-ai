@@ -13,7 +13,9 @@ import {
   detectSuccessMetrics,
   detectSections,
   detectStakeholders,
-  detectTimeline
+  detectTimeline,
+  detectAlternatives,
+  detectUrgency
 } from './validator-detection.js';
 
 // ============================================================================
@@ -31,13 +33,13 @@ export function scoreProblemClarity(text) {
   let score = 0;
   const maxScore = 30;
 
-  // Problem statement exists and is specific (0-10 pts)
+  // Problem statement exists and is specific (0-8 pts)
   const problemDetection = detectProblemStatement(text);
   if (problemDetection.hasProblemSection && problemDetection.hasProblemLanguage) {
-    score += 10;
+    score += 8;
     strengths.push('Clear problem statement with dedicated section');
   } else if (problemDetection.hasProblemLanguage) {
-    score += 6;
+    score += 5;
     issues.push('Problem mentioned but lacks dedicated section');
   } else {
     issues.push('Problem statement missing or unclear - define the specific problem');
@@ -55,12 +57,24 @@ export function scoreProblemClarity(text) {
     issues.push('Missing cost of inaction - explain impact of not solving this problem');
   }
 
-  // Problem is customer/business focused (0-10 pts)
+  // Problem is customer/business focused (0-8 pts)
   if (problemDetection.hasBusinessFocus) {
-    score += 10;
+    score += 8;
     strengths.push('Problem clearly tied to customer/business value');
   } else {
     issues.push('Strengthen customer/business focus - explain why this matters to stakeholders');
+  }
+
+  // Why Now / Urgency established (0-4 pts) - NEW
+  const urgencyDetection = detectUrgency(text);
+  if (urgencyDetection.hasUrgencySection || (urgencyDetection.hasUrgencyLanguage && urgencyDetection.hasTimePressure)) {
+    score += 4;
+    strengths.push('Clear urgency/timing justification ("Why Now")');
+  } else if (urgencyDetection.hasUrgencyLanguage || urgencyDetection.hasTimePressure) {
+    score += 2;
+    issues.push('Some urgency mentioned but not clearly justified - add "Why Now" section');
+  } else {
+    issues.push('Missing "Why Now" - explain the urgency or timing for this initiative');
   }
 
   return {
@@ -86,27 +100,27 @@ export function scoreSolutionQuality(text) {
   let score = 0;
   const maxScore = 25;
 
-  // Solution addresses stated problem (0-10 pts)
+  // Solution addresses stated problem (0-8 pts)
   const solutionDetection = detectSolution(text);
   const problemDetection = detectProblemStatement(text);
 
   if (solutionDetection.hasSolutionSection && problemDetection.hasProblemLanguage) {
-    score += 10;
+    score += 8;
     strengths.push('Solution clearly addresses stated problem');
   } else if (solutionDetection.hasSolutionLanguage) {
-    score += 6;
+    score += 5;
     issues.push('Solution present but connection to problem could be clearer');
   } else {
     issues.push('Solution section missing or unclear');
   }
 
-  // Key goals/benefits are measurable (0-10 pts)
+  // Key goals/benefits are measurable (0-8 pts)
   const goalsDetection = detectMeasurableGoals(text);
   if (goalsDetection.hasMeasurable && goalsDetection.hasGoals) {
-    score += 10;
+    score += 8;
     strengths.push('Goals are measurable and well-defined');
   } else if (goalsDetection.hasGoals) {
-    score += 5;
+    score += 4;
     issues.push('Goals defined but not measurable - add specific metrics');
   } else {
     issues.push('Goals/benefits missing - define what success looks like');
@@ -118,6 +132,18 @@ export function scoreSolutionQuality(text) {
     strengths.push('Solution stays at appropriate high-level');
   } else if (solutionDetection.hasImplementationDetails) {
     issues.push('Solution includes too much implementation detail - keep it high-level');
+  }
+
+  // Alternatives considered (0-4 pts) - NEW: Why this solution over others?
+  const alternativesDetection = detectAlternatives(text);
+  if (alternativesDetection.hasAlternativesSection && alternativesDetection.hasDoNothingOption) {
+    score += 4;
+    strengths.push('Alternatives considered including "do nothing" option');
+  } else if (alternativesDetection.hasAlternativesLanguage) {
+    score += 2;
+    issues.push('Alternatives mentioned but not in dedicated section or missing "do nothing" option');
+  } else {
+    issues.push('No alternatives considered - explain why THIS solution over other options');
   }
 
   return {

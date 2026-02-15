@@ -13,14 +13,15 @@ Scrutinize the one-pager document below for **logical soundness** and **decision
 1. **Project/Feature Name**: Clear, descriptive title
 2. **Problem Statement**: Root cause, not symptoms. Specific and quantified.
 3. **Cost of Doing Nothing** (REQUIRED): Quantified business impact—specific dollar amounts or percentages
-4. **Proposed Solution & Alternatives**: What AND why this over other options
-5. **Key Goals/Benefits**: Outcomes with [Baseline] → [Target] format (not features)
-6. **The Investment** (REQUIRED): Effort + cost required to execute
-7. **Risks & Assumptions**: What must be true? What could kill this?
-8. **Scope**: In-scope AND out-of-scope (brief, no padding)
-9. **Success Metrics**: [Current] → [Target] by [Date]
-10. **Key Stakeholders**: Owner and approvers
-11. **Timeline**: Key milestones with dates
+4. **Why Now** (REQUIRED): Timing justification—window of opportunity, urgency, deadline
+5. **Proposed Solution & Alternatives**: What AND why this over other options (including "do nothing")
+6. **Key Goals/Benefits**: Outcomes with [Baseline] → [Target] format (not features)
+7. **The Investment** (REQUIRED): Effort + cost required to execute
+8. **Risks & Assumptions**: What must be true? What could kill this?
+9. **Scope**: In-scope AND out-of-scope (brief, no padding)
+10. **Success Metrics**: [Current] → [Target] by [Date]
+11. **Key Stakeholders**: Owner and approvers
+12. **Timeline**: Key milestones with dates
 
 ## ⚠️ CRITICAL: AI Slop Detection Checklist
 
@@ -50,14 +51,16 @@ Scrutinize the one-pager document below for **logical soundness** and **decision
 Score the document on these 4 dimensions (MUST match validator.js exactly):
 
 ### 1. Problem Clarity (30 points)
-- **Problem Statement (10 pts)**: Dedicated problem section with root cause, not symptoms
+- **Problem Statement (8 pts)**: Dedicated problem section with root cause, not symptoms
 - **Cost of Doing Nothing (10 pts)**: Quantified impact—specific $ or %. REQUIRED.
-- **Business Focus (10 pts)**: Tied to customer/business value (keywords: customer, user, revenue, market, strategic)
+- **Business Focus (8 pts)**: Tied to customer/business value (keywords: customer, user, revenue, market, strategic)
+- **Why Now / Urgency (4 pts)**: Timing justification with urgency keywords (deadline, window, opportunity, time-sensitive)
 
 ### 2. Solution Quality (25 points)
-- **Solution Addresses Problem (10 pts)**: Dedicated solution section that bridges to stated problem
-- **Measurable Goals (10 pts)**: Goals in [Baseline] → [Target] format, not vague claims
+- **Solution Addresses Problem (8 pts)**: Dedicated solution section that bridges to stated problem
+- **Measurable Goals (8 pts)**: Goals in [Baseline] → [Target] format, not vague claims
 - **High-Level Approach (5 pts)**: Solution stays strategic (no implementation details like code, API, database)
+- **Alternatives Considered (4 pts)**: Explains why this solution over alternatives, including "do nothing" option
 
 ### 3. Scope Discipline (25 points)
 - **In-Scope Defined (8 pts)**: Explicit "in-scope" or "we will" statements with dedicated section
@@ -65,15 +68,20 @@ Score the document on these 4 dimensions (MUST match validator.js exactly):
 - **SMART Metrics (8 pts)**: Success metrics with [Current] → [Target] by [Date] format
 
 ### 4. Completeness (20 points)
-- **Required Sections (8 pts)**: Problem, Solution, Goals, Scope, Metrics, Stakeholders, Timeline present
+- **Required Sections (8 pts)**: Problem, Why Now, Solution & Alternatives, Goals, Scope, Metrics, Stakeholders, Timeline present
 - **Stakeholders Identified (6 pts)**: Owner, approvers, RACI roles defined
 - **Timeline Phased (6 pts)**: Milestones with dates, phased approach
 
 ## Calibration Guidance
 
-- **70+ = Decision-ready**: Ready for executive go/no-go
-- **50-69 = Needs work**: Logical gaps or missing critical sections
-- **<50 = Not ready**: Fundamental issues with problem definition or ROI
+| Score Range | Meaning |
+|-------------|---------|
+| **0-40** | Incomplete - missing critical sections or Cost of Doing Nothing |
+| **41-55** | Weak - has structure but circular logic or vague metrics |
+| **56-70** | Average - covers basics, needs better quantification |
+| **71-80** | Good - solid one-pager, minor improvements needed |
+| **81-90** | Strong - crisp, actionable, would pass VP review |
+| **91-100** | Exceptional - exemplary clarity and strategic thinking |
 
 ## Your Process
 
@@ -105,7 +113,8 @@ CRITICAL - Your final document must be COPY-PASTE READY:
 |---------|---------|--------|
 | Problem Statement | Root cause, not symptoms | 2-3 sentences |
 | Cost of Doing Nothing | REQUIRED. Specific $ or % | Quantified impact |
-| Proposed Solution | High-level + why over alternatives | Strategic, no implementation details |
+| Why Now | REQUIRED. Urgency/timing justification | 1-2 sentences |
+| Proposed Solution & Alternatives | High-level + why over alternatives (incl. do nothing) | Strategic, no impl details |
 | Key Goals/Benefits | Outcomes with So What test | [Baseline] → [Target] |
 | The Investment | Effort + Cost | e.g., "2 engineers, 3 sprints" |
 | Risks & Assumptions | Key assumption + Top risk with mitigation | Bullets |

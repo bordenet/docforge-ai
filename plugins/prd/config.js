@@ -42,7 +42,24 @@ export const prdPlugin = {
       type: 'textarea',
       required: false,
       rows: 3,
-      placeholder: 'Market context, competitive landscape, strategic alignment...',
+      placeholder: 'Market context, strategic alignment, why now...',
+    },
+    {
+      id: 'competitors',
+      label: 'Competitors & Alternatives',
+      type: 'textarea',
+      required: false,
+      rows: 2,
+      placeholder: 'Who are the main competitors? What alternatives do users currently use?',
+    },
+    {
+      id: 'customerEvidence',
+      label: 'Customer Evidence & Research',
+      type: 'textarea',
+      required: false,
+      rows: 3,
+      placeholder:
+        'Customer interviews, support ticket data, analytics, NPS feedback, competitive losses...',
     },
     {
       id: 'goals',
@@ -50,7 +67,7 @@ export const prdPlugin = {
       type: 'textarea',
       required: false,
       rows: 2,
-      placeholder: 'What does success look like? How will it be measured?',
+      placeholder: 'What does success look like? Include current baselines if known.',
     },
     {
       id: 'requirements',
