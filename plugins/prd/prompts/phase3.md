@@ -86,7 +86,23 @@ Before finalizing, verify:
 - ✅ Feature flags and rollback triggers defined
 - ✅ Out-of-Scope items include rationale (WHY excluded, not just listed)
 
-### Step 6: Validate
+### Step 6: Generate Stakeholder Pitches
+
+**After finalizing the PRD, offer to generate stakeholder-specific pitch summaries.**
+
+Different stakeholders need different framings:
+
+| Stakeholder | Primary Concern | Pitch Focus | Tone |
+|-------------|-----------------|-------------|------|
+| **VP Engineering** | Technical risk, capacity | Technical architecture, resource requirements, engineering risks | Technical, concise, addresses concerns upfront |
+| **CEO/CPO** | Strategic fit, ROI | Market opportunity, competitive positioning, expected revenue impact | Strategic, data-driven, confident |
+| **CFO** | Budget, ROI | Cost breakdown, expected ROI, timeline to value | Numbers-focused, conservative estimates |
+| **Design Lead** | User experience | User problems, research insights, UX implications | User-centric, evidence-based |
+| **Sales/Marketing** | Positioning, GTM | Competitive advantages, customer pain points addressed, messaging | Customer-facing, benefit-focused |
+
+> **ASK THE USER:** "Would you like me to generate a 1-paragraph pitch summary for any specific stakeholder? (e.g., 'skeptical VP of Engineering', 'CEO focused on growth', 'CFO concerned about costs')"
+
+### Step 7: Validate
 - Confirm with the user that the synthesis captures their intent
 - Make final adjustments based on feedback
 

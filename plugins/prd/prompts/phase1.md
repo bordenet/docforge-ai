@@ -165,10 +165,27 @@ For EACH metric, provide:
 - **Counter-Metric:** What we must NOT degrade (prevents perverse incentives)
 
 **Leading vs Lagging Indicators:**
-- **Lagging:** Revenue, NPS, Churn Rate (outcome measures - too late to act)
-- **Leading:** % users completing first action in <30s, feature adoption rate (predictive - actionable)
 
-Every PRD MUST include at least one Leading Indicator per major goal.
+| Indicator Type | Definition | When to Use | Examples |
+|----------------|------------|-------------|----------|
+| **Leading** | Predictive metrics that signal future outcomes; actionable NOW | Primary focus - these drive decisions | Activation rate, Time to first value, Feature adoption %, Daily active usage |
+| **Lagging** | Outcome metrics that confirm past performance; too late to change | Secondary - validates strategy worked | Revenue, NPS, Churn rate, Customer lifetime value |
+
+**Why Leading Indicators Matter More:**
+- By the time lagging indicators move, it's too late to course-correct
+- Leading indicators give you 30-90 days advance warning
+- They enable "pivot or persevere" decisions BEFORE burning through runway
+
+**Leading Indicator Examples by Product Type:**
+
+| Product Type | Leading Indicators | Lagging Indicators |
+|--------------|-------------------|-------------------|
+| **SaaS/B2B** | Trial-to-paid conversion rate, Feature adoption in first 7 days, Support tickets per user | MRR, Churn rate, NPS |
+| **Consumer App** | DAU/MAU ratio, Time in app, Invite rate | Revenue per user, 90-day retention |
+| **E-commerce** | Add-to-cart rate, Wishlist saves, Browse-to-buy time | GMV, Repeat purchase rate |
+| **Developer Tool** | API calls per user, Docs engagement, Integration completion rate | Paid tier upgrades, Logo retention |
+
+> ⚠️ **RULE:** Every PRD MUST include at least one Leading Indicator per major goal. If you only have lagging indicators, you're flying blind.
 
 ### 4.4 Hypothesis Kill Switch
 

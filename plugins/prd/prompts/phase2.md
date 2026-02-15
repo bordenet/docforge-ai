@@ -141,7 +141,30 @@ Evaluate the **16 required sections** (per Phase1.md):
    - Check for missing failure/edge case ACs
 3. **Ask Clarifying Questions**: Work with the user to fill gaps
 4. **Suggest Improvements**: Recommend specific changes with examples
-5. **Final Output**: Provide the improved PRD as markdown
+5. **Pressure-Test Assumptions**: Challenge the PRD with devil's advocate questions (see below)
+6. **Final Output**: Provide the improved PRD as markdown
+
+## 🔥 Pressure-Testing Section (Devil's Advocate)
+
+**Before finalizing your review, ask these hard questions:**
+
+### Strategic Challenges
+- "What's the strongest argument AGAINST building this?"
+- "If a competitor launched this tomorrow, would we still build it? Why?"
+- "What would have to be true for this to FAIL spectacularly?"
+- "Is this a vitamin (nice-to-have) or a painkiller (must-have)?"
+
+### Scope Challenges
+- "What if we built 20% of this scope and shipped in 2 weeks instead?"
+- "Which requirement, if removed, would barely impact the outcome?"
+- "Are we solving the root cause or a symptom?"
+
+### Assumption Challenges
+- "What customer evidence contradicts our assumptions?"
+- "What if the target user segment is wrong?"
+- "What's the worst interpretation of our success metrics?"
+
+**Include at least 3 pressure-test questions in your review under a "## Pressure-Test Questions" section.** These help Phase 3 and the PM stress-test the PRD before committing resources.
 
 ## Critical Rules
 
@@ -174,8 +197,9 @@ CRITICAL - Your review AND improved PRD must be COPY-PASTE READY:
 | ## Initial Assessment Scores | 5 dimension scores (see table below) | Table |
 | ## Key Issues Identified | Vague terms, missing info, weak areas | Numbered list |
 | ## Suggested Improvements | Specific changes with examples | Numbered list |
+| ## Pressure-Test Questions | 3+ devil's advocate challenges | Numbered list |
 | # {Document Title} | Improved PRD starting here | H1 header |
-| (All 14 PRD sections) | Improved versions of each section | Standard PRD format |
+| (All 16 PRD sections) | Improved versions of each section | Standard PRD format |
 
 **Score Table Format (5 dimensions, 100 pts max):**
 
