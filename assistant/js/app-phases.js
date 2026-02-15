@@ -12,8 +12,6 @@ import { generatePrompt } from '../../shared/js/prompt-generator.js';
 import { renderPhaseContent } from '../../shared/js/views.js';
 import { logger } from '../../shared/js/logger.js';
 import { initDiffModule, handleSaveResponse, showDiffModal } from './app-phases-diff.js';
-import { createClientForPhase } from '../../shared/js/llm-client.js';
-import { Workflow } from '../../shared/js/workflow.js';
 
 /**
  * Update phase tab styles
@@ -40,62 +38,6 @@ export function attachPhaseEventListeners(plugin, project, phase) {
   const responseTextarea = document.getElementById('response-textarea');
   const nextPhaseBtn = document.getElementById('next-phase-btn');
   const exportFinalBtn = document.getElementById('export-final-btn');
-  const autoGenerateBtn = document.getElementById('auto-generate-btn');
-
-  // Auto-generate button (mock mode for testing)
-  if (autoGenerateBtn) {
-    autoGenerateBtn.addEventListener('click', async () => {
-      const progressEl = document.getElementById('generate-progress');
-      const statusEl = document.getElementById('generate-status');
-
-      try {
-        // Show progress
-        if (progressEl) progressEl.classList.remove('hidden');
-        if (statusEl) statusEl.textContent = `Generating with ${phase === 2 ? 'Gemini' : 'Claude'}...`;
-        autoGenerateBtn.disabled = true;
-        autoGenerateBtn.classList.add('opacity-50', 'cursor-not-allowed');
-
-        // Create workflow and execute phase
-        const workflow = new Workflow(project, plugin);
-        workflow.currentPhase = phase;
-
-        const client = createClientForPhase(phase);
-        const result = await workflow.executePhase(client);
-
-        // Update project phases
-        if (!project.phases) project.phases = {};
-        if (!project.phases[phase]) project.phases[phase] = { prompt: '', response: '', completed: false };
-        project.phases[phase].prompt = result.prompt;
-        project.phases[phase].response = result.response;
-        project.phases[phase].completed = true;
-        project.currentPhase = phase + 1;
-
-        // Save to storage
-        await saveProject(plugin.dbName, project);
-
-        // Update UI
-        if (responseTextarea) {
-          responseTextarea.value = result.response;
-          responseTextarea.disabled = false;
-        }
-
-        showToast(`Phase ${phase} generated successfully!`, 'success');
-
-        // Re-render phase content to show completion state
-        const freshProject = await getProject(plugin.dbName, project.id);
-        document.getElementById('phase-content').innerHTML = renderPhaseContent(plugin, freshProject, phase);
-        attachPhaseEventListeners(plugin, freshProject, phase);
-
-      } catch (error) {
-        logger.error('Auto-generate failed', error, 'app-phases');
-        showToast(`Generation failed: ${error.message}`, 'error');
-      } finally {
-        if (progressEl) progressEl.classList.add('hidden');
-        autoGenerateBtn.disabled = false;
-        autoGenerateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-      }
-    });
-  }
 
   // Copy prompt button
   if (copyPromptBtn) {
