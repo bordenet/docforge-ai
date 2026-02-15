@@ -3,6 +3,7 @@
 [![CI](https://github.com/bordenet/docforge-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/bordenet/docforge-ai/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/bordenet/docforge-ai/graph/badge.svg?token=ILlxpHLae5)](https://codecov.io/gh/bordenet/docforge-ai)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Successor to genesis](https://img.shields.io/badge/←_Successor_to-genesis_(archived)-lightgrey)](https://github.com/bordenet/genesis)
 
 Generate business documents with AI critique. Claude drafts, Gemini critiques, Claude synthesizes.
 
@@ -108,7 +109,7 @@ Coverage target: 80%. Current: 87%.
 
 ## Predecessor
 
-DocForge consolidates [Genesis](https://github.com/bordenet/genesis), which ran the same workflow across 9 separate repos. Genesis proved the adversarial pattern works but created maintenance overhead—every bug fix required 9 PRs. DocForge keeps the workflow, drops the duplication.
+DocForge consolidates [Genesis](https://github.com/bordenet/genesis) (now archived), which ran the same workflow across 9 separate repos. Genesis proved the adversarial pattern works but created maintenance overhead—every bug fix required 9 PRs. DocForge keeps the workflow, drops the duplication. The genesis repo remains available for historical reference.
 
 ## License
 
