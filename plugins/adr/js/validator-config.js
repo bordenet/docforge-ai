@@ -288,7 +288,7 @@ export const SIGNOFF_PATTERNS = {
 
 // ADR numbering patterns (enterprise documentation standards)
 export const ADR_NUMBERING_PATTERNS = {
-  titleNumber: /^#+\s*(?:ADR|Decision)[-\s]?(\d{3,4})(?:\s*[:\-])/im,
+  titleNumber: /^#+\s*(?:ADR|Decision)[-\s]?(\d{3,4})(?:\s*[:-])/im,
   fileNumber: /ADR[-_]?(\d{3,4})/gi,
   inlineRef: /\bADR[-\s]?(\d{3,4})\b/gi
 };

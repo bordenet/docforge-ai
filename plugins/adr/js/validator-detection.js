@@ -247,7 +247,7 @@ export function detectDecisionDrivers(text) {
   // Extract drivers section content if present
   let driversCount = 0;
   if (hasSectionHeader) {
-    const driversMatch = text.match(/^#+\s*decision\s+drivers?\b[\s\S]*?(?=^#+\s|\z)/im);
+    const driversMatch = text.match(/^#+\s*decision\s+drivers?\b[\s\S]*?(?=^#+\s|$)/im);
     if (driversMatch) {
       const sectionText = driversMatch[0];
       const bullets = sectionText.match(/^[\s]*[-*•]\s+.+$/gm) || [];

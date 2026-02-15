@@ -17,7 +17,6 @@ import {
   detectAlternatives,
   detectUrgency,
   detectDecisionNeeded,
-  detectVagueQuantifiers,
   detectStakeholderTableQuality,
   detectAlternativesQuality
 } from './validator-detection.js';

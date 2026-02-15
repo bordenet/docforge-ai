@@ -4,6 +4,14 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
+
+// ============================================================================
+// Fixture-Based Regression Tests
+// ============================================================================
+
+import { readFileSync, readdirSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 import {
   validateDocument,
   validateOnePager,
@@ -267,14 +275,6 @@ We lose $6M annually if we don't act.`;
   });
 });
 
-// ============================================================================
-// Fixture-Based Regression Tests
-// ============================================================================
-
-import { readFileSync, readdirSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -362,7 +362,7 @@ describe('One-Pager Fixture Regression Tests', () => {
         .filter(f => parseInt(f.slice(0, 2)) <= 5)
         .map(f => validateOnePager(loadFixture(f)).totalScore);
 
-      const goodScores = fixtureFiles
+      const _goodScores = fixtureFiles
         .filter(f => parseInt(f.slice(0, 2)) >= 6 && parseInt(f.slice(0, 2)) <= 10)
         .map(f => validateOnePager(loadFixture(f)).totalScore);
 

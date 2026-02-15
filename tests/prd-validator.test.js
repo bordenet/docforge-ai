@@ -5,13 +5,21 @@
  */
 
 import { describe, test, expect } from '@jest/globals';
+
+// ============================================================================
+// Fixture-Based Regression Tests
+// ============================================================================
+
+import { readFileSync, readdirSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 import {
   detectSections,
   detectVagueLanguage,
   detectPrioritization,
   countFunctionalRequirements,
   countAcceptanceCriteria,
-  scoreDocumentStructure,
+  scoreDocumentStructure, validatePRD 
 } from '../plugins/prd/js/validator.js';
 
 describe('PRD Validator', () => {
@@ -171,15 +179,6 @@ FR1: Feature
   });
 });
 
-// ============================================================================
-// Fixture-Based Regression Tests
-// ============================================================================
-
-import { readFileSync, readdirSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { validatePRD } from '../plugins/prd/js/validator.js';
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -301,7 +300,7 @@ describe('PRD Fixture Regression Tests', () => {
         .filter(f => parseInt(f.slice(0, 2)) <= 5)
         .map(f => validatePRD(loadFixture(f)).totalScore);
 
-      const goodScores = fixtureFiles
+      const _goodScores = fixtureFiles
         .filter(f => parseInt(f.slice(0, 2)) >= 6 && parseInt(f.slice(0, 2)) <= 10)
         .map(f => validatePRD(loadFixture(f)).totalScore);
 

@@ -318,7 +318,6 @@ export function detectDecisionNeeded(text) {
  */
 export function detectVagueQuantifiers(text) {
   const vagueTermMatches = text.match(VAGUE_QUANTIFIER_PATTERNS.vagueTerms) || [];
-  const vagueRangeMatches = text.match(VAGUE_QUANTIFIER_PATTERNS.vagueRanges) || [];
   const wideRangeMatches = text.match(VAGUE_QUANTIFIER_PATTERNS.wideRangeIndicator) || [];
 
   // Count unique vague terms (case-insensitive)

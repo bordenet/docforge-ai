@@ -60,7 +60,7 @@ export class LLMClient {
 
     // Simulate network latency (500-1500ms)
     const delay = 500 + Math.random() * 1000;
-    await new Promise((resolve) => setTimeout(resolve, delay));
+    await new Promise((resolve) => { setTimeout(resolve, delay); });
 
     logger.info(`Mock ${this.provider} response for phase ${phase}`, 'llm-client');
 
