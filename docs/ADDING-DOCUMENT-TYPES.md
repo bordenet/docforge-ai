@@ -627,11 +627,49 @@ Study these implementations for patterns:
 
 | Plugin | Complexity | Notable Features |
 |--------|------------|------------------|
-| `one-pager` | Simple | Basic sections, 5 dimensions |
+| `one-pager` | Medium | Urgency/Why Now detection, alternatives scoring, circular logic detection |
 | `jd` | Medium | Inclusive language detection, mandated sections |
-| `prd` | Complex | MoSCoW prioritization, acceptance criteria |
+| `prd` | Complex | MoSCoW prioritization, acceptance criteria, customer evidence |
 | `pr-faq` | Complex | Press release structure, FAQ sections |
-| `adr` | Medium | Options analysis, consequences |
+| `adr` | Medium | MADR 3.0 template, decision drivers, confirmation section |
+
+### One-Pager Detection Patterns (2026-02-15)
+
+The one-pager validator demonstrates advanced pattern detection:
+
+```javascript
+// validator-config.js - Alternatives detection
+export const ALTERNATIVES_PATTERNS = {
+  alternativesSection: /^(#+\s*)?(alternative|option|why.?this|comparison)/im,
+  alternativesLanguage: /\b(alternative|option|instead|compared|versus|vs\.?)\b/gi,
+  doNothingOption: /\b(do.?nothing|status.?quo|no.?change)\b/gi
+};
+
+// validator-config.js - Urgency detection
+export const URGENCY_PATTERNS = {
+  urgencySection: /^(#+\s*)?(why.?now|urgency|timing|window)/im,
+  urgencyLanguage: /\b(why.?now|urgent|window|opportunity|deadline)\b/gi,
+  timePressure: /\b(before|by|within|deadline|end.?of|q[1-4])\b/gi
+};
+```
+
+### ADR Detection Patterns (MADR 3.0)
+
+The ADR validator implements MADR 3.0 with decision drivers and confirmation:
+
+```javascript
+// validator-config.js - Decision Drivers detection
+export const DECISION_DRIVERS_PATTERNS = {
+  sectionHeader: /^#+\s*decision\s+drivers?\b/im,
+  driverLanguage: /\b(driver|constraint|concern|quality|requirement)\b/gi
+};
+
+// validator-config.js - Confirmation detection
+export const CONFIRMATION_PATTERNS = {
+  sectionHeader: /^#+\s*confirmation\b/im,
+  validationLanguage: /\b(confirm|validate|verify|review|test|audit)\b/gi
+};
+```
 
 ---
 

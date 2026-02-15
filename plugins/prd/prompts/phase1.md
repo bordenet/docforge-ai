@@ -264,6 +264,31 @@ Example:
 ### 7.4 Key Workflows
 {Main user journeys}
 
+### 7.5 UX Mockups & User Flows
+
+**Include visual references to help stakeholders and engineers understand the user experience.**
+
+**User Flow Diagram:**
+Describe the primary user journey as a sequence of steps:
+1. {Entry point: How user enters the flow}
+2. {Step 2: User action}
+3. {Step 3: System response}
+4. {Step N: Completion/exit point}
+
+**Wireframe/Mockup References:**
+If wireframes or mockups exist, reference them here:
+- **Link:** {Figma/Sketch/Balsamiq URL or file path}
+- **Status:** {Draft / In Review / Approved}
+- **Designer:** {Who to contact for questions}
+
+**Key UI Elements:**
+| Screen/View | Key Elements | Notes |
+|-------------|--------------|-------|
+| {Main screen} | {Buttons, fields, navigation} | {Accessibility, responsive considerations} |
+| {Detail view} | {Data displayed, actions available} | {Loading states, error states} |
+
+⚠️ **If no mockups exist yet**, note: "UX mockups: TBD - pending design phase" and identify when they'll be ready.
+
 ## 8. Scope
 {What's in and out of scope}
 
@@ -271,7 +296,21 @@ Example:
 {What we're building in this effort}
 
 ### 8.2 Out of Scope
-{What we're explicitly NOT building}
+
+**REQUIRED: For each out-of-scope item, explain WHY it's excluded.**
+
+| Item | Rationale | Future Phase? |
+|------|-----------|---------------|
+| {Feature/capability} | {Why excluded: timeline, cost, complexity, not aligned with goals, etc.} | {Yes: Phase 2 / No: Not planned} |
+
+Example:
+| Item | Rationale | Future Phase? |
+|------|-----------|---------------|
+| Mobile app | Web-first MVP to validate demand before mobile investment | Yes: Phase 2 (Q3) |
+| Multi-language support | Single market launch; localization deferred until product-market fit confirmed | Yes: Phase 3 |
+| Advanced analytics dashboard | Nice-to-have, not critical for MVP success criteria | No: Not planned |
+
+⚠️ **Do NOT simply list what's out of scope without justification.** Stakeholders need to understand the trade-off decisions.
 
 ### 8.3 Future Considerations
 {What might come later}
@@ -292,11 +331,23 @@ For EACH requirement, provide:
 **One-Way Door Examples:** Data schema changes, API contracts with partners, pricing model
 **Two-Way Door Examples:** UI layout, notification frequency, feature toggles
 
-Example:
+**Format Options (choose one consistently):**
+
+**Option A: Table Format**
 | ID | Requirement | Problem | Door | AC (Success) | AC (Failure) |
 |----|-------------|---------|------|--------------|--------------|
 | FR1 | User can upload files up to 100MB | P1 | 🔄 Two-Way | Given a 50MB file, When uploaded, Then stored in <5s | Given a 150MB file, When uploaded, Then show "File exceeds 100MB limit" |
 | FR2 | API contract with PaymentCo | P2 | 🚪 One-Way | Given valid payment, When submitted, Then receive confirmation | Given network timeout, When submitted, Then retry 3x then fail gracefully |
+
+**Option B: User Story Format**
+Use when requirements benefit from persona-centric framing:
+
+| ID | User Story | Problem | Door | Acceptance Criteria |
+|----|-----------|---------|------|---------------------|
+| FR1 | As a **content creator**, I want to **upload files up to 100MB**, so that **I can share high-resolution assets with my team** | P1 | 🔄 Two-Way | **Success:** Given a 50MB file, When uploaded, Then stored in <5s; **Failure:** Given 150MB file, Then show size limit error |
+| FR2 | As a **customer**, I want to **complete payment securely**, so that **I can purchase without re-entering details** | P2 | 🚪 One-Way | **Success:** Given valid payment, Then receive confirmation; **Failure:** Given timeout, Then retry 3x then fail gracefully |
+
+**User Story Template:** "As a **[user type]**, I want to **[action]**, so that **[benefit/outcome]**"
 
 ### 9.2 Non-Functional Requirements
 
@@ -315,8 +366,44 @@ Each NFR must include:
 - **Threshold:** Specific measurable value
 - **Measurement:** How it will be verified (e.g., "Datadog p95 dashboard", "penetration test report")
 
-### 9.3 Constraints
-{Technical, business, or regulatory constraints - list specific dependencies, assumptions, blockers, and prerequisites}
+### 9.3 Constraints & Dependencies
+
+**Categorize constraints and dependencies to help engineers understand blockers and sequencing.**
+
+#### 9.3.1 Technical Constraints
+- {Existing system/infrastructure requirements}
+- {Technology stack limitations}
+- {Performance boundaries}
+
+#### 9.3.2 Business & Regulatory Constraints
+- {Budget limitations}
+- {Compliance requirements (HIPAA, GDPR, SOC 2, etc.)}
+- {Legal or contractual obligations}
+
+#### 9.3.3 Dependencies
+
+**Upstream Dependencies (we depend on these):**
+| Dependency | Owner | Status | Impact if Delayed | Mitigation |
+|------------|-------|--------|-------------------|------------|
+| {API/service/team we need} | {Owning team} | {Ready/In Progress/Blocked} | {What breaks if not available} | {Workaround} |
+
+**Downstream Dependencies (others depend on us):**
+| Dependent | What They Need | Deadline | Communication Plan |
+|-----------|---------------|----------|-------------------|
+| {Team/system} | {What they're waiting for} | {When} | {How we'll notify them} |
+
+#### 9.3.4 Assumptions
+**List assumptions that, if proven false, would change the approach:**
+
+| Assumption | Risk if Wrong | How to Validate | Validation Timeline |
+|------------|---------------|-----------------|---------------------|
+| {Assumption} | {Impact} | {How to verify} | {By when} |
+
+Example:
+| Assumption | Risk if Wrong | How to Validate | Validation Timeline |
+|------------|---------------|-----------------|---------------------|
+| Users have stable internet | Offline mode needed (+4 weeks) | Usage analytics from existing product | Week 1 |
+| Legal approves data retention policy | Feature blocked | Legal review meeting | Week 2 |
 
 ## 10. User Personas
 
@@ -378,12 +465,32 @@ Unless the user provides specific dates, use relative phases:
 If the user needs specific dates, ask:
 > **ASK THE USER:** "What is your target start date and any hard deadlines I should know about?"
 
+### 12.1 Development Phases
+
 | Phase | Duration | Activities | Exit Criteria |
 |-------|----------|------------|---------------|
 | Discovery | Week 1-2 | {activities} | {criteria} |
 | Design | Week 3-4 | {activities} | {criteria} |
 | Build | Week 5-10 | {activities} | {criteria} |
 | Pilot | Week 11-12 | {activities} | {criteria} |
+
+### 12.2 Rollout Strategy
+
+**How will the feature be released to users?**
+
+| Stage | Audience | Duration | Success Criteria | Rollback Trigger |
+|-------|----------|----------|------------------|------------------|
+| Internal dogfooding | Engineering + Product team | Week 11 | No P0 bugs, core flows work | P0 bug or data loss |
+| Beta/Pilot | {N} early adopter customers | Week 12-13 | {Adoption rate, feedback score} | {Error rate > X%} |
+| GA Rollout | All customers | Week 14+ | {Full success metrics} | {Threshold breached} |
+
+**Rollout Mechanism:**
+- **Feature Flag:** {Yes/No} - Will feature be behind a toggle?
+- **Gradual Rollout:** {Percentage-based rollout? e.g., 10% → 50% → 100%}
+- **A/B Test:** {If applicable, what are the variants and success criteria?}
+- **Communication:** {How will users be notified? In-app, email, docs update?}
+
+> **ASK THE USER:** "How do you want to roll out this feature? (Big bang, beta/pilot, gradual percentage-based, or A/B test?)"
 
 ## 13. Risks and Mitigation
 
@@ -563,8 +670,11 @@ Your PRD will be scored across **5 dimensions totaling 100 points**. Understandi
 - Given/When/Then acceptance criteria for success AND failure
 - Door type marked (🚪 One-Way or 🔄 Two-Way)
 - Traceability: Problem → Requirement → Metric
+- **User Story Bonus (+1 pt):** Requirements in user story format ("As a [user], I want [action], so that [benefit]")
+- **UX Mockup Bonus (+1-2 pts):** UX Mockups section present (+1), wireframe/flow references included (+1)
+- **Dependency Mapping Bonus (+1-2 pts):** Upstream/downstream dependencies documented (+1), assumptions with validation plan (+1)
 
-**Strategic Viability (+20 pts max):** Broken into 5 sub-dimensions:
+**Strategic Viability (+20 pts max):** Broken into 6 sub-dimensions:
 - **Competitive Analysis (0-4 pts):**
   - Competitive Landscape section present with 2+ competitors: +2 pts
   - Clear differentiation articulated for each competitor: +1 pt

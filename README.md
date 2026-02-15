@@ -26,17 +26,17 @@ Copy each prompt to the respective LLM. Paste outputs back. The adversarial loop
 
 ## Document Types
 
-| Type | Use Case |
-|------|----------|
-| `one-pager` | Executive summary for go/no-go decisions |
-| `prd` | Product requirements with acceptance criteria |
-| `adr` | Architecture decisions with tradeoff analysis |
-| `pr-faq` | Amazon-style "Working Backwards" press release + FAQ |
-| `power-statement` | Role-based achievement statements |
-| `acceptance-criteria` | User story test conditions |
-| `jd` | Job descriptions with leveling criteria |
-| `business-justification` | ROI analysis for budget approval |
-| `strategic-proposal` | Initiative proposals with success metrics |
+| Type | Use Case | Notable Features |
+|------|----------|------------------|
+| `one-pager` | Executive summary for go/no-go decisions | Urgency/Why Now scoring, alternatives detection |
+| `prd` | Product requirements with acceptance criteria | MoSCoW prioritization, FR/AC counting |
+| `adr` | Architecture decisions with tradeoff analysis | MADR 3.0 template with Decision Drivers + Confirmation |
+| `pr-faq` | Amazon-style "Working Backwards" press release + FAQ | Customer quote validation, FAQ structure |
+| `power-statement` | Role-based achievement statements | CAR format detection |
+| `acceptance-criteria` | User story test conditions | Given/When/Then format scoring |
+| `jd` | Job descriptions with leveling criteria | Inclusive language detection |
+| `business-justification` | ROI analysis for budget approval | NPV/IRR detection |
+| `strategic-proposal` | Initiative proposals with success metrics | OKR alignment scoring |
 
 Switch types via URL: `?type=prd`, `?type=adr`, etc.
 
@@ -80,7 +80,7 @@ docforge-ai/
 │   ├── form-generator.js
 │   ├── prompt-generator.js
 │   └── projects.js     # IndexedDB storage
-└── tests/              # 900+ tests (Jest + Playwright)
+└── tests/              # 1100+ tests (Jest + Playwright)
 ```
 
 Each plugin is self-contained. See [Adding Document Types](docs/ADDING-DOCUMENT-TYPES.md) for the step-by-step guide (includes validator implementation, test requirements, and LLM prompt templates).
@@ -94,7 +94,7 @@ npm run lint          # ESLint
 npm run serve         # Local server on :8080
 ```
 
-Coverage target: 80%. Current: 84%.
+Coverage target: 80%. Current: 87%.
 
 ## Architecture Decisions
 

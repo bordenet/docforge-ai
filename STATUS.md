@@ -1,6 +1,6 @@
 # DocForgeAI - Status & Continuation Plan
 
-> **Last Updated:** 2026-02-14
+> **Last Updated:** 2026-02-15
 > **Status:** [Live on GitHub](https://github.com/bordenet/docforge-ai) | **v1.0.0**
 > **Location:** `genesis-tools/docforge-ai/`
 
@@ -9,7 +9,7 @@
 ```bash
 cd ~/GitHub/Personal/genesis-tools/docforge-ai
 npm install
-npm test              # 1101 unit tests
+npm test              # 1108 unit tests
 npm run test:e2e      # 51 E2E tests
 npm run serve         # Start local server on port 8080
 ```
@@ -37,7 +37,7 @@ Then open:
 | Error handling | ✅ Complete | Global error boundary with toast feedback |
 | Prompt templates | ✅ Complete | 27 files (3 phases × 9 types) |
 | Demo data | ✅ Complete | One-pager sample with all 3 phases |
-| Unit tests | ✅ Complete | 1101 tests passing |
+| Unit tests | ✅ Complete | 1108 tests passing |
 | E2E tests | ✅ Complete | 51 Playwright tests |
 | CI workflow | ✅ Complete | GitHub Actions with codecov |
 | Code coverage | ✅ ~87% | All 9 validators at 80%+ |
@@ -96,9 +96,25 @@ docforge-ai/
 └── README.md
 ```
 
+### Recent Changes (2026-02-15)
+
+#### One-Pager Plugin Enhancements
+- **Alternatives Detection** (4 pts) - Validator now scores for "Why this over alternatives?" including "do nothing" option
+- **Urgency/Why Now Detection** (4 pts) - Validator scores for timing justification (deadline, window, opportunity)
+- **Score Calibration Alignment** - Phase 1 and Phase 2 prompts now use identical 0-100 calibration scale
+- **11 Required Sections** - Added "Why Now" as a required section
+
+#### ADR Plugin Enhancements
+- **MADR 3.0 Template** - Upgraded from Michael Nygard to MADR 3.0 (Markdown ADR) format
+- **Decision Drivers Section** - New required section listing 3-5 explicit forces/concerns
+- **Confirmation Section** - New section specifying validation mechanisms for implementation compliance
+- **Validator Updates** - Added `detectDecisionDrivers()` and `detectConfirmation()` functions
+
 ### Commit History
 
 ```
+8929972 feat(adr): upgrade to MADR 3.0 template with decision drivers and confirmation
+f6c8b6f feat(one-pager): add alternatives and urgency detection with scoring
 4b56981 test: add demo data E2E tests
 ed797b2 feat: add demo data module for one-pager
 7b462a1 ci: add GitHub Actions workflow for testing
