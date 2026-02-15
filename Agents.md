@@ -6,7 +6,13 @@
 > **Type**: web-apps
 
 Minimal core with on-demand module loading. Templates at: `$HOME/.golden-agents/templates/`
-
+<!-- GOLDEN:self-manage:start -->
+## ⚠️ Before ANY Task
+1. Load `.ai-guidance/invariants.md` — contains critical rules
+2. After editing ANY guidance file, check: `wc -l Agents.md .ai-guidance/*.md 2>/dev/null`
+   - `Agents.md` >150 lines → refactor into `.ai-guidance/`
+   - Any `.ai-guidance/*.md` >50 lines → split into sub-directory
+<!-- GOLDEN:self-manage:end -->
 <!-- GOLDEN:framework:start -->
 
 ---
@@ -14,11 +20,12 @@ Minimal core with on-demand module loading. Templates at: `$HOME/.golden-agents/
 ## Quality Gates (MANDATORY)
 
 Before ANY commit:
-1. **Lint**: `npm run lint` (zero warnings)
-2. **Test**: `npm test`
-3. **Coverage**: Minimum 80%
+1. **Lint**: `npm run lint`
+2. **Build**: `npm run build`
+3. **Test**: `npm test`
+4. **Coverage**: Minimum 70%
 
-**Order matters.** Lint → Test. Never skip steps.
+**Order matters.** Lint → Build → Test. Never skip steps.
 
 ---
 
@@ -46,6 +53,9 @@ Before ANY commit:
 - 🔴 **WHEN build fails OR lint errors appear**: Read `$HOME/.golden-agents/templates/workflows/build-hygiene.md`
 - 🟡 **BEFORE deploying to any environment**: Read `$HOME/.golden-agents/templates/workflows/deployment.md`
 - 🟡 **WHEN conversation exceeds 50 exchanges**: Read `$HOME/.golden-agents/templates/workflows/context-management.md`
+
+### Project type guidance:
+- Read `$HOME/.golden-agents/templates/project-types/web-apps.md`
 
 ### Optional: Superpowers integration
 
@@ -96,4 +106,3 @@ This module covers scope declaration, pre-action verification, spillover handlin
 - 🔴 **BEFORE any commit**: Read `docs/modules/quality-standards.md`
 
 Quick reference: `npm run lint` (zero warnings) → `npm test` (all pass) → coverage >= 80%
-
