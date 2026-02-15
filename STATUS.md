@@ -1,7 +1,7 @@
 # DocForgeAI - Status & Continuation Plan
 
-> **Last Updated:** 2026-02-15
-> **Status:** [Live on GitHub](https://github.com/bordenet/docforge-ai) | **v1.0.0**
+> **Last Updated:** 2026-02-15 (LLM Integration)
+> **Status:** [Live on GitHub](https://github.com/bordenet/docforge-ai) | **v1.1.0**
 > **Location:** `genesis-tools/docforge-ai/`
 
 ## Quick Start (Resume Work)
@@ -9,7 +9,7 @@
 ```bash
 cd ~/GitHub/Personal/genesis-tools/docforge-ai
 npm install
-npm test              # 1108 unit tests
+npm test              # 1234 unit tests
 npm run test:e2e      # 51 E2E tests
 npm run serve         # Start local server on port 8080
 ```
@@ -37,7 +37,7 @@ Then open:
 | Error handling | ✅ Complete | Global error boundary with toast feedback |
 | Prompt templates | ✅ Complete | 27 files (3 phases × 9 types) |
 | Demo data | ✅ Complete | One-pager sample with all 3 phases |
-| Unit tests | ✅ Complete | 1108 tests passing |
+| Unit tests | ✅ Complete | 1234 tests passing |
 | E2E tests | ✅ Complete | 51 Playwright tests |
 | CI workflow | ✅ Complete | GitHub Actions with codecov |
 | Code coverage | ✅ ~87% | All 9 validators at 80%+ |
@@ -47,10 +47,12 @@ Then open:
 
 | Component | Priority | Complexity | Notes |
 |-----------|----------|------------|-------|
-| LLM API integration | High | Medium | Needs Claude + Gemini API calls |
+| ~~LLM API integration~~ | ✅ Done | - | `shared/js/llm-client.js` - Claude + Gemini |
+| ~~Full workflow execution~~ | ✅ Done | - | `Workflow.executePhase()`, `runFullWorkflow()` |
+| ~~Auto-generate UI~~ | ✅ Done | - | Auto-generate button with progress |
+| API key configuration UI | Medium | Low | Settings modal for entering API keys |
 | Clipboard copy | Medium | Low | Copy prompt/output to clipboard |
 | Export/Import JSON | Medium | Low | Backup/restore projects |
-| Full workflow execution | High | High | Multi-phase generation flow |
 | Demo data for other doc types | Low | Medium | Only one-pager has demo data |
 | Dark mode persistence | Low | Low | Currently resets on reload |
 
@@ -85,6 +87,11 @@ docforge-ai/
 │   ├── storage.js              # IndexedDB per plugin
 │   ├── ui.js                   # Toast, loading, etc.
 │   ├── views.js                # View rendering
+│   ├── views-phase.js          # Phase content with auto-generate UI
+│   ├── workflow.js             # 3-phase workflow orchestration
+│   ├── workflow-config.js      # Phase definitions
+│   ├── workflow-functions.js   # Standalone workflow functions
+│   ├── llm-client.js           # ⭐ NEW: LLM API client (mock + real)
 │   └── demo-data.js            # Sample data for demos
 ├── tests/                      # Jest unit tests
 ├── e2e/                        # Playwright E2E tests
@@ -97,6 +104,24 @@ docforge-ai/
 ```
 
 ### Recent Changes (2026-02-15)
+
+#### LLM Integration (NEW)
+- **`shared/js/llm-client.js`** - Abstract LLM interface with mock and API modes
+  - `LLMClient` class with `generate()`, `isReady()`, `getDisplayName()` methods
+  - Support for Claude (Anthropic) and Gemini (Google) providers
+  - Mock mode generates phase-appropriate test responses (no API keys needed)
+  - API mode calls real LLM APIs when keys are configured
+  - Factory functions: `createClientForPhase()`, `checkWorkflowReady()`
+- **`shared/js/workflow.js`** - Enhanced with LLM orchestration
+  - `Workflow.executePhase(client)` - Execute single phase with LLM
+  - `Workflow.runFullWorkflow(options)` - Run all 3 phases automatically
+  - Callbacks: `onPhaseStart`, `onPhaseComplete`, `onPromptGenerated`, `onResponseReceived`
+- **`shared/js/views-phase.js`** - Auto-generate UI
+  - "Auto-Generate with AI" button with progress indicator
+  - LLM mode display (mock/api)
+  - Manual workflow collapsed into `<details>` element
+- **`assistant/js/app-phases.js`** - Event handlers for auto-generate
+- **31 new unit tests** for LLM functionality (22 llm-client + 9 workflow)
 
 #### One-Pager Plugin Enhancements
 - **Alternatives Detection** (4 pts) - Validator now scores for "Why this over alternatives?" including "do nothing" option
@@ -162,37 +187,46 @@ e4f00ed Initial commit: DocForgeAI design document
 3. Verify CI passes
 4. Add repo description and topics
 
-### Phase 2: LLM Integration (High Priority)
+### Phase 2: LLM Integration ✅ COMPLETE
 
 **Goal:** Enable actual document generation with Claude and Gemini APIs.
 
-#### Tasks:
+#### Completed Tasks:
 
-1. **Create `shared/js/llm-client.js`**
+1. ✅ **Create `shared/js/llm-client.js`**
    - Abstract interface for LLM calls
    - Support both Claude (Anthropic) and Gemini (Google) APIs
-   - Handle API key storage (localStorage, never sent to server)
-   - Implement retry logic and error handling
+   - Mock mode for testing without API keys
+   - API mode for real LLM calls
+   - 22 unit tests
 
-2. **Create `shared/js/workflow.js`**
-   - Orchestrate 3-phase generation flow
-   - Phase 1: Claude generates initial document
-   - Phase 2: Gemini provides adversarial review
-   - Phase 3: Claude synthesizes final version
-   - Save intermediate results to IndexedDB
+2. ✅ **Enhance `shared/js/workflow.js`**
+   - `executePhase()` - Run single phase with LLM client
+   - `runFullWorkflow()` - Orchestrate all 3 phases automatically
+   - Callbacks for progress tracking
+   - 9 new unit tests
 
-3. **Add API key configuration UI**
+3. ✅ **Wire up assistant UI**
+   - Auto-generate button with progress indicator
+   - LLM mode display (mock/api)
+   - Real-time generation feedback
+   - Manual workflow still available (collapsed)
+
+#### Remaining (Phase 2.5):
+
+4. **Add API key configuration UI**
    - Settings modal for entering API keys
    - Keys stored in localStorage (client-side only)
    - Validation that keys work before saving
 
-4. **Wire up assistant form submission**
-   - On submit, start workflow
-   - Show progress indicator for each phase
-   - Display results in markdown viewer
+#### How to Test:
 
-#### Reference Implementation:
-Look at `genesis-tools/one-pager/shared/js/app.js` for the original workflow logic.
+```bash
+# Run mock LLM generation (no API keys needed)
+npm run serve
+# Open http://localhost:8080/assistant/?type=one-pager
+# Create a project, click "Generate Phase 1"
+```
 
 ### Phase 3: Clipboard & Export (Medium Priority)
 
