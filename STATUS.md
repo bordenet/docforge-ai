@@ -47,9 +47,10 @@ Then open:
 
 | Component | Priority | Complexity | Notes |
 |-----------|----------|------------|-------|
-| ~~LLM mock client~~ | ✅ Done | - | `shared/js/llm-client.js` - Mock responses for testing |
+| ~~LLM API integration~~ | ✅ Done | - | `shared/js/llm-client.js` - Claude + Gemini |
 | ~~Full workflow execution~~ | ✅ Done | - | `Workflow.executePhase()`, `runFullWorkflow()` |
 | ~~Auto-generate UI~~ | ✅ Done | - | Auto-generate button with progress |
+| API key configuration UI | Medium | Low | Settings modal for entering API keys |
 | Clipboard copy | Medium | Low | Copy prompt/output to clipboard |
 | Export/Import JSON | Medium | Low | Backup/restore projects |
 | Demo data for other doc types | Low | Medium | Only one-pager has demo data |
@@ -90,7 +91,7 @@ docforge-ai/
 │   ├── workflow.js             # 3-phase workflow orchestration
 │   ├── workflow-config.js      # Phase definitions
 │   ├── workflow-functions.js   # Standalone workflow functions
-│   ├── llm-client.js           # ⭐ NEW: Mock LLM client for UI testing
+│   ├── llm-client.js           # ⭐ NEW: LLM API client (mock + real)
 │   └── demo-data.js            # Sample data for demos
 ├── tests/                      # Jest unit tests
 ├── e2e/                        # Playwright E2E tests
@@ -105,20 +106,22 @@ docforge-ai/
 ### Recent Changes (2026-02-15)
 
 #### LLM Integration (NEW)
-- **`shared/js/llm-client.js`** - Mock LLM client for UI testing
-  - `LLMClient` class with `generate()`, `getDisplayName()` methods
-  - Phase-appropriate mock responses (no external API calls)
-  - Factory function: `createClientForPhase()`
-  - *Note: DocForge AI uses a copy-paste workflow - users manually interact with Claude.ai/Gemini*
+- **`shared/js/llm-client.js`** - Abstract LLM interface with mock and API modes
+  - `LLMClient` class with `generate()`, `isReady()`, `getDisplayName()` methods
+  - Support for Claude (Anthropic) and Gemini (Google) providers
+  - Mock mode generates phase-appropriate test responses (no API keys needed)
+  - API mode calls real LLM APIs when keys are configured
+  - Factory functions: `createClientForPhase()`, `checkWorkflowReady()`
 - **`shared/js/workflow.js`** - Enhanced with LLM orchestration
-  - `Workflow.executePhase(client)` - Execute single phase with LLM client
+  - `Workflow.executePhase(client)` - Execute single phase with LLM
   - `Workflow.runFullWorkflow(options)` - Run all 3 phases automatically
   - Callbacks: `onPhaseStart`, `onPhaseComplete`, `onPromptGenerated`, `onResponseReceived`
 - **`shared/js/views-phase.js`** - Auto-generate UI
   - "Auto-Generate with AI" button with progress indicator
+  - LLM mode display (mock/api)
   - Manual workflow collapsed into `<details>` element
 - **`assistant/js/app-phases.js`** - Event handlers for auto-generate
-- **Unit tests** for LLM functionality (llm-client + workflow)
+- **31 new unit tests** for LLM functionality (22 llm-client + 9 workflow)
 
 #### One-Pager Plugin Enhancements
 - **Alternatives Detection** (4 pts) - Validator now scores for "Why this over alternatives?" including "do nothing" option
@@ -186,32 +189,43 @@ e4f00ed Initial commit: DocForgeAI design document
 
 ### Phase 2: LLM Integration ✅ COMPLETE
 
-**Goal:** Enable mock LLM workflow for UI testing. DocForge AI uses a **copy-paste workflow** - users copy prompts to Claude.ai/Gemini and paste responses back manually.
+**Goal:** Enable actual document generation with Claude and Gemini APIs.
 
 #### Completed Tasks:
 
 1. ✅ **Create `shared/js/llm-client.js`**
-   - Mock LLM client for UI testing
-   - Phase-appropriate mock responses
-   - `LLMClient` class with `generate()`, `getDisplayName()` methods
-   - Factory function: `createClientForPhase()`
+   - Abstract interface for LLM calls
+   - Support both Claude (Anthropic) and Gemini (Google) APIs
+   - Mock mode for testing without API keys
+   - API mode for real LLM calls
+   - 22 unit tests
 
 2. ✅ **Enhance `shared/js/workflow.js`**
    - `executePhase()` - Run single phase with LLM client
    - `runFullWorkflow()` - Orchestrate all 3 phases automatically
    - Callbacks for progress tracking
+   - 9 new unit tests
 
 3. ✅ **Wire up assistant UI**
    - Auto-generate button with progress indicator
+   - LLM mode display (mock/api)
    - Real-time generation feedback
    - Manual workflow still available (collapsed)
+
+#### Remaining (Phase 2.5):
+
+4. **Add API key configuration UI**
+   - Settings modal for entering API keys
+   - Keys stored in localStorage (client-side only)
+   - Validation that keys work before saving
 
 #### How to Test:
 
 ```bash
+# Run mock LLM generation (no API keys needed)
 npm run serve
 # Open http://localhost:8080/assistant/?type=one-pager
-# Create a project, click "Generate Phase 1" (uses mock responses)
+# Create a project, click "Generate Phase 1"
 ```
 
 ### Phase 3: Clipboard & Export (Medium Priority)
@@ -351,7 +365,8 @@ All aligned with genesis baseline versions:
 
 1. ~~**GitHub repo name?**~~ - Decided: `docforge-ai`
 2. **Keep as experiment or replace originals?** - Is this the new canonical implementation?
-3. **Demo data for all types?** - Worth the effort, or one-pager is enough?
+3. **API key management?** - localStorage only, or add optional backend?
+4. **Demo data for all types?** - Worth the effort, or one-pager is enough?
 
 ---
 
