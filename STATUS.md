@@ -114,7 +114,7 @@ docforge-ai/
 - **Final Polish** - Security impact patterns (auth, threats, audit), Dependencies documentation (upstream/downstream), Diagram/Visual references (Mermaid, PlantUML, C4), Observability patterns (SLO/SLI, metrics, tracing)
 - **Validator Updates** - 46 pattern constants in `validator-config.js`, 48 detection functions in `validator-detection.js`, comprehensive scoring in `validator-scoring.js` and `validator-scoring-results.js`
 
-#### PRD Plugin Enhancements (3 Rounds)
+#### PRD Plugin Enhancements (4 Rounds)
 - **Section 6: Competitive Landscape** - 2-3 direct competitors with differentiation, competitive moat
 - **Section 5.2: Customer Evidence** - Required evidence types (interviews, support data, analytics, NPS, competitive loss)
 - **Section 4.3: Leading/Lagging Indicators** - Comprehensive table with product-type examples (SaaS, Consumer, Enterprise)
@@ -125,12 +125,16 @@ docforge-ai/
 - **Section 12.2: Rollout Strategy** - Beta/pilot → GA stages with feature flags
 - **Phase 2: Pressure-Testing** - Devil's advocate questions (strategic, scope, assumption challenges)
 - **Phase 3: Stakeholder Pitches** - VP Eng, CEO, CFO, Design Lead, Sales/Marketing pitch guidance
-- **Form Fields** - Added `competitors` and `customerEvidence` input fields
+- **Form Fields** - Added `competitors`, `customerEvidence`, and `documentScope` input fields
 - **Scoring Rubric** - 100-point system with 16 required sections
+- **Document Scope Control** - Feature (1-3 pages), Epic (4-8 pages), Product (8-15 pages) length targets
+- **Tiered Structure** - Executive Summary (Tier 1), Core Sections (Tier 2), Appendix (Tier 3)
+- **Ruthless Brevity Rules** - Merge thin sections, use tables over prose, cut redundancy
 
 ### Commit History
 
 ```
+0dfa53b feat(prd): Add document scope field to prevent PRD bloat
 1da0831 feat(prd): Round 3 - stakeholder pitches, enhanced indicators, pressure-testing
 92c4674 feat(prd): Add user stories, UX mockups, rollout strategy, and dependency tracking
 127e085 feat(prd): Add competitive landscape section and strengthen customer evidence
