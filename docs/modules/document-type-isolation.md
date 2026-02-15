@@ -128,5 +128,5 @@ Cross-contamination (modifying multiple document types in one commit) causes:
 - Mislabeled commit history making debugging harder
 - Potential for one agent's changes to overwrite another's
 
-See `PARALLEL_AGENT_REMEDIATION.md` for a detailed case study.
+See `docs/archive/PARALLEL_AGENT_REMEDIATION.md` for a detailed case study.
 

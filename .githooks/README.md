@@ -32,5 +32,5 @@ When you use a conventional commit scope like `feat(prd):`, this hook validates 
 - `shared` - Any combination of files
 - No scope - Any combination of files
 
-See `PARALLEL_AGENT_REMEDIATION.md` for the case study that led to this hook.
+See `docs/archive/PARALLEL_AGENT_REMEDIATION.md` for the case study that led to this hook.
 

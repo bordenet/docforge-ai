@@ -1,7 +1,10 @@
 # Parallel Agent Cross-Contamination Remediation
 
-> **Investigation Date:** 2026-02-15  
-> **Investigator:** Augment Agent  
+> **Status:** ARCHIVED - All prevention measures implemented. See `docs/modules/document-type-isolation.md` for current guardrails.
+> **Archived:** 2026-02-15
+
+> **Investigation Date:** 2026-02-15
+> **Investigator:** Augment Agent
 > **Status:** ✅ No data loss - remediation is preventive only
 
 ---
