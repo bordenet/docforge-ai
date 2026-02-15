@@ -255,4 +255,129 @@ describe('Workflow class', () => {
   });
 });
 
+describe('LLM Orchestration', () => {
+  let project;
+  let plugin;
+  let workflow;
+
+  beforeEach(() => {
+    project = {
+      id: 'test-123',
+      title: 'Test Project',
+      description: 'Test description',
+      phase: 1,
+      formData: { title: 'Test Title', description: 'Test Desc' },
+    };
+    plugin = { id: 'test-plugin' };
+    workflow = new Workflow(project, plugin);
+  });
+
+  describe('executePhase', () => {
+    it('should generate prompt and call LLM client', async () => {
+      const mockClient = {
+        generate: jest.fn().mockResolvedValue('Mock LLM response'),
+      };
+
+      const result = await workflow.executePhase(mockClient);
+
+      expect(mockClient.generate).toHaveBeenCalledTimes(1);
+      expect(result.response).toBe('Mock LLM response');
+      expect(result.phase).toBe(1);
+    });
+
+    it('should save response to project', async () => {
+      const mockClient = {
+        generate: jest.fn().mockResolvedValue('Saved response'),
+      };
+
+      await workflow.executePhase(mockClient);
+
+      expect(project.phase1_output).toBe('Saved response');
+    });
+
+    it('should call onPromptGenerated callback', async () => {
+      const mockClient = { generate: jest.fn().mockResolvedValue('Response') };
+      const onPromptGenerated = jest.fn();
+
+      await workflow.executePhase(mockClient, { onPromptGenerated });
+
+      expect(onPromptGenerated).toHaveBeenCalledWith(expect.any(String), 1);
+    });
+
+    it('should call onResponseReceived callback', async () => {
+      const mockClient = { generate: jest.fn().mockResolvedValue('Test response') };
+      const onResponseReceived = jest.fn();
+
+      await workflow.executePhase(mockClient, { onResponseReceived });
+
+      expect(onResponseReceived).toHaveBeenCalledWith('Test response', 1);
+    });
+
+    it('should execute phase 2 with correct phase number', async () => {
+      workflow.currentPhase = 2;
+      project.phase1_output = 'Phase 1 output';
+      const mockClient = { generate: jest.fn().mockResolvedValue('Phase 2 response') };
+
+      const result = await workflow.executePhase(mockClient);
+
+      expect(mockClient.generate).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({ phase: 2 })
+      );
+      expect(result.phase).toBe(2);
+    });
+  });
+
+  describe('runFullWorkflow', () => {
+    it('should execute all 3 phases', async () => {
+      // Import the module to mock it
+      const llmClientModule = await import('../shared/js/llm-client.js');
+
+      // Set to mock mode for predictable responses
+      llmClientModule.setLLMMode('mock');
+
+      const onPhaseComplete = jest.fn();
+      const result = await workflow.runFullWorkflow({ onPhaseComplete });
+
+      expect(result.success).toBe(true);
+      expect(result.results.length).toBe(3);
+      expect(onPhaseComplete).toHaveBeenCalledTimes(3);
+    });
+
+    it('should advance through all phases', async () => {
+      const llmClientModule = await import('../shared/js/llm-client.js');
+      llmClientModule.setLLMMode('mock');
+
+      await workflow.runFullWorkflow();
+
+      expect(workflow.currentPhase).toBe(4); // Past phase 3
+      expect(workflow.isComplete()).toBe(true);
+    });
+
+    it('should call onPhaseStart for each phase', async () => {
+      const llmClientModule = await import('../shared/js/llm-client.js');
+      llmClientModule.setLLMMode('mock');
+
+      const onPhaseStart = jest.fn();
+      await workflow.runFullWorkflow({ onPhaseStart });
+
+      expect(onPhaseStart).toHaveBeenCalledTimes(3);
+      expect(onPhaseStart).toHaveBeenNthCalledWith(1, 1, expect.objectContaining({ name: 'Generate' }));
+      expect(onPhaseStart).toHaveBeenNthCalledWith(2, 2, expect.objectContaining({ name: 'Critique' }));
+      expect(onPhaseStart).toHaveBeenNthCalledWith(3, 3, expect.objectContaining({ name: 'Synthesize' }));
+    });
+
+    it('should save outputs for all phases', async () => {
+      const llmClientModule = await import('../shared/js/llm-client.js');
+      llmClientModule.setLLMMode('mock');
+
+      await workflow.runFullWorkflow();
+
+      expect(project.phase1_output).toBeTruthy();
+      expect(project.phase2_output).toBeTruthy();
+      expect(project.phase3_output).toBeTruthy();
+    });
+  });
+});
+
 // Note: Standalone function tests moved to workflow-functions.test.js

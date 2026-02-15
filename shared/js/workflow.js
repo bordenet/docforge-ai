@@ -202,6 +202,87 @@ export class Workflow {
   getProgress() {
     return Math.round((this.currentPhase / WORKFLOW_CONFIG.phaseCount) * 100);
   }
+
+  /**
+   * Execute current phase using LLM client
+   * Generates prompt, calls LLM, saves response, advances phase
+   *
+   * @param {import('./llm-client.js').LLMClient} llmClient - LLM client to use
+   * @param {Object} [options] - Options
+   * @param {function} [options.onPromptGenerated] - Callback when prompt is ready
+   * @param {function} [options.onResponseReceived] - Callback when LLM responds
+   * @returns {Promise<{prompt: string, response: string, phase: number}>}
+   */
+  async executePhase(llmClient, options = {}) {
+    const { onPromptGenerated, onResponseReceived } = options;
+
+    // Generate prompt for current phase
+    const prompt = await this.generatePrompt();
+    if (onPromptGenerated) {
+      onPromptGenerated(prompt, this.currentPhase);
+    }
+
+    // Call LLM
+    const response = await llmClient.generate(prompt, { phase: this.currentPhase });
+    if (onResponseReceived) {
+      onResponseReceived(response, this.currentPhase);
+    }
+
+    // Save response and get phase number before advancing
+    const completedPhase = this.currentPhase;
+    this.savePhaseOutput(response);
+
+    return { prompt, response, phase: completedPhase };
+  }
+
+  /**
+   * Run complete 3-phase workflow
+   * Executes all phases sequentially using appropriate LLM for each
+   *
+   * @param {Object} [options] - Options
+   * @param {function} [options.onPhaseStart] - Callback when phase starts
+   * @param {function} [options.onPhaseComplete] - Callback when phase completes
+   * @param {function} [options.onError] - Callback on error
+   * @returns {Promise<{success: boolean, results: Object[], error?: Error}>}
+   */
+  async runFullWorkflow(options = {}) {
+    const { onPhaseStart, onPhaseComplete, onError } = options;
+    const results = [];
+
+    // Import llm-client dynamically to avoid circular dependency
+    const { createClientForPhase } = await import('./llm-client.js');
+
+    try {
+      while (this.currentPhase <= WORKFLOW_CONFIG.phaseCount) {
+        const phase = this.currentPhase;
+
+        if (onPhaseStart) {
+          onPhaseStart(phase, WORKFLOW_CONFIG.phases[phase - 1]);
+        }
+
+        // Get appropriate client for this phase
+        const client = createClientForPhase(phase);
+
+        // Execute phase
+        const result = await this.executePhase(client);
+        results.push(result);
+
+        if (onPhaseComplete) {
+          onPhaseComplete(phase, result);
+        }
+
+        // Advance to next phase
+        this.advancePhase();
+      }
+
+      return { success: true, results };
+    } catch (error) {
+      if (onError) {
+        onError(error, this.currentPhase);
+      }
+      return { success: false, results, error };
+    }
+  }
 }
 
 // ============================================================================
