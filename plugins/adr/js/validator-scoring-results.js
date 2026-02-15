@@ -17,7 +17,26 @@ import {
   detectConsequences,
   detectStatus,
   detectSections,
-  detectConfirmation
+  detectConfirmation,
+  detectMADRConsequenceFormat,
+  detectYAMLMetadata,
+  detectMoreInfoSection,
+  detectRisks,
+  detectADRReferences,
+  detectImplementationHistory,
+  detectCompliance,
+  detectTeamContext,
+  detectQualityAttributes,
+  detectLinks,
+  detectChangelog,
+  detectSignoff,
+  detectADRNumbering,
+  detectCostEstimation,
+  detectTimeline,
+  detectSecurityImpact,
+  detectDependencies,
+  detectDiagrams,
+  detectObservability
 } from './validator-detection.js';
 
 /**
@@ -92,6 +111,66 @@ export function scoreConsequences(text) {
     issues.push('Missing review timing - when should this decision be reassessed?');
   }
 
+  // MADR "Good, because" / "Bad, because" format bonus (+2 pts)
+  const madrFormatDetection = detectMADRConsequenceFormat(text);
+  if (madrFormatDetection.hasMADRFormat && madrFormatDetection.hasBalancedMADR) {
+    score += 2;
+    strengths.push(`MADR consequence format: ${madrFormatDetection.goodBecauseCount} good, ${madrFormatDetection.badBecauseCount} bad`);
+  } else if (madrFormatDetection.hasMADRFormat) {
+    score += 1;
+    strengths.push('MADR consequence format partially used');
+  }
+
+  // Risks and Mitigations bonus (KEP pattern, +2 pts)
+  const risksDetection = detectRisks(text);
+  if (risksDetection.hasRisksSection && risksDetection.hasRiskMitigationPairs) {
+    score += 2;
+    strengths.push(`Risks with mitigations: ${risksDetection.riskCount} risks, ${risksDetection.mitigationCount} mitigations`);
+  } else if (risksDetection.hasRiskLanguage || risksDetection.hasRisksSection) {
+    score += 1;
+    strengths.push('Risk awareness present');
+  }
+
+  // Quality Attributes bonus (ISO 25010, +2 pts)
+  const qualityDetection = detectQualityAttributes(text);
+  if (qualityDetection.categoriesCovered >= 3) {
+    score += 2;
+    strengths.push(`Quality attributes documented (${qualityDetection.categoriesCovered} categories: performance, reliability, security, maintainability)`);
+  } else if (qualityDetection.categoriesCovered >= 1) {
+    score += 1;
+    strengths.push('Quality considerations mentioned');
+  }
+
+  // Cost Estimation bonus (+2 pts)
+  const costDetection = detectCostEstimation(text);
+  if (costDetection.hasCostSection && costDetection.hasEffortEstimate) {
+    score += 2;
+    strengths.push('Cost and effort estimation documented');
+  } else if (costDetection.hasCostAnalysis) {
+    score += 1;
+    strengths.push('Cost considerations addressed');
+  }
+
+  // Security Impact bonus (+2 pts)
+  const securityDetection = detectSecurityImpact(text);
+  if (securityDetection.hasSecuritySection && securityDetection.hasThreatAnalysis) {
+    score += 2;
+    strengths.push('Security impact with threat analysis');
+  } else if (securityDetection.hasSecurityAnalysis) {
+    score += 1;
+    strengths.push('Security considerations documented');
+  }
+
+  // Dependencies bonus (+2 pts)
+  const dependenciesDetection = detectDependencies(text);
+  if (dependenciesDetection.hasDependenciesSection && dependenciesDetection.hasUpstreamDeps) {
+    score += 2;
+    strengths.push('Dependencies thoroughly documented');
+  } else if (dependenciesDetection.detected) {
+    score += 1;
+    strengths.push('Dependency awareness present');
+  }
+
   return {
     score: Math.max(0, Math.min(score, maxScore)),
     maxScore,
@@ -158,6 +237,136 @@ export function scoreStatus(text) {
     issues.push('Validation mentioned but missing dedicated Confirmation section (MADR 3.0)');
   } else {
     issues.push('Missing Confirmation section - specify how compliance will be validated (MADR 3.0)');
+  }
+
+  // YAML Front Matter metadata bonus (MADR 3.0) - (+2 pts)
+  const yamlDetection = detectYAMLMetadata(text);
+  if (yamlDetection.hasRichMetadata) {
+    score += 2;
+    strengths.push(`Rich YAML metadata: ${yamlDetection.metadataCount} fields (MADR 3.0)`);
+  } else if (yamlDetection.hasFrontMatter) {
+    score += 1;
+    strengths.push('YAML front matter present');
+  }
+
+  // More Information section bonus (MADR 3.0) - (+2 pts)
+  const moreInfoDetection = detectMoreInfoSection(text);
+  if (moreInfoDetection.hasSectionHeader && moreInfoDetection.hasLinks) {
+    score += 2;
+    strengths.push(`More Information section with ${moreInfoDetection.linkCount} links (MADR 3.0)`);
+  } else if (moreInfoDetection.hasSectionHeader || moreInfoDetection.hasLinks) {
+    score += 1;
+    strengths.push('Additional references/links provided');
+  }
+
+  // ADR cross-references / evolution tracking bonus (+2 pts)
+  const adrRefDetection = detectADRReferences(text);
+  if (adrRefDetection.hasEvolutionTracking) {
+    score += 2;
+    strengths.push('ADR evolution tracking (supersedes/superseded-by references)');
+  } else if (adrRefDetection.hasRelatedADRs) {
+    score += 1;
+    strengths.push(`ADR cross-references: ${adrRefDetection.adrReferenceCount} referenced`);
+  }
+
+  // Implementation History bonus (+2 pts)
+  const historyDetection = detectImplementationHistory(text);
+  if (historyDetection.hasRichHistory) {
+    score += 2;
+    strengths.push(`Implementation History with ${historyDetection.dateCount} dated entries`);
+  } else if (historyDetection.hasSectionHeader || historyDetection.hasDateEntries) {
+    score += 1;
+    strengths.push('Implementation timeline present');
+  }
+
+  // Compliance/Governance bonus (+2 pts)
+  const complianceDetection = detectCompliance(text);
+  if (complianceDetection.hasComplianceSection && complianceDetection.hasStandards) {
+    score += 2;
+    strengths.push(`Compliance documented: ${complianceDetection.standardsCount} standards referenced`);
+  } else if (complianceDetection.hasComplianceAwareness) {
+    score += 1;
+    strengths.push('Compliance/governance awareness');
+  }
+
+  // Team Context bonus (+2 pts)
+  const teamDetection = detectTeamContext(text);
+  if (teamDetection.hasTeamClarity) {
+    score += 2;
+    strengths.push('Team accountability defined (owner/consulted/informed)');
+  } else if (teamDetection.hasOwnership) {
+    score += 1;
+    strengths.push('Decision owner identified');
+  }
+
+  // Links and References bonus (+2 pts)
+  const linksDetection = detectLinks(text);
+  if (linksDetection.hasRichReferences) {
+    score += 2;
+    strengths.push(`Well-referenced document (${linksDetection.totalLinks} links/references)`);
+  } else if (linksDetection.hasSection || linksDetection.totalLinks > 0) {
+    score += 1;
+    strengths.push('External references included');
+  }
+
+  // Changelog/Version History bonus (+2 pts)
+  const changelogDetection = detectChangelog(text);
+  if (changelogDetection.hasSection && changelogDetection.hasVersionHistory) {
+    score += 2;
+    strengths.push(`Version history documented (${changelogDetection.versionCount} versions)`);
+  } else if (changelogDetection.hasSection) {
+    score += 1;
+    strengths.push('Changelog section present');
+  }
+
+  // Stakeholder Sign-off bonus (+2 pts)
+  const signoffDetection = detectSignoff(text);
+  if (signoffDetection.hasFormalSignoff) {
+    score += 2;
+    strengths.push('Formal stakeholder sign-off documented');
+  } else if (signoffDetection.hasSection || signoffDetection.hasApprovals) {
+    score += 1;
+    strengths.push('Approval process documented');
+  }
+
+  // ADR Numbering bonus (enterprise standards, +2 pts)
+  const numberingDetection = detectADRNumbering(text);
+  if (numberingDetection.hasTitleNumber && numberingDetection.hasInlineRefs) {
+    score += 2;
+    strengths.push(`Enterprise ADR numbering with ${numberingDetection.inlineRefCount} cross-references`);
+  } else if (numberingDetection.detected) {
+    score += 1;
+    strengths.push('ADR numbering present');
+  }
+
+  // Timeline/Deadline awareness bonus (+2 pts)
+  const timelineDetection = detectTimeline(text);
+  if (timelineDetection.hasTimelineSection && timelineDetection.hasDeadlines) {
+    score += 2;
+    strengths.push('Timeline with deadlines documented');
+  } else if (timelineDetection.hasTimeline) {
+    score += 1;
+    strengths.push('Timeline awareness present');
+  }
+
+  // Diagrams/Visual Documentation bonus (+2 pts)
+  const diagramsDetection = detectDiagrams(text);
+  if (diagramsDetection.hasEmbeddedDiagrams || (diagramsDetection.hasDiagramSection && diagramsDetection.hasDiagramTypes)) {
+    score += 2;
+    strengths.push(`Visual documentation (${diagramsDetection.diagramCount} diagrams)`);
+  } else if (diagramsDetection.detected) {
+    score += 1;
+    strengths.push('Diagram references included');
+  }
+
+  // Observability/Monitoring bonus (+2 pts)
+  const observabilityDetection = detectObservability(text);
+  if (observabilityDetection.hasObservabilitySection && observabilityDetection.hasMetrics) {
+    score += 2;
+    strengths.push('Observability with SLOs/metrics defined');
+  } else if (observabilityDetection.detected) {
+    score += 1;
+    strengths.push('Monitoring considerations documented');
   }
 
   return {

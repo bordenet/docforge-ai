@@ -17,7 +17,18 @@ import {
   detectDecision,
   detectOptions,
   detectRationale,
-  detectDecisionDrivers
+  detectDecisionDrivers,
+  detectYStatement,
+  detectProsConsSection,
+  detectQuantifiedMetrics,
+  detectGoals,
+  detectTradeoffMatrix,
+  detectTechnicalContext,
+  detectReversibility,
+  detectAssumptions,
+  detectScopeImpact,
+  detectAlternativesDepth,
+  detectASR
 } from './validator-detection.js';
 
 // Re-export consequences and status scoring from separate module
@@ -79,6 +90,63 @@ export function scoreContext(text) {
     issues.push('Decision drivers mentioned but missing dedicated section (MADR 3.0)');
   } else {
     issues.push('Missing Decision Drivers section - list 3-5 forces/constraints (MADR 3.0)');
+  }
+
+  // Quantified Context (bonus 0-2 pts)
+  const quantifiedDetection = detectQuantifiedMetrics(text);
+  if (quantifiedDetection.isWellQuantified) {
+    score += 2;
+    strengths.push(`Well-quantified context (${quantifiedDetection.totalMetrics} metrics across ${quantifiedDetection.categoryCount} categories)`);
+  }
+
+  // Goals/Non-Goals sections (KEP pattern, bonus 0-2 pts)
+  const goalsDetection = detectGoals(text);
+  if (goalsDetection.hasBothSections) {
+    score += 2;
+    strengths.push('Goals and Non-Goals sections defined (KEP pattern)');
+  } else if (goalsDetection.hasGoalsSection || goalsDetection.hasNonGoalsSection) {
+    score += 1;
+    strengths.push(goalsDetection.hasGoalsSection ? 'Goals section present' : 'Non-Goals section present');
+  }
+
+  // Technical Context depth bonus (+2 pts)
+  const techContextDetection = detectTechnicalContext(text);
+  if (techContextDetection.hasRichTechnicalContext) {
+    score += 2;
+    strengths.push(`Rich technical context (${techContextDetection.contextDepth} aspects covered)`);
+  } else if (techContextDetection.contextDepth >= 2) {
+    score += 1;
+    strengths.push('Technical context provided');
+  }
+
+  // Assumptions documentation bonus (+2 pts)
+  const assumptionsDetection = detectAssumptions(text);
+  if (assumptionsDetection.hasSection && assumptionsDetection.assumptionCount >= 2) {
+    score += 2;
+    strengths.push(`Assumptions documented (${assumptionsDetection.assumptionCount} assumptions)`);
+  } else if (assumptionsDetection.assumptionCount >= 2) {
+    score += 1;
+    strengths.push('Assumptions referenced');
+  }
+
+  // Scope and Impact documentation bonus (+2 pts)
+  const scopeImpactDetection = detectScopeImpact(text);
+  if (scopeImpactDetection.hasSection && scopeImpactDetection.systemsAffectedCount > 0) {
+    score += 2;
+    strengths.push('Scope/Impact clearly defined with affected systems');
+  } else if (scopeImpactDetection.impactCount >= 2) {
+    score += 1;
+    strengths.push('Impact considerations mentioned');
+  }
+
+  // Architecture Significant Requirements bonus (+2 pts)
+  const asrDetection = detectASR(text);
+  if (asrDetection.hasASRSection && asrDetection.hasQualityDrivers) {
+    score += 2;
+    strengths.push('Architecture Significant Requirements with quality drivers');
+  } else if (asrDetection.hasASRSection || asrDetection.hasASRLanguage) {
+    score += 1;
+    strengths.push('Architecture significance acknowledged');
   }
 
   return {
@@ -155,6 +223,53 @@ export function scoreDecision(text) {
     issues.push('Some rationale provided - strengthen with evidence or data');
   } else {
     issues.push('Rationale missing - explain WHY this decision was made');
+  }
+
+  // Y-Statement format bonus (MADR 3.0) - (+2 pts)
+  const yStatementDetection = detectYStatement(text);
+  if (yStatementDetection.hasYStatement && yStatementDetection.hasJustification) {
+    score += 2;
+    strengths.push('MADR Y-statement format: "Chosen option: X, because..."');
+  } else if (yStatementDetection.hasYStatement) {
+    score += 1;
+    strengths.push('Decision outcome format present');
+  }
+
+  // Pros and Cons of Options section bonus (MADR 3.0) - (+2 pts)
+  const prosConsDetection = detectProsConsSection(text);
+  if (prosConsDetection.hasDetailedAnalysis) {
+    score += 2;
+    strengths.push(`Pros/Cons section with ${prosConsDetection.optionCount} options analyzed (MADR 3.0)`);
+  } else if (prosConsDetection.hasSectionHeader) {
+    score += 1;
+    strengths.push('Pros and Cons section present');
+  }
+
+  // Tradeoff Matrix bonus (+2 pts)
+  const tradeoffDetection = detectTradeoffMatrix(text);
+  if (tradeoffDetection.hasStructuredComparison) {
+    score += 2;
+    strengths.push(`Structured option comparison with ${tradeoffDetection.tableCount} table(s)`);
+  } else if (tradeoffDetection.hasMarkdownTable) {
+    score += 1;
+    strengths.push('Comparison table present');
+  }
+
+  // Decision Reversibility classification bonus (+2 pts)
+  const reversibilityDetection = detectReversibility(text);
+  if (reversibilityDetection.hasReversibilityAwareness) {
+    score += 2;
+    strengths.push('Decision reversibility classified (door type)');
+  }
+
+  // Alternatives Depth bonus (+2 pts)
+  const alternativesDepthDetection = detectAlternativesDepth(text);
+  if (alternativesDepthDetection.hasRejectionReasons && alternativesDepthDetection.proConCount >= 3) {
+    score += 2;
+    strengths.push('Alternatives thoroughly analyzed with rejection reasons');
+  } else if (alternativesDepthDetection.hasSection || alternativesDepthDetection.proConCount >= 2) {
+    score += 1;
+    strengths.push('Alternative options considered');
   }
 
   return {
