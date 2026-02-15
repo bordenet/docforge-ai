@@ -9,7 +9,11 @@ import {
   PROBLEM_PATTERNS,
   SOLUTION_PATTERNS,
   ALTERNATIVES_PATTERNS,
-  URGENCY_PATTERNS
+  URGENCY_PATTERNS,
+  DECISION_NEEDED_PATTERNS,
+  VAGUE_QUANTIFIER_PATTERNS,
+  STAKEHOLDER_TABLE_PATTERNS,
+  ALTERNATIVES_QUALITY_PATTERNS
 } from './validator-config.js';
 
 // Re-export section-related detections from split file
@@ -270,6 +274,150 @@ export function detectUrgency(text) {
       hasUrgencySection && 'Dedicated "Why Now" section',
       urgencyMatches.length > 0 && `${urgencyMatches.length} urgency indicators`,
       timePressureMatches.length > 0 && 'Time pressure/deadline mentioned'
+    ].filter(Boolean)
+  };
+}
+
+// ============================================================================
+// Decision Needed Detection (P1 improvement)
+// ============================================================================
+
+/**
+ * Detect decision/ask/request section in text
+ * Amazon one-pagers should end with a clear decision request
+ * @param {string} text - Text to analyze
+ * @returns {Object} Decision needed detection results
+ */
+export function detectDecisionNeeded(text) {
+  const hasDecisionSection = DECISION_NEEDED_PATTERNS.decisionSection.test(text);
+  const decisionMatches = text.match(DECISION_NEEDED_PATTERNS.decisionLanguage) || [];
+  const explicitAskMatches = text.match(DECISION_NEEDED_PATTERNS.explicitAsk) || [];
+
+  return {
+    hasDecisionSection,
+    hasDecisionLanguage: decisionMatches.length > 0,
+    decisionCount: decisionMatches.length,
+    hasExplicitAsk: explicitAskMatches.length > 0,
+    indicators: [
+      hasDecisionSection && 'Dedicated decision/ask section',
+      decisionMatches.length > 0 && `${decisionMatches.length} decision-related terms`,
+      explicitAskMatches.length > 0 && 'Explicit ask/request present'
+    ].filter(Boolean)
+  };
+}
+
+// ============================================================================
+// Vague Quantifier Detection (P2 improvement)
+// ============================================================================
+
+/**
+ * Detect vague quantifiers that should be replaced with specific numbers
+ * Examples: "TBD", "some amount", "various", "approximately"
+ * @param {string} text - Text to analyze
+ * @returns {Object} Vague quantifier detection results
+ */
+export function detectVagueQuantifiers(text) {
+  const vagueTermMatches = text.match(VAGUE_QUANTIFIER_PATTERNS.vagueTerms) || [];
+  const vagueRangeMatches = text.match(VAGUE_QUANTIFIER_PATTERNS.vagueRanges) || [];
+  const wideRangeMatches = text.match(VAGUE_QUANTIFIER_PATTERNS.wideRangeIndicator) || [];
+
+  // Count unique vague terms (case-insensitive)
+  const uniqueVagueTerms = [...new Set(vagueTermMatches.map(t => t.toLowerCase()))];
+
+  return {
+    hasVagueTerms: vagueTermMatches.length > 0,
+    vagueTermCount: vagueTermMatches.length,
+    uniqueVagueTerms,
+    hasWideRanges: wideRangeMatches.length > 0,
+    wideRangeCount: wideRangeMatches.length,
+    // Higher penalty = more vague
+    vaguenessPenalty: Math.min(10, vagueTermMatches.length * 2 + wideRangeMatches.length * 3),
+    indicators: [
+      vagueTermMatches.length > 0 && `${vagueTermMatches.length} vague terms found`,
+      wideRangeMatches.length > 0 && `${wideRangeMatches.length} overly wide ranges`,
+      uniqueVagueTerms.length > 0 && `Vague terms: ${uniqueVagueTerms.slice(0, 3).join(', ')}`
+    ].filter(Boolean)
+  };
+}
+
+// ============================================================================
+// Stakeholder Table Quality Detection (P4 improvement)
+// ============================================================================
+
+/**
+ * Detect stakeholder table quality - RACI/DACI vs simple name lists
+ * @param {string} text - Text to analyze
+ * @returns {Object} Stakeholder table quality results
+ */
+export function detectStakeholderTableQuality(text) {
+  const hasRaciTable = STAKEHOLDER_TABLE_PATTERNS.raciTable.test(text);
+  const hasRoleTable = STAKEHOLDER_TABLE_PATTERNS.roleTable.test(text);
+  const simpleListMatches = text.match(STAKEHOLDER_TABLE_PATTERNS.simpleList) || [];
+
+  // Quality score: RACI/DACI > Role table > Simple list > Nothing
+  let qualityScore = 0;
+  let qualityLevel = 'none';
+
+  if (hasRaciTable) {
+    qualityScore = 3;
+    qualityLevel = 'raci';
+  } else if (hasRoleTable) {
+    qualityScore = 2;
+    qualityLevel = 'role-table';
+  } else if (simpleListMatches.length > 0) {
+    qualityScore = 1;
+    qualityLevel = 'simple-list';
+  }
+
+  return {
+    hasRaciTable,
+    hasRoleTable,
+    hasSimpleList: simpleListMatches.length > 0,
+    qualityScore,
+    qualityLevel,
+    indicators: [
+      hasRaciTable && 'RACI/DACI accountability matrix present',
+      hasRoleTable && 'Role-based stakeholder table',
+      simpleListMatches.length > 0 && 'Simple stakeholder list (consider adding roles)'
+    ].filter(Boolean)
+  };
+}
+
+// ============================================================================
+// Alternatives Quality Detection (P5 improvement)
+// ============================================================================
+
+/**
+ * Detect quality of alternatives section - does it include rejection rationale?
+ * @param {string} text - Text to analyze
+ * @returns {Object} Alternatives quality results
+ */
+export function detectAlternativesQuality(text) {
+  const rejectionMatches = text.match(ALTERNATIVES_QUALITY_PATTERNS.rejectionRationale) || [];
+  const chosenMatches = text.match(ALTERNATIVES_QUALITY_PATTERNS.chosenRationale) || [];
+  const numberedMatches = text.match(ALTERNATIVES_QUALITY_PATTERNS.numberedAlternatives) || [];
+  const doNothingConsequenceMatches = text.match(ALTERNATIVES_QUALITY_PATTERNS.doNothingWithConsequence) || [];
+
+  // Quality score based on thoroughness
+  let qualityScore = 0;
+  if (numberedMatches.length >= 2) qualityScore += 1;  // Multiple options listed
+  if (rejectionMatches.length > 0) qualityScore += 2;  // Explains why rejected
+  if (chosenMatches.length > 0) qualityScore += 1;     // Explains why chosen
+  if (doNothingConsequenceMatches.length > 0) qualityScore += 1; // Do nothing has consequence
+
+  return {
+    hasRejectionRationale: rejectionMatches.length > 0,
+    rejectionCount: rejectionMatches.length,
+    hasChosenRationale: chosenMatches.length > 0,
+    hasNumberedAlternatives: numberedMatches.length > 0,
+    alternativesCount: numberedMatches.length,
+    hasDoNothingWithConsequence: doNothingConsequenceMatches.length > 0,
+    qualityScore: Math.min(5, qualityScore),
+    indicators: [
+      numberedMatches.length > 0 && `${numberedMatches.length} alternatives listed`,
+      rejectionMatches.length > 0 && 'Rejection rationale provided',
+      chosenMatches.length > 0 && 'Explains why solution was chosen',
+      doNothingConsequenceMatches.length > 0 && '"Do nothing" consequence explained'
     ].filter(Boolean)
   };
 }

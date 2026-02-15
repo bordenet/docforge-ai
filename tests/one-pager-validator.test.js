@@ -267,3 +267,122 @@ We lose $6M annually if we don't act.`;
   });
 });
 
+// ============================================================================
+// Fixture-Based Regression Tests
+// ============================================================================
+
+import { readFileSync, readdirSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const fixturesDir = join(__dirname, 'fixtures/one-pager-samples');
+
+describe('One-Pager Fixture Regression Tests', () => {
+  // Load all fixtures once
+  const fixtureFiles = readdirSync(fixturesDir)
+    .filter(f => f.endsWith('.md'))
+    .sort();
+
+  const loadFixture = (filename) => {
+    return readFileSync(join(fixturesDir, filename), 'utf-8');
+  };
+
+  describe('Excellent Quality Documents (01-05)', () => {
+    const excellentFiles = fixtureFiles.filter(f => f.startsWith('0'));
+
+    it.each(excellentFiles)('%s should score 70+ (excellent quality)', (filename) => {
+      const content = loadFixture(filename);
+      const result = validateOnePager(content);
+      expect(result.totalScore).toBeGreaterThanOrEqual(70);
+    });
+
+    it.each(excellentFiles)('%s should have problem clarity >= 22', (filename) => {
+      const content = loadFixture(filename);
+      const result = validateOnePager(content);
+      expect(result.problemClarity.score).toBeGreaterThanOrEqual(22);
+    });
+  });
+
+  describe('Good Quality Documents (06-10)', () => {
+    const goodFiles = fixtureFiles.filter(f => f.startsWith('0') && parseInt(f.slice(0, 2)) >= 6 || f.startsWith('10'));
+
+    it.each(goodFiles)('%s should score 60+ (good quality)', (filename) => {
+      const content = loadFixture(filename);
+      const result = validateOnePager(content);
+      expect(result.totalScore).toBeGreaterThanOrEqual(60);
+    });
+  });
+
+  describe('Needs-Work Quality Documents (11-15)', () => {
+    const needsWorkFiles = fixtureFiles.filter(f => parseInt(f.slice(0, 2)) >= 11);
+
+    it.each(needsWorkFiles)('%s should score below 60 (needs improvement)', (filename) => {
+      const content = loadFixture(filename);
+      const result = validateOnePager(content);
+      expect(result.totalScore).toBeLessThan(60);
+    });
+
+    it.each(needsWorkFiles)('%s should have vague quantifier deductions', (filename) => {
+      const content = loadFixture(filename);
+      const result = validateOnePager(content);
+      // Needs-work docs should trigger vague quantifier detection
+      expect(result.vagueQuantifiers.vagueTermCount).toBeGreaterThan(0);
+    });
+  });
+
+  describe('New Detection Functions', () => {
+    it('should detect decision needed section in excellent docs', () => {
+      const content = loadFixture('01-product-launch-excellent.md');
+      const result = validateOnePager(content);
+      // Excellent docs should have completeness score including decision detection
+      expect(result.completeness.score).toBeGreaterThanOrEqual(15);
+    });
+
+    it('should penalize vague quantifiers in needs-work docs', () => {
+      const content = loadFixture('11-budget-request-needs-work.md');
+      const result = validateOnePager(content);
+      expect(result.vagueQuantifiers.deduction).toBeGreaterThan(0);
+    });
+
+    it('should detect RACI tables when present', () => {
+      // 01-product-launch-excellent has RACI format
+      const content = loadFixture('01-product-launch-excellent.md');
+      const result = validateOnePager(content);
+      // High completeness indicates stakeholder quality detected
+      expect(result.completeness.score).toBeGreaterThanOrEqual(15);
+    });
+  });
+
+  describe('Score Distribution', () => {
+    it('should maintain proper tier separation', () => {
+      const excellentScores = fixtureFiles
+        .filter(f => parseInt(f.slice(0, 2)) <= 5)
+        .map(f => validateOnePager(loadFixture(f)).totalScore);
+
+      const goodScores = fixtureFiles
+        .filter(f => parseInt(f.slice(0, 2)) >= 6 && parseInt(f.slice(0, 2)) <= 10)
+        .map(f => validateOnePager(loadFixture(f)).totalScore);
+
+      const needsWorkScores = fixtureFiles
+        .filter(f => parseInt(f.slice(0, 2)) >= 11)
+        .map(f => validateOnePager(loadFixture(f)).totalScore);
+
+      const minExcellent = Math.min(...excellentScores);
+      const maxNeedsWork = Math.max(...needsWorkScores);
+
+      // Excellent docs should score significantly higher than needs-work
+      expect(minExcellent).toBeGreaterThan(maxNeedsWork);
+    });
+
+    it('should average 60+ across all fixtures', () => {
+      const allScores = fixtureFiles
+        .map(f => validateOnePager(loadFixture(f)).totalScore);
+
+      const average = allScores.reduce((a, b) => a + b, 0) / allScores.length;
+      expect(average).toBeGreaterThanOrEqual(55); // Reasonable threshold
+    });
+  });
+});

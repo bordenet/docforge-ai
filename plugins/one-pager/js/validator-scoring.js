@@ -15,7 +15,11 @@ import {
   detectStakeholders,
   detectTimeline,
   detectAlternatives,
-  detectUrgency
+  detectUrgency,
+  detectDecisionNeeded,
+  detectVagueQuantifiers,
+  detectStakeholderTableQuality,
+  detectAlternativesQuality
 } from './validator-detection.js';
 
 // ============================================================================
@@ -134,11 +138,19 @@ export function scoreSolutionQuality(text) {
     issues.push('Solution includes too much implementation detail - keep it high-level');
   }
 
-  // Alternatives considered (0-4 pts) - NEW: Why this solution over others?
+  // Alternatives considered with quality scoring (0-4 pts) - P5 improvement
   const alternativesDetection = detectAlternatives(text);
+  const alternativesQuality = detectAlternativesQuality(text);
+
   if (alternativesDetection.hasAlternativesSection && alternativesDetection.hasDoNothingOption) {
-    score += 4;
+    // Base 3 pts for having alternatives with do-nothing
+    score += 3;
     strengths.push('Alternatives considered including "do nothing" option');
+    // Bonus for rejection rationale (P5)
+    if (alternativesQuality.hasRejectionRationale) {
+      score += 1;
+      strengths.push('Rejection rationale provided for alternatives');
+    }
   } else if (alternativesDetection.hasAlternativesLanguage) {
     score += 2;
     issues.push('Alternatives mentioned but not in dedicated section or missing "do nothing" option');
@@ -224,45 +236,65 @@ export function scoreCompleteness(text) {
   let score = 0;
   const maxScore = 20;
 
-  // All required sections present (0-8 pts)
+  // All required sections present (0-6 pts) - reduced from 8 to make room for decision needed
   const sections = detectSections(text);
   const sectionScore = sections.found.reduce((sum, s) => sum + s.weight, 0);
   const maxSectionScore = REQUIRED_SECTIONS.reduce((sum, s) => sum + s.weight, 0);
   const sectionPercentage = sectionScore / maxSectionScore;
 
   if (sectionPercentage >= 0.85) {
-    score += 8;
+    score += 6;
     strengths.push(`${sections.found.length}/${REQUIRED_SECTIONS.length} required sections present`);
   } else if (sectionPercentage >= 0.70) {
-    score += 5;
+    score += 4;
     issues.push(`Missing sections: ${sections.missing.map(s => s.name).join(', ')}`);
   } else {
     score += 2;
     issues.push(`Only ${sections.found.length} of ${REQUIRED_SECTIONS.length} sections present`);
   }
 
-  // Stakeholders clearly identified (0-6 pts)
+  // Stakeholders clearly identified with quality scoring (0-5 pts) - P4 improvement
   const stakeholderDetection = detectStakeholders(text);
+  const stakeholderQuality = detectStakeholderTableQuality(text);
+
   if (stakeholderDetection.hasStakeholderSection && stakeholderDetection.hasRoles) {
-    score += 6;
+    // Base 4 pts for stakeholder section with roles
+    score += 4;
     strengths.push('Stakeholders and roles clearly identified');
+    // Bonus for RACI/DACI table (P4)
+    if (stakeholderQuality.hasRaciTable) {
+      score += 1;
+      strengths.push('RACI/DACI accountability matrix included');
+    }
   } else if (stakeholderDetection.hasStakeholders) {
-    score += 3;
-    issues.push('Stakeholders mentioned but roles not clearly defined');
+    score += 2;
+    issues.push('Stakeholders mentioned but roles not clearly defined - consider RACI table');
   } else {
     issues.push('Stakeholders not identified - list who\'s involved and their roles');
   }
 
-  // Timeline is realistic and phased (0-6 pts)
+  // Timeline is realistic and phased (0-5 pts) - reduced from 6
   const timelineDetection = detectTimeline(text);
   if (timelineDetection.hasTimelineSection && timelineDetection.hasPhasing) {
-    score += 6;
+    score += 5;
     strengths.push('Timeline is phased and realistic');
   } else if (timelineDetection.hasTimeline) {
     score += 3;
     issues.push('Timeline present but lacks clear phasing');
   } else {
     issues.push('Timeline missing - provide realistic milestones and phases');
+  }
+
+  // Decision Needed section (0-4 pts) - P1 improvement
+  const decisionDetection = detectDecisionNeeded(text);
+  if (decisionDetection.hasDecisionSection && decisionDetection.hasExplicitAsk) {
+    score += 4;
+    strengths.push('Clear decision request with explicit ask');
+  } else if (decisionDetection.hasDecisionSection || decisionDetection.hasDecisionLanguage) {
+    score += 2;
+    issues.push('Decision mentioned but lacks explicit ask - state exactly what you need approved');
+  } else {
+    issues.push('Missing "Decision Needed" section - end with a clear ask');
   }
 
   return {

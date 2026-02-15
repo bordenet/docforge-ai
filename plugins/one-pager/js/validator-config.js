@@ -23,7 +23,8 @@ export const REQUIRED_SECTIONS = [
   { pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(timeline|milestone|phase|schedule|roadmap)/im, name: 'Timeline/Milestones', weight: 1 },
   { pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(investment|effort|resource|cost|budget)/im, name: 'Investment/Resources', weight: 2 },
   { pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(risk|assumption|mitigation|dependency|dependencies)/im, name: 'Risks/Assumptions', weight: 1 },
-  { pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(cost.of.doing.nothing|cost.of.inaction|why.now|urgency)/im, name: 'Cost of Doing Nothing', weight: 2 }
+  { pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(cost.of.doing.nothing|cost.of.inaction|why.now|urgency)/im, name: 'Cost of Doing Nothing', weight: 2 },
+  { pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(decision|ask|request|approval|next.?step|action.?needed|conclusion)/im, name: 'Decision Needed', weight: 2 }
 ];
 
 // ============================================================================
@@ -113,8 +114,59 @@ export const URGENCY_PATTERNS = {
 };
 
 // ============================================================================
+// Decision Needed Patterns (P1 improvement)
+// ============================================================================
+
+export const DECISION_NEEDED_PATTERNS = {
+  decisionSection: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(decision|ask|request|approval|next.?step|action.?needed)/im,
+  decisionLanguage: /\b(decision|approve|approval|authorize|sign.?off|green.?light|go.ahead|proceed|fund|allocate|commit)\b/gi,
+  explicitAsk: /\b(please\s+approve|requesting|we\s+ask|we\s+need|approve\s+this|decision\s+needed)\b/gi
+};
+
+// ============================================================================
+// Vague Quantifier Patterns (P2 improvement)
+// ============================================================================
+
+export const VAGUE_QUANTIFIER_PATTERNS = {
+  // Vague placeholder terms that should be quantified
+  vagueTerms: /\b(tbd|to\s+be\s+determined|some\s+amount|various|several|many|few|numerous|multiple|significant|substantial|considerable|approximately|around|about|roughly|could\s+be\s+anywhere|depending\s+on|hard\s+to\s+quantify)\b/gi,
+  // Vague ranges that are too wide to be meaningful
+  vagueRanges: /\$?\d+[km]?\s*(?:to|[-–])\s*\$?\d+[km]?\s*(?:million|thousand)?/gi,
+  // Check if range is too wide (helper pattern for scoring)
+  wideRangeIndicator: /(?:anywhere\s+from|could\s+be|ranging?\s+from)\s+\$?\d/gi
+};
+
+// ============================================================================
+// Stakeholder Table Patterns (P4 improvement)
+// ============================================================================
+
+export const STAKEHOLDER_TABLE_PATTERNS = {
+  // RACI/DACI table detection
+  raciTable: /\b(raci|daci|responsible|accountable|consulted|informed|driver)\b.*\|/gim,
+  // Role-based table (| Role | Person | Responsibility |)
+  roleTable: /\|\s*role\s*\|.*\|\s*(?:person|name|owner)\s*\|/gi,
+  // Simple name list (just bullet points with names)
+  simpleList: /^[-*]\s*(?:owner|lead|team|sponsor):\s*\w+/gim
+};
+
+// ============================================================================
+// Alternatives Quality Patterns (P5 improvement)
+// ============================================================================
+
+export const ALTERNATIVES_QUALITY_PATTERNS = {
+  // Rejection rationale patterns
+  rejectionRationale: /\b(rejected|not\s+chosen|ruled\s+out|unacceptable|insufficient|too\s+(?:expensive|slow|risky|complex)|doesn't\s+(?:address|solve)|won't\s+work)\b/gi,
+  // "Chosen" with rationale
+  chosenRationale: /\b(chosen|selected|preferred|recommended)\s*(?::|because|due\s+to|for)/gi,
+  // Numbered alternatives (1. Option A: ..., 2. Option B: ...)
+  numberedAlternatives: /^(?:\d+\.|[-*])\s*\*?\*?(?:option|alternative|approach)\s*\d?\s*\*?\*?[:)]/gim,
+  // Do nothing with consequence
+  doNothingWithConsequence: /do\s*(?:-|\s)?nothing.*(?:lose|cost|risk|unacceptable|delay)/gi
+};
+
+// ============================================================================
 // Word Count Limits
 // ============================================================================
 
-export const WORD_LIMIT = 450;  // Maximum 450 words per phase1.md
+export const WORD_LIMIT = 600;  // Maximum 600 words - increased from 450 to accommodate full Amazon-style structure
 

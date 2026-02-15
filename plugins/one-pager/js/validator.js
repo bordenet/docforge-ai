@@ -12,7 +12,8 @@ import { getSlopPenalty, calculateSlopScore } from '../../../shared/js/slop-scor
 import { WORD_LIMIT } from './validator-config.js';
 import {
   detectCircularLogic,
-  detectBaselineTarget
+  detectBaselineTarget,
+  detectVagueQuantifiers
 } from './validator-detection.js';
 import {
   scoreProblemClarity,
@@ -38,7 +39,11 @@ export {
   detectStakeholders,
   detectTimeline,
   detectAlternatives,
-  detectUrgency
+  detectUrgency,
+  detectDecisionNeeded,
+  detectVagueQuantifiers,
+  detectStakeholderTableQuality,
+  detectAlternativesQuality
 } from './validator-detection.js';
 
 export {
@@ -106,7 +111,20 @@ export function validateOnePager(text) {
     }
   }
 
-  // Word count enforcement per phase1.md "Maximum 450 words"
+  // Vague quantifier detection (P2 improvement) - penalize TBD, "some amount", etc.
+  const vagueQuantifiers = detectVagueQuantifiers(text);
+  let vagueDeduction = 0;
+  const vagueIssues = [];
+
+  if (vagueQuantifiers.vagueTermCount > 0) {
+    // Deduct up to 8 points for vague quantifiers
+    vagueDeduction = Math.min(8, vagueQuantifiers.vaguenessPenalty);
+    if (vagueQuantifiers.uniqueVagueTerms.length > 0) {
+      vagueIssues.push(`Vague terms detected: ${vagueQuantifiers.uniqueVagueTerms.slice(0, 3).join(', ')}. Replace with specific numbers.`);
+    }
+  }
+
+  // Word count enforcement - increased to 600 words for full Amazon-style structure
   const wordCount = text.split(/\s+/).filter(w => w.length > 0).length;
   let wordCountDeduction = 0;
   const wordCountIssues = [];
@@ -116,7 +134,7 @@ export function validateOnePager(text) {
     wordCountIssues.push(`Document is ${wordCount} words (max ${WORD_LIMIT}). Deducting ${wordCountDeduction} points.`);
   }
 
-  const rawScore = problemClarity.score + solution.score + scope.score + completeness.score - slopDeduction - wordCountDeduction;
+  const rawScore = problemClarity.score + solution.score + scope.score + completeness.score - slopDeduction - wordCountDeduction - vagueDeduction;
 
   // CRITICAL: Cap at 50 if circular logic detected (per prompts.js line 49)
   const isCircularCapped = circularLogic.isCircular && rawScore > 50;
@@ -146,6 +164,11 @@ export function validateOnePager(text) {
     baselineTarget: {
       ...baselineTarget,
       issues: baselineIssues
+    },
+    vagueQuantifiers: {
+      ...vagueQuantifiers,
+      deduction: vagueDeduction,
+      issues: vagueIssues
     },
     wordCount: {
       count: wordCount,
