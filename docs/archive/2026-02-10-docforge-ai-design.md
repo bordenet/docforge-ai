@@ -1,5 +1,8 @@
 # DocForgeAI Design
 
+> **Status:** ARCHIVED - Founding design document. See actual codebase for current architecture.
+> **Archived:** 2026-02-15
+
 > **Date**: 2026-02-10
 > **Status**: Complete (Core Architecture)
 > **Goal**: AI-powered document creation with adversarial review workflow - 9 document types in one unified platform
