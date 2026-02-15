@@ -110,9 +110,26 @@ docforge-ai/
 - **Confirmation Section** - New section specifying validation mechanisms for implementation compliance
 - **Validator Updates** - Added `detectDecisionDrivers()` and `detectConfirmation()` functions
 
+#### PRD Plugin Enhancements (3 Rounds)
+- **Section 6: Competitive Landscape** - 2-3 direct competitors with differentiation, competitive moat
+- **Section 5.2: Customer Evidence** - Required evidence types (interviews, support data, analytics, NPS, competitive loss)
+- **Section 4.3: Leading/Lagging Indicators** - Comprehensive table with product-type examples (SaaS, Consumer, Enterprise)
+- **Section 7.5: UX Mockups & User Flows** - Wireframe reference guidance
+- **Section 8.2: Out-of-Scope with Rationale** - Justification required for exclusions
+- **Section 9.1: User Story Format** - "As a [user], I want [action], so that [benefit]"
+- **Section 9.3: Dependencies** - Upstream/downstream categorization with validation plans
+- **Section 12.2: Rollout Strategy** - Beta/pilot → GA stages with feature flags
+- **Phase 2: Pressure-Testing** - Devil's advocate questions (strategic, scope, assumption challenges)
+- **Phase 3: Stakeholder Pitches** - VP Eng, CEO, CFO, Design Lead, Sales/Marketing pitch guidance
+- **Form Fields** - Added `competitors` and `customerEvidence` input fields
+- **Scoring Rubric** - 100-point system with 16 required sections
+
 ### Commit History
 
 ```
+1da0831 feat(prd): Round 3 - stakeholder pitches, enhanced indicators, pressure-testing
+92c4674 feat(prd): Add user stories, UX mockups, rollout strategy, and dependency tracking
+127e085 feat(prd): Add competitive landscape section and strengthen customer evidence
 8929972 feat(adr): upgrade to MADR 3.0 template with decision drivers and confirmation
 f6c8b6f feat(one-pager): add alternatives and urgency detection with scoring
 4b56981 test: add demo data E2E tests

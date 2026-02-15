@@ -629,7 +629,7 @@ Study these implementations for patterns:
 |--------|------------|------------------|
 | `one-pager` | Medium | Urgency/Why Now detection, alternatives scoring, circular logic detection |
 | `jd` | Medium | Inclusive language detection, mandated sections |
-| `prd` | Complex | MoSCoW prioritization, acceptance criteria, customer evidence |
+| `prd` | Complex | MoSCoW prioritization, acceptance criteria, customer evidence, competitive landscape, leading/lagging indicators, stakeholder pitches, pressure-testing, user stories, rollout strategy |
 | `pr-faq` | Complex | Press release structure, FAQ sections |
 | `adr` | Medium | MADR 3.0 template, decision drivers, confirmation section |
 
