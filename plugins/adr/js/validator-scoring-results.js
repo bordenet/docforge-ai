@@ -16,7 +16,8 @@ import {
 import {
   detectConsequences,
   detectStatus,
-  detectSections
+  detectSections,
+  detectConfirmation
 } from './validator-detection.js';
 
 /**
@@ -132,19 +133,31 @@ export function scoreStatus(text) {
     issues.push('Date missing - add when this decision was made');
   }
 
-  // Required sections present (0-8 pts)
+  // Required sections present (0-5 pts) - reduced to make room for Confirmation
   const sectionScore = sections.found.reduce((sum, s) => sum + s.weight, 0);
   const maxSectionScore = REQUIRED_SECTIONS.reduce((sum, s) => sum + s.weight, 0);
   const sectionPercentage = sectionScore / maxSectionScore;
 
   if (sectionPercentage >= 0.85) {
-    score += 8;
+    score += 5;
     strengths.push(`${sections.found.length}/${REQUIRED_SECTIONS.length} required sections present`);
   } else if (sectionPercentage >= 0.60) {
-    score += 4;
+    score += 3;
     issues.push(`Missing sections: ${sections.missing.map(s => s.name).join(', ')}`);
   } else {
     issues.push(`Only ${sections.found.length} of ${REQUIRED_SECTIONS.length} sections present`);
+  }
+
+  // Confirmation section (MADR 3.0) - (0-3 pts)
+  const confirmationDetection = detectConfirmation(text);
+  if (confirmationDetection.hasSectionHeader) {
+    score += 3;
+    strengths.push('Confirmation section specifies validation mechanism (MADR 3.0)');
+  } else if (confirmationDetection.hasValidationLanguage) {
+    score += 1;
+    issues.push('Validation mentioned but missing dedicated Confirmation section (MADR 3.0)');
+  } else {
+    issues.push('Missing Confirmation section - specify how compliance will be validated (MADR 3.0)');
   }
 
   return {

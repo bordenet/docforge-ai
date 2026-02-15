@@ -16,7 +16,8 @@ import {
   detectContext,
   detectDecision,
   detectOptions,
-  detectRationale
+  detectRationale,
+  detectDecisionDrivers
 } from './validator-detection.js';
 
 // Re-export consequences and status scoring from separate module
@@ -57,12 +58,27 @@ export function scoreContext(text) {
     issues.push('Constraints missing - list requirements, limitations, and forces');
   }
 
-  // Business/stakeholder focus (0-7 pts)
+  // Business/stakeholder focus (0-5 pts) - reduced to make room for Decision Drivers
   if (contextDetection.hasBusinessFocus) {
-    score += 7;
+    score += 5;
     strengths.push('Context tied to business/stakeholder needs');
   } else {
     issues.push('Add business context - explain why this matters to stakeholders');
+  }
+
+  // Decision Drivers (MADR 3.0) - bonus/penalty (0-5 pts)
+  const driversDetection = detectDecisionDrivers(text);
+  if (driversDetection.hasSectionHeader && driversDetection.hasMinimumDrivers) {
+    score += 5;
+    strengths.push(`Decision Drivers section with ${driversDetection.driversCount} drivers (MADR 3.0)`);
+  } else if (driversDetection.hasSectionHeader) {
+    score += 2;
+    issues.push(`Decision Drivers section has only ${driversDetection.driversCount} drivers - need 3+ (MADR 3.0)`);
+  } else if (driversDetection.hasDriverLanguage) {
+    score += 1;
+    issues.push('Decision drivers mentioned but missing dedicated section (MADR 3.0)');
+  } else {
+    issues.push('Missing Decision Drivers section - list 3-5 forces/constraints (MADR 3.0)');
   }
 
   return {
