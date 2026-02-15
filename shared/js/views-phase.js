@@ -226,9 +226,14 @@ export function renderPhaseContent(plugin, project, phase) {
           ${
             phaseData.completed && phase < 3
               ? `
-            <button id="next-phase-btn" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-              Next Phase →
-            </button>
+            <div class="flex gap-3">
+              <button id="next-phase-btn" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                Next Phase →
+              </button>
+              <button id="copy-output-btn" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm">
+                📋 Copy Output
+              </button>
+            </div>
           `
               : phase < 3
                 ? `

@@ -162,6 +162,21 @@ export function attachPhaseEventListeners(plugin, project, phase) {
     });
   }
 
+  // Copy output button (phases 1-2 only)
+  const copyOutputBtn = document.getElementById('copy-output-btn');
+  if (copyOutputBtn) {
+    copyOutputBtn.addEventListener('click', async () => {
+      const freshProject = await getProject(plugin.dbName, project.id);
+      const phaseResponse = freshProject.phases?.[phase]?.response || '';
+      if (phaseResponse) {
+        await copyToClipboard(phaseResponse);
+        showToast('Output copied to clipboard!', 'success');
+      } else {
+        showToast('No output to copy', 'warning');
+      }
+    });
+  }
+
   // Export final document button (Phase 3 complete)
   if (exportFinalBtn) {
     exportFinalBtn.addEventListener('click', async () => {
