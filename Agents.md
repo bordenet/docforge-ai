@@ -47,9 +47,6 @@ Before ANY commit:
 - 🟡 **BEFORE deploying to any environment**: Read `$HOME/.golden-agents/templates/workflows/deployment.md`
 - 🟡 **WHEN conversation exceeds 50 exchanges**: Read `$HOME/.golden-agents/templates/workflows/context-management.md`
 
-### Project type guidance:
-- Read `$HOME/.golden-agents/templates/project-types/web-apps.md`
-
 ### Optional: Superpowers integration
 
 If [superpowers](https://github.com/obra/superpowers) is installed, run at session start:
@@ -68,228 +65,35 @@ node ~/.codex/superpowers-augment/superpowers-augment.js bootstrap
 
 ### Architecture
 
-DocForge is a plugin-based document generation platform:
+DocForge is a plugin-based document generation platform with 9 document types in `plugins/{type}/`, using a 3-phase workflow (Claude drafts → Gemini critiques → Claude synthesizes) with per-plugin IndexedDB isolation.
 
-- **9 document types** as plugins in `plugins/{type}/`
-- **3-phase workflow**: Claude drafts → Gemini critiques → Claude synthesizes
-- **Per-plugin IndexedDB** for data isolation
-
-### Plugin Structure
-
-Each plugin in `plugins/{type}/` contains:
-
-```
-config.js           # Form fields, scoring dimensions, metadata
-templates.js        # Quick-start templates
-prompts/            # phase1.md, phase2.md, phase3.md
-js/
-  validator.js      # Main entry point (exports validateDocument)
-  validator-config.js    # Pattern definitions
-  validator-detection.js # Detection functions
-  validator-scoring.js   # Scoring functions
-```
+Each plugin contains: `config.js`, `templates.js`, `prompts/phase{1,2,3}.md`, and `js/validator-*.js` modules.
 
 ### Adding New Document Types
 
-> **REQUIRED READING:** See `docs/ADDING-DOCUMENT-TYPES.md` for step-by-step instructions.
-
-The guide covers:
-- Plugin config structure
-- Form field → prompt placeholder mapping
-- LLM prompt templates (all 3 phases)
-- Validator implementation patterns
-- Test requirements (20+ tests minimum)
-- Plugin registry wiring
-- Common mistakes to avoid
-- AI agent checklist
+- 🔴 **BEFORE adding a new document type**: Read `docs/ADDING-DOCUMENT-TYPES.md`
 
 ---
 
-## Agent Definitions
+## Agent Definitions (🟡 Reference)
 
-### Agent: DraftGenerator (Phase 1)
+- 🟡 **WHEN understanding the 3-phase workflow**: Read `docs/modules/agent-definitions.md`
 
-**Purpose**: Generate initial document draft from form inputs
-**Domain**: Document creation
-**LLM**: Claude (user's choice of model)
-
-| Capability | Allowed | Constraints |
-|------------|---------|-------------|
-| Read form data | ✅ | All fields from config.js |
-| Generate markdown | ✅ | Must follow template structure |
-| Access external APIs | ❌ | Prompt is copy-pasted by user |
-
-**Inputs**: Form field values (JSON), document type, template selection
-**Outputs**: Markdown document following plugin's template structure
-
-### Agent: AdversarialCritic (Phase 2)
-
-**Purpose**: Score and critique the draft on 5 dimensions
-**Domain**: Document quality assessment
-**LLM**: Gemini (different model for adversarial perspective)
-
-| Capability | Allowed | Constraints |
-|------------|---------|-------------|
-| Read Phase 1 output | ✅ | Full draft text |
-| Score dimensions | ✅ | 1-5 scale per dimension |
-| Identify gaps | ✅ | Must cite specific sections |
-| Rewrite content | ❌ | Critique only, no rewrites |
-
-**Inputs**: Phase 1 draft, scoring dimensions from config.js
-**Outputs**: Dimension scores (1-5), gap analysis, improvement suggestions
-
-### Agent: Synthesizer (Phase 3)
-
-**Purpose**: Incorporate critique into final document
-**Domain**: Document refinement
-**LLM**: Claude (same as Phase 1 for consistency)
-
-| Capability | Allowed | Constraints |
-|------------|---------|-------------|
-| Read Phase 1 + 2 | ✅ | Draft and critique |
-| Rewrite sections | ✅ | Address all critique points |
-| Add new content | ✅ | Only to fill identified gaps |
-| Remove content | ⚠️ | Only if critique flags as wrong |
-
-**Inputs**: Phase 1 draft, Phase 2 critique
-**Outputs**: Final document with all critique points addressed
+Quick reference: Phase 1 (Claude drafts) → Phase 2 (Gemini critiques) → Phase 3 (Claude synthesizes)
 
 ---
 
-## Operating Constraints
+## Document Type Isolation (🔴 CRITICAL)
 
-**Privacy**: Drafts stored locally in browser (IndexedDB). User controls when prompts are sent to external AI services.
-**Cost**: User controls LLM costs (copy-paste workflow to external AI, not API).
-**Token Limits**: Prompts designed for 8K-32K context windows.
+- 🔴 **BEFORE modifying ANY file in `plugins/` or `tests/`**: Read `docs/modules/document-type-isolation.md`
 
----
-
-## Document Type Isolation (CRITICAL)
-
-When working on a specific document type (one-pager, prd, adr, etc.):
-
-| Rule | Description |
-|------|-------------|
-| **File scope** | ONLY modify files in `plugins/<document-type>/` |
-| **Test scope** | ONLY modify tests in `tests/<document-type>-*.test.js` |
-| **No cross-type changes** | If you identify improvements for OTHER document types, document them but DO NOT implement |
-| **Commit scope match** | Use commit message scope that matches files modified |
-
-### 🎯 Mandatory Scope Declaration (SESSION START)
-
-**BEFORE doing any work on a document type, you MUST declare your scope:**
-
-```
-## 🎯 Working Scope Declaration
-
-**Document Type:** [one-pager | prd | adr | jd | pr-faq | strategic-proposal | business-justification | acceptance-criteria | power-statement]
-
-**Allowed Files:**
-- `plugins/<type>/*`
-- `tests/<type>-*.test.js`
-
-**Forbidden Files:** All other `plugins/*` and `tests/*` directories
-
-I acknowledge I will NOT modify files outside this scope.
-```
-
-**For cross-plugin work, use:**
-```
-**Document Type:** cross-plugin
-**Scope:** [List specific types being modified]
-```
-
-### Pre-Action File Verification (BEFORE EACH EDIT)
-
-**BEFORE modifying ANY file in `plugins/` or `tests/`, verify:**
-
-1. ✅ Does this file path contain my declared document type?
-2. ✅ If NO → **STOP** and use spillover handling below
-3. ✅ If YES → Proceed with modification
-
-**Example verification:**
-- Declared scope: `prd`
-- File to edit: `plugins/one-pager/js/validator.js`
-- Check: Does `plugins/one-pager/` contain `prd`? **NO**
-- Action: **STOP** - document in spillover backlog, do not implement
-
-### Spillover Handling Protocol
-
-When you identify improvements for OTHER document types:
-
-1. **DO NOT** implement the improvement
-2. **DO** add an entry to `docs/SPILLOVER_BACKLOG.md`:
-
-```markdown
-| Date | Your Scope | Target Type | Improvement | Rationale |
-|------|------------|-------------|-------------|-----------|
-| YYYY-MM-DD | prd | one-pager | Add urgency detection | Similar to PRD competitive section |
-```
-
-3. **DO** continue with your declared scope work
-
-### Defense-in-Depth Layers
-
-| Layer | When | Action |
-|-------|------|--------|
-| **Scope declaration** | Session start | Establishes boundaries |
-| **Pre-action verification** | Before each edit | Verifies file belongs to scope |
-| **Spillover backlog** | When cross-type improvement found | Documents without implementing |
-| **commit-msg hook** | At commit time | Rejects cross-contaminated commits |
-
-If you bypass the first 3 layers, the hook will reject your commit. Do not attempt to bypass.
-
-### Commit Message Scope Examples
-
-| Scope | Allowed Files | Forbidden Files |
-|-------|--------------|-----------------|
-| `feat(prd):` | `plugins/prd/*`, `tests/prd-*` | `plugins/one-pager/*`, `plugins/adr/*` |
-| `feat(one-pager):` | `plugins/one-pager/*`, `tests/one-pager-*` | `plugins/prd/*`, `plugins/adr/*` |
-| `feat(adr):` | `plugins/adr/*`, `tests/adr-*` | `plugins/prd/*`, `plugins/one-pager/*` |
-| `feat(shared):` | `shared/*`, multiple plugins | Any combination |
-| `feat:` (no scope) | Cross-cutting changes | - |
-
-### Branch Naming Policy
-
-| Work Type | Branch Pattern | Example |
-|-----------|----------------|---------|
-| One-pager work | `feature/one-pager/*` | `feature/one-pager/validator-improvements` |
-| PRD work | `feature/prd/*` | `feature/prd/competitive-landscape` |
-| ADR work | `feature/adr/*` | `feature/adr/madr-3-upgrade` |
-| Cross-plugin | `feature/cross-plugin/*` | `feature/cross-plugin/shared-patterns` |
-| Bug fixes | `fix/<scope>/*` | `fix/prd/scoring-bug` |
-
-### Git Hooks
-
-Install cross-contamination prevention hooks:
-
-```bash
-git config core.hooksPath .githooks
-```
-
-This enables the `commit-msg` hook that validates scope matches files. See `.githooks/README.md` for details.
-
-### Why This Matters
-
-Cross-contamination (modifying multiple document types in one commit) causes:
-- Merge conflicts when parallel agents work on different document types
-- Mislabeled commit history making debugging harder
-- Potential for one agent's changes to overwrite another's
-
-See `PARALLEL_AGENT_REMEDIATION.md` for a detailed case study.
+This module covers scope declaration, pre-action verification, spillover handling, and commit-msg hook enforcement.
 
 ---
 
-## Quality Standards
+## Quality Standards (🔴 Required)
 
-- **Coverage target**: 80% (currently 84%)
-- **Lint clean**: `npm run lint` must pass with zero warnings
-- **Prompt templates**: Include anti-slop guidance in all phase prompts
+- 🔴 **BEFORE any commit**: Read `docs/modules/quality-standards.md`
 
-### Git Identity
-
-```bash
-git config user.name "Matt J Bordenet"
-git config user.email "bordenet@users.noreply.github.com"
-```
+Quick reference: `npm run lint` (zero warnings) → `npm test` (all pass) → coverage >= 80%
 
