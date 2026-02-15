@@ -155,6 +155,29 @@ Different stakeholders need different framings:
 
 ## Critical Rules
 
+### ⚠️ ENFORCE: WHY and WHAT, Never HOW
+
+**The final PRD must be 100% free of implementation prescriptions.**
+
+During synthesis, actively remove any "HOW" language that slipped through:
+
+| ❌ Remove (HOW) | ✅ Keep/Rewrite (WHAT) |
+|----------------|------------------------|
+| "Use microservices architecture" | "Billing and user systems must scale independently" |
+| "Implement in Python" | "Processing must complete in <2 seconds" |
+| "Store in S3 buckets" | "Documents must be retrievable within 500ms" |
+| "Build with React" | "Interface must work on desktop and mobile browsers" |
+| "Use Kafka for messaging" | "Events must be processed with <1 second latency" |
+
+**Why This Matters:**
+- Engineers own the HOW - it's their expertise
+- Prescribing technology in a PRD creates technical debt before code is written
+- Future engineers will be stuck with decisions made without full context
+
+**The Test:** Read each requirement aloud. If it sounds like a design doc or tech spec, rewrite it as a business outcome.
+
+### Other Critical Rules
+
 - ❌ **NO CODE**: Never provide code, JSON schemas, SQL queries, or technical implementation
 - ❌ **NO METADATA TABLE**: Don't include author/version/date table at the top
 - ❌ **NO VAGUE TERMS**: Ensure "fast", "scalable", "near-real-time" are replaced with specific thresholds

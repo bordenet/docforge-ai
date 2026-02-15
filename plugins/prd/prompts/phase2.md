@@ -143,6 +143,7 @@ Evaluate the **16 required sections** (per Phase1.md):
 - ❌ Missing kill switch / hypothesis failure criteria
 - ❌ No competitive landscape or "we have no competitors"
 - ❌ Customer evidence missing or entirely fabricated
+- ❌ **Implementation prescriptions** ("Use React", "Deploy to AWS", "Implement OAuth") - **Flag and rewrite**
 
 ## Your Process
 
@@ -153,6 +154,7 @@ Evaluate the **16 required sections** (per Phase1.md):
    - Note absent compliance requirements
    - Highlight vague terms ("fast", "scalable", "near-real-time")
    - Check for missing failure/edge case ACs
+   - **⚠️ Flag any "HOW" violations** (technology prescriptions that should be business requirements)
 3. **Ask Clarifying Questions**: Work with the user to fill gaps
 4. **Suggest Improvements**: Recommend specific changes with examples
 5. **Pressure-Test Assumptions**: Challenge the PRD with devil's advocate questions (see below)
@@ -182,6 +184,34 @@ Evaluate the **16 required sections** (per Phase1.md):
 
 ## Critical Rules
 
+### ⚠️ ENFORCE: WHY and WHAT, Never HOW
+
+**A PRD is a decision-making tool, not a technical specification.**
+
+The PRD must focus on:
+- **WHY** → Business context, problem severity, strategic rationale, customer pain
+- **WHAT** → Requirements, outcomes, constraints, success metrics
+
+The PRD must NEVER include:
+- **HOW** → Technical architecture, specific technologies, implementation approaches
+
+**Flag These "HOW" Violations in Your Review:**
+| Violation | Rewrite To |
+|-----------|------------|
+| "Use microservices" | "System must scale independently for billing vs. user management" |
+| "Implement OAuth 2.0" | "Users must authenticate securely via SSO" |
+| "Store in PostgreSQL" | "Data must be queryable with <100ms p95 latency" |
+| "Build a React dashboard" | "Users need a visual interface to monitor X" |
+| "Use Redis for caching" | "Frequently accessed data must load in <50ms" |
+| "Deploy to AWS Lambda" | "System must handle 0-to-1000 requests/min elastically" |
+| "REST API with JSON" | "External systems must integrate programmatically" |
+
+**The Test:** If an engineer could implement it 5 different ways, you're describing WHAT (correct). If you're prescribing a specific technology, you're describing HOW (flag it).
+
+**Exception:** Pre-existing constraints are allowed (e.g., "Must integrate with existing Salesforce instance").
+
+### Other Critical Rules
+
 - ❌ **NO CODE**: Never provide code, JSON schemas, SQL queries, or technical implementation
 - ❌ **NO METADATA TABLE**: Don't include author/version/date table at the top
 - ❌ **NO VAGUE TERMS**: Replace "fast", "scalable", "near-real-time", "high-performance" with specific thresholds
@@ -189,7 +219,7 @@ Evaluate the **16 required sections** (per Phase1.md):
 - ✅ **FOCUS ON OUTCOMES**: Emphasize what users achieve, not how it's built
 - ✅ **BE SPECIFIC**: Use concrete examples and quantifiable metrics
 - ✅ **DEFINE FORMULAS**: All scoring mechanisms must include explicit formulas
-- ✅ **SPECIFY INTEGRATIONS**: Name exact APIs, protocols, and third-party services
+- ✅ **SPECIFY INTEGRATIONS**: Name exact APIs, protocols, and third-party services (as constraints, not solutions)
 - ✅ **INCLUDE BASELINES**: All success metrics must have baseline values and targets
 
 ## Output Format
