@@ -164,6 +164,58 @@ The guide covers:
 
 ---
 
+## Document Type Isolation (CRITICAL)
+
+When working on a specific document type (one-pager, prd, adr, etc.):
+
+| Rule | Description |
+|------|-------------|
+| **File scope** | ONLY modify files in `plugins/<document-type>/` |
+| **Test scope** | ONLY modify tests in `tests/<document-type>-*.test.js` |
+| **No cross-type changes** | If you identify improvements for OTHER document types, document them but DO NOT implement |
+| **Commit scope match** | Use commit message scope that matches files modified |
+
+### Commit Message Scope Examples
+
+| Scope | Allowed Files | Forbidden Files |
+|-------|--------------|-----------------|
+| `feat(prd):` | `plugins/prd/*`, `tests/prd-*` | `plugins/one-pager/*`, `plugins/adr/*` |
+| `feat(one-pager):` | `plugins/one-pager/*`, `tests/one-pager-*` | `plugins/prd/*`, `plugins/adr/*` |
+| `feat(adr):` | `plugins/adr/*`, `tests/adr-*` | `plugins/prd/*`, `plugins/one-pager/*` |
+| `feat(shared):` | `shared/*`, multiple plugins | Any combination |
+| `feat:` (no scope) | Cross-cutting changes | - |
+
+### Branch Naming Policy
+
+| Work Type | Branch Pattern | Example |
+|-----------|----------------|---------|
+| One-pager work | `feature/one-pager/*` | `feature/one-pager/validator-improvements` |
+| PRD work | `feature/prd/*` | `feature/prd/competitive-landscape` |
+| ADR work | `feature/adr/*` | `feature/adr/madr-3-upgrade` |
+| Cross-plugin | `feature/cross-plugin/*` | `feature/cross-plugin/shared-patterns` |
+| Bug fixes | `fix/<scope>/*` | `fix/prd/scoring-bug` |
+
+### Git Hooks
+
+Install cross-contamination prevention hooks:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+This enables the `commit-msg` hook that validates scope matches files. See `.githooks/README.md` for details.
+
+### Why This Matters
+
+Cross-contamination (modifying multiple document types in one commit) causes:
+- Merge conflicts when parallel agents work on different document types
+- Mislabeled commit history making debugging harder
+- Potential for one agent's changes to overwrite another's
+
+See `PARALLEL_AGENT_REMEDIATION.md` for a detailed case study.
+
+---
+
 ## Quality Standards
 
 - **Coverage target**: 80% (currently 84%)
