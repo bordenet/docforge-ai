@@ -1,8 +1,8 @@
 You are synthesizing a final, production-ready Architecture Decision Record (ADR).
 
-Your job is to combine the best of the original draft with critical feedback to create the definitive ADR.
+Your job is to combine the best of the original draft with critical feedback to create the definitive ADR aligned with **MADR 3.0 standards**.
 
-Reference the official ADR format: https://github.com/joelparkerhenderson/architecture-decision-record
+Reference: MADR 3.0 at https://adr.github.io/madr/ - emphasizing explicit decision drivers, validation criteria, and justified design choices.
 
 ## Original ADR (Phase 1 - Initial Draft)
 
@@ -33,9 +33,16 @@ When deciding between Phase 1 and feedback suggestions:
 - **Example of what NOT to do**: "may increase complexity (from Phase 1) with some mitigation (from Phase 2)" ❌
 - **Example of what TO do**: "Requires distributed tracing implementation; debugging cross-service issues changes from grep-based to Jaeger visualization" ✅
 
-## Critical Requirements for Final ADR
+## Critical Requirements for Final ADR (MADR 3.0)
 
-### Decision Section Must:
+### Decision Drivers Section Must:
+- List 3-5 explicit drivers as bullet points
+- Include desired qualities (e.g., "scalability to 10k concurrent users")
+- Include constraints (e.g., "must integrate with existing Oracle DB")
+- Include concerns (e.g., "team has no Kubernetes experience")
+- Be specific and measurable where possible
+
+### Decision Outcome Section Must:
 - Name the specific architectural approach chosen (not vague principles)
 - Explain the RATIONALE (why this approach over alternatives)
 - **Include explicit alternatives discussion** ("We considered X and Y, but chose Z because...")
@@ -52,6 +59,11 @@ When deciding between Phase 1 and feedback suggestions:
 - Address three dimensions: technical, organizational, operational
 - Each consequence should be one substantive sentence, not a phrase
 - Avoid generic words: "complexity", "overhead" - be specific about WHAT is complex
+
+### Confirmation Section Must (MADR 3.0):
+- Specify how implementation compliance will be validated
+- Include concrete verification mechanisms (not vague "monitor progress")
+- Options: code review, architecture review, automated tests, metrics thresholds, DCAR
 
 ### Context Section Should:
 - Reference specific numbers/facts that drive the decision
@@ -87,18 +99,21 @@ CRITICAL - Your final ADR must be COPY-PASTE READY:
 - The user will paste your ENTIRE response directly into the tool
 </output_rules>
 
-### Required Sections (Synthesize Best from Both Versions)
+### Required Sections (MADR 3.0 Aligned)
 
 | Section | Synthesis Guidance | Format |
 |---------|-------------------|--------|
-| # {title} | Use clearer title from either version | H1 header |
-| ## Status | Keep original unless changed | Paragraph |
-| ## Context | Incorporate feedback improvements | Paragraph |
-| ## Decision | Best specificity from either version | Paragraph |
-| ### Positive Consequences | 3+ most concrete impacts | Bullet list |
-| ### Negative Consequences | 3+ most honest assessments | Bullet list |
+| # {title} | Use clearer title (problem + solution essence) | H1 header |
+| ## Status | Keep original with metadata (date, deciders) | Paragraph |
+| ## Context and Problem Statement | Incorporate feedback improvements | Paragraph |
+| ## Decision Drivers | 3-5 explicit forces/constraints | Bullet list |
+| ## Considered Options | Alternatives investigated | Numbered list |
+| ## Decision Outcome | Best specificity with Y-statement | Paragraph |
+| ### Positive Consequences | 3+ "Good, because..." impacts | Bullet list |
+| ### Negative Consequences | 3+ "Bad, because..." assessments | Bullet list |
 | ### Subsequent ADRs Triggered | Combined from both | Bullet list |
 | ### Recommended Review Timing | Most specific checkpoint | Paragraph |
+| ## Confirmation | How compliance will be validated | Paragraph |
 | ## If This ADR Is Updated Later | Amendment pattern | Template |
 
 ## ⚠️ FINAL AI Slop Sweep
@@ -125,13 +140,15 @@ Before finalizing, eliminate ALL remaining slop:
 
 ---
 
-## Quality Checklist Before Returning
+## Quality Checklist Before Returning (MADR 3.0 Aligned)
+- ✅ **Decision Drivers section** lists 3-5 explicit forces/constraints
+- ✅ **Considered Options section** lists alternatives investigated
 - ✅ Decision names a specific approach (microservices, monorepo, event-driven, etc.)
 - ✅ Decision explains why, not how
 - ✅ **Decision includes alternatives discussion** ("We considered X and Y, but chose Z because...")
 - ✅ **Decision is grounded in business drivers** (cost, time-to-market, capability, risk)
-- ✅ 3+ positive consequences listed with specifics
-- ✅ 3+ negative consequences listed with specifics
+- ✅ 3+ positive consequences with "Good, because..." format
+- ✅ 3+ negative consequences with "Bad, because..." format
 - ✅ **Team factors explicitly addressed** (training, skill gaps, hiring, team structure)
 - ✅ Negative consequences are honest and realistic
 - ✅ No vague words (improve, optimize, better, enhance, complexity)
@@ -139,6 +156,7 @@ Before finalizing, eliminate ALL remaining slop:
 - ✅ Organizational impact addressed (training needs, team coordination, etc.)
 - ✅ **Subsequent ADRs section present** (lists 2-3 triggered decisions)
 - ✅ **Recommended Review Timing present** (specific checkpoints)
+- ✅ **Confirmation section present** (specifies how compliance will be validated)
 - ✅ **Living document guidance included** (amendment pattern with dates)
 - ✅ **Zero AI Slop** (no vague terms, filler phrases, or undefined buzzwords)
 

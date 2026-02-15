@@ -1,6 +1,6 @@
-You are helping draft an Architecture Decision Record (ADR) following the Michael Nygard template.
+You are helping draft an Architecture Decision Record (ADR) following the MADR 3.0 template (Markdown ADR).
 
-Your goal is to produce a clear, implementable architectural decision that will guide team decisions for years.
+Your goal is to produce a clear, implementable architectural decision that will guide team decisions for years. MADR emphasizes: **justified design choices** addressing architecturally significant requirements, with explicit decision drivers and validation criteria.
 
 ## Input
 
@@ -14,12 +14,28 @@ Your goal is to produce a clear, implementable architectural decision that will 
 
 Generate a complete ADR based on the input above. You must:
 
-1. **Decision section**: State a specific, actionable architectural choice (not vague principles)
-2. **Consequences section**: List BOTH positive and negative impacts with equal weight (this is mandatory)
+1. **Decision Drivers section**: List 3-5 explicit forces/concerns driving this decision
+2. **Decision Outcome section**: State a specific, actionable architectural choice (not vague principles)
+3. **Consequences section**: List BOTH positive and negative impacts with equal weight (this is mandatory)
+4. **Confirmation section**: Specify how compliance will be validated
 
 ## Critical Requirements for Quality
 
-### Decision Section Must:
+### Decision Drivers Section Must (MADR 3.0):
+- List 3-5 explicit drivers as bullet points
+- Include desired qualities (e.g., "scalability to 10k concurrent users")
+- Include constraints (e.g., "must integrate with existing Oracle DB")
+- Include concerns (e.g., "team has no Kubernetes experience")
+- Be specific and measurable where possible
+
+**Example Decision Drivers:**
+- Scalability: Must handle 10,000 concurrent users by Q3
+- Team capability: Current team lacks distributed systems experience
+- Budget: $50k limit for infrastructure changes
+- Timeline: Must ship MVP in 8 weeks
+- Compliance: GDPR data residency requirements
+
+### Decision Outcome Section Must:
 - Name a specific architectural approach, pattern, or technology choice (e.g., "microservices", "monorepo", "event-driven", not "improve scalability")
 - Explain WHY this approach is chosen, not HOW to implement it
 - Include **explicit alternatives comparison**: "We considered [X], [Y], and [Z], but chose [decision] because..."
@@ -65,6 +81,16 @@ Generate a complete ADR based on the input above. You must:
 - "Operational teams must maintain separate deployment pipelines for each service, increasing release coordination from 30-minute monolithic releases to independent per-service deployments (5 minutes each)" ✅
 - "Requires investment in distributed tracing tooling (X-Ray, Jaeger); debugging cross-service issues that once required grep now need trace visualization" ✅
 
+### Confirmation Section Must (MADR 3.0):
+- Specify how implementation compliance will be validated
+- Include concrete verification mechanisms (not vague "monitor progress")
+- Options: code review, architecture review, automated tests, metrics thresholds
+
+**Example Confirmation statements:**
+- "Compliance will be validated via architecture review before implementation begins and code review for service boundaries" ✅
+- "Confirmed by: (1) load test demonstrating 10k concurrent users, (2) deployment pipeline achieving <5 min release time" ✅
+- "A DCAR (Decision-Centric Architecture Review) will validate alignment after first sprint" ✅
+
 ## Interactive Question Phase
 
 **CRITICAL**: Before generating the ADR, ask 3-5 clarifying questions to strengthen the decision:
@@ -103,19 +129,22 @@ CRITICAL - Your final ADR must be COPY-PASTE READY:
 - The user will paste your ENTIRE response directly into the tool
 </output_rules>
 
-### Required Sections (in order)
+### Required Sections (in order per MADR 3.0)
 
 | Section | Content | Format |
 |---------|---------|--------|
-| # {title} | ADR title | H1 header |
-| ## Status | Proposed/Accepted/Deprecated/Superseded | Paragraph |
-| ## Context | Background, constraints, problem statement | Paragraph |
-| ## Decision | Specific architectural choice with alternatives comparison and business drivers | Paragraph |
+| # {title} | ADR title (convey problem + solution essence) | H1 header |
+| ## Status | `Proposed` / `Accepted` / `Deprecated` / `Superseded by ADR-XXX` | Paragraph with metadata |
+| ## Context and Problem Statement | Background, constraints, problem as question | Paragraph |
+| ## Decision Drivers | Desired qualities, forces, concerns (numbered list) | Bullet list (3-5 drivers) |
+| ## Considered Options | List of alternatives investigated | Numbered list |
+| ## Decision Outcome | Chosen option with Y-statement justification | Paragraph |
 | ## Consequences | Positive and negative impacts | Two subsections |
-| ### Positive Consequences | 3+ specific positive impacts | Bullet list |
-| ### Negative Consequences | 3+ specific negative impacts | Bullet list |
+| ### Positive Consequences | 3+ specific positive impacts | Bullet list with "Good, because..." |
+| ### Negative Consequences | 3+ specific negative impacts | Bullet list with "Bad, because..." |
 | ### Subsequent ADRs Triggered | 2-3 decisions this necessitates | Bullet list |
 | ### Recommended Review Timing | When to review (e.g., "30 days") | Paragraph |
+| ## Confirmation | How compliance will be validated (review, test, etc.) | Paragraph |
 | ## If This ADR Is Updated Later | Amendment pattern with dates | Subsection template |
 
 ## Context Grounding
@@ -126,22 +155,25 @@ Reference specific facts from the context in your Decision and Consequences:
 
 **Example**: Instead of "improves deployment", say "Reduces 45-minute deployments to 5-minute per-service deployments, eliminating the need for coordinated releases"
 
-## Quality Checklist Before Returning
+## Quality Checklist Before Returning (MADR 3.0 Aligned)
+- ✅ **Decision Drivers section** lists 3-5 explicit forces/constraints driving this decision
+- ✅ **Considered Options section** lists alternatives investigated
 - ✅ Decision names a specific architectural approach (microservices, monorepo, event-driven, etc.)
 - ✅ Decision explains WHY (references specific context facts)
 - ✅ **Decision includes alternatives comparison** ("We considered X and Y, but chose Z because...")
 - ✅ **Decision grounds rationale in business drivers** (cost, time-to-market, team capability, etc.)
 - ✅ Decision does NOT explain HOW (no implementation details like "use Kafka")
-- ✅ At least 3 positive consequences listed with concrete technical/organizational specifics
-- ✅ At least 3 negative consequences listed with concrete technical/organizational specifics
+- ✅ At least 3 positive consequences listed with "Good, because..." format
+- ✅ At least 3 negative consequences listed with "Bad, because..." format
 - ✅ Each consequence is a substantive sentence, not a phrase
 - ✅ Negative consequences are honest and realistic (not minimized)
 - ✅ Consequences reference specific impacts: "adds X latency", "requires Y expertise", "enables Z benefit"
-- ✅ **Consequences explicitly address team factors**: training needs, skill gaps, hiring requirements, team structure changes
+- ✅ **Consequences explicitly address team factors**: training needs, skill gaps, hiring requirements
 - ✅ Consequences address ALL three dimensions: technical, organizational, operational
 - ✅ **NO vague consequence language**: Replace "complexity" with specific impacts, "overhead" with measurable costs
-- ✅ **Subsequent ADRs section lists 2-3 triggered decisions** (e.g., "service mesh selection", "distributed tracing strategy")
+- ✅ **Subsequent ADRs section lists 2-3 triggered decisions**
 - ✅ **Recommended Review Timing specifies clear checkpoints** (not vague; e.g., "30 days" not "later")
+- ✅ **Confirmation section** specifies how compliance will be validated (review, test, metrics)
 
 ---
 
@@ -213,6 +245,18 @@ The validator detects these patterns:
 - "quarterly review", "annual review"
 Include at least one of these to specify when to revisit the decision.
 
+**Missing Decision Drivers (-3 pts):**
+The validator detects these patterns:
+- "decision driver", "driver:", "force:", "concern:", "quality:"
+- Explicit numbered/bulleted list in Decision Drivers section
+Include 3-5 explicit drivers to avoid the penalty.
+
+**Missing Confirmation (-2 pts):**
+The validator detects these patterns:
+- "confirm", "validate", "verify", "review", "test", "audit"
+- "compliance", "DCAR", "architecture review", "code review"
+Include how the decision's implementation will be validated.
+
 **AI Slop Penalty (-0 to -5 pts):**
 - Buzzwords, filler phrases, hollow specificity
 
@@ -246,10 +290,12 @@ Include at least one of these to specify when to revisit the decision.
 
 | Pattern | Validator Detection | Bonus |
 |---------|---------------------|-------|
+| Decision Drivers | Section with 3+ bullet points listing drivers/forces/concerns | +3 pts |
 | Team factors | Regex: `training.*need\|skill gap\|hiring impact\|team ramp\|learning curve\|expertise required\|onboarding\|team structure\|hiring\|staffing` | +2 pts |
 | Subsequent ADRs | Regex: `subsequent ADR\|follow-on ADR\|triggers ADR\|future ADR\|ADR-\d+\|triggers.*decision.*on\s+\w+` | +2 pts |
 | Review timing | Regex: `\d+\s*(days?\|weeks?\|months?)\s*(review\|reassess\|revisit)\|after-action\|quarterly review\|annual review` | +2 pts |
 | Alternatives inline | Regex: `we considered .+?,\s*.+?(?:,\s*.+?)?\s*(?:and\s+.+?\s+)?but (?:chose\|selected\|decided\|went with)` | +2 pts |
+| Confirmation section | Section specifying validation/verification mechanism | +2 pts |
 
 ---
 

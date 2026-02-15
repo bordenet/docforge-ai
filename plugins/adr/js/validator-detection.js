@@ -11,7 +11,9 @@ import {
   CONSEQUENCES_PATTERNS,
   VAGUE_CONSEQUENCE_TERMS,
   STATUS_PATTERNS,
-  RATIONALE_PATTERNS
+  RATIONALE_PATTERNS,
+  DECISION_DRIVERS_PATTERNS,
+  CONFIRMATION_PATTERNS
 } from './validator-config.js';
 
 /**
@@ -195,6 +197,73 @@ export function detectRationale(text) {
       hasRationaleSection && 'Dedicated rationale section',
       rationaleMatches.length > 0 && `${rationaleMatches.length} rationale statements`,
       evidenceMatches.length > 0 && 'Evidence-based reasoning'
+    ].filter(Boolean)
+  };
+}
+
+/**
+ * Detect decision drivers in ADR (MADR 3.0)
+ * @param {string} text - Text to analyze
+ * @returns {Object} Decision drivers detection results
+ */
+export function detectDecisionDrivers(text) {
+  const hasSectionHeader = DECISION_DRIVERS_PATTERNS.sectionHeader.test(text);
+  const hasSection = DECISION_DRIVERS_PATTERNS.section.test(text);
+  const driverMatches = text.match(DECISION_DRIVERS_PATTERNS.driverLanguage) || [];
+  const bulletMatches = text.match(DECISION_DRIVERS_PATTERNS.bulletList) || [];
+  const numberedMatches = text.match(DECISION_DRIVERS_PATTERNS.numberedList) || [];
+
+  // Extract drivers section content if present
+  let driversCount = 0;
+  if (hasSectionHeader) {
+    const driversMatch = text.match(/^#+\s*decision\s+drivers?\b[\s\S]*?(?=^#+\s|\z)/im);
+    if (driversMatch) {
+      const sectionText = driversMatch[0];
+      const bullets = sectionText.match(/^[\s]*[-*•]\s+.+$/gm) || [];
+      const numbered = sectionText.match(/^[\s]*\d+\.\s+.+$/gm) || [];
+      driversCount = bullets.length + numbered.length;
+    }
+  }
+
+  return {
+    hasSectionHeader,
+    hasSection,
+    hasDriverLanguage: driverMatches.length > 0,
+    driversCount,
+    hasBulletList: bulletMatches.length > 0,
+    hasNumberedList: numberedMatches.length > 0,
+    hasMinimumDrivers: driversCount >= 3,
+    indicators: [
+      hasSectionHeader && 'Dedicated Decision Drivers section',
+      driversCount > 0 && `${driversCount} drivers listed`,
+      driversCount >= 3 && '✓ Minimum 3 drivers (MADR 3.0)',
+      driversCount < 3 && driversCount > 0 && `⚠️ Only ${driversCount} drivers (need 3+)`
+    ].filter(Boolean)
+  };
+}
+
+/**
+ * Detect confirmation/validation section in ADR (MADR 3.0)
+ * @param {string} text - Text to analyze
+ * @returns {Object} Confirmation detection results
+ */
+export function detectConfirmation(text) {
+  const hasSectionHeader = CONFIRMATION_PATTERNS.sectionHeader.test(text);
+  const hasSection = CONFIRMATION_PATTERNS.section.test(text);
+  const validationMatches = text.match(CONFIRMATION_PATTERNS.validationLanguage) || [];
+  const measurableMatches = text.match(CONFIRMATION_PATTERNS.measurable) || [];
+
+  return {
+    hasSectionHeader,
+    hasSection,
+    hasValidationLanguage: validationMatches.length > 0,
+    validationCount: validationMatches.length,
+    hasMeasurable: measurableMatches.length > 0,
+    measurableCount: measurableMatches.length,
+    indicators: [
+      hasSectionHeader && 'Dedicated Confirmation section',
+      validationMatches.length > 0 && `${validationMatches.length} validation mechanisms`,
+      measurableMatches.length > 0 && 'Measurable criteria specified'
     ].filter(Boolean)
   };
 }

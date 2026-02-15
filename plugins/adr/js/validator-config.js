@@ -4,11 +4,13 @@
 
 export const REQUIRED_SECTIONS = [
   { pattern: /^(#+\s*)?(context|background|problem|situation)/im, name: 'Context', weight: 2 },
+  { pattern: /^(#+\s*)?(decision\s+driver|driver)/im, name: 'Decision Drivers', weight: 1.5 },
   { pattern: /^(#+\s*)?(decision|choice|selected|chosen)/im, name: 'Decision', weight: 2 },
   { pattern: /^(#+\s*)?(consequence|impact|result|outcome|implication)/im, name: 'Consequences', weight: 2 },
   { pattern: /^(#+\s*)?(status|state)/im, name: 'Status', weight: 2 },
   { pattern: /^(#+\s*)?(option|alternative|considered)/im, name: 'Options Considered', weight: 1 },
-  { pattern: /^(#+\s*)?(rationale|reason|justification|why)/im, name: 'Rationale', weight: 1 }
+  { pattern: /^(#+\s*)?(rationale|reason|justification|why)/im, name: 'Rationale', weight: 1 },
+  { pattern: /^(#+\s*)?(confirmation|validation|verification)/im, name: 'Confirmation', weight: 1 }
 ];
 
 // Context patterns
@@ -78,4 +80,21 @@ export const REVIEW_PATTERN = /\b\d+\s*(days?|weeks?|months?)\s*(review|reassess
 
 // Alternatives comparison pattern
 export const ALTERNATIVES_PATTERN = /we considered .+?,\s*.+?(?:,\s*.+?)?\s*(?:and\s+.+?\s+)?but (?:chose|selected|decided|went with)/i;
+
+// Decision Drivers patterns (MADR 3.0)
+export const DECISION_DRIVERS_PATTERNS = {
+  section: /^(#+\s*)?(decision\s+driver|driver|force|concern|quality)/im,
+  sectionHeader: /^#+\s*decision\s+drivers?\b/im,
+  driverLanguage: /\b(driver|force|concern|quality|constraint|requirement|consideration)\b/gi,
+  bulletList: /^[\s]*[-*•]\s+.+$/gm,
+  numberedList: /^[\s]*\d+\.\s+.+$/gm
+};
+
+// Confirmation/Validation patterns (MADR 3.0)
+export const CONFIRMATION_PATTERNS = {
+  section: /^(#+\s*)?(confirmation|validation|verification|compliance)/im,
+  sectionHeader: /^#+\s*confirmation\b/im,
+  validationLanguage: /\b(confirm|validate|verify|review|test|audit|check|compliance|DCAR|architecture review|code review|load test)\b/gi,
+  measurable: /\b(metric|threshold|baseline|target|criteria|pass|fail)\b/gi
+};
 

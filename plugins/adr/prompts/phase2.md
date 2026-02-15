@@ -1,8 +1,8 @@
 You are refining an Architecture Decision Record (ADR) based on critical review feedback.
 
-Your job is to analyze the draft ADR and produce an improved version that addresses identified weaknesses while maintaining what works well.
+Your job is to analyze the draft ADR against **MADR 3.0 standards** and produce an improved version that addresses identified weaknesses while maintaining what works well.
 
-Reference the official ADR format: https://github.com/joelparkerhenderson/architecture-decision-record
+Reference: MADR 3.0 at https://adr.github.io/madr/ - emphasizing explicit decision drivers, validation criteria, and justified design choices.
 
 ## Draft ADR (Original)
 
@@ -12,14 +12,20 @@ Reference the official ADR format: https://github.com/joelparkerhenderson/archit
 
 Review the ADR across these dimensions and produce an improved version:
 
-### 1. Decision Specificity
+### 1. Decision Drivers (MADR 3.0 Required)
+- Does the ADR have an explicit **Decision Drivers** section?
+- Are there 3-5 numbered/bulleted drivers listed?
+- Do drivers include: desired qualities, constraints, concerns?
+- Are drivers specific and measurable (not vague like "better performance")?
+
+### 2. Decision Specificity
 - Does the decision name a specific architectural approach (microservices, event-driven, monorepo, etc.)?
 - Does it explain WHY, not just WHAT?
 - **Does it include explicit alternatives comparison** ("We considered X and Y, but chose Z because...")?
 - **Is the rationale grounded in business drivers** (cost, time-to-market, team capability, risk)?
 - Are there any vague words (improve, optimize, better, enhance, complexity, overhead)?
 
-### 2. Consequences Balance & Depth
+### 3. Consequences Balance & Depth
 - Are BOTH positive AND negative consequences equally present?
 - Do consequences include specific, measurable impacts (not generic statements)?
 - Are three dimensions covered: technical, organizational, operational?
@@ -28,7 +34,7 @@ Review the ADR across these dimensions and produce an improved version:
 - **Are subsequent ADRs triggered by this decision mentioned** (e.g., "This necessitates decisions on X, Y, Z")?
 - **Is after-action review timing specified** (e.g., "Review in 30 days" not "monitor later")?
 
-### 3. Context Grounding
+### 4. Context Grounding
 - Are specific numbers/facts from the context referenced in the decision and consequences?
 - Does the decision clearly solve the problem stated in Context?
 - Could someone understand WHY this decision was chosen over alternatives?
@@ -51,6 +57,15 @@ Review the ADR across these dimensions and produce an improved version:
 - Operational: deployment complexity, monitoring/observability needs, runbooks, incident response changes
 
 **If Decision Lacks Alternatives**: Add explicit comparison like "We considered X (cost: Y, benefit: Z) and A (cost: B, benefit: C), but chose decision because..."
+
+**If Decision Drivers Missing**: Add explicit section with 3-5 bullet points:
+- "Scalability: Must handle 10,000 concurrent users by Q3"
+- "Team capability: Current team lacks distributed systems experience"
+- "Budget: $50k limit for infrastructure changes"
+
+**If Confirmation Missing**: Add section specifying how compliance will be validated:
+- "Compliance validated via architecture review before implementation and load test demonstrating 10k users"
+- NOT: "We will monitor progress" (too vague)
 
 **If Team Factors Missing**: Add specific impacts:
 - "Requires hiring 2-3 distributed systems engineers (3-month ramp-up)"
@@ -90,19 +105,22 @@ CRITICAL - Your review and improved ADR must be COPY-PASTE READY:
 - The user will paste your ENTIRE response directly into the tool
 </output_rules>
 
-### Required Sections (in order)
+### Required Sections (in order per MADR 3.0)
 
 | Section | Content | Format |
 |---------|---------|--------|
 | ## Questions About This ADR | 3-5 clarifying questions | Numbered list |
-| # {title} | ADR title | H1 header |
-| ## Status | Proposed/Accepted/Deprecated/Superseded | Paragraph |
-| ## Context | Keep as-is unless critical gap | Paragraph |
-| ## Decision | Improved with alternatives and business drivers | Paragraph |
-| ### Positive Consequences | 3+ specific impacts | Bullet list |
-| ### Negative Consequences | 3+ specific impacts (honest) | Bullet list |
+| # {title} | ADR title (problem + solution essence) | H1 header |
+| ## Status | Proposed/Accepted/Deprecated/Superseded with metadata | Paragraph |
+| ## Context and Problem Statement | Keep as-is unless critical gap | Paragraph |
+| ## Decision Drivers | 3-5 explicit forces/constraints | Bullet list |
+| ## Considered Options | Alternatives investigated | Numbered list |
+| ## Decision Outcome | Improved with Y-statement justification | Paragraph |
+| ### Positive Consequences | 3+ "Good, because..." impacts | Bullet list |
+| ### Negative Consequences | 3+ "Bad, because..." impacts (honest) | Bullet list |
 | ### Subsequent ADRs Triggered | 2-3 decisions this necessitates | Bullet list |
 | ### Recommended Review Timing | Clear checkpoints | Paragraph |
+| ## Confirmation | How compliance will be validated | Paragraph |
 | ## If This ADR Is Updated Later | Amendment pattern | Template |
 
 ## ⚠️ CRITICAL: AI Slop Detection Checklist
@@ -127,13 +145,15 @@ CRITICAL - Your review and improved ADR must be COPY-PASTE READY:
 
 ---
 
-## Quality Checklist Before Returning
+## Quality Checklist Before Returning (MADR 3.0 Aligned)
+- ✅ **Decision Drivers section** lists 3-5 explicit forces/constraints
+- ✅ **Considered Options section** lists alternatives investigated
 - ✅ Decision names a specific approach (not vague principles)
 - ✅ Decision explains WHY, not HOW
 - ✅ **Decision includes alternatives comparison** ("We considered X, but chose Y because...")
 - ✅ **Decision is grounded in business drivers** (cost, time-to-market, capability, risk)
-- ✅ 3+ positive consequences listed with concrete specifics
-- ✅ 3+ negative consequences listed with concrete specifics
+- ✅ 3+ positive consequences with "Good, because..." format
+- ✅ 3+ negative consequences with "Bad, because..." format
 - ✅ **Team factors explicitly addressed** (training needs, skill gaps, hiring requirements)
 - ✅ No vague words (complexity, overhead, improve, optimize, better)
 - ✅ Specific technical implications (latency, patterns, technology requirements)
@@ -142,6 +162,7 @@ CRITICAL - Your review and improved ADR must be COPY-PASTE READY:
 - ✅ Each consequence is a substantive sentence, not a phrase
 - ✅ **Subsequent ADRs section present** (lists 2-3 triggered decisions)
 - ✅ **Recommended Review Timing present** (specific checkpoints, not vague timelines)
+- ✅ **Confirmation section present** (specifies how compliance will be validated)
 - ✅ **Living document guidance included** (amendment pattern shown)
 - ✅ **Zero AI Slop** (no vague terms, filler phrases, or undefined buzzwords)
 
