@@ -1,5 +1,12 @@
-<!-- Source: https://github.com/crossplane/crossplane/blob/main/design/one-pager-crd-scaling.md -->
-<!-- Note: This is a real-world engineering design document from Crossplane. It scores in the needs-work tier because it focuses on technical implementation rather than business outcomes, customer impact, and measurable success metrics expected in a business one-pager. -->
+<!--
+SOURCE: https://github.com/crossplane/crossplane/blob/main/design/one-pager-crd-scaling.md
+AUTHOR: Crossplane Authors (CNCF project)
+RETRIEVED: 2026-02-15
+LICENSE: Apache-2.0
+NOTE: Downloaded for DocForge-AI validator regression testing. This engineering
+design document scores in the needs-work tier because it focuses on technical
+implementation rather than business outcomes and measurable success metrics.
+-->
 
 # Performance Issues of Deploying Thousands of CRDs
 * Owner: Alper Rifat Uluçınar (@ulucinar)
