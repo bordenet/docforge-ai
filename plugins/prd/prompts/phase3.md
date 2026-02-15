@@ -15,12 +15,25 @@ Compare the two versions below and create a final PRD that:
 4. **Ensures completeness** - all sections are thorough and actionable
 5. **Optimizes for engineering teams** - clear requirements, measurable success criteria
 
+## Document Scope Awareness
+
+**Before synthesizing, identify the Document Scope:**
+- **Feature (1-3 pages):** Consolidate aggressively. 8-10 sections max. Cut fluff ruthlessly.
+- **Epic (4-8 pages):** All 16 sections, but keep each concise. No appendices unless essential.
+- **Product (8-15 pages):** Full depth permitted. Use appendices for research/competitive details.
+
+**Synthesis by Scope:**
+- If scope = "feature" and both versions are 8+ pages → **Consolidate to 1-3 pages**
+- If scope = "product" and both versions are thin → **Expand with probing questions**
+- Default to respecting the user's length preference
+
 ## Synthesis Process
 
 ### Step 1: Analyze Both Versions
 - Identify strengths and weaknesses of each version
 - Note where they agree and where they differ
 - Highlight areas where one is clearly superior
+- **Check if either version is bloated relative to scope**
 
 ### Step 2: Ask Clarifying Questions
 - If there are contradictions, ask the user for guidance
@@ -42,8 +55,13 @@ Compare the two versions below and create a final PRD that:
 ### Step 5: Quality Gate
 Before finalizing, verify:
 
+**Scope Alignment (Pass/Fail)**
+- ✅ Document length matches scope: Feature (1-3 pages), Epic (4-8 pages), Product (8-15 pages)
+- ✅ Section count appropriate: Feature (8-10 sections), Epic/Product (full 16 sections)
+- ❌ If bloated: Consolidate sections, move details to appendix, cut redundancy
+
 **Structure & Completeness (20 pts)**
-- ✅ All 16 required sections present (Executive Summary through Dissenting Opinions)
+- ✅ Required sections present (all 16 for Epic/Product; 8-10 for Feature)
 - ✅ Customer FAQ section appears BEFORE Competitive Landscape and Proposed Solution (Working Backwards)
 - ✅ Competitive Landscape includes 2+ competitors with differentiation
 - ✅ Traceability Summary table links Problems → Requirements → Metrics

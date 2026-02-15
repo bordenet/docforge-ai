@@ -24,6 +24,8 @@ The user has provided the following information:
 
 **Constraints & Dependencies:** {{CONSTRAINTS}}
 
+**Document Scope:** {{DOCUMENT_SCOPE}}
+
 ## Your Task
 
 Generate a comprehensive PRD that focuses on the **"Why"** (business context) and the **"What"** (requirements) while staying completely out of the **"How"** (implementation details).
@@ -100,6 +102,50 @@ This PRD is a **decision-making tool**, not documentation theater. Engineers wil
 **Rule:** If an engineer could implement it multiple ways, you're describing WHAT. If you're prescribing a specific technology or approach, you're describing HOW (forbidden).
 
 **Technical Constraints Exception:** Only specify technical details if they are PRE-EXISTING constraints (e.g., "Must integrate with existing Salesforce instance" or "Must use company's existing AWS infrastructure").
+
+### Mutation 3: Ruthless Brevity (Prevent PRD Bloat)
+
+**A PRD nobody reads is a PRD that failed.** Every section must earn its place.
+
+#### Length Targets by Document Scope
+
+| Scope | Target Length | Page 1 | Core Sections | Appendix |
+|-------|---------------|--------|---------------|----------|
+| **Feature** | 1-3 pages | Executive Summary (standalone, decision-ready) | Problem, Solution, Requirements, Metrics | None or minimal |
+| **Epic** | 4-8 pages | Executive Summary (1 page max) | Full core sections | Deep dives, edge cases |
+| **Product** | 8-15 pages | Executive Summary (1 page max) | Comprehensive coverage | Technical appendices, research data |
+
+**If {{DOCUMENT_SCOPE}} is:**
+- **"feature"** → Be aggressive. Cut anything that doesn't directly answer "what are we building and why?" Combine sections where possible. Skip optional subsections.
+- **"epic"** → Standard depth. Include all core sections but keep each concise. Use appendix for details.
+- **"product"** → Comprehensive, but still structured. Use appendix for data-heavy content (research, competitor analysis details).
+- **Empty/unspecified** → Default to "epic" (4-8 pages). Ask user if unsure.
+
+#### Tiered Structure (REQUIRED for all scopes)
+
+Every PRD MUST be readable at three levels:
+
+1. **Tier 1: Executive Summary (Page 1)** — Standalone, decision-ready
+   - A busy executive should be able to read ONLY page 1 and understand: problem, solution, impact, ask
+   - Must answer: "Should we do this? Why? What's the risk if we don't?"
+
+2. **Tier 2: Core Sections (Pages 2-3 for features, 2-5 for epics)** — The "must read"
+   - Problem Statement, Solution, Requirements, Success Metrics, Timeline
+   - Engineers and stakeholders read this to understand the work
+
+3. **Tier 3: Appendix/Deep Dives** — Optional reading
+   - Competitive analysis details, research data, edge case handling, technical constraints
+   - Reference material for those who need it
+
+#### Brevity Rules
+
+- **Merge thin sections:** If a section would be <2 sentences, merge it into a related section
+- **Use tables over prose:** Tables are scannable; paragraphs are not
+- **Cut redundancy ruthlessly:** If you've said it once, don't repeat it
+- **Link, don't paste:** Reference external docs (Figma, research reports) instead of copying content
+- **Every paragraph must earn its place:** Ask "If I cut this, would decision-making suffer?" If no, cut it.
+
+> ⚠️ **SELF-CHECK BEFORE OUTPUT:** Count your sections. If you have 16 detailed sections for a "feature" scope PRD, you've over-engineered it. Consolidate.
 
 ### Document Structure
 
@@ -739,7 +785,32 @@ CRITICAL - Your PRD must be COPY-PASTE READY:
 - The user will paste your ENTIRE response directly into the tool
 </output_rules>
 
-### Required 16 Sections (in order)
+### Section Requirements by Scope
+
+**Feature Scope (1-3 pages):** Include sections 1-4, 7-9, 13, 15. Merge others or omit if not relevant.
+
+| Section | Required? | Notes |
+|---------|-----------|-------|
+| 1. Executive Summary | ✅ Required | Decision-ready standalone (Tier 1) |
+| 2. Problem Statement | ✅ Required | Keep concise |
+| 3. Value Proposition | ✅ Required | Can merge with Problem Statement |
+| 4. Goals and Objectives | ✅ Required | 2-3 metrics max |
+| 5. Customer FAQ | ⚠️ Optional | Include if user provided evidence |
+| 6. Competitive Landscape | ⚠️ Optional | Brief if included |
+| 7. Proposed Solution | ✅ Required | Core functionality only |
+| 8. Scope | ✅ Required | In/out of scope |
+| 9. Requirements | ✅ Required | 3-8 requirements typical |
+| 10-12. Personas/Stakeholders/Timeline | ⚠️ Optional | Often handled elsewhere for features |
+| 13. Risks and Mitigation | ✅ Required | Top 2-3 risks |
+| 14. Traceability | ❌ Skip | Overkill for features |
+| 15. Open Questions | ✅ Required | List blockers |
+| 16. Dissenting Opinions | ⚠️ Optional | If relevant |
+
+**Epic Scope (4-8 pages):** Include all 16 sections, but keep each concise.
+
+**Product Scope (8-15 pages):** Full 16 sections with appendices for deep dives.
+
+### Full 16 Sections (for Epic/Product scope)
 
 | Section | Content | Format |
 |---------|---------|--------|

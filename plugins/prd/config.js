@@ -85,6 +85,18 @@ export const prdPlugin = {
       rows: 2,
       placeholder: 'Technical constraints, dependencies, timeline constraints...',
     },
+    {
+      id: 'documentScope',
+      label: 'Document Scope & Length',
+      type: 'select',
+      required: false,
+      options: [
+        { value: 'feature', label: 'Feature (1-3 pages) - Single capability or enhancement' },
+        { value: 'epic', label: 'Epic (4-8 pages) - Multi-feature initiative' },
+        { value: 'product', label: 'Product (8-15 pages) - New product or major platform' },
+      ],
+      placeholder: 'How big is this initiative?',
+    },
   ],
 
   scoringDimensions: [
