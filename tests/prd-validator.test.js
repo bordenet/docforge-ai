@@ -170,3 +170,166 @@ FR1: Feature
     });
   });
 });
+
+// ============================================================================
+// Fixture-Based Regression Tests
+// ============================================================================
+
+import { readFileSync, readdirSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+import { validatePRD } from '../plugins/prd/js/validator.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const fixturesDir = join(__dirname, 'fixtures/prd-samples');
+
+describe('PRD Fixture Regression Tests', () => {
+  // Load all fixtures once
+  const fixtureFiles = readdirSync(fixturesDir)
+    .filter(f => f.endsWith('.md'))
+    .sort();
+
+  const loadFixture = (filename) => {
+    return readFileSync(join(fixturesDir, filename), 'utf-8');
+  };
+
+  describe('Excellent Quality Documents (01-05)', () => {
+    const excellentFiles = fixtureFiles.filter(f => parseInt(f.slice(0, 2)) <= 5);
+
+    it.each(excellentFiles)('%s should score 70+ (excellent quality)', (filename) => {
+      const content = loadFixture(filename);
+      const result = validatePRD(content);
+      expect(result.totalScore).toBeGreaterThanOrEqual(70);
+    });
+
+    it.each(excellentFiles)('%s should have structure score >= 15', (filename) => {
+      const content = loadFixture(filename);
+      const result = validatePRD(content);
+      expect(result.structure.score).toBeGreaterThanOrEqual(15);
+    });
+
+    it.each(excellentFiles)('%s should have low vague language count', (filename) => {
+      const content = loadFixture(filename);
+      const result = validatePRD(content);
+      expect(result.clarity.vagueLanguage.totalCount).toBeLessThan(10);
+    });
+  });
+
+  describe('Good Quality Documents (06-10)', () => {
+    const goodFiles = fixtureFiles.filter(f => {
+      const num = parseInt(f.slice(0, 2));
+      return num >= 6 && num <= 10;
+    });
+
+    it.each(goodFiles)('%s should score 60+ (good quality)', (filename) => {
+      const content = loadFixture(filename);
+      const result = validatePRD(content);
+      expect(result.totalScore).toBeGreaterThanOrEqual(60);
+    });
+
+    it.each(goodFiles)('%s should have structure score >= 10', (filename) => {
+      const content = loadFixture(filename);
+      const result = validatePRD(content);
+      expect(result.structure.score).toBeGreaterThanOrEqual(10);
+    });
+  });
+
+  describe('Needs-Work Quality Documents (11-15)', () => {
+    const needsWorkFiles = fixtureFiles.filter(f => parseInt(f.slice(0, 2)) >= 11);
+
+    it.each(needsWorkFiles)('%s should score below 60 (needs improvement)', (filename) => {
+      const content = loadFixture(filename);
+      const result = validatePRD(content);
+      expect(result.totalScore).toBeLessThan(60);
+    });
+
+    it.each(needsWorkFiles)('%s should have vague language issues', (filename) => {
+      const content = loadFixture(filename);
+      const result = validatePRD(content);
+      // Needs-work docs should trigger vague language detection
+      expect(result.clarity.vagueLanguage.totalCount).toBeGreaterThan(0);
+    });
+
+    it.each(needsWorkFiles)('%s should have missing sections', (filename) => {
+      const content = loadFixture(filename);
+      const result = validatePRD(content);
+      // Needs-work docs should be missing key sections
+      expect(result.structure.sections.missing.length).toBeGreaterThan(3);
+    });
+  });
+
+  describe('New Detection Functions', () => {
+    it('should detect baseline→target metric pairs in excellent docs', () => {
+      const content = loadFixture('01-ai-chat-feature-excellent.md');
+      const result = validatePRD(content);
+      // Excellent docs should have baseline→target metrics
+      expect(result.strategicViability.score).toBeGreaterThanOrEqual(12);
+    });
+
+    it('should detect competitive analysis depth in excellent docs', () => {
+      const content = loadFixture('02-payments-integration-excellent.md');
+      const result = validatePRD(content);
+      // Excellent docs should have competitive analysis with differentiation
+      expect(result.strategicViability.score).toBeGreaterThanOrEqual(12);
+    });
+
+    it('should detect user segment specificity in excellent docs', () => {
+      const content = loadFixture('03-sso-enterprise-excellent.md');
+      const result = validatePRD(content);
+      // Excellent docs should have specific user segments
+      expect(result.userFocus.score).toBeGreaterThanOrEqual(12);
+    });
+
+    it('should penalize vague language in needs-work docs', () => {
+      const content = loadFixture('11-chat-widget-needs-work.md');
+      const result = validatePRD(content);
+      expect(result.clarity.vagueLanguage.totalCount).toBeGreaterThan(5);
+    });
+
+    it('should detect prioritization in good quality docs', () => {
+      const content = loadFixture('06-notification-system-good.md');
+      const result = validatePRD(content);
+      expect(result.clarity.prioritization.hasPLevel).toBe(true);
+    });
+  });
+
+  describe('Score Distribution', () => {
+    it('should maintain proper tier separation', () => {
+      const excellentScores = fixtureFiles
+        .filter(f => parseInt(f.slice(0, 2)) <= 5)
+        .map(f => validatePRD(loadFixture(f)).totalScore);
+
+      const goodScores = fixtureFiles
+        .filter(f => parseInt(f.slice(0, 2)) >= 6 && parseInt(f.slice(0, 2)) <= 10)
+        .map(f => validatePRD(loadFixture(f)).totalScore);
+
+      const needsWorkScores = fixtureFiles
+        .filter(f => parseInt(f.slice(0, 2)) >= 11)
+        .map(f => validatePRD(loadFixture(f)).totalScore);
+
+      const minExcellent = Math.min(...excellentScores);
+      const maxNeedsWork = Math.max(...needsWorkScores);
+
+      // Excellent docs should score significantly higher than needs-work
+      expect(minExcellent).toBeGreaterThan(maxNeedsWork);
+    });
+
+    it('should have clear tier boundaries', () => {
+      const excellentScores = fixtureFiles
+        .filter(f => parseInt(f.slice(0, 2)) <= 5)
+        .map(f => validatePRD(loadFixture(f)).totalScore);
+
+      const goodScores = fixtureFiles
+        .filter(f => parseInt(f.slice(0, 2)) >= 6 && parseInt(f.slice(0, 2)) <= 10)
+        .map(f => validatePRD(loadFixture(f)).totalScore);
+
+      // Average excellent should be higher than average good
+      const avgExcellent = excellentScores.reduce((a, b) => a + b, 0) / excellentScores.length;
+      const avgGood = goodScores.reduce((a, b) => a + b, 0) / goodScores.length;
+
+      expect(avgExcellent).toBeGreaterThan(avgGood);
+    });
+  });
+});
