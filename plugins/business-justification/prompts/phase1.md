@@ -195,17 +195,16 @@ Your document will be scored across **4 dimensions totaling 100 points**. Unders
 - Business focus: customer impact, revenue, competitive position
 
 **Financial Justification (+25 pts max):**
-- ROI calculation: explicit formula with numbers
-- Payback period: "12 months" or "break-even in Q3"
-- TCO analysis: 3-year view including implementation, training, operations
-- Dollar amounts: "$150,000 annual savings", "$50,000 implementation"
+- **ROI calculation (0-8 pts):** The validator detects: (Benefit - Cost) / Cost patterns, explicit percentages (ROI = X%), NPV mentions
+- **Payback period (0-8 pts):** Must include time-based payback ("12 months", "break-even in Q3", "recover investment by Q2")
+- **TCO analysis (0-9 pts):** Detects "3-year", "total cost of ownership", implementation/training/operational cost mentions
+- Dollar amounts: Use specific figures like "$150,000 annual savings", not "significant savings"
 
 **Options & Alternatives (+25 pts max):**
-- Do-nothing option: quantified risk/cost
-- Minimal investment option: lower cost with trade-offs
-- Full investment option: recommended with full benefits
-- Clear recommendation: "We recommend Option C because..."
-- Comparison table or pros/cons
+- **Do-nothing option (0-8 pts):** Validator detects: "do nothing", "status quo", "if we don't", "Option A"
+- **3 options structure (0-10 pts):** At least 3 alternatives (minimal, moderate, full investment)
+- **Clear recommendation (0-7 pts):** Detects: "recommend", "proposed", "chosen", "preferred", "we propose"
+- Comparison table or pros/cons for each option
 
 **Execution Completeness (+20 pts max):**
 - Executive summary: 30-second TL;DR at top

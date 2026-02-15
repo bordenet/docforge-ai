@@ -79,11 +79,18 @@ A PR-FAQ is not a marketing document. It is a **logic test**:
 - No "excited to announce": 2 pts
 - Professional, journalistic tone: 2 pts
 
-**BANNED WORDS — Using these costs you 2-5 points EACH:**
-- revolutionary, groundbreaking, cutting-edge, world-class, best-in-class
-- excited, pleased, proud, thrilled, delighted, passionate
-- comprehensive, seamless, robust, innovative, transformative
-- game-changing, next-generation, state-of-the-art
+**BANNED WORDS — The validator penalizes these (2-5 pts EACH):**
+
+**Hype Words (17 total):**
+- revolutionary, groundbreaking, cutting-edge, world-class, industry-leading, best-in-class, state-of-the-art, next-generation, breakthrough, game-changing, disruptive, unprecedented, ultimate, premier, superior, exceptional, outstanding
+
+**Emotional Fluff (6 total):**
+- excited, thrilled, delighted, pleased, proud, honored
+
+**Vague Terms (6 phrases):**
+- comprehensive solution, robust platform, seamless integration, enhanced productivity, improved efficiency, optimal performance
+
+**Also Banned:**
 - "we believe", "we're proud", "we're excited"
 
 ### Customer Evidence (10 points)
@@ -128,6 +135,11 @@ A PR-FAQ is not a marketing document. It is a **logic test**:
 - Includes RISK question ("What is the most likely reason this fails?"): 5 pts
 - Includes REVERSIBILITY ("Is this a One-Way Door or Two-Way Door?"): 5 pts
 - Includes OPPORTUNITY COST ("What are we NOT doing if we build this?"): 5 pts
+
+⚠️ **SOFTBALL DETECTION — The validator will NOT count these as hard questions:**
+- Questions that contain "risk" or "fail" but pair them with positive/dismissive context (e.g., "no real risk", "risk to success", "minimal challenges")
+- Patterns detected: "risk of success", "easy to reverse", "one-way door to growth"
+- If all your "hard questions" are softballs, your Internal FAQ Rigor score = 0
 
 ## INPUT DATA
 

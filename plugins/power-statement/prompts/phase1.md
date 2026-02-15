@@ -139,19 +139,25 @@ Your power statement will be scored across **4 dimensions totaling 100 points**.
 - Replace with strong action verbs: "delivered", "achieved", "reduced", "accelerated"
 
 **Filler Words (-2 pts each):**
-- "very", "really", "quite", "somewhat", "basically", "essentially", "actually"
-- "in order to", "due to the fact that", "for the purpose of"
-- "a lot of", "thing", "stuff", "something"
+The validator detects these exact filler patterns:
+- Qualifiers: "very", "really", "quite", "somewhat", "rather", "fairly", "pretty much"
+- Hedges: "basically", "essentially", "actually", "literally", "virtually"
+- Wordy phrases: "in order to", "due to the fact that", "for the purpose of"
+- Vague nouns: "a lot of", "lots of", "tons of", "bunch of", "thing", "stuff", "something", "somehow"
 
 **Filler Phrases (-3 pts each):**
-- "It's worth noting that..."
-- "In today's competitive landscape..."
+The validator detects these exact phrases:
+- "It's worth noting (that)..."
+- "In today's (competitive) landscape..."
 - "Let's talk about..."
 - "The reality is..."
 
 **Jargon/Buzzwords (-2 pts each):**
-- "synergy", "leverage", "paradigm", "best-in-class", "cutting-edge", "state-of-the-art"
-- "move the needle", "low-hanging fruit", "boil the ocean", "circle back", "deep dive"
+The validator detects these exact jargon patterns:
+- Corporate speak: "synergy/synergize/synergistic", "leverage/leveraging/leveraged", "paradigm/paradigm shift"
+- Superlatives: "best-in-class", "world-class", "cutting-edge", "state-of-the-art"
+- Clichés: "move the needle", "low-hanging fruit", "boil the ocean"
+- Meeting speak: "circle back", "touch base", "take offline", "bandwidth (to)", "deep dive", "drill down"
 
 **Vague Improvements (-3 pts each):**
 - Using "improve", "enhance", "optimize", "better results", "significant" without numbers
@@ -175,7 +181,7 @@ Your power statement will be scored across **4 dimensions totaling 100 points**.
 - ROI clearly stated with timeframe
 
 **Action (+25 pts max):**
-- Strong action verbs: achieved, accelerated, delivered, reduced, eliminated, transformed
+- Strong action verbs (validator recognizes 200+ including): achieved, accelerated, accomplished, activated, advanced, amplified, architected, automated, boosted, built, captured, championed, consolidated, created, delivered, deployed, designed, developed, doubled, drove, eliminated, enabled, engineered, established, exceeded, executed, expanded, generated, grew, halved, implemented, improved, increased, innovated, launched, led, managed, maximized, minimized, negotiated, optimized, orchestrated, outperformed, pioneered, produced, reduced, restructured, revolutionized, scaled, slashed, spearheaded, streamlined, strengthened, surpassed, transformed, tripled
 - Problem stated in terms customers recognize
 - Solution described with specific capabilities
 - "Without" factor included (what customers avoid)

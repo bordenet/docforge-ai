@@ -144,17 +144,24 @@ Your acceptance criteria will be scored across **4 dimensions totaling 100 point
 - Too verbose for Linear. Use concise checkbox items.
 
 **Vague Terms (-5 to -15 pts):**
-- "works correctly", "handles properly", "appropriate behavior"
-- "user-friendly", "seamless", "fast", "good"
-- "as expected", "as needed", "reasonable"
+The validator detects these exact patterns (case-insensitive):
+- "works correctly", "handles properly", "appropriate/appropriately"
+- "intuitive/intuitively", "user-friendly", "seamless/seamlessly"
+- "fast", "slow", "good", "bad", "nice", "better", "worse"
+- "adequate/adequately", "sufficient/sufficiently", "reasonable/reasonably"
+- "acceptable", "properly", "correctly", "as expected", "as needed"
 
 **Compound Criteria (-2 pts each):**
 - Criteria containing "and" or "or" should be split
 - Each checkbox = ONE testable item
 
 **Implementation Details (-3 pts each):**
-- Tech stack references (PostgreSQL, React, AWS, Docker)
-- Belong in technical design, NOT acceptance criteria
+The validator flags these tech stack references (belong in technical design, NOT AC):
+- Databases: PostgreSQL, MySQL, MongoDB, Redis, SQL
+- Frontend: React, Vue, Angular, Svelte, Tailwind, CSS/SCSS/SASS
+- Cloud: AWS, Lambda, S3, EC2, GCP, Azure
+- Infrastructure: Docker, Kubernetes/K8s, API endpoint, microservice
+- Other: GraphQL, REST API, Webpack, Vite, npm, yarn
 
 **AI Slop Penalty (-0 to -5 pts):**
 - Filler phrases, buzzwords, hollow specificity
@@ -179,9 +186,9 @@ Your acceptance criteria will be scored across **4 dimensions totaling 100 point
 
 **Completeness (+20 pts max):**
 - 3-7 criteria (optimal count)
-- Error cases covered: "error", "fail", "invalid", "timeout"
-- Edge cases addressed: "empty state", "no results", "maximum value"
-- Permission scenarios: "authenticated", "admin only", "guest user"
+- Error cases covered (validator detects): error, fail, invalid, empty, null, undefined, missing, timeout, offline, denied, unauthorized, forbidden, not found, exception
+- Edge cases addressed (validator detects): edge case, boundary condition/value, upper/lower limit, maximum/minimum value, empty state, no results, only one, zero items, overflow, underflow, race condition, concurrent, simultaneous
+- Permission scenarios (validator detects): permission, role, admin, user, guest, authenticated, logged in, logged out
 
 ---
 

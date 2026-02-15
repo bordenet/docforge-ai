@@ -158,13 +158,19 @@ Your one-pager will be scored across **4 dimensions totaling 100 points**. Under
 
 ### What Costs You Points (Penalties)
 
-**Circular Logic Penalty (capped at 50):**
-- Solution is just the inverse of the problem (e.g., "Problem: No dashboard" → "Solution: Build dashboard")
-- Fix: Address the ROOT CAUSE, explain WHY a dashboard solves the underlying problem
+**Circular Logic Penalty (CAPS SCORE AT 50):**
+- **Detection:** The validator scans for 2+ pattern matches where action verbs (build, create, add, implement, develop, make, establish, introduce, launch) + nouns from the problem section appear in the solution section
+- Example: "Problem: We don't have a dashboard" → "Solution: Build a dashboard" = CIRCULAR
+- Fix: Address the ROOT CAUSE, explain WHY a dashboard solves the underlying business problem
+- The circular logic penalty is severe: if detected, your max possible score is 50
 
 **Vague Metrics Penalty (-5 to -15 pts):**
-- Using "improve", "increase", "reduce" without baselines
-- Missing [Current] → [Target] → [Timeline] format
+- Using "improve", "increase", "reduce", "enhance", "better", "more", "less", "faster" without baselines
+- **Detection:** Validator counts vague words that are NOT followed by numbers vs. quantified patterns:
+  - Arrow patterns: `20% → 40%` or `$10k -> $50k`
+  - From/to patterns: `from 5 to 15 requests/second`
+  - Bracket patterns: `[Current: 30%] → [Target: 60%]`
+- If vague metrics outnumber quantified metrics, penalty applies
 - Unquantified cost of inaction
 
 **Word Count Penalty (-5 pts per 50 words over 450):**
@@ -184,7 +190,7 @@ Your one-pager will be scored across **4 dimensions totaling 100 points**. Under
 
 **Solution Quality (+25 pts max):**
 - Solution addresses the stated problem directly
-- High-level approach (no implementation details)
+- **High-level approach (no implementation details):** The validator penalizes these banned implementation terms: code, function, class, method, api, database, sql, algorithm, library, framework
 - Alternatives considered ("Why this over X?")
 - Measurable goals with baselines
 
@@ -196,8 +202,13 @@ Your one-pager will be scored across **4 dimensions totaling 100 points**. Under
 
 **Completeness (+20 pts max):**
 - All 10 sections present (with correct weights: Problem, Cost of DN, Solution, Goals, Scope, Investment = 2 pts; Metrics, Stakeholders, Timeline, Risks = 1 pt)
-- Stakeholders with clear ownership (RACI roles) including cross-functional concerns (Finance/FP&A, Legal, HR if applicable)
-- Timeline with phased milestones (e.g., "Phase 1: Discovery", "Week 3-4: Build")
+- **Stakeholder Detection:** The validator looks for:
+  - RACI roles: responsible, accountable, consulted, informed
+  - Cross-functional concerns: finance, FP&A, financial.planning, HR, people.team, people.ops, legal, compliance, CFO, CTO, CEO, VP, Director
+  - Ownership terms: owner, lead, sponsor, approver, sign-off
+- **Timeline Detection:** The validator scores for:
+  - Phasing terms: phase, stage, wave, iteration, sprint, release
+  - Date patterns: week, month, quarter, Q1-Q4, milestone, v1/v2
 - Risks identified with specific mitigations
 
 ---

@@ -493,14 +493,26 @@ Your PRD will be scored across **5 dimensions totaling 100 points**. Understandi
 
 **Requirements Clarity (+25 pts max):**
 - All claims quantified with baselines and targets
-- No vague language
+- No vague language (see 6 categories above)
 - Requirements numbered (FR1, FR2, NFR1)
 - Acceptance criteria for each requirement
+- **Prioritization Bonus (+1-3 pts):** Using prioritization frameworks:
+  - MoSCoW: "Must Have", "Should Have", "Could Have", "Won't Have"
+  - P-Levels: "P0", "P1", "P2", "P3", "Priority: High/Medium/Low"
+  - Tiered: "Tier 1", "Phase 1", "MVP", "v1", "v2"
+  - Dedicated Priorities section
 
 **User Focus (+20 pts max):**
-- Clear user personas identified
-- Problem statement with quantified impact
-- Customer quotes or research cited
+- **User Persona Quality (0-5 pts):** Scored by: dedicated persona section present (+2), 2+ distinct user types identified (+2), pain points described (+1), usage scenarios included (+1), persona depth (descriptions like "**Primary User**:") (+1)
+- **Problem Statement (0-5 pts):** Dedicated section (+2), problem framing language (+1), value proposition language (+1), "why" explanation (so that, in order to, because) (+1)
+- **Requirements-to-User-Needs (0-5 pts):** FR format (FR1, FR2) with 3+ requirements AND "why" explanations
+- **Customer Evidence (0-5 pts):** The validator detects 5 evidence types:
+  - **Research:** "user research", "customer interview", "usability test", "focus group", "market research", "discovery"
+  - **Data:** "data shows", "analytics indicate", "metrics show", "research indicates", "%+ of users/customers"
+  - **Quotes:** Direct quotes in quotation marks (10+ characters)
+  - **Feedback:** "customer feedback", "user feedback", "NPS", "CSAT", "support ticket", "feature request", "pain point"
+  - **Validation:** "validated", "tested with", "confirmed by", "pilot", "dogfood", "beta", "prototype testing"
+  - Bonus: Customer FAQ section (+1), Customer "Aha!" quote (+1)
 - Value proposition for BOTH customer AND company
 
 **Technical Quality (+15 pts max):**
@@ -509,13 +521,21 @@ Your PRD will be scored across **5 dimensions totaling 100 points**. Understandi
 - Door type marked (🚪 One-Way or 🔄 Two-Way)
 - Traceability: Problem → Requirement → Metric
 
-**Strategic Viability (+20 pts max):**
-- Leading AND lagging indicators defined
-- Counter-metrics to prevent perverse incentives
-- Kill switch/failure criteria specified
-- Alternatives considered with trade-offs
-- Dissenting opinions documented
-- Source of truth for each metric
+**Strategic Viability (+20 pts max):** Broken into 4 sub-dimensions:
+- **Metric Validity (0-6 pts):**
+  - Leading indicators (predictive metrics like "adoption rate", "activation", "time to value"): +2 pts
+  - Counter-metrics (guardrail metrics, "must not degrade", "no decrease in"): +2 pts
+  - Source of truth defined (Mixpanel, Amplitude, Datadog, Salesforce, "measured via"): +2 pts for 2+ sources
+- **Scope Realism (0-5 pts):**
+  - Kill switch/failure criteria ("kill criteria", "pivot or persevere", "rollback plan"): +2 pts
+  - Door type tagging (🚪 One-Way Door, 🔄 Two-Way Door, or "irreversible"/"reversible"): +2 pts
+  - Alternatives considered section with rejected approaches: +1 pt
+- **Risk & Mitigation Quality (0-5 pts):**
+  - Risk section with specific mitigations (not just "risks"): +3 pts
+  - Dissenting opinions or known unknowns documented: +2 pts
+- **Traceability (0-4 pts):**
+  - Traceability section present: +2 pts
+  - Requirements link to Problem IDs (P1 → FR1) and Metric IDs (FR1 → M1): +2 pts for 3+ links
 
 ---
 

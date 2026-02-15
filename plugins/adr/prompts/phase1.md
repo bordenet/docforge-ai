@@ -179,9 +179,11 @@ Your ADR will be scored across **4 dimensions totaling 100 points**. Understandi
 ### What Costs You Points (Penalties)
 
 **Vague Decision Phrases (-10 to -15 pts):**
+The validator detects these exact phrases (case-insensitive):
 - "strategic approach", "architectural intervention", "improve scalability"
 - "more maintainable", "better architecture", "enhance performance"
 - "optimize the system", "modernize the platform", "transform the infrastructure"
+These trigger heavy penalties because they don't name a specific architectural choice.
 
 **Vague Consequence Terms (-3 pts each):**
 - "complexity", "overhead", "difficult", "challenging", "problematic"
@@ -193,16 +195,23 @@ Your ADR will be scored across **4 dimensions totaling 100 points**. Understandi
 - Shows you evaluated options, not just picked one
 
 **Missing Team Factors (-5 pts):**
-- Training needs, skill gaps, hiring impact, team ramp-up
-- Learning curve, expertise required, onboarding effort, team structure changes
+The validator detects these team factor patterns:
+- "training need", "skill gap", "hiring impact", "team ramp-up", "learning curve"
+- "expertise required", "onboarding", "team structure", "hiring", "staffing"
+Include at least one of these in consequences to avoid the penalty.
 
 **Missing Subsequent ADRs (-3 pts):**
-- What other decisions does this trigger?
-- "This triggers decisions on: [topic 1], [topic 2], [topic 3]"
+The validator detects these patterns:
+- "subsequent ADR", "follow-on ADR", "triggers ADR", "future ADR", "ADR-[number]"
+- "triggers decision on/for/about/regarding [topic]"
+Include at least one of these to show what decisions this necessitates.
 
 **Missing Review Timing (-3 pts):**
-- When will you revisit this decision?
-- "Review in 30 days", "Quarterly review", "After-action review in 60 days"
+The validator detects these patterns:
+- "[number] days/weeks/months review/reassess/revisit"
+- "after-action", "review timing", "recommended review", "review in [number]"
+- "quarterly review", "annual review"
+Include at least one of these to specify when to revisit the decision.
 
 **AI Slop Penalty (-0 to -5 pts):**
 - Buzzwords, filler phrases, hollow specificity
@@ -235,12 +244,12 @@ Your ADR will be scored across **4 dimensions totaling 100 points**. Understandi
 
 ### Bonus Patterns (Recognized by Validator)
 
-| Pattern | Example | Bonus |
-|---------|---------|-------|
-| Team factors | "team ramp-up", "skill gap", "hiring impact", "training need" | +2 pts |
-| Subsequent ADRs | "triggers ADR on...", "follow-on ADR for..." | +2 pts |
-| Review timing | "review in 30 days", "quarterly review", "after-action" | +2 pts |
-| Alternatives inline | "We considered X, Y, but chose Z because..." | +2 pts |
+| Pattern | Validator Detection | Bonus |
+|---------|---------------------|-------|
+| Team factors | Regex: `training.*need\|skill gap\|hiring impact\|team ramp\|learning curve\|expertise required\|onboarding\|team structure\|hiring\|staffing` | +2 pts |
+| Subsequent ADRs | Regex: `subsequent ADR\|follow-on ADR\|triggers ADR\|future ADR\|ADR-\d+\|triggers.*decision.*on\s+\w+` | +2 pts |
+| Review timing | Regex: `\d+\s*(days?\|weeks?\|months?)\s*(review\|reassess\|revisit)\|after-action\|quarterly review\|annual review` | +2 pts |
+| Alternatives inline | Regex: `we considered .+?,\s*.+?(?:,\s*.+?)?\s*(?:and\s+.+?\s+)?but (?:chose\|selected\|decided\|went with)` | +2 pts |
 
 ---
 

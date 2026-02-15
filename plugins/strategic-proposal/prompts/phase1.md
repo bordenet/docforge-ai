@@ -221,7 +221,7 @@ Your proposal will be scored across **4 dimensions totaling 100 points**. Unders
 - Quantified outcomes: "additional $X gross profit per store per month"
 - Competitive positioning stated
 - Hedge statement included: "Even if estimates are 50% high..."
-- Dealership-specific impacts (if applicable): call conversion, appointment rate, missed opportunities
+- Dealership-specific impacts (validator detects): "gross profit per store", "per store", "per rooftop", "call conversion", "appointment rate", "inbound call", "outbound connection", "missed opportunities", "vendor switch"
 
 **Implementation Plan (+25 pts max):**
 - Phases/milestones defined: Phase 1, Wave 1, Q1, etc.
@@ -232,9 +232,10 @@ Your proposal will be scored across **4 dimensions totaling 100 points**. Unders
 ### Bonus Points
 
 **Stakeholder Analysis (+3 pts):**
-- RACI roles defined
-- FP&A/Finance concerns addressed
-- Approval path identified
+- RACI roles defined (validator detects: responsible, accountable, consulted, informed, RACI)
+- FP&A/Finance concerns addressed (validator detects: finance, FP&A, financial planning, CFO, VP, director)
+- Extended stakeholders (validator detects): HR, People Team/Ops, Legal, Compliance, CEO, CTO, GM/General Manager
+- Approval path identified: sign-off, approval, sponsor, approver
 
 **Risk Mitigation (+2 pts):**
 - Risks identified with mitigations

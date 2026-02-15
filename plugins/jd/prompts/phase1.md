@@ -193,11 +193,15 @@ Your job description will be scored using a **penalty-based system** starting at
 
 ### What Keeps Your Score High
 
-**Inclusive Language:**
-- Use "proactive" instead of "aggressive"
-- Use "expert" instead of "ninja" or "rockstar"
-- Use "motivated" instead of "driven"
-- Use "structured workflow" instead of "fast-paced"
+**Inclusive Language Replacements (validator SUGGESTIONS map):**
+- aggressive → "proactive" or "bold"
+- ambitious → "motivated" or "goal-oriented"
+- ninja/rockstar/guru → "expert" or "specialist"
+- driven → "motivated" or "dedicated"
+- fast-paced → "dynamic projects with clear priorities"
+- like a family → "supportive, collaborative team"
+- team player → "contributes to team goals through your strengths"
+- strong communicator → "shares ideas clearly via writing, visuals, or discussion"
 
 **Specificity:**
 - Concrete responsibilities: "Own X and ship Y per quarter"
