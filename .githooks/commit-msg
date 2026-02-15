@@ -1,0 +1,80 @@
+#!/bin/bash
+# Commit-msg hook: Validate conventional commit scope matches modified files
+# Prevents cross-contamination between document type plugins
+
+set -e
+
+MSG_FILE="$1"
+COMMIT_MSG=$(cat "$MSG_FILE")
+
+# Extract scope from conventional commit format: type(scope): message
+# Example: feat(prd): Add feature -> extracts "prd"
+SCOPE=$(echo "$COMMIT_MSG" | grep -oE '^\w+\(([^)]+)\)' | sed 's/.*(\(.*\))/\1/' | head -1)
+
+# If no scope found, allow the commit (docs, chore without scope, etc.)
+if [ -z "$SCOPE" ]; then
+  exit 0
+fi
+
+# Get list of staged files
+STAGED_FILES=$(git diff --cached --name-only)
+
+# Define plugin scopes and their allowed directories
+check_scope_violation() {
+  local scope="$1"
+  local forbidden_pattern="$2"
+  local friendly_name="$3"
+  
+  if echo "$STAGED_FILES" | grep -q "$forbidden_pattern"; then
+    echo ""
+    echo "ERROR: Cross-contamination detected!"
+    echo "========================================"
+    echo "Commit scope: ($scope)"
+    echo "But you're modifying $friendly_name files:"
+    echo ""
+    echo "$STAGED_FILES" | grep "$forbidden_pattern" | sed 's/^/  - /'
+    echo ""
+    echo "Options:"
+    echo "  1. Split into separate commits (recommended)"
+    echo "  2. Change scope to match all files being modified"
+    echo "  3. Use a cross-plugin scope like (shared) or (all)"
+    echo ""
+    exit 1
+  fi
+}
+
+# Check for cross-contamination based on scope
+case "$SCOPE" in
+  prd)
+    check_scope_violation "prd" "plugins/one-pager/" "one-pager"
+    check_scope_violation "prd" "plugins/adr/" "adr"
+    check_scope_violation "prd" "tests/one-pager" "one-pager test"
+    check_scope_violation "prd" "tests/adr" "adr test"
+    ;;
+  one-pager)
+    check_scope_violation "one-pager" "plugins/prd/" "prd"
+    check_scope_violation "one-pager" "plugins/adr/" "adr"
+    check_scope_violation "one-pager" "tests/prd" "prd test"
+    check_scope_violation "one-pager" "tests/adr" "adr test"
+    ;;
+  adr)
+    check_scope_violation "adr" "plugins/prd/" "prd"
+    check_scope_violation "adr" "plugins/one-pager/" "one-pager"
+    check_scope_violation "adr" "tests/prd" "prd test"
+    check_scope_violation "adr" "tests/one-pager" "one-pager test"
+    ;;
+  jd)
+    check_scope_violation "jd" "plugins/prd/" "prd"
+    check_scope_violation "jd" "plugins/one-pager/" "one-pager"
+    check_scope_violation "jd" "plugins/adr/" "adr"
+    ;;
+  pr-faq)
+    check_scope_violation "pr-faq" "plugins/prd/" "prd"
+    check_scope_violation "pr-faq" "plugins/one-pager/" "one-pager"
+    check_scope_violation "pr-faq" "plugins/adr/" "adr"
+    ;;
+  # Add other plugin scopes as needed
+esac
+
+exit 0
+
