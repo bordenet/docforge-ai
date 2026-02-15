@@ -104,6 +104,31 @@ export const AC_NUMBERED_PATTERN = /\bAC\s*\d+[.:]\s*/gi;
 export const AC_CASE_PATTERN = /(?:success|failure)\s*(?:case|criteria)[.:]/gi;
 export const MEASURABLE_PATTERN = /(?:≤|≥|<|>|=)?\s*\d+(?:\.\d+)?\s*(ms|millisecond|second|minute|hour|day|week|%|percent|\$|dollar|user|request|transaction|item|task|point|pt)/gi;
 
+// Baseline→Target metric pair patterns (e.g., "reduce from 5 hours to 30 minutes")
+export const BASELINE_TARGET_PATTERNS = {
+  fromTo: /\b(reduce|increase|improve|decrease|grow|cut|raise|lower|boost|shrink)\s+(from\s+)?\d+[%\w./]*\s*(to|→|->|–)\s*<?(\d+|half|double)/gi,
+  arrowFormat: /\d+[%\w./]*\s*[→\->]+\s*<?(\d+|half|double)/gi,
+  baselineTarget: /\b(baseline|current)[:\s]+\d+.*\b(target|goal)[:\s]+\d+/gi,
+  changeFormat: /\b(from|currently)\s+\d+[%\w./]*\s+(down\s+)?to\s+\d+/gi,
+};
+
+// Competitive analysis depth patterns
+export const COMPETITIVE_DEPTH_PATTERNS = {
+  competitorMention: /\b(competitor|alternative|vs\.?|versus|compared to|rivalry|incumbent)\b/gi,
+  competitorNames: /\b(slack|zoom|salesforce|hubspot|notion|asana|jira|trello|monday|airtable|figma|miro|stripe|plaid|twilio)\b/gi,
+  differentiation: /\b(differentiat|differ from|unlike|whereas|our\s+approach|we\s+differ|advantage over|sets?\s+us\s+apart|unique|better than|faster than|cheaper than)\b/gi,
+  moat: /\b(competitive\s+moat|defensib|barrier|unique\s+advantage|sustainable|hard\s+to\s+replicate|network\s+effect|switching\s+cost|lock[- ]?in|proprietary)\b/gi,
+  competitorSection: /^(?:#+\s*)?(\d+\.?\d*\.?\s*)?(competitive|competitor|alternative|market\s+landscape|competitive\s+analysis)/im,
+};
+
+// User segment specificity patterns
+export const SEGMENT_SPECIFICITY_PATTERNS = {
+  quantified: /\b(\d+%|top\s+\d+%?|bottom\s+\d+%?|middle\s+\d+%?|\d+-\d+\s*(year|age|old)|tier\s*\d+|segment\s*[A-Z\d]|\d+\+\s*(user|employee|customer))/gi,
+  bounded: /\b(not\s+(top|bottom|beginner|expert|enterprise|SMB|consumer)|excluding|between\s+\d+\s+and\s+\d+|under\s+\d+|over\s+\d+|less\s+than\s+\d+|more\s+than\s+\d+)\b/gi,
+  specific: /\b(first-time|returning|power\s+user|enterprise|SMB|mid-market|\$\d+[KMB]?\+?|\d+\+?\s*employees?|B2B|B2C|prosumer|early\s+adopter|late\s+majority)\b/gi,
+  demographic: /\b(millennials?|gen[- ]?[XYZ]|boomers?|urban|rural|suburban|remote\s+worker|hybrid|freelancer|solopreneur)\b/gi,
+};
+
 // Strategic Viability detection patterns
 // Section patterns use (?:#+\s*|\d+\.?\d*\.?\s*) to match both markdown # and numbered sections
 export const STRATEGIC_VIABILITY_PATTERNS = {

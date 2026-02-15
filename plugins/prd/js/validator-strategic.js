@@ -3,7 +3,7 @@
  * Evaluates: Metric Validity, Scope Realism, Risk & Mitigation Quality, Traceability
  */
 
-import { STRATEGIC_VIABILITY_PATTERNS } from './validator-config.js';
+import { STRATEGIC_VIABILITY_PATTERNS, BASELINE_TARGET_PATTERNS, COMPETITIVE_DEPTH_PATTERNS } from './validator-config.js';
 
 /**
  * Score Strategic Viability (20 pts max)
@@ -50,6 +50,23 @@ export function scoreStrategicViability(text) {
     issues.push('Define source of truth for all metrics (e.g., Mixpanel, Datadog)');
   } else {
     issues.push('No metric sources defined - specify where metrics are tracked');
+  }
+
+  // Baseline→Target metric pairs bonus (Proposal 1)
+  const baselineTargetMatches = [
+    ...(text.match(BASELINE_TARGET_PATTERNS.fromTo) || []),
+    ...(text.match(BASELINE_TARGET_PATTERNS.arrowFormat) || []),
+    ...(text.match(BASELINE_TARGET_PATTERNS.baselineTarget) || []),
+    ...(text.match(BASELINE_TARGET_PATTERNS.changeFormat) || []),
+  ];
+  const uniqueBaselineTargets = [...new Set(baselineTargetMatches)].length;
+  if (uniqueBaselineTargets >= 2) {
+    metricValidityScore += 2;
+    strengths.push(`${uniqueBaselineTargets} baseline→target metric pairs (e.g., "reduce from X to Y")`);
+  } else if (uniqueBaselineTargets >= 1) {
+    metricValidityScore += 1;
+    strengths.push('Baseline→target metric pair found');
+    issues.push('Add more baseline→target pairs for key metrics');
   }
   score += metricValidityScore;
 
@@ -135,17 +152,53 @@ export function scoreStrategicViability(text) {
   }
   score += traceabilityScore;
 
+  // Competitive Analysis Depth (0-4 pts bonus) - Proposal 2
+  let competitiveDepthScore = 0;
+  const hasCompetitorSection = COMPETITIVE_DEPTH_PATTERNS.competitorSection.test(text);
+  const competitorMentions = text.match(COMPETITIVE_DEPTH_PATTERNS.competitorMention) || [];
+  const competitorNames = text.match(COMPETITIVE_DEPTH_PATTERNS.competitorNames) || [];
+  const uniqueCompetitors = [...new Set([...competitorMentions, ...competitorNames].map(s => s.toLowerCase()))].length;
+  const hasDifferentiation = COMPETITIVE_DEPTH_PATTERNS.differentiation.test(text);
+  const hasMoat = COMPETITIVE_DEPTH_PATTERNS.moat.test(text);
+
+  if (hasCompetitorSection || uniqueCompetitors >= 2) {
+    competitiveDepthScore += 2;
+    strengths.push(uniqueCompetitors >= 2 ? `${uniqueCompetitors} competitors analyzed` : 'Competitive landscape documented');
+  } else if (uniqueCompetitors >= 1) {
+    competitiveDepthScore += 1;
+    issues.push('Add 2+ competitor analyses for stronger market positioning');
+  } else {
+    issues.push('Add competitive analysis section with specific competitors');
+  }
+
+  if (hasDifferentiation) {
+    competitiveDepthScore += 1;
+    strengths.push('Differentiation from competitors articulated');
+  } else {
+    issues.push('Articulate how this product differs from alternatives');
+  }
+
+  if (hasMoat) {
+    competitiveDepthScore += 1;
+    strengths.push('Competitive moat or defensibility explained');
+  }
+  score += competitiveDepthScore;
+
   return {
     score: Math.min(score, maxScore), maxScore, issues, strengths,
-    metricValidityScore, scopeRealismScore, riskScore, traceabilityScore,
+    metricValidityScore, scopeRealismScore, riskScore, traceabilityScore, competitiveDepthScore,
     details: {
       hasLeadingIndicators: leadingMatches.length >= 1,
       hasCounterMetrics: counterMatches.length >= 1,
       hasSourceOfTruth: sourceMatches.length >= 1,
+      hasBaselineTargetPairs: uniqueBaselineTargets >= 1,
       hasKillSwitch, hasDoorType,
       hasAlternatives: hasAlternatives || hasAlternativesContent,
       hasDissentingOpinions: hasDissentingSection || hasDissentingContent,
       hasTraceability: hasTraceabilitySection || traceabilityMatches.length >= 1,
+      hasCompetitiveAnalysis: hasCompetitorSection || uniqueCompetitors >= 2,
+      hasDifferentiation,
+      hasMoat,
     },
   };
 }
