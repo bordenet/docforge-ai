@@ -155,27 +155,59 @@ export function renderPhaseContent(plugin, project, phase) {
         </button>
       </div>
 
-      <!-- Step A: Generate Prompt -->
-      <div class="mb-6">
-        <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-          Step A: Copy Prompt to AI
-        </h4>
-        <div class="flex gap-3 flex-wrap">
-          <button id="copy-prompt-btn" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
-            📋 ${phaseData.prompt ? 'Copy Prompt Again' : 'Generate & Copy Prompt'}
+      <!-- Auto-Generate Option (Mock/API mode) -->
+      <div id="auto-generate-section" class="mb-6 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 border border-purple-200 dark:border-purple-700 rounded-lg">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+          <div>
+            <h4 class="text-lg font-semibold text-purple-900 dark:text-purple-200 flex items-center">
+              <span class="mr-2">⚡</span> Auto-Generate with AI
+            </h4>
+            <p class="text-purple-700 dark:text-purple-300 text-sm mt-1" id="llm-mode-info">
+              Using mock mode (for testing)
+            </p>
+          </div>
+          <button id="auto-generate-btn" class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium flex items-center">
+            <span class="mr-2">🚀</span> Generate Phase ${phase}
           </button>
-          <a
-            id="open-ai-btn"
-            href="${phase === 2 ? 'https://gemini.google.com' : 'https://claude.ai'}"
-            target="ai-assistant-tab"
-            rel="noopener noreferrer"
-            class="px-6 py-3 bg-green-600 text-white rounded-lg transition-colors font-medium ${phaseData.prompt ? 'hover:bg-green-700' : 'opacity-50 cursor-not-allowed pointer-events-none'}"
-            ${phaseData.prompt ? '' : 'aria-disabled="true"'}
-          >
-            🔗 Open ${phase === 2 ? 'Gemini' : 'Claude'}
-          </a>
+        </div>
+        <!-- Progress indicator (hidden by default) -->
+        <div id="generate-progress" class="hidden mt-3">
+          <div class="flex items-center">
+            <div class="animate-spin mr-3 h-5 w-5 border-2 border-purple-600 border-t-transparent rounded-full"></div>
+            <span class="text-purple-700 dark:text-purple-300" id="generate-status">Generating...</span>
+          </div>
         </div>
       </div>
+
+      <!-- Manual Workflow (collapsible) -->
+      <details class="mb-6">
+        <summary class="cursor-pointer text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-sm font-medium py-2">
+          📝 Or use manual copy/paste workflow
+        </summary>
+        <div class="mt-4 pl-4 border-l-2 border-gray-200 dark:border-gray-600">
+          <!-- Step A: Generate Prompt -->
+          <div class="mb-4">
+            <h4 class="text-md font-semibold text-gray-900 dark:text-white mb-3">
+              Step A: Copy Prompt to AI
+            </h4>
+            <div class="flex gap-3 flex-wrap">
+              <button id="copy-prompt-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm">
+                📋 ${phaseData.prompt ? 'Copy Prompt Again' : 'Generate & Copy Prompt'}
+              </button>
+              <a
+                id="open-ai-btn"
+                href="${phase === 2 ? 'https://gemini.google.com' : 'https://claude.ai'}"
+                target="ai-assistant-tab"
+                rel="noopener noreferrer"
+                class="px-4 py-2 bg-green-600 text-white rounded-lg transition-colors font-medium text-sm ${phaseData.prompt ? 'hover:bg-green-700' : 'opacity-50 cursor-not-allowed pointer-events-none'}"
+                ${phaseData.prompt ? '' : 'aria-disabled="true"'}
+              >
+                🔗 Open ${phase === 2 ? 'Gemini' : 'Claude'}
+              </a>
+            </div>
+          </div>
+        </div>
+      </details>
 
       <!-- Step B: Paste Response -->
       <div>
