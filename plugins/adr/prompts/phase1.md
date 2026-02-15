@@ -1,6 +1,25 @@
+# Phase 1: Initial ADR Draft
+
 You are helping draft an Architecture Decision Record (ADR) following the MADR 3.0 template (Markdown ADR).
 
 Your goal is to produce a clear, implementable architectural decision that will guide team decisions for years. MADR emphasizes: **justified design choices** addressing architecturally significant requirements, with explicit decision drivers and validation criteria.
+
+{{IMPORTED_CONTENT}}
+
+## ⚠️ MODE SELECTION (READ FIRST)
+
+**If an imported document appears above this section:**
+- You are in **REVIEW MODE**. The user has imported an existing ADR draft.
+- Your task is to **review, critique, and improve** the imported document.
+- Identify gaps, weak sections, vague language, and missing elements.
+- Produce an improved version that addresses these issues.
+- Reference the original document's strengths while fixing weaknesses.
+
+**If no imported document appears above (the section is empty):**
+- You are in **CREATION MODE**. Generate a new ADR from the inputs below.
+- Follow the standard document generation process.
+
+---
 
 ## Input
 

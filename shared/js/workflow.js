@@ -168,8 +168,9 @@ export class Workflow {
       1: this.getPhaseOutput(1),
       2: this.getPhaseOutput(2),
     };
+    const options = { isImported: this.project.isImported || false };
 
-    return generatePromptFromTemplate(this.plugin, this.currentPhase, formData, previousResponses);
+    return generatePromptFromTemplate(this.plugin, this.currentPhase, formData, previousResponses, options);
   }
 
   /**

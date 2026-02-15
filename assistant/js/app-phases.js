@@ -44,7 +44,8 @@ export function attachPhaseEventListeners(plugin, project, phase) {
     copyPromptBtn.addEventListener('click', async () => {
       try {
         const previousResponses = { 1: project.phases?.[1]?.response || '', 2: project.phases?.[2]?.response || '' };
-        const prompt = await generatePrompt(plugin, phase, project.formData, previousResponses);
+        const options = { isImported: project.isImported || false };
+        const prompt = await generatePrompt(plugin, phase, project.formData, previousResponses, options);
         await copyToClipboard(prompt);
         showToast('Prompt copied to clipboard!', 'success');
 
@@ -151,7 +152,8 @@ export function attachPhaseEventListeners(plugin, project, phase) {
       icon: '👁️',
       onClick: async () => {
         const previousResponses = { 1: project.phases?.[1]?.response || '', 2: project.phases?.[2]?.response || '' };
-        const prompt = await generatePrompt(plugin, phase, project.formData, previousResponses);
+        const options = { isImported: project.isImported || false };
+        const prompt = await generatePrompt(plugin, phase, project.formData, previousResponses, options);
         showPromptModal(prompt, `Phase ${phase} Prompt`);
       },
     });

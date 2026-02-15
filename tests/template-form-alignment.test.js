@@ -26,7 +26,7 @@ const PLUGIN_IDS = [
 ];
 
 // Reserved template variables that don't come from form fields
-const RESERVED_VARIABLES = ['PHASE1_OUTPUT', 'PHASE2_OUTPUT', 'PHASE1_RESPONSE', 'PHASE2_RESPONSE'];
+const RESERVED_VARIABLES = ['PHASE1_OUTPUT', 'PHASE2_OUTPUT', 'PHASE1_RESPONSE', 'PHASE2_RESPONSE', 'IS_IMPORTED', 'IMPORTED_CONTENT'];
 
 /**
  * Convert UPPER_SNAKE_CASE to camelCase

@@ -131,9 +131,11 @@ Create the final, polished document.
  * @param {number} phase - Phase number
  * @param {Object} formData - Form data
  * @param {Object} [previousResponses] - Previous phase responses
+ * @param {Object} [options] - Additional options
+ * @param {boolean} [options.isImported] - Whether the document was imported
  * @returns {Promise<string>} Complete prompt
  */
-export async function generatePrompt(plugin, phase, formData, previousResponses = {}) {
+export async function generatePrompt(plugin, phase, formData, previousResponses = {}, options = {}) {
   const template = await loadPromptTemplate(plugin.id, phase);
 
   // Build combined data for template filling
@@ -145,6 +147,9 @@ export async function generatePrompt(plugin, phase, formData, previousResponses 
     PHASE2_OUTPUT: previousResponses[2] || '',
     PHASE1_RESPONSE: previousResponses[1] || '',
     PHASE2_RESPONSE: previousResponses[2] || '',
+    // Pass import status for conditional prompts
+    IS_IMPORTED: options.isImported ? 'true' : '',
+    IMPORTED_CONTENT: options.isImported ? (formData.importedContent || previousResponses[1] || '') : '',
   };
 
   return fillPromptTemplate(template, data);

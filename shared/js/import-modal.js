@@ -53,7 +53,7 @@ export function getImportModalHtml(docType) {
             Cancel
           </button>
           <button id="import-save-btn" class="hidden px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-            Save & Continue to Phase 2
+            Save & Continue to Phase 1
           </button>
         </div>
       </div>
@@ -122,25 +122,24 @@ export function showImportModal(plugin, saveProject, onComplete) {
       const project = await saveProject(plugin.dbName, {
         title,
         formData: { title, importedContent: markdown },
-        currentPhase: 2,
+        currentPhase: 1,
         phases: {
           1: {
             response: markdown,
-            completed: true,
+            completed: false,
             startedAt: now,
-            completedAt: now,
           },
         },
         isImported: true,
       });
 
       closeModal();
-      showToast(`${docType} imported! Continue to Phase 2 for review.`, 'success');
+      showToast(`${docType} imported! Continue to Phase 1 for Claude review.`, 'success');
       onComplete(project);
     } finally {
       isSaving = false;
       saveBtn.disabled = false;
-      saveBtn.textContent = 'Save & Continue to Phase 2';
+      saveBtn.textContent = 'Save & Continue to Phase 1';
     }
   });
 

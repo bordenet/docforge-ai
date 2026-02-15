@@ -35,7 +35,7 @@ describe('Import Modal', () => {
     test('should include save button', () => {
       const html = getImportModalHtml('PR-FAQ');
       expect(html).toContain('import-save-btn');
-      expect(html).toContain('Save & Continue to Phase 2');
+      expect(html).toContain('Save & Continue to Phase 1');
     });
 
     test('should include cancel button', () => {
@@ -93,7 +93,7 @@ describe('Import Modal', () => {
       expect(document.activeElement).toBe(pasteArea);
     });
 
-    test('should save with currentPhase 2 and phase 1 completed when importing', async () => {
+    test('should save with currentPhase 1 and phase 1 not completed when importing', async () => {
       const plugin = { name: 'One-Pager', dbName: 'test-db' };
       let savedProject = null;
       const saveProject = jest.fn().mockImplementation((dbName, data) => {
@@ -122,8 +122,8 @@ describe('Import Modal', () => {
       // Verify save was called with correct structure
       expect(saveProject).toHaveBeenCalled();
       const savedData = saveProject.mock.calls[0][1];
-      expect(savedData.currentPhase).toBe(2);
-      expect(savedData.phases[1].completed).toBe(true);
+      expect(savedData.currentPhase).toBe(1);
+      expect(savedData.phases[1].completed).toBe(false);
       expect(savedData.phases[1].response).toContain('My Document Title');
       expect(savedData.isImported).toBe(true);
     });
@@ -160,8 +160,8 @@ Current development hardware (5-year-old Surface 4 with i7-11185G7, 16GB RAM) ca
       expect(saveProject).toHaveBeenCalled();
       const savedData = saveProject.mock.calls[0][1];
       expect(savedData.title).toBe('One-Pager');
-      expect(savedData.currentPhase).toBe(2);
-      expect(savedData.phases[1].completed).toBe(true);
+      expect(savedData.currentPhase).toBe(1);
+      expect(savedData.phases[1].completed).toBe(false);
     });
 
     test('should extract proper title from H1 header', async () => {
