@@ -67,8 +67,8 @@ Flag these issues BEFORE drafting:
 | ## Risks & Assumptions | Key assumption + Top risk with mitigation | Bullets |
 | ## Scope | In-scope AND Out-of-scope | Brief, no padding |
 | ## Success Metrics | All with baseline → target → timeline | [Current: X] → [Target: Y] by [Date] |
-| ## Key Stakeholders | Owner + Approvers | Names |
-| ## Timeline | Milestones with dates | Phased bullets |
+| ## Key Stakeholders | Owner + Approvers + Cross-functional (Finance/FP&A, Legal, HR if applicable) | Names with RACI roles |
+| ## Timeline | Milestones with dates | Phased bullets (e.g., "Week 1-2: Discovery") |
 
 ## ⚠️ CRITICAL: AI Slop Prevention Rules
 
@@ -84,6 +84,12 @@ Flag these issues BEFORE drafting:
 | "efficient" | "process N items in <X seconds" |
 | "better/faster/easier" | specific baseline → target |
 | "significant/substantial" | exact percentage or number |
+
+**Additional Banned Terms:**
+- **Vague Quantifiers:** "many", "several", "some", "few", "various", "numerous", "multiple" → use specific counts
+- **Vague Temporal:** "soon", "quickly", "ASAP", "eventually" → use specific timeframes
+- **Marketing Fluff:** "best-in-class", "world-class", "cutting-edge", "next-generation", "revolutionary", "industry-leading" → remove entirely
+- **Weasel Words:** "should be able to", "could potentially", "generally", "typically" → use definitive statements
 
 ### Banned Filler Phrases
 
@@ -189,10 +195,10 @@ Your one-pager will be scored across **4 dimensions totaling 100 points**. Under
 - No scope creep or vague boundaries
 
 **Completeness (+20 pts max):**
-- All 10 sections present
-- Stakeholders with clear ownership (RACI roles)
-- Timeline with milestones
-- Risks identified with mitigations
+- All 10 sections present (with correct weights: Problem, Cost of DN, Solution, Goals, Scope, Investment = 2 pts; Metrics, Stakeholders, Timeline, Risks = 1 pt)
+- Stakeholders with clear ownership (RACI roles) including cross-functional concerns (Finance/FP&A, Legal, HR if applicable)
+- Timeline with phased milestones (e.g., "Phase 1: Discovery", "Week 3-4: Build")
+- Risks identified with specific mitigations
 
 ---
 

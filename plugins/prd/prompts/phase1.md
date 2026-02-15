@@ -27,6 +27,8 @@ This PRD is a **decision-making tool**, not documentation theater. Engineers wil
 ### Mutation 1: Banned Vague Language
 
 ❌ **NEVER use these vague terms without specific quantification:**
+
+**Vague Qualifiers:**
 - "improve" → Specify: "increase from X to Y"
 - "enhance" → Specify: "reduce from X to Y" or "add capability to Z"
 - "user-friendly" → Specify: "reduce clicks from X to Y" or "complete task in <N seconds"
@@ -36,6 +38,27 @@ This PRD is a **decision-making tool**, not documentation theater. Engineers wil
 - "optimize" → Specify: what metric improves by how much
 - "faster" → Specify: "reduce from X seconds to Y seconds"
 - "easier" → Specify: "reduce steps from X to Y" or "reduce training time from X to Y"
+- "robust", "intuitive", "seamless", "flexible", "optimal", "minimal", "sufficient", "reasonable", "appropriate", "adequate"
+
+**Vague Quantifiers (BANNED):**
+- "many", "several", "some", "few", "various", "numerous", "multiple", "a lot", "a number of", "a bit", "a little"
+- → Replace with: specific counts or percentages
+
+**Vague Temporal Terms (BANNED):**
+- "soon", "quickly", "rapidly", "promptly", "eventually", "in the future", "ASAP", "shortly", "in due time"
+- → Replace with: specific timeframes ("within 2 weeks", "by Q2")
+
+**Weasel Words (BANNED):**
+- "should be able to", "could potentially", "generally", "typically", "usually", "often", "sometimes"
+- → Replace with: definitive statements ("must", "will", "shall")
+
+**Marketing Fluff (BANNED):**
+- "best-in-class", "world-class", "cutting-edge", "next-generation", "state-of-the-art", "industry-leading", "innovative", "revolutionary"
+- → Remove entirely or replace with measurable differentiators
+
+**Unquantified Comparatives (BANNED):**
+- "better", "faster", "more efficient", "improved", "enhanced", "easier", "simpler", "cheaper", "superior", "optimized"
+- → Replace with: "X% faster than baseline", "reduce from X to Y"
 
 ✅ **ALWAYS use:**
 - Baseline + Target: "reduce from 5 hours/week to 30 minutes/week"
@@ -233,12 +256,54 @@ Example:
 | FR2 | API contract with PaymentCo | P2 | 🚪 One-Way | Given valid payment, When submitted, Then receive confirmation | Given network timeout, When submitted, Then retry 3x then fail gracefully |
 
 ### 8.2 Non-Functional Requirements
-{Performance, security, scalability, etc. - each with measurable thresholds}
+
+**REQUIRED: Address ALL 4 NFR categories with measurable thresholds:**
+
+| Category | Requirement | Threshold |
+|----------|-------------|-----------|
+| **Performance** | Response time | e.g., "<200ms p95 latency", "page load <2s on 10Mbps" |
+| **Security** | Data protection | e.g., "AES-256 encryption at rest", "SOC 2 Type II compliant" |
+| **Reliability** | Uptime/availability | e.g., "99.9% uptime", "RTO <4 hours, RPO <1 hour" |
+| **Scalability** | Capacity | e.g., "support 10K concurrent users", "handle 1M events/day" |
+
+Each NFR must include:
+- **ID:** NFR1, NFR2, etc.
+- **Category:** Performance, Security, Reliability, or Scalability
+- **Threshold:** Specific measurable value
+- **Measurement:** How it will be verified (e.g., "Datadog p95 dashboard", "penetration test report")
 
 ### 8.3 Constraints
-{Technical, business, or regulatory constraints}
+{Technical, business, or regulatory constraints - list specific dependencies, assumptions, blockers, and prerequisites}
 
-## 9. Stakeholders
+## 9. User Personas
+
+**REQUIRED: Define at least 2 distinct user types with depth.**
+
+For EACH persona, provide:
+- **Name/Role:** Descriptive title (e.g., "Power User - Data Analyst", "Casual User - Marketing Manager")
+- **Description:** Who they are, their context
+- **Pain Points:** Specific frustrations they experience today (quantified if possible)
+- **Goals:** What they want to achieve
+- **Scenarios:** 1-2 concrete usage scenarios
+
+Example:
+### 9.1 Primary Persona: Operations Manager
+- **Description:** Mid-level manager overseeing 10-20 team members, uses system daily
+- **Pain Points:** Spends 3+ hours/week manually compiling reports; data is often stale by the time it reaches stakeholders
+- **Goals:** Reduce reporting time to <30 min/week; access real-time data
+- **Scenarios:**
+  - Monday morning: Pulls weekly performance dashboard for team standup
+  - End of month: Generates executive summary for leadership review
+
+### 9.2 Secondary Persona: Executive Sponsor
+- **Description:** VP-level, reviews dashboards weekly, needs high-level insights
+- **Pain Points:** Too much detail, not enough actionable summary
+- **Goals:** Get key insights in <5 minutes; identify issues requiring intervention
+- **Scenarios:**
+  - Weekly: Reviews KPI dashboard on mobile during commute
+  - Quarterly: Deep-dives into trend analysis for board presentation
+
+## 10. Stakeholders
 
 **Mutation 4: Stakeholder Impact Requirements**
 
@@ -249,13 +314,13 @@ For EACH stakeholder group, specify:
 - **Success Criteria:** How they'll measure success
 
 Example:
-### 9.1 Customer Support Team
+### 10.1 Customer Support Team
 - **Role:** Handle customer inquiries and feedback
 - **Impact:** Workload reduced from 200 emails/day to 50 emails/day (75% reduction)
 - **Needs:** Training on new feedback categorization system, access to analytics dashboard
 - **Success Criteria:** Average response time <2 hours, customer satisfaction >90%
 
-## 10. Timeline and Milestones
+## 11. Timeline and Milestones
 
 ⚠️ **Use relative timeframes, NOT specific calendar dates.**
 
@@ -277,7 +342,7 @@ If the user needs specific dates, ask:
 | Build | Week 5-10 | {activities} | {criteria} |
 | Pilot | Week 11-12 | {activities} | {criteria} |
 
-## 11. Risks and Mitigation
+## 12. Risks and Mitigation
 
 For EACH risk, provide:
 - **Risk:** Specific description (not generic "we might run late")
@@ -291,7 +356,7 @@ Example:
 |------|------|--------|------------|-------------|
 | Third-party API rate limits exceeded during peak | Medium | High | Pre-negotiate higher limits, implement request queuing | Fall back to batch processing mode |
 
-## 12. Traceability Summary
+## 13. Traceability Summary
 
 **REQUIRED: Map every requirement back to a problem and forward to a metric.**
 
@@ -302,19 +367,19 @@ Example:
 
 **Validation:** If a Problem has no Requirements, the PRD is incomplete. If a Requirement has no Metric, success cannot be measured.
 
-## 13. Open Questions
+## 14. Open Questions
 {What needs to be resolved}
 
-## 14. Known Unknowns & Dissenting Opinions
+## 15. Known Unknowns & Dissenting Opinions
 
 **REQUIRED: Document unresolved debates and disagreements.**
 
-### 14.1 Known Unknowns
+### 15.1 Known Unknowns
 What we don't know yet that could change the approach:
 - {Unknown 1}: How will we learn the answer? By when?
 - {Unknown 2}: What's our fallback if we can't resolve?
 
-### 14.2 Dissenting Opinions Log
+### 15.2 Dissenting Opinions Log
 Document the top 2 unresolved debates between stakeholders:
 
 | Topic | Position A | Position B | Decision | Rationale |
@@ -420,9 +485,11 @@ Your PRD will be scored across **5 dimensions totaling 100 points**. Understandi
 ### What Earns You Points (Strengths)
 
 **Document Structure (+20 pts max):**
-- All 14 sections present with proper headers
-- Clear hierarchy and organization
+- All 15 sections present with proper headers
+- Clear hierarchy and organization (H1 for title, H2 for sections, H3 for subsections)
 - Numbered sections for traceability
+- Consistent bullet formatting (use dashes `-` consistently, NOT mixed with `*`)
+- Tables for structured information (requirements, risks, timeline)
 
 **Requirements Clarity (+25 pts max):**
 - All claims quantified with baselines and targets
@@ -474,7 +541,7 @@ CRITICAL - Your PRD must be COPY-PASTE READY:
 - The user will paste your ENTIRE response directly into the tool
 </output_rules>
 
-### Required 14 Sections (in order)
+### Required 15 Sections (in order)
 
 | Section | Content | Format |
 |---------|---------|--------|
@@ -487,12 +554,13 @@ CRITICAL - Your PRD must be COPY-PASTE READY:
 | ## 6. Proposed Solution | Core functionality, alternatives considered, workflows | H2 + subsections |
 | ## 7. Scope | In scope, out of scope, future considerations | H2 + subsections |
 | ## 8. Requirements | FR/NFR with door type, success AND failure ACs | H2 + tables |
-| ## 9. Stakeholders | Role, impact, needs, success criteria | H2 + subsections |
-| ## 10. Timeline | High-level phases | H2 + table or list |
-| ## 11. Risks and Mitigation | Risk, probability, impact, mitigation, contingency | H2 + table |
-| ## 12. Traceability Summary | Problem → Requirements → Metrics mapping | H2 + table |
-| ## 13. Open Questions | Unresolved items | H2 + list |
-| ## 14. Known Unknowns & Dissenting Opinions | Unresolved debates, dissenting views | H2 + subsections |
+| ## 9. User Personas | 2+ user types with pain points, goals, scenarios | H2 + subsections |
+| ## 10. Stakeholders | Role, impact, needs, success criteria | H2 + subsections |
+| ## 11. Timeline | High-level phases | H2 + table or list |
+| ## 12. Risks and Mitigation | Risk, probability, impact, mitigation, contingency | H2 + table |
+| ## 13. Traceability Summary | Problem → Requirements → Metrics mapping | H2 + table |
+| ## 14. Open Questions | Unresolved items | H2 + list |
+| ## 15. Known Unknowns & Dissenting Opinions | Unresolved debates, dissenting views | H2 + subsections |
 
 ---
 

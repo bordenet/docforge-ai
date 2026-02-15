@@ -133,4 +133,85 @@ Before providing your response, verify:
 
 ---
 
+## ⚠️ SCORING RUBRIC - How Your Job Description Will Be Evaluated
+
+Your job description will be scored using a **penalty-based system** starting at 100 points. Understanding this rubric helps you write more inclusive, effective JDs.
+
+### Scoring System (100 pts - penalties)
+
+| Category | Max Penalty | Trigger |
+|----------|-------------|---------|
+| **Masculine-Coded Words** | -25 pts | -5 pts per word: aggressive, ninja, rockstar, etc. |
+| **Red Flag Phrases** | -25 pts | -5 pts per phrase: fast-paced, hustle, like a family |
+| **Extrovert-Bias** | -20 pts | -5 pts per phrase: outgoing, high-energy, team player |
+| **Word Count** | -15 pts | Too short (<400) or too long (>700) |
+| **Missing Compensation** | -10 pts | No salary range (external postings) |
+| **Missing Encouragement** | -5 pts | No "60-70% qualifications" statement |
+| **AI Slop** | -5 pts | Buzzwords, filler phrases, hollow specificity |
+
+### Score Calibration
+
+| Score Range | Meaning |
+|-------------|---------|
+| **0-40** | Poor - multiple red flags, exclusionary language |
+| **41-55** | Weak - masculine-coded or extrovert-biased language |
+| **56-70** | Average - some issues with length or specificity |
+| **71-80** | Good - mostly inclusive, minor improvements needed |
+| **81-90** | Strong - inclusive, specific, would attract diverse talent |
+| **91-100** | Exceptional - fully inclusive, specific, encourages applications |
+
+### What Costs You Points (Penalties)
+
+**Masculine-Coded Words (-5 pts each, max -25):**
+- aggressive, ambitious, assertive, competitive, confident, decisive
+- determined, dominant, driven, fearless, independent
+- ninja, rockstar, guru, self-reliant, self-sufficient, superior
+- leader, go-getter, hard-charging, strong, tough, warrior, superhero, superstar, boss
+
+**Red Flag Phrases (-5 pts each, max -25):**
+- fast-paced, like a family, wear many hats, always-on, hustle, grind
+- unlimited pto, work hard play hard, hit the ground running, self-starter
+- thick skin, no ego, drama-free, whatever it takes, passion required
+
+**Extrovert-Bias Phrases (-5 pts each, max -20):**
+- outgoing, high-energy, energetic, people person, gregarious
+- strong communicator, excellent verbal, team player
+
+**Word Count Violations (-up to 15 pts):**
+- Under 400 words: too brief, missing context
+- Over 700 words: too long, loses candidates
+
+**Missing Compensation (-10 pts, external postings only):**
+- No salary range OR unreasonable spread (>50%)
+- Skip this check for internal postings
+
+**Missing Encouragement (-5 pts):**
+- Must include: "If you meet 60-70% of these qualifications, we encourage you to apply"
+
+**AI Slop Penalty (-0 to -5 pts):**
+- Buzzwords, filler phrases, vague language
+
+### What Keeps Your Score High
+
+**Inclusive Language:**
+- Use "proactive" instead of "aggressive"
+- Use "expert" instead of "ninja" or "rockstar"
+- Use "motivated" instead of "driven"
+- Use "structured workflow" instead of "fast-paced"
+
+**Specificity:**
+- Concrete responsibilities: "Own X and ship Y per quarter"
+- Measurable requirements: "3+ years with Python"
+- Clear compensation: "$170,000 - $220,000"
+- Specific tech stack: "Python, React, PostgreSQL"
+- Defined team structure: "8-person backend team"
+
+**Inclusivity Signals:**
+- "If you meet 60-70% of qualifications, we encourage you to apply"
+- Flexible work arrangements mentioned
+- Clear career growth path
+- Reasonable number of requirements (not 20+ "must-haves")
+
+---
+
 Generate the job description now. Begin directly with # [Job Title]. No preambles, no commentary.
