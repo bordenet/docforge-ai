@@ -1,393 +1,75 @@
 /**
- * LLM Client - Abstract interface for LLM API calls
+ * LLM Client - Mock interface for testing workflow
  * @module llm-client
  *
- * Supports both real API calls (production) and mock responses (testing).
- * Mock mode enables testing the full workflow without API keys or rate limits.
+ * Provides mock LLM responses to test the 3-phase workflow.
+ * DocForge AI uses a copy-paste workflow - users manually interact with LLMs.
+ * This module enables UI testing without external dependencies.
  *
  * Usage:
- *   import { LLMClient, setLLMMode, getLLMMode } from './llm-client.js';
- *
- *   // Create client for a provider
- *   const client = new LLMClient('claude');
- *
- *   // Generate response
+ *   import { LLMClient, createClientForPhase } from './llm-client.js';
+ *   const client = createClientForPhase(1);
  *   const response = await client.generate(prompt);
  */
 
 import { logger } from './logger.js';
 
-// ============================================================================
-// Configuration
-// ============================================================================
-
-/**
- * LLM mode: 'mock' or 'api'
- * @type {'mock' | 'api'}
- */
-let llmMode = 'mock';
-
-/**
- * API keys stored in memory (not persisted for security)
- * @type {Object<string, string>}
- */
-const apiKeys = {};
-
-/**
- * Set LLM mode
- * @param {'mock' | 'api'} mode - Mode to set
- */
-export function setLLMMode(mode) {
-  if (mode !== 'mock' && mode !== 'api') {
-    throw new Error(`Invalid LLM mode: ${mode}. Must be 'mock' or 'api'.`);
-  }
-  llmMode = mode;
-  logger.info(`LLM mode set to: ${mode}`, 'llm-client');
-}
-
-/**
- * Get current LLM mode
- * @returns {'mock' | 'api'} Current mode
- */
-export function getLLMMode() {
-  return llmMode;
-}
-
-/**
- * Set API key for a provider
- * @param {'claude' | 'gemini'} provider - Provider name
- * @param {string} key - API key
- */
-export function setAPIKey(provider, key) {
-  apiKeys[provider] = key;
-  logger.info(`API key set for: ${provider}`, 'llm-client');
-}
-
-/**
- * Get API key for a provider
- * @param {'claude' | 'gemini'} provider - Provider name
- * @returns {string|null} API key or null
- */
-export function getAPIKey(provider) {
-  return apiKeys[provider] || null;
-}
-
-/**
- * Check if API key is configured for provider
- * @param {'claude' | 'gemini'} provider - Provider name
- * @returns {boolean} True if key exists
- */
-export function hasAPIKey(provider) {
-  return Boolean(apiKeys[provider]);
-}
-
-/**
- * Clear API key for a provider (for testing)
- * @param {'claude' | 'gemini'} provider - Provider name
- */
-export function clearAPIKey(provider) {
-  delete apiKeys[provider];
-}
-
-/**
- * Clear all API keys (for testing)
- */
-export function clearAllAPIKeys() {
-  Object.keys(apiKeys).forEach((key) => delete apiKeys[key]);
-}
-
-// ============================================================================
-// Provider Configuration
-// ============================================================================
-
-/**
- * Provider configurations
- */
-const PROVIDERS = {
-  claude: {
-    name: 'Claude',
-    apiUrl: 'https://api.anthropic.com/v1/messages',
-    model: 'claude-sonnet-4-20250514',
-    maxTokens: 8192,
-  },
-  gemini: {
-    name: 'Gemini',
-    apiUrl: 'https://generativelanguage.googleapis.com/v1beta/models',
-    model: 'gemini-2.0-flash',
-    maxTokens: 8192,
-  },
-};
-
-/**
- * Get provider config
- * @param {'claude' | 'gemini'} provider - Provider name
- * @returns {Object} Provider config
- */
-export function getProviderConfig(provider) {
-  const config = PROVIDERS[provider];
-  if (!config) {
-    throw new Error(`Unknown provider: ${provider}. Must be 'claude' or 'gemini'.`);
-  }
-  return config;
-}
-
-// ============================================================================
-// Mock Response Generator
-// ============================================================================
-
-/**
- * Generate mock response for testing
- * @param {string} prompt - Input prompt
- * @param {'claude' | 'gemini'} provider - Provider name
- * @param {number} phase - Phase number (1-3)
- * @returns {Promise<string>} Mock response
- */
-async function generateMockResponse(prompt, provider, phase) {
-  // Simulate API latency (500-1500ms)
-  const delay = 500 + Math.random() * 1000;
-  await new Promise((resolve) => setTimeout(resolve, delay));
-
-  const providerName = PROVIDERS[provider]?.name || provider;
-  const timestamp = new Date().toISOString();
-
-  // Extract document type hint from prompt
-  const docTypeMatch = prompt.match(/(?:PRD|One-Pager|ADR|Strategic Proposal|Job Description)/i);
-  const docType = docTypeMatch ? docTypeMatch[0] : 'Document';
-
-  return generateMockContent(phase, providerName, docType, timestamp);
-}
+// Provider display names
+const PROVIDER_NAMES = { claude: 'Claude', gemini: 'Gemini' };
 
 /**
  * Generate mock content based on phase
- * @param {number} phase - Phase number
- * @param {string} provider - Provider name
- * @param {string} docType - Document type
- * @param {string} timestamp - ISO timestamp
- * @returns {string} Mock content
  */
 function generateMockContent(phase, provider, docType, timestamp) {
+  const base = `**Mock Response** | ${provider} | ${timestamp}\n\n`;
   switch (phase) {
     case 1:
-      return `# ${docType} - Initial Draft
-
-## 1. Executive Summary
-
-This is a **mock response** generated by the DocForge AI testing system.
-In production, this would be generated by ${provider}.
-
-**Generated:** ${timestamp}
-**Mode:** Mock (no API calls made)
-
-## 2. Problem Statement
-
-The mock system simulates LLM responses to enable:
-- End-to-end workflow testing without API keys
-- UI development without rate limits
-- Consistent test scenarios
-
-## 3. Proposed Solution
-
-When API keys are configured and mode is set to 'api', real LLM calls will be made.
-
----
-
-*This is a mock response for testing purposes.*`;
-
+      return `# ${docType} - Initial Draft\n\n${base}## Executive Summary\nMock Phase 1 draft for testing the copy-paste workflow.\n\n## Problem Statement\nSimulates LLM response for UI testing.\n\n## Proposed Solution\nUsers copy prompts to Claude.ai/Gemini and paste responses back.\n\n---\n*Mock response for testing*`;
     case 2:
-      return `## Phase 2 Review (Mock ${provider} Response)
-
-### Assessment
-
-**Score:** 75/100
-
-This is a **mock adversarial review** generated for testing.
-
-### Key Issues Identified
-
-1. **Mock Issue 1** - Example critique point
-2. **Mock Issue 2** - Another example critique
-
-### Suggested Improvements
-
-- Add more specific metrics
-- Clarify scope boundaries
-- Include competitive analysis
-
-### Pressure-Test Questions
-
-1. What if the assumption about user adoption is wrong?
-2. How does this compare to existing alternatives?
-
----
-
-*Mock Phase 2 review generated at ${timestamp}*`;
-
+      return `## Phase 2 Review\n\n${base}**Score:** 75/100\n\n### Issues Identified\n1. Mock Issue 1\n2. Mock Issue 2\n\n### Improvements\n- Add metrics\n- Clarify scope\n\n---\n*Mock Phase 2 review*`;
     case 3:
-      return `# Final Synthesized ${docType}
-
-## 1. Executive Summary
-
-This is the **final synthesized document** combining Phase 1 draft and Phase 2 critique.
-
-**Generated:** ${timestamp}
-**Mode:** Mock synthesis by ${provider}
-
-## 2. Improvements Made
-
-Based on the Phase 2 review, this synthesis:
-- Addressed all identified issues (mock)
-- Incorporated suggested improvements (mock)
-- Resolved conflicting perspectives (mock)
-
-## 3. Conclusion
-
-The 3-phase workflow is complete. In production:
-- Phase 1: Claude generates initial draft
-- Phase 2: Gemini provides adversarial review
-- Phase 3: Claude synthesizes final version
-
----
-
-*Mock Phase 3 synthesis - workflow complete*`;
-
+      return `# Final Synthesized ${docType}\n\n${base}## Summary\nMock synthesis combining Phase 1 and Phase 2.\n\n## Improvements Made\n- Addressed issues (mock)\n- Incorporated feedback (mock)\n\n---\n*Mock Phase 3 synthesis*`;
     default:
-      return `Mock response for unknown phase ${phase}`;
+      return `Mock response for phase ${phase}`;
   }
 }
 
-// ============================================================================
-// Real API Calls
-// ============================================================================
-
 /**
- * Call Claude API
- * @param {string} prompt - Input prompt
- * @returns {Promise<string>} Response text
- */
-async function callClaudeAPI(prompt) {
-  const key = getAPIKey('claude');
-  if (!key) {
-    throw new Error('Claude API key not configured');
-  }
-
-  const config = PROVIDERS.claude;
-
-  const response = await fetch(config.apiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': key,
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify({
-      model: config.model,
-      max_tokens: config.maxTokens,
-      messages: [{ role: 'user', content: prompt }],
-    }),
-  });
-
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`Claude API error (${response.status}): ${error}`);
-  }
-
-  const data = await response.json();
-  return data.content[0]?.text || '';
-}
-
-/**
- * Call Gemini API
- * @param {string} prompt - Input prompt
- * @returns {Promise<string>} Response text
- */
-async function callGeminiAPI(prompt) {
-  const key = getAPIKey('gemini');
-  if (!key) {
-    throw new Error('Gemini API key not configured');
-  }
-
-  const config = PROVIDERS.gemini;
-  const url = `${config.apiUrl}/${config.model}:generateContent?key=${key}`;
-
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: {
-        maxOutputTokens: config.maxTokens,
-      },
-    }),
-  });
-
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`Gemini API error (${response.status}): ${error}`);
-  }
-
-  const data = await response.json();
-  return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-}
-
-// ============================================================================
-// LLM Client Class
-// ============================================================================
-
-/**
- * LLM Client - Unified interface for LLM providers
+ * LLM Client - Mock interface for workflow testing
  */
 export class LLMClient {
   /**
    * @param {'claude' | 'gemini'} provider - Provider name
    */
   constructor(provider) {
+    if (!PROVIDER_NAMES[provider]) {
+      throw new Error(`Unknown provider: ${provider}. Must be 'claude' or 'gemini'.`);
+    }
     this.provider = provider;
-    this.config = getProviderConfig(provider);
   }
 
   /**
-   * Generate response from LLM
+   * Generate mock response
    * @param {string} prompt - Input prompt
    * @param {Object} [options] - Options
-   * @param {number} [options.phase] - Phase number for mock responses
-   * @returns {Promise<string>} Response text
+   * @param {number} [options.phase] - Phase number (1-3)
+   * @returns {Promise<string>} Mock response
    */
   async generate(prompt, options = {}) {
     const phase = options.phase || 1;
 
-    if (llmMode === 'mock') {
-      logger.info(`Mock ${this.provider} response for phase ${phase}`, 'llm-client');
-      return generateMockResponse(prompt, this.provider, phase);
-    }
+    // Simulate network latency (500-1500ms)
+    const delay = 500 + Math.random() * 1000;
+    await new Promise((resolve) => setTimeout(resolve, delay));
 
-    // API mode
-    logger.info(`Calling ${this.provider} API`, 'llm-client');
+    logger.info(`Mock ${this.provider} response for phase ${phase}`, 'llm-client');
 
-    try {
-      if (this.provider === 'claude') {
-        return await callClaudeAPI(prompt);
-      } else if (this.provider === 'gemini') {
-        return await callGeminiAPI(prompt);
-      } else {
-        throw new Error(`Unknown provider: ${this.provider}`);
-      }
-    } catch (error) {
-      logger.error(`${this.provider} API call failed`, error, 'llm-client');
-      throw error;
-    }
-  }
+    const providerName = PROVIDER_NAMES[this.provider];
+    const timestamp = new Date().toISOString();
+    const docTypeMatch = prompt.match(/(?:PRD|One-Pager|ADR|Strategic Proposal|Job Description)/i);
+    const docType = docTypeMatch ? docTypeMatch[0] : 'Document';
 
-  /**
-   * Check if client is ready (API key configured or in mock mode)
-   * @returns {boolean} True if ready
-   */
-  isReady() {
-    if (llmMode === 'mock') {
-      return true;
-    }
-    return hasAPIKey(this.provider);
+    return generateMockContent(phase, providerName, docType, timestamp);
   }
 
   /**
@@ -395,13 +77,9 @@ export class LLMClient {
    * @returns {string} Display name
    */
   getDisplayName() {
-    return this.config.name;
+    return PROVIDER_NAMES[this.provider];
   }
 }
-
-// ============================================================================
-// Factory Functions
-// ============================================================================
 
 /**
  * Create LLM client for a phase
@@ -412,24 +90,5 @@ export function createClientForPhase(phase) {
   // Phase 1 & 3: Claude, Phase 2: Gemini
   const provider = phase === 2 ? 'gemini' : 'claude';
   return new LLMClient(provider);
-}
-
-/**
- * Check if all required providers are ready for workflow
- * @returns {{ready: boolean, missing: string[]}} Ready status and missing providers
- */
-export function checkWorkflowReady() {
-  if (llmMode === 'mock') {
-    return { ready: true, missing: [] };
-  }
-
-  const missing = [];
-  if (!hasAPIKey('claude')) missing.push('Claude');
-  if (!hasAPIKey('gemini')) missing.push('Gemini');
-
-  return {
-    ready: missing.length === 0,
-    missing,
-  };
 }
 

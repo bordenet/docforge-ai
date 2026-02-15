@@ -330,12 +330,6 @@ describe('LLM Orchestration', () => {
 
   describe('runFullWorkflow', () => {
     it('should execute all 3 phases', async () => {
-      // Import the module to mock it
-      const llmClientModule = await import('../shared/js/llm-client.js');
-
-      // Set to mock mode for predictable responses
-      llmClientModule.setLLMMode('mock');
-
       const onPhaseComplete = jest.fn();
       const result = await workflow.runFullWorkflow({ onPhaseComplete });
 
@@ -345,9 +339,6 @@ describe('LLM Orchestration', () => {
     });
 
     it('should advance through all phases', async () => {
-      const llmClientModule = await import('../shared/js/llm-client.js');
-      llmClientModule.setLLMMode('mock');
-
       await workflow.runFullWorkflow();
 
       expect(workflow.currentPhase).toBe(4); // Past phase 3
@@ -355,9 +346,6 @@ describe('LLM Orchestration', () => {
     });
 
     it('should call onPhaseStart for each phase', async () => {
-      const llmClientModule = await import('../shared/js/llm-client.js');
-      llmClientModule.setLLMMode('mock');
-
       const onPhaseStart = jest.fn();
       await workflow.runFullWorkflow({ onPhaseStart });
 
@@ -368,9 +356,6 @@ describe('LLM Orchestration', () => {
     });
 
     it('should save outputs for all phases', async () => {
-      const llmClientModule = await import('../shared/js/llm-client.js');
-      llmClientModule.setLLMMode('mock');
-
       await workflow.runFullWorkflow();
 
       expect(project.phase1_output).toBeTruthy();

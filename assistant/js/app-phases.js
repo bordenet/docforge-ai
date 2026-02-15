@@ -12,7 +12,7 @@ import { generatePrompt } from '../../shared/js/prompt-generator.js';
 import { renderPhaseContent } from '../../shared/js/views.js';
 import { logger } from '../../shared/js/logger.js';
 import { initDiffModule, handleSaveResponse, showDiffModal } from './app-phases-diff.js';
-import { createClientForPhase, getLLMMode } from '../../shared/js/llm-client.js';
+import { createClientForPhase } from '../../shared/js/llm-client.js';
 import { Workflow } from '../../shared/js/workflow.js';
 
 /**
@@ -41,17 +41,8 @@ export function attachPhaseEventListeners(plugin, project, phase) {
   const nextPhaseBtn = document.getElementById('next-phase-btn');
   const exportFinalBtn = document.getElementById('export-final-btn');
   const autoGenerateBtn = document.getElementById('auto-generate-btn');
-  const llmModeInfo = document.getElementById('llm-mode-info');
 
-  // Update LLM mode info display
-  if (llmModeInfo) {
-    const mode = getLLMMode();
-    llmModeInfo.textContent = mode === 'mock'
-      ? 'Using mock mode (for testing)'
-      : 'Using API mode (real LLM calls)';
-  }
-
-  // Auto-generate button
+  // Auto-generate button (mock mode for testing)
   if (autoGenerateBtn) {
     autoGenerateBtn.addEventListener('click', async () => {
       const progressEl = document.getElementById('generate-progress');
