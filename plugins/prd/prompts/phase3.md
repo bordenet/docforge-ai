@@ -76,6 +76,15 @@ Before finalizing, verify:
 - ✅ All non-functional requirements include measurable thresholds
 - ✅ Alternatives Considered section shows rejected approaches with reasons
 - ✅ Dissenting Opinions log documents unresolved debates
+- ✅ Dependencies documented with upstream/downstream tracking and owner info
+- ✅ Assumptions listed with validation plans and timelines
+- ✅ UX Mockups section present (or marked "TBD - pending design phase")
+- ✅ User stories in "As a [user], I want [action], so that [benefit]" format (optional but recommended)
+
+**Rollout & Scope Quality**
+- ✅ Rollout Strategy section with staged rollout (beta/pilot → GA)
+- ✅ Feature flags and rollback triggers defined
+- ✅ Out-of-Scope items include rationale (WHY excluded, not just listed)
 
 ### Step 6: Validate
 - Confirm with the user that the synthesis captures their intent
@@ -142,12 +151,12 @@ CRITICAL - Your final PRD must be COPY-PASTE READY:
 | ## 4. Goals and Objectives | Metrics with baselines/targets, kill switch | H2 + subsections |
 | ## 5. Customer FAQ | External FAQ + customer evidence | H2 + subsections |
 | ## 6. Competitive Landscape | Competitors, differentiation, moat | H2 + subsections |
-| ## 7. Proposed Solution | Core functionality, alternatives | H2 + subsections |
-| ## 8. Scope | In/out of scope | H2 + subsections |
-| ## 9. Requirements | FR/NFR with door type, ACs | H2 + tables |
+| ## 7. Proposed Solution | Core functionality, alternatives, UX mockups (7.5) | H2 + subsections |
+| ## 8. Scope | In scope, out of scope with rationale, future considerations | H2 + subsections |
+| ## 9. Requirements | FR/NFR with door type, user stories (optional), constraints & dependencies | H2 + tables |
 | ## 10. User Personas | 2+ user types with pain points | H2 + subsections |
 | ## 11. Stakeholders | Role, impact, needs | H2 + subsections |
-| ## 12. Timeline | Phases | H2 + table or list |
+| ## 12. Timeline | Development phases (12.1), Rollout strategy (12.2) | H2 + tables |
 | ## 13. Risks and Mitigation | Risk table | H2 + table |
 | ## 14. Traceability Summary | Problem → Requirements → Metrics | H2 + table |
 | ## 15. Open Questions | Unresolved items | H2 + list |

@@ -96,8 +96,11 @@ Evaluate the **16 required sections** (per Phase1.md):
 - Are NFRs covered? (performance, security, reliability, scalability)
 - Are acceptance criteria in Given/When/Then format?
 - Do ACs include BOTH success AND failure/edge cases?
-- Are dependencies and constraints documented?
+- Are dependencies and constraints documented? (upstream/downstream)
+- Are assumptions listed with validation plans?
 - Are door types tagged? (🚪 One-Way vs 🔄 Two-Way doors)
+- Are requirements in user story format? ("As a [user], I want [action], so that [benefit]")
+- Is there a UX Mockups section with wireframe references or user flows?
 
 ### 5. Strategic Viability (20 pts max)
 
@@ -115,6 +118,8 @@ Evaluate the **16 required sections** (per Phase1.md):
 | 2 pts | Traceability (requirements → problems → metrics) |
 | 2 pts | Risk quality (specific risks, actionable mitigations) |
 | 1 pt | Scope realism (achievable within timeline) |
+| 3 pts | **Rollout Strategy** (staged rollout, feature flags, rollback triggers) |
+| 2 pts | **Out-of-Scope Rationale** (WHY each item is excluded, not just listed) |
 
 **Red Flags (each costs 2-5 pts):**
 - ❌ "Increase user engagement" without defining engagement

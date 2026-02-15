@@ -693,6 +693,10 @@ Your PRD will be scored across **5 dimensions totaling 100 points**. Understandi
 - **Traceability (0-3 pts):**
   - Traceability section present: +1 pt
   - Requirements link to Problem IDs (P1 → FR1) and Metric IDs (FR1 → M1): +2 pts for 3+ links
+- **Rollout Strategy (0-3 pts):**
+  - Rollout strategy section present with staged rollout (beta, pilot, GA): +1 pt
+  - Feature flag or gradual rollout mechanism described: +1 pt
+  - Rollback triggers and success criteria per stage: +1 pt
 
 ---
 
@@ -729,12 +733,12 @@ CRITICAL - Your PRD must be COPY-PASTE READY:
 | ## 4. Goals and Objectives | Business/user goals, metrics with baselines/targets, kill switch | H2 + subsections |
 | ## 5. Customer FAQ | External FAQ + "Aha!" moment quote | H2 + subsections |
 | ## 6. Competitive Landscape | Competitors, differentiation, competitive moat | H2 + subsections |
-| ## 7. Proposed Solution | Core functionality, alternatives considered, workflows | H2 + subsections |
-| ## 8. Scope | In scope, out of scope, future considerations | H2 + subsections |
-| ## 9. Requirements | FR/NFR with door type, success AND failure ACs | H2 + tables |
+| ## 7. Proposed Solution | Core functionality, alternatives considered, workflows, UX mockups (7.5) | H2 + subsections |
+| ## 8. Scope | In scope, out of scope with rationale, future considerations | H2 + subsections |
+| ## 9. Requirements | FR/NFR with door type, user stories (optional), constraints & dependencies | H2 + tables |
 | ## 10. User Personas | 2+ user types with pain points, goals, scenarios | H2 + subsections |
 | ## 11. Stakeholders | Role, impact, needs, success criteria | H2 + subsections |
-| ## 12. Timeline | High-level phases | H2 + table or list |
+| ## 12. Timeline | Development phases (12.1), Rollout strategy (12.2) | H2 + tables |
 | ## 13. Risks and Mitigation | Risk, probability, impact, mitigation, contingency | H2 + table |
 | ## 14. Traceability Summary | Problem → Requirements → Metrics mapping | H2 + table |
 | ## 15. Open Questions | Unresolved items | H2 + list |
