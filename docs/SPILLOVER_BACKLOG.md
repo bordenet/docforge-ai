@@ -15,8 +15,7 @@ Improvements identified for OTHER document types during scoped work.
 
 | Date | Agent Scope | Target Type | Improvement | Rationale | Status |
 |------|-------------|-------------|-------------|-----------|--------|
-| 2026-02-15 | prd | one-pager | Add urgency detection patterns | Commit 127e085 scope creep - valid improvement but wrong scope | ✅ Implemented in 052a49d |
-| 2026-02-15 | prd | one-pager | Add alternatives rejection rationale | Identified during PRD competitive landscape work | ✅ Implemented in 052a49d |
+| | | | *(No pending items)* | | |
 
 ---
 
