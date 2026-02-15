@@ -104,11 +104,15 @@ docforge-ai/
 - **Score Calibration Alignment** - Phase 1 and Phase 2 prompts now use identical 0-100 calibration scale
 - **11 Required Sections** - Added "Why Now" as a required section
 
-#### ADR Plugin Enhancements
-- **MADR 3.0 Template** - Upgraded from Michael Nygard to MADR 3.0 (Markdown ADR) format
-- **Decision Drivers Section** - New required section listing 3-5 explicit forces/concerns
-- **Confirmation Section** - New section specifying validation mechanisms for implementation compliance
-- **Validator Updates** - Added `detectDecisionDrivers()` and `detectConfirmation()` functions
+#### ADR Plugin Enhancements (7 Iterations, 46 Patterns)
+- **MADR 3.0 Core** - Y-Statement format, MADR consequence format (Good/Bad because), Pros/Cons sections, YAML front matter, More Information section, Quantified context
+- **Kubernetes KEP Patterns** - Goals/Non-Goals sections, Risks and Mitigations, ADR references (superseded/related), Implementation History, Tradeoff/Comparison matrix
+- **Advanced Patterns** - Compliance/Governance markers, Technical context depth, Decision reversibility (one-way/two-way door), Team context (RACI/DACI)
+- **Quality Refinements** - Assumptions documentation, Decision scope and impact, Quality attributes (ISO 25010), Alternatives depth analysis
+- **Documentation Patterns** - Links/References section, Changelog entries, Superseded ADR handling, Stakeholder sign-off
+- **Enterprise Standards** - ADR numbering (enterprise documentation), Architecture Significant Requirements (ASR), Cost estimation, Timeline/Deadlines
+- **Final Polish** - Security impact patterns (auth, threats, audit), Dependencies documentation (upstream/downstream), Diagram/Visual references (Mermaid, PlantUML, C4), Observability patterns (SLO/SLI, metrics, tracing)
+- **Validator Updates** - 46 pattern constants in `validator-config.js`, 48 detection functions in `validator-detection.js`, comprehensive scoring in `validator-scoring.js` and `validator-scoring-results.js`
 
 #### PRD Plugin Enhancements (3 Rounds)
 - **Section 6: Competitive Landscape** - 2-3 direct competitors with differentiation, competitive moat

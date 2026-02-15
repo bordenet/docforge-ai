@@ -631,7 +631,7 @@ Study these implementations for patterns:
 | `jd` | Medium | Inclusive language detection, mandated sections |
 | `prd` | Complex | MoSCoW prioritization, acceptance criteria, customer evidence, competitive landscape, leading/lagging indicators, stakeholder pitches, pressure-testing, user stories, rollout strategy |
 | `pr-faq` | Complex | Press release structure, FAQ sections |
-| `adr` | Medium | MADR 3.0 template, decision drivers, confirmation section |
+| `adr` | Complex | 46 patterns: MADR 3.0, KEP patterns, security, observability, enterprise standards (see ADR Detection Patterns section) |
 
 ### One-Pager Detection Patterns (2026-02-15)
 
@@ -653,21 +653,41 @@ export const URGENCY_PATTERNS = {
 };
 ```
 
-### ADR Detection Patterns (MADR 3.0)
+### ADR Detection Patterns (46 Patterns across 7 Categories)
 
-The ADR validator implements MADR 3.0 with decision drivers and confirmation:
+The ADR validator implements comprehensive patterns from MADR 3.0, Kubernetes KEP, and enterprise documentation standards:
+
+| Category | Patterns | Examples |
+|----------|----------|----------|
+| **MADR 3.0 Core** | 8 | Decision Drivers, Confirmation, Y-Statement, MADR consequence format, Pros/Cons, YAML metadata, More Info, Quantified |
+| **Kubernetes KEP** | 5 | Goals/Non-Goals, Risks/Mitigations, ADR references, Implementation History, Tradeoff matrix |
+| **Advanced** | 8 | Compliance, Technical context, Reversibility (one-way/two-way door), Team context (RACI/DACI), Assumptions, Scope/Impact, Quality attributes (ISO 25010), Alternatives depth |
+| **Documentation** | 4 | Links/References, Changelog, Superseded ADRs, Stakeholder sign-off |
+| **Enterprise** | 4 | ADR numbering, Architecture Significant Requirements, Cost estimation, Timeline/Deadlines |
+| **Final Polish** | 4 | Security impact, Dependencies, Diagrams/Visuals, Observability (SLO/SLI) |
 
 ```javascript
-// validator-config.js - Decision Drivers detection
+// validator-config.js - Example patterns (46 total)
 export const DECISION_DRIVERS_PATTERNS = {
   sectionHeader: /^#+\s*decision\s+drivers?\b/im,
   driverLanguage: /\b(driver|constraint|concern|quality|requirement)\b/gi
 };
 
-// validator-config.js - Confirmation detection
-export const CONFIRMATION_PATTERNS = {
-  sectionHeader: /^#+\s*confirmation\b/im,
-  validationLanguage: /\b(confirm|validate|verify|review|test|audit)\b/gi
+export const Y_STATEMENT_PATTERNS = {
+  chosenOption: /chosen\s+option[:\s]+["']?([^"'\n]+)["']?/im,
+  becauseClause: /\bbecause\b[^.!?]+[.!?]/gi
+};
+
+export const SECURITY_PATTERNS = {
+  securitySection: /^#+\s*(?:security|privacy|compliance|data\s+protection)\b/im,
+  securityLanguage: /\b(?:authentication|authorization|encryption|TLS|OAuth|RBAC)\b/gi,
+  threatLanguage: /\b(?:threat|vulnerability|attack|exploit|injection|XSS|CSRF)\b/gi
+};
+
+export const OBSERVABILITY_PATTERNS = {
+  observabilitySection: /^#+\s*(?:observability|monitoring|metrics|SLOs?)\b/im,
+  metricsLanguage: /\b(?:SLO|SLA|SLI|latency|throughput|error\s+rate|p99|p95)\b/gi,
+  tracingLanguage: /\b(?:tracing|distributed\s+tracing|opentelemetry|jaeger)\b/gi
 };
 ```
 

@@ -30,7 +30,7 @@ Copy each prompt to the respective LLM. Paste outputs back. The adversarial loop
 |------|----------|------------------|
 | `one-pager` | Executive summary for go/no-go decisions | Urgency/Why Now scoring, alternatives detection |
 | `prd` | Product requirements with acceptance criteria | MoSCoW prioritization, competitive landscape, customer evidence, leading/lagging indicators, stakeholder pitches, pressure-testing |
-| `adr` | Architecture decisions with tradeoff analysis | MADR 3.0 template with Decision Drivers + Confirmation |
+| `adr` | Architecture decisions with tradeoff analysis | MADR 3.0 + KEP patterns: 46 detection patterns including Decision Drivers, Y-statements, Goals/Non-Goals, Risks/Mitigations, Security, Observability |
 | `pr-faq` | Amazon-style "Working Backwards" press release + FAQ | Customer quote validation, FAQ structure |
 | `power-statement` | Role-based achievement statements | CAR format detection |
 | `acceptance-criteria` | User story test conditions | Given/When/Then format scoring |
