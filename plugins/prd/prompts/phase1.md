@@ -53,48 +53,41 @@ This PRD is a **decision-making tool**, not documentation theater. Engineers wil
 
 **Your goal is to clarify product strategy.** The document must serve as a logic test: if the requirements are met, do the success metrics actually improve? Be ruthlessly objective.
 
-## ⚠️ CRITICAL RULES - READ FIRST
+## ⛔ STYLE MANIFESTO (ENFORCED ACROSS ALL PHASES)
 
-### Mutation 1: Banned Vague Language
+**This section defines the writing standards for your PRD. Phase 2 will CHECK for violations. Phase 3 will REMOVE any that slip through.**
 
-❌ **NEVER use these vague terms without specific quantification:**
+### 1. NO ADVERBS (BANNED)
+Intensity-amplifying adverbs make documents read like novels, not professional PRDs.
+- ❌ BANNED: "significantly", "dramatically", "extremely", "highly", "truly", "deeply", "profoundly", "fundamentally", "essentially", "ultimately", "greatly", "substantially", "considerably", "remarkably", "incredibly"
+- ✅ REPLACE WITH: Quantified statements ("reduced by 40%" not "significantly reduced")
 
-**Vague Qualifiers:**
-- "improve" → Specify: "increase from X to Y"
-- "enhance" → Specify: "reduce from X to Y" or "add capability to Z"
-- "user-friendly" → Specify: "reduce clicks from X to Y" or "complete task in <N seconds"
-- "efficient" → Specify: "process N items in <X seconds"
-- "scalable" → Specify: "handle N concurrent users with <X ms latency"
-- "better" → Specify: exact metric and target
-- "optimize" → Specify: what metric improves by how much
-- "faster" → Specify: "reduce from X seconds to Y seconds"
-- "easier" → Specify: "reduce steps from X to Y" or "reduce training time from X to Y"
-- "robust", "intuitive", "seamless", "flexible", "optimal", "minimal", "sufficient", "reasonable", "appropriate", "adequate"
+### 2. NO WEASEL WORDS (BANNED)
+Hedging language undermines credibility and precision.
+- ❌ BANNED: "should", "could", "might", "may", "generally", "typically", "usually", "often", "sometimes", "arguably", "could potentially", "should be able to"
+- ✅ REPLACE WITH: Definitive statements ("must", "will", "shall")
 
-**Vague Quantifiers (BANNED):**
-- "many", "several", "some", "few", "various", "numerous", "multiple", "a lot", "a number of", "a bit", "a little"
-- → Replace with: specific counts or percentages
+### 3. NO VAGUE QUALIFIERS (BANNED)
+- ❌ BANNED: "improve", "enhance", "user-friendly", "efficient", "scalable", "better", "optimize", "faster", "easier", "robust", "intuitive", "seamless", "flexible", "optimal"
+- ✅ REPLACE WITH: Specific metrics ("increase from X to Y", "reduce clicks from 5 to 2")
 
-**Vague Temporal Terms (BANNED):**
-- "soon", "quickly", "rapidly", "promptly", "eventually", "in the future", "ASAP", "shortly", "in due time"
-- → Replace with: specific timeframes ("within 2 weeks", "by Q2")
+### 4. NO VAGUE QUANTIFIERS (BANNED)
+- ❌ BANNED: "many", "several", "some", "few", "various", "numerous", "multiple", "a lot", "a number of"
+- ✅ REPLACE WITH: Specific counts or percentages ("15 users", "40% of customers")
 
-**Weasel Words (BANNED):**
-- "should be able to", "could potentially", "generally", "typically", "usually", "often", "sometimes"
-- → Replace with: definitive statements ("must", "will", "shall")
+### 5. NO VAGUE TEMPORAL TERMS (BANNED)
+- ❌ BANNED: "soon", "quickly", "rapidly", "promptly", "eventually", "in the future", "ASAP", "shortly"
+- ✅ REPLACE WITH: Specific timeframes ("within 2 weeks", "by Month 3")
 
-**Marketing Fluff (BANNED):**
-- "best-in-class", "world-class", "cutting-edge", "next-generation", "state-of-the-art", "industry-leading", "innovative", "revolutionary"
-- → Remove entirely or replace with measurable differentiators
+### 6. NO MARKETING FLUFF (BANNED)
+- ❌ BANNED: "best-in-class", "world-class", "cutting-edge", "next-generation", "state-of-the-art", "industry-leading", "innovative", "revolutionary"
+- ✅ REMOVE entirely or replace with measurable differentiators
 
-**Unquantified Comparatives (BANNED):**
-- "better", "faster", "more efficient", "improved", "enhanced", "easier", "simpler", "cheaper", "superior", "optimized"
-- → Replace with: "X% faster than baseline", "reduce from X to Y"
+### 7. ACTIVE VOICE REQUIRED
+- ❌ BANNED: "It has been observed that...", "Benefits will be realized...", "The system should be configured..."
+- ✅ USE: "Users reported...", "This feature delivers...", "Configure the system to..."
 
-✅ **ALWAYS use:**
-- Baseline + Target: "reduce from 5 hours/week to 30 minutes/week"
-- Quantified outcomes: "increase NPS from 42 to 48"
-- Measurable criteria: "process 100K transactions/day with <100ms p95 latency"
+**Self-Check:** Before generating, ask: "Could I replace this word with a number?" If yes, do it.
 
 ### Mutation 2: Focus on "Why" and "What", NOT "How"
 
@@ -706,119 +699,6 @@ Before finalizing your draft, ensure:
 - ✅ Each functional requirement must be testable (include acceptance criteria)
 - ✅ Each non-functional requirement must include measurable thresholds
 - ✅ Number all requirements (FR1, FR2, NFR1, NFR2, etc.) for traceability
-
----
-
-## ⚠️ SCORING RUBRIC - How Your PRD Will Be Evaluated
-
-Your PRD will be scored across **5 dimensions totaling 100 points**. Understanding this rubric helps you write a higher-quality document.
-
-### Scoring Dimensions
-
-| Dimension | Max Points | What Gets Scored |
-|-----------|-----------|------------------|
-| **Document Structure** | 20 pts | Section presence, organization, formatting |
-| **Requirements Clarity** | 25 pts | Precision, completeness, no vague language |
-| **User Focus** | 20 pts | Personas, problem statement quality, customer alignment |
-| **Technical Quality** | 15 pts | Non-functional requirements, acceptance criteria, traceability |
-| **Strategic Viability** | 20 pts | Leading/lagging indicators, kill criteria, alternatives, dissenting opinions |
-
-### Section Weights (16 Required Sections)
-
-| Weight | Sections |
-|--------|----------|
-| **2 pts each (high priority)** | Executive Summary, Problem Statement, Value Proposition, Goals/Objectives, Customer FAQ, Competitive Landscape, Proposed Solution, Requirements |
-| **1.5 pts each (medium)** | Scope, User Personas, Stakeholders |
-| **1 pt each (standard)** | Timeline, Risks/Mitigation, Traceability Summary, Open Questions, Known Unknowns |
-
-### Score Calibration
-
-| Score Range | Meaning |
-|-------------|---------|
-| **0-40** | Incomplete - missing critical sections |
-| **41-55** | Weak - has structure but lacks specificity |
-| **56-70** | Average - covers basics, needs quantification |
-| **71-80** | Good - solid PRD, minor improvements needed |
-| **81-90** | Strong - would pass VP review |
-| **91-100** | Exceptional - exemplary PRD |
-
-### What Costs You Points (Penalties)
-
-**Vague Language Penalty (-1 to -5 pts):** Using terms without quantification:
-- Qualifiers: "user-friendly", "fast", "scalable", "robust", "efficient", "intuitive"
-- Quantifiers: "many", "several", "some", "a lot", "numerous"
-- Temporal: "soon", "quickly", "eventually", "ASAP"
-- Weasel words: "should be able to", "could potentially", "generally"
-- Marketing fluff: "best-in-class", "cutting-edge", "revolutionary", "innovative"
-- Unquantified comparatives: "better", "faster", "improved", "enhanced"
-
-**AI Slop Penalty (-0 to -5 pts):** Filler phrases, buzzwords, hollow specificity
-
-### What Earns You Points (Strengths)
-
-**Document Structure (+20 pts max):**
-- All 16 sections present with proper headers
-- Clear hierarchy and organization (H1 for title, H2 for sections, H3 for subsections)
-- Numbered sections for traceability
-- Consistent bullet formatting (use dashes `-` consistently, NOT mixed with `*`)
-- Tables for structured information (requirements, risks, timeline)
-
-**Requirements Clarity (+25 pts max):**
-- All claims quantified with baselines and targets
-- No vague language (see 6 categories above)
-- Requirements numbered (FR1, FR2, NFR1)
-- Acceptance criteria for each requirement
-- **Prioritization Bonus (+1-3 pts):** Using prioritization frameworks:
-  - MoSCoW: "Must Have", "Should Have", "Could Have", "Won't Have"
-  - P-Levels: "P0", "P1", "P2", "P3", "Priority: High/Medium/Low"
-  - Tiered: "Tier 1", "Phase 1", "MVP", "v1", "v2"
-  - Dedicated Priorities section
-
-**User Focus (+20 pts max):**
-- **User Persona Quality (0-5 pts):** Scored by: dedicated persona section present (+2), 2+ distinct user types identified (+2), pain points described (+1), usage scenarios included (+1), persona depth (descriptions like "**Primary User**:") (+1)
-- **Problem Statement (0-5 pts):** Dedicated section (+2), problem framing language (+1), value proposition language (+1), "why" explanation (so that, in order to, because) (+1)
-- **Requirements-to-User-Needs (0-5 pts):** FR format (FR1, FR2) with 3+ requirements AND "why" explanations
-- **Customer Evidence (0-5 pts):** The validator detects 5 evidence types:
-  - **Research:** "user research", "customer interview", "usability test", "focus group", "market research", "discovery"
-  - **Data:** "data shows", "analytics indicate", "metrics show", "research indicates", "%+ of users/customers"
-  - **Quotes:** Direct quotes in quotation marks (10+ characters)
-  - **Feedback:** "customer feedback", "user feedback", "NPS", "CSAT", "support ticket", "feature request", "pain point"
-  - **Validation:** "validated", "tested with", "confirmed by", "pilot", "dogfood", "beta", "prototype testing"
-  - Bonus: Customer FAQ section (+1), Customer "Aha!" quote (+1)
-- Value proposition for BOTH customer AND company
-
-**Technical Quality (+15 pts max):**
-- Non-functional requirements with thresholds (e.g., "<100ms p95 latency")
-- Given/When/Then acceptance criteria for success AND failure
-- Door type marked (🚪 One-Way or 🔄 Two-Way)
-- Traceability: Problem → Requirement → Metric
-- **User Story Bonus (+1 pt):** Requirements in user story format ("As a [user], I want [action], so that [benefit]")
-- **UX Mockup Bonus (+1-2 pts):** UX Mockups section present (+1), wireframe/flow references included (+1)
-- **Dependency Mapping Bonus (+1-2 pts):** Upstream/downstream dependencies documented (+1), assumptions with validation plan (+1)
-
-**Strategic Viability (+20 pts max):** Broken into 6 sub-dimensions:
-- **Competitive Analysis (0-4 pts):**
-  - Competitive Landscape section present with 2+ competitors: +2 pts
-  - Clear differentiation articulated for each competitor: +1 pt
-  - Competitive moat/defensibility explained: +1 pt
-- **Metric Validity (0-5 pts):**
-  - Leading indicators (predictive metrics like "adoption rate", "activation", "time to value"): +2 pts
-  - Counter-metrics (guardrail metrics, "must not degrade", "no decrease in"): +2 pts
-  - Source of truth defined (Mixpanel, Amplitude, Datadog, Salesforce, "measured via"): +1 pt for 2+ sources
-- **Scope Realism (0-4 pts):**
-  - Kill switch/failure criteria ("kill criteria", "pivot or persevere", "rollback plan"): +2 pts
-  - Door type tagging (🚪 One-Way Door, 🔄 Two-Way Door, or "irreversible"/"reversible"): +1 pt
-  - Alternatives considered section with rejected approaches: +1 pt
-- **Risk & Mitigation Quality (0-4 pts):**
-  - Risk section with specific mitigations (not just "risks"): +2 pts
-  - Dissenting opinions or known unknowns documented: +2 pts
-- **Traceability (0-3 pts):**
-  - Traceability section present: +1 pt
-  - Requirements link to Problem IDs (P1 → FR1) and Metric IDs (FR1 → M1): +2 pts for 3+ links
-- **Rollout Strategy (0-3 pts):**
-  - Rollout strategy section present with staged rollout (beta, pilot, GA): +1 pt
-  - Feature flag or gradual rollout mechanism described: +1 pt
-  - Rollback triggers and success criteria per stage: +1 pt
 
 ---
 

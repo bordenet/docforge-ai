@@ -81,6 +81,24 @@ These stubs are **intentional user choices** to keep the document concise. The u
 
 **In your improved PRD, reproduce these stubs verbatim.** The user will expand them later if needed.
 
+### ⚠️ Style Enforcement Checklist
+
+**Before generating your improved version, scan Phase 1 output for style violations:**
+
+| Category | BANNED Terms | Fix |
+|----------|-------------|-----|
+| **Adverbs** | "significantly", "dramatically", "extremely", "highly", "truly", "deeply", "profoundly", "fundamentally" | Replace with numbers ("40% faster" not "significantly faster") |
+| **Weasel words** | "should", "could", "might", "generally", "typically", "arguably" | Use definitive: "must", "will", "shall" |
+| **Marketing fluff** | "best-in-class", "cutting-edge", "innovative", "revolutionary" | Remove or quantify |
+| **Vague qualifiers** | "improve", "enhance", "user-friendly", "efficient", "scalable" | Specify: "increase from X to Y" |
+
+**Your obligations:**
+1. ✅ **FLAG violations** in your "Key Issues Identified" section
+2. ✅ **FIX violations** in your improved PRD version
+3. ❌ **DO NOT introduce new violations** in your improvements - your output will be checked by Phase 3
+
+**Example flag:** "Line 47: 'significantly improve response time' → rewrite as 'reduce response time from 800ms to 200ms'"
+
 ## Review Criteria (5 Dimensions - 100 pts total)
 
 **CRITICAL**: These 5 dimensions MUST match the JavaScript validator scoring. Output scores in this exact format.

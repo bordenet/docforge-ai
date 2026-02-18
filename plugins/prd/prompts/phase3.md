@@ -108,6 +108,27 @@ These stubs represent the **user's explicit choice** to keep those sections brie
 
 **Even if Phase 2 provided a full risks section, use the stub above.**
 
+### ⚠️ Final Style Gate
+
+**Before finalizing, verify BOTH Phase 1 and Phase 2 outputs comply with style rules:**
+
+| Category | BANNED | Action |
+|----------|--------|--------|
+| **Adverbs** | "significantly", "dramatically", "extremely", "highly", "truly", "deeply", "profoundly", "fundamentally", "essentially", "ultimately" | Remove and quantify |
+| **Weasel words** | "should", "could", "might", "generally", "typically", "arguably" | Replace with "must", "will", "shall" |
+| **Marketing fluff** | "best-in-class", "cutting-edge", "innovative", "revolutionary" | Delete entirely |
+| **Passive voice** | "it has been observed", "benefits will be realized" | Rewrite in active voice |
+
+**Synthesis preference for style conflicts:**
+- If Phase 1 uses "reduced latency by 40%" and Phase 2 uses "significantly improved latency" → **Choose Phase 1**
+- If BOTH versions contain banned language → **Rewrite with quantified alternative**
+- If Phase 2 introduced violations that Phase 1 avoided → **Prefer Phase 1's language**
+
+**Final check before output:**
+1. Search for "-ly" words (adverbs) - remove intensity amplifiers
+2. Search for "should/could/might" - replace with definitive language
+3. Verify all claims have numbers, not adjectives
+
 **Structure & Completeness (20 pts)**
 - ✅ Required sections present (all 16 for Epic/Product; 8-10 for Feature)
 - ✅ Customer FAQ section appears BEFORE Competitive Landscape and Proposed Solution (Working Backwards)
