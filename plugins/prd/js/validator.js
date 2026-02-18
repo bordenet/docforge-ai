@@ -12,6 +12,7 @@
 import { getSlopPenalty, calculateSlopScore } from '../../../shared/js/slop-scoring.js';
 import { scoreDocumentStructure, scoreRequirementsClarity, scoreUserFocus, scoreTechnicalQuality } from './validator-scoring.js';
 import { scoreStrategicViability } from './validator-strategic.js';
+import { detectExpansionStubs } from './validator-detection.js';
 
 // Re-export detection functions for external use
 export {
@@ -20,8 +21,6 @@ export {
   detectUserPersonas, detectProblemStatement, detectNonFunctionalRequirements,
   detectExpansionStubs,
 } from './validator-detection.js';
-
-import { detectExpansionStubs } from './validator-detection.js';
 
 // Re-export requirements functions
 export { countUserStories, countFunctionalRequirements, countAcceptanceCriteria, countMeasurableRequirements } from './validator-requirements.js';
