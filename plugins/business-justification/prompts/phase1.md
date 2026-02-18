@@ -231,32 +231,6 @@ Your document will be scored across **4 dimensions totaling 100 points**. Unders
 
 ---
 
-## Self-Check Before Output
-
-Before providing your response, verify:
-
-**Strategic Evidence (30 pts)**
-- [ ] Zero banned vague terms (improve, enhance, optimize without metrics)
-- [ ] All claims backed by quantified data (80/20 quant/qual ratio)
-- [ ] Sources cited (industry benchmarks, internal data with dates)
-
-**Financial Justification (25 pts)**
-- [ ] ROI calculation with explicit formula and inputs
-- [ ] Payback period stated (target: <12 months)
-- [ ] 3-year TCO including hidden costs
-
-**Options & Alternatives (25 pts)**
-- [ ] At least 3 options analyzed (do-nothing, minimal, full)
-- [ ] Do-nothing scenario quantified with cost/risk
-- [ ] Clear recommendation with justification
-
-**Execution Completeness (20 pts)**
-- [ ] Executive summary readable in 30 seconds
-- [ ] All stakeholder concerns addressed (Finance, HR, Legal)
-- [ ] Risks identified with mitigation strategies
-
----
-
 ## Interactive Refinement
 
 If the context is incomplete, ask 3-5 clarifying questions FIRST. Wait for answers before generating the document.
