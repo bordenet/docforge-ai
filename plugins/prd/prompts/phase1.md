@@ -655,53 +655,6 @@ Document the top 2 unresolved debates between stakeholders:
 
 ---
 
-## Guidelines
-
-1. **Be Specific**: Use concrete examples and quantifiable metrics
-2. **Focus on Outcomes**: Emphasize what users will achieve, not how it's built
-3. **Avoid Implementation Details**: No code, schemas, SQL, or technical architecture
-4. **Use Section Numbering**: Number all ## and ### level headings
-5. **No Metadata Table**: Don't include author/version/date table at the top
-6. **Ask Clarifying Questions**: If information is unclear or missing, ask before proceeding
-7. **Iterate**: Work with the user to refine sections as needed
-
-## Specificity Checklist
-
-Before finalizing your draft, ensure:
-
-### Formulas and Calculations
-- ✅ All scoring mechanisms include explicit formulas (e.g., "engagement score = 0.4×login_freq + 0.3×feature_breadth + 0.3×active_users")
-- ✅ All weighted calculations show percentages and components
-- ❌ Never use undefined terms like "engagement score" without defining the formula
-
-### Integration Requirements
-- ✅ Specify exact APIs and protocols (e.g., "Epic FHIR API", "Stripe Payment Intents API", "SAML 2.0")
-- ✅ Name specific third-party services (e.g., "Google Maps API", "Twilio SMS API")
-- ❌ Avoid vague terms like "integrate with existing systems" without naming them
-
-### Compliance and Security
-- ✅ Identify specific compliance requirements (HIPAA, SOC 2 Type II, PCI-DSS, GDPR, etc.)
-- ✅ Specify data handling requirements (encryption at rest/in transit, audit logging, access controls)
-- ✅ Include regulatory constraints relevant to the industry
-
-### Success Metrics
-- ✅ Include baseline values (e.g., "reduce from 18% to <12%", not just "reduce no-show rate")
-- ✅ Specify measurement methods (e.g., "measured via user survey at 30 and 60 days")
-- ✅ Set specific targets with timeframes (e.g., "80% adoption within 30 days")
-
-### Performance Requirements
-- ✅ Use specific thresholds (e.g., "load within 2 seconds on 10 Mbps connection")
-- ✅ Define acceptable ranges (e.g., "support 500 concurrent users without degradation")
-- ❌ Avoid vague terms: "fast", "scalable", "high-performance", "near-real-time"
-- ✅ Instead use: "within X seconds", "support X users", "latency <X ms", "refresh every X minutes"
-
-### Requirements Quality
-- ✅ Each functional requirement must be testable (include acceptance criteria)
-- ✅ Each non-functional requirement must include measurable thresholds
-- ✅ Number all requirements (FR1, FR2, NFR1, NFR2, etc.) for traceability
-
----
-
 ## Interactive Refinement
 
 After generating the initial draft, ask clarifying questions if:
@@ -745,31 +698,9 @@ CRITICAL - Your PRD must be COPY-PASTE READY:
 | 15. Open Questions | ✅ Required | List blockers |
 | 16. Dissenting Opinions | ⚠️ Optional | If relevant |
 
-**Epic Scope (4-8 pages):** Include all 16 sections, but keep each concise.
+**Epic Scope (4-8 pages):** Include all 16 sections (see detailed templates above), but keep each concise.
 
 **Product Scope (8-15 pages):** Full 16 sections with appendices for deep dives.
-
-### Full 16 Sections (for Epic/Product scope)
-
-| Section | Content | Format |
-|---------|---------|--------|
-| # {Document Title} | Title from user input | H1 header |
-| ## 1. Executive Summary | 2-3 sentences: problem, solution, impact | Paragraph |
-| ## 2. Problem Statement | Current state + impact with quantification | H2 + subsections |
-| ## 3. Value Proposition | Customer AND company benefits, quantified | H2 + subsections |
-| ## 4. Goals and Objectives | Business/user goals, metrics with baselines/targets, kill switch | H2 + subsections |
-| ## 5. Customer FAQ | External FAQ + "Aha!" moment quote | H2 + subsections |
-| ## 6. Competitive Landscape | Competitors, differentiation, competitive moat | H2 + subsections |
-| ## 7. Proposed Solution | Core functionality, alternatives considered, workflows, UX mockups (7.5) | H2 + subsections |
-| ## 8. Scope | In scope, out of scope with rationale, future considerations | H2 + subsections |
-| ## 9. Requirements | FR/NFR with door type, user stories (optional), constraints & dependencies | H2 + tables |
-| ## 10. User Personas | 2+ user types with pain points, goals, scenarios | H2 + subsections |
-| ## 11. Stakeholders | Role, impact, needs, success criteria | H2 + subsections |
-| ## 12. Timeline | Development phases (12.1), Rollout strategy (12.2) | H2 + tables |
-| ## 13. Risks and Mitigation | Risk, probability, impact, mitigation, contingency | H2 + table |
-| ## 14. Traceability Summary | Problem → Requirements → Metrics mapping | H2 + table |
-| ## 15. Open Questions | Unresolved items | H2 + list |
-| ## 16. Known Unknowns & Dissenting Opinions | Unresolved debates, dissenting views | H2 + subsections |
 
 ---
 
