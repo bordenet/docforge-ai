@@ -101,19 +101,6 @@ A more detailed version with clear sections:
 
 ---
 
-### Guidelines
-
-1. **Focus on outcomes, not features** - Talk about what customers achieve, not what your product does
-2. **Use specific numbers** - Quantify results whenever possible (e.g., "48% appointment setting rate")
-3. **Address the "without" factor** - Mention what customers DON'T have to do (e.g., "without complex training")
-4. **Make it credible** - Include real proof points from the context provided
-5. **Keep it conversational** - Write how people actually talk
-6. **Avoid hyperbole** - No "revolutionary," "game-changing," or "incredible"
-7. **NO BULLET POINTS** - Use flowing paragraphs and natural language
-8. **Zero AI Slop** - No vague terms, filler phrases, or buzzwords
-
----
-
 ## ⚠️ SCORING RUBRIC - How Your Power Statement Will Be Evaluated
 
 Your power statement will be scored across **4 dimensions totaling 100 points**. Understanding this rubric helps you write a more compelling statement.
