@@ -180,3 +180,25 @@ export function detectScopeBoundaries(text) {
     hasScopeSection,
   };
 }
+
+/**
+ * Detect [TO BE EXPANDED] stub markers in text
+ * These are intentional placeholders from the length checkpoint feature
+ */
+export function detectExpansionStubs(text) {
+  // Match [TO BE EXPANDED] markers (case-insensitive)
+  const stubPattern = /\[TO BE EXPANDED\]/gi;
+  const matches = text.match(stubPattern) || [];
+
+  // Find which sections contain stubs by looking for headers followed by stub markers
+  const sectionStubPattern = /^(#+\s*)?(\d+\.?\d*\.?\s*)?([^\n]+)\n\[TO BE EXPANDED\]/gim;
+  const sectionMatches = [...text.matchAll(sectionStubPattern)];
+  const stubbedSections = sectionMatches.map(m => m[3]?.trim()).filter(Boolean);
+
+  return {
+    hasStubs: matches.length > 0,
+    stubCount: matches.length,
+    stubbedSections,
+    isIntentional: matches.length > 0, // Stubs are always intentional (from length checkpoint)
+  };
+}

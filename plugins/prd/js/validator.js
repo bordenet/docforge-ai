@@ -18,7 +18,10 @@ export {
   detectSections, detectVagueQualifiers, detectVagueLanguage, detectPrioritization,
   detectCustomerEvidence, detectScopeBoundaries, detectValueProposition,
   detectUserPersonas, detectProblemStatement, detectNonFunctionalRequirements,
+  detectExpansionStubs,
 } from './validator-detection.js';
+
+import { detectExpansionStubs } from './validator-detection.js';
 
 // Re-export requirements functions
 export { countUserStories, countFunctionalRequirements, countAcceptanceCriteria, countMeasurableRequirements } from './validator-requirements.js';
@@ -52,6 +55,9 @@ export function validatePRD(text) {
   const userFocus = scoreUserFocus(text);
   const technical = scoreTechnicalQuality(text);
   const strategicViability = scoreStrategicViability(text);
+
+  // Detect intentional expansion stubs from length checkpoint feature
+  const expansionStubs = detectExpansionStubs(text);
 
   // AI slop detection (aligned with inline validator)
   const slopPenalty = getSlopPenalty(text);
@@ -88,6 +94,8 @@ export function validatePRD(text) {
       deduction: slopDeduction,
       issues: slopIssues,
     },
+    // Expansion stubs from length checkpoint feature (informational, no penalty)
+    expansionStubs,
   };
 }
 

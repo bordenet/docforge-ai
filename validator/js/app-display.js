@@ -109,6 +109,44 @@ export function renderSlopDetection(slopData) {
 }
 
 /**
+ * Render expansion stubs notification (informational, not a penalty)
+ * @param {Object} stubData - Expansion stubs data from detectExpansionStubs()
+ */
+export function renderExpansionStubs(stubData) {
+  const container = document.getElementById('expansion-stubs');
+  if (!container) return;
+
+  if (!stubData || !stubData.hasStubs) {
+    container.innerHTML = '';
+    return;
+  }
+
+  const sectionList = stubData.stubbedSections.length > 0
+    ? stubData.stubbedSections.slice(0, 5).map(s => `<li>• ${escapeHtml(s)}</li>`).join('')
+    : '<li>• (sections not detected)</li>';
+
+  container.innerHTML = `
+    <div class="mt-4 p-3 bg-blue-900/50 border border-blue-700 rounded-lg">
+      <div class="flex justify-between items-center mb-2">
+        <span class="text-sm font-medium text-blue-300">📋 Intentional Stubs Detected</span>
+        <span class="text-sm text-blue-400">${stubData.stubCount} section${stubData.stubCount > 1 ? 's' : ''}</span>
+      </div>
+      <p class="text-xs text-blue-200 mb-2">
+        This document contains <code class="bg-blue-800 px-1 rounded">[TO BE EXPANDED]</code> markers.
+        These are <strong>intentional placeholders</strong> from the length checkpoint feature, not missing content.
+      </p>
+      <details class="text-xs text-blue-300">
+        <summary class="cursor-pointer hover:text-blue-200">Stubbed sections</summary>
+        <ul class="mt-1 ml-2 text-blue-400">${sectionList}</ul>
+      </details>
+      <p class="text-xs text-blue-400 mt-2 italic">
+        Note: Scores may be lower due to incomplete sections. This is expected for draft documents.
+      </p>
+    </div>
+  `;
+}
+
+/**
  * Render validation issues
  * @param {Array} issues - Array of issue strings
  */

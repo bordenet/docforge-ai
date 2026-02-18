@@ -80,6 +80,34 @@ Before finalizing, verify:
 >
 > Please reply with **(a)** or **(b)**.
 
+### ⚠️ CRITICAL: Stub Preservation Rule
+
+**If Phase 1 (your initial draft) contains sections marked `[TO BE EXPANDED]`:**
+
+These stubs represent the **user's explicit choice** to keep those sections brief. The user made this decision during Phase 1's length checkpoint.
+
+**Your obligations during synthesis:**
+1. ✅ **PRESERVE stubs from Phase 1** - Do NOT expand them, even if you could add value
+2. ✅ **IGNORE Phase 2's expansions** - If Gemini expanded any stubs, **revert to Phase 1's stub format**
+3. ✅ **Honor user intent** - The user chose brevity over completeness for these sections
+4. ❌ **DO NOT synthesize full content** where Phase 1 has a stub
+5. ❌ **DO NOT prefer Phase 2's "more complete" version** for stubbed sections
+
+**When comparing Phase 1 vs Phase 2 for stubbed sections:**
+- Phase 1 has `[TO BE EXPANDED]` stub → **Use Phase 1's stub**
+- Phase 2 expanded the same section → **Ignore Phase 2's expansion, use Phase 1's stub**
+
+**Example - Preserve this from Phase 1:**
+```markdown
+## 13. Risks and Mitigation
+[TO BE EXPANDED]
+- Technical risk: API rate limiting
+- Business risk: Competitor response
+- Mitigation strategies for each
+```
+
+**Even if Phase 2 provided a full risks section, use the stub above.**
+
 **Structure & Completeness (20 pts)**
 - ✅ Required sections present (all 16 for Epic/Product; 8-10 for Feature)
 - ✅ Customer FAQ section appears BEFORE Competitive Landscape and Proposed Solution (Working Backwards)

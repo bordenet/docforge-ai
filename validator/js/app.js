@@ -10,7 +10,7 @@ import { showToast, escapeHtml, setupGlobalErrorHandler } from '../../shared/js/
 import { validateDocument } from '../../shared/js/validator.js';
 import { logger } from '../../shared/js/logger.js';
 // Display functions
-import { updateScoreDisplay, renderSlopDetection, renderIssues } from './app-display.js';
+import { updateScoreDisplay, renderSlopDetection, renderIssues, renderExpansionStubs } from './app-display.js';
 // AI Power-ups functions
 import {
   initPowerups,
@@ -173,6 +173,7 @@ function runValidation() {
   currentResult = validateDocument(content, currentPlugin);
   updateScoreDisplay(currentResult, currentPlugin);
   renderSlopDetection(currentResult.slopDetection);
+  renderExpansionStubs(currentResult.expansionStubs);
   renderIssues(currentResult.issues);
 
   // Show AI power-ups if content is substantial
