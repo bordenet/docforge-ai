@@ -176,34 +176,6 @@ A PR-FAQ is not a marketing document. It is a **logic test**:
 
 ## OUTPUT FORMAT
 
-Generate a complete PR-FAQ document with:
-
-1. **Press Release**
-   - Headline (8-15 words, action verb + mechanism + metric)
-   - Dateline (CITY, ST — Month Day, Year —)
-   - Opening paragraph (5 Ws + measurable outcome + customer pain/relief)
-   - 2-3 body paragraphs (mechanism, benefits, competitive differentiation)
-   - Price and Availability paragraph (who can get it, where, for how much)
-   - Exactly 2 quotes (1 Executive Vision, 1 Customer Relief)
-   - "About [Company]" boilerplate
-
-2. **External FAQ** (5-7 questions customers would ask)
-   - Pricing, availability, compatibility, support, migration
-   - Must include: "How is this different from [Alternative]?"
-
-3. **Internal FAQ** (5-7 questions) — THE HARD QUESTIONS
-   **MUST include these three:**
-   - **Risk**: "What is the most likely reason this fails?"
-   - **Reversibility**: "Is this a One-Way Door (hard to undo) or Two-Way Door (easy to pivot)?"
-   - **Opportunity Cost**: "What are we NOT doing if we build this?"
-
-   **Also address:**
-   - Unit economics / pricing logic
-   - Why we didn't use [Competitor/Existing Tool]
-   - Technical dependencies or blockers
-
-## OUTPUT FORMAT
-
 <output_rules>
 CRITICAL - Your PR-FAQ must be COPY-PASTE READY:
 - Start IMMEDIATELY with the headline (no preamble like "Here's the PR-FAQ...")
