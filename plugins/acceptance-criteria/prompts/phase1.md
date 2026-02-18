@@ -95,18 +95,6 @@ Generate markdown ready to paste into Linear. Use EXACTLY this structure:
 
 ---
 
-## Before You Output
-
-Verify your criteria pass these checks:
-- [ ] Each item is a checkbox `- [ ]`
-- [ ] Each item is testable (yes/no verification)
-- [ ] No user story syntax ("As a...")
-- [ ] No Gherkin syntax ("Given/When/Then")
-- [ ] 3-7 items total (suggest splitting if more)
-- [ ] Plain language, no jargon
-
----
-
 ## If Context is Incomplete
 
 Ask 2-3 clarifying questions FIRST. Wait for answers before generating AC.
