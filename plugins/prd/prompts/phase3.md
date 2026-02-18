@@ -60,6 +60,26 @@ Before finalizing, verify:
 - ✅ Section count appropriate: Feature (8-10 sections), Epic/Product (full 16 sections)
 - ❌ If bloated: Consolidate sections, move details to appendix, cut redundancy
 
+#### Length Checkpoint (Synthesis Phase)
+
+**Before finalizing, check combined document length:**
+
+| Scope | Maximum Length | Action if Exceeded |
+|-------|---------------|-------------------|
+| **Feature** | 3 pages (~1,050 words) | Consolidate aggressively |
+| **Epic** | 8 pages (~2,800 words) | Pause and ask user |
+| **Product** | 15 pages (~5,250 words) | Pause and ask user |
+
+**If the synthesized document exceeds the scope's maximum:**
+
+> **⚠️ Length Check:** The synthesized PRD is ~X pages, exceeding the {{DOCUMENT_SCOPE}}-scope target.
+>
+> **Options:**
+> - **(a) Keep full detail** - Accept the longer document
+> - **(b) Consolidate now** - I'll move detailed content to appendix stubs marked `[TO BE EXPANDED]`
+>
+> Please reply with **(a)** or **(b)**.
+
 **Structure & Completeness (20 pts)**
 - ✅ Required sections present (all 16 for Epic/Product; 8-10 for Feature)
 - ✅ Customer FAQ section appears BEFORE Competitive Landscape and Proposed Solution (Working Backwards)

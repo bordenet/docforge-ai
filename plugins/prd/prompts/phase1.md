@@ -164,6 +164,48 @@ Every PRD MUST be readable at three levels:
 
 > ⚠️ **SELF-CHECK BEFORE OUTPUT:** Count your sections. If you have 16 detailed sections for a "feature" scope PRD, you've over-engineered it. Consolidate.
 
+### Mutation 3.1: Length Checkpoint (Prevent Runaway Documents)
+
+**After completing Tier 2 sections (through Section 9: Requirements), STOP and perform this check:**
+
+#### Length Thresholds by Scope
+
+| Scope | Checkpoint Threshold | Approximate Words |
+|-------|---------------------|-------------------|
+| **Feature** | ~2.5 pages | ~875 words |
+| **Epic** | ~6 pages | ~2,100 words |
+| **Product** | ~12 pages | ~4,200 words |
+| **Unspecified** | Use Epic thresholds | ~2,100 words |
+
+#### Checkpoint Protocol
+
+1. **Estimate current document length** (word count or page equivalent)
+2. **If approaching or exceeding the threshold for {{DOCUMENT_SCOPE}}:**
+
+   PAUSE and present this choice to the user:
+
+   > **⚠️ Length Check:** This document is approaching ~X pages, which is near the upper limit for a {{DOCUMENT_SCOPE}}-scope PRD.
+   >
+   > **How would you like to proceed?**
+   > - **(a) Continue with full detail** - Complete all remaining sections with full depth
+   > - **(b) Stub remaining sections** - Summarize Sections 10-16 as bullet-point outlines marked `[TO BE EXPANDED]`
+   >
+   > Please reply with **(a)** or **(b)**.
+
+3. **If user chooses (b)**, format remaining sections as:
+
+   ```
+   ## [Section Number]. [Section Title]
+   [TO BE EXPANDED]
+   - Key point 1 that would be covered
+   - Key point 2 that would be covered
+   - Key point 3 that would be covered
+   ```
+
+4. **If user chooses (a)** or **if under threshold**, continue with full detail.
+
+> ⚠️ **DO NOT SKIP THIS CHECKPOINT.** Product managers have reported excessive document length as a pain point.
+
 ### Document Structure
 
 Create a well-structured PRD with the following sections (detailed guidance for each below):
