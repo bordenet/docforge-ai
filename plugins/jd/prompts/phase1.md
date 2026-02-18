@@ -133,23 +133,6 @@ Create a well-structured job description with these sections:
 
 ---
 
-## Self-Check Before Output
-
-Before providing your response, verify:
-
-- [ ] Zero masculine-coded words (aggressive, ninja, rockstar, etc.)
-- [ ] Zero neurodiversity-excluding language (fast-paced, self-starter, etc.)
-- [ ] Zero red flag phrases (like a family, passion required, etc.)
-- [ ] All responsibilities are concrete and measurable
-- [ ] All required qualifications are specific (not "strong X skills")
-- [ ] Compensation range is included and reasonable (30-50% spread) **← SKIP FOR INTERNAL POSTINGS**
-- [ ] 400-700 words total
-- [ ] Includes "If you meet 60-70% of qualifications, we encourage you to apply"
-- [ ] Company preamble and legal text preserved exactly as provided
-- [ ] **NO DUPLICATE CONTENT** - Each section has unique content; no redundancy between sections
-
----
-
 ## ⚠️ SCORING RUBRIC - How Your Job Description Will Be Evaluated
 
 Your job description will be scored using a **penalty-based system** starting at 100 points. Understanding this rubric helps you write more inclusive, effective JDs.
