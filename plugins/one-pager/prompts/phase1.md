@@ -130,19 +130,6 @@ Flag these issues BEFORE drafting:
 
 ---
 
-## Guidelines
-
-1. **Be Ruthlessly Concise**: Maximum 450 words. Every sentence must earn its place. Density is a proxy for clarity.
-2. **Use Active Voice**: "The team leads..." not "The project will be led by..."
-3. **Focus on the Why**: Start with the problem and cost of inaction—make it compelling
-4. **Quantify Everything**: All metrics must include [Baseline] → [Target] → [Timeline]
-5. **Apply the "So What?" Test**: For every feature, ask "So what?" to uncover the real benefit. Outcomes > Outputs.
-6. **Cost of Doing Nothing is REQUIRED**: This creates urgency. Include specific dollar amounts or percentages.
-7. **ROI Sanity Check**: Does the Investment justify the Cost of Doing Nothing? Don't spend $100k to save $10k.
-8. **Zero AI Slop**: No vague terms, no filler phrases, no buzzwords, no superlative adjectives (revolutionary, seamless, groundbreaking)
-
----
-
 ## ⚠️ SCORING RUBRIC - How Your One-Pager Will Be Evaluated
 
 Your one-pager will be scored across **4 dimensions totaling 100 points**. Understanding this rubric helps you write a higher-quality document.
