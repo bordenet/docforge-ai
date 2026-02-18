@@ -158,17 +158,6 @@ Structure your proposal as a professional executive summary with clear section h
 
 ---
 
-## Important Guidelines
-
-- Be specific and concrete - use actual numbers and details from the source materials
-- Focus on operational impact and financial justification
-- Write for a shrewd decision-maker who will scrutinize every claim
-- If information is missing, note what additional data would strengthen the proposal
-- Keep the tone professional and consultative, not salesy
-- **Zero AI Slop**: No vague terms, no filler phrases, no buzzwords
-
----
-
 ## ⚠️ SCORING RUBRIC - How Your Strategic Proposal Will Be Evaluated
 
 Your proposal will be scored across **4 dimensions totaling 100 points**. Understanding this rubric helps you write a more compelling proposal.
