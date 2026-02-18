@@ -85,21 +85,6 @@ Generate a complete ADR based on the input above. You must:
 - Address team/organizational impact (training needs, hiring, coordination overhead)
 - Use clear consequence language: "will", "may", "requires", "makes", "reduces", "increases"
 
-### Examples of Vague vs. Specific Consequences
-**VAGUE (DO NOT DO THIS)**:
-- "May increase complexity" ❌
-- "Makes operations harder" ❌
-- "Better scalability" ❌
-- "Requires more resources" ❌
-
-**SPECIFIC (DO THIS)**:
-- "Requires implementing event-driven patterns for data consistency; services can no longer use distributed transactions" ✅
-- "Adds 50-100ms network latency for inter-service calls; request tracing becomes mandatory" ✅
-- "Enables horizontal scaling of individual services; microservice #1 can handle 10x traffic without scaling all others" ✅
-- "Requires hiring expertise in message queues (Kafka, RabbitMQ) and distributed systems; existing team needs 6-8 weeks training" ✅
-- "Operational teams must maintain separate deployment pipelines for each service, increasing release coordination from 30-minute monolithic releases to independent per-service deployments (5 minutes each)" ✅
-- "Requires investment in distributed tracing tooling (X-Ray, Jaeger); debugging cross-service issues that once required grep now need trace visualization" ✅
-
 ### Confirmation Section Must (MADR 3.0):
 - Specify how implementation compliance will be validated
 - Include concrete verification mechanisms (not vague "monitor progress")
@@ -173,26 +158,6 @@ Reference specific facts from the context in your Decision and Consequences:
 - Ground rationale in context: "The 300% growth makes current monolith unscalable, requiring..."
 
 **Example**: Instead of "improves deployment", say "Reduces 45-minute deployments to 5-minute per-service deployments, eliminating the need for coordinated releases"
-
-## Quality Checklist Before Returning (MADR 3.0 Aligned)
-- ✅ **Decision Drivers section** lists 3-5 explicit forces/constraints driving this decision
-- ✅ **Considered Options section** lists alternatives investigated
-- ✅ Decision names a specific architectural approach (microservices, monorepo, event-driven, etc.)
-- ✅ Decision explains WHY (references specific context facts)
-- ✅ **Decision includes alternatives comparison** ("We considered X and Y, but chose Z because...")
-- ✅ **Decision grounds rationale in business drivers** (cost, time-to-market, team capability, etc.)
-- ✅ Decision does NOT explain HOW (no implementation details like "use Kafka")
-- ✅ At least 3 positive consequences listed with "Good, because..." format
-- ✅ At least 3 negative consequences listed with "Bad, because..." format
-- ✅ Each consequence is a substantive sentence, not a phrase
-- ✅ Negative consequences are honest and realistic (not minimized)
-- ✅ Consequences reference specific impacts: "adds X latency", "requires Y expertise", "enables Z benefit"
-- ✅ **Consequences explicitly address team factors**: training needs, skill gaps, hiring requirements
-- ✅ Consequences address ALL three dimensions: technical, organizational, operational
-- ✅ **NO vague consequence language**: Replace "complexity" with specific impacts, "overhead" with measurable costs
-- ✅ **Subsequent ADRs section lists 2-3 triggered decisions**
-- ✅ **Recommended Review Timing specifies clear checkpoints** (not vague; e.g., "30 days" not "later")
-- ✅ **Confirmation section** specifies how compliance will be validated (review, test, metrics)
 
 ---
 
