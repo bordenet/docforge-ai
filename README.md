@@ -27,15 +27,15 @@ npm install && npm run serve
 
 You fill out a form. It generates three prompts:
 
-1. **Draft** (Claude) — Creates initial document from your inputs
-2. **Critique** (Gemini) — Scores the draft on 5 dimensions, identifies gaps
-3. **Synthesis** (Claude) — Incorporates critique into final version
+1. **Draft** (Claude): Creates initial document from your inputs
+2. **Critique** (Gemini): Scores the draft on 5 dimensions, identifies gaps
+3. **Synthesis** (Claude): Incorporates critique into final version
 
 Copy each prompt to the respective LLM. Paste outputs back. The adversarial loop catches weak arguments, missing data, and vague language that a single-pass generation misses.
 
 ### Why "DocForge"?
 
-A blacksmith's forge shapes raw metal through heat and pressure into something stronger. DocForge does the same with documents — Claude drafts the raw form, Gemini applies critical heat, Claude hammers out the final shape. The adversarial loop is the anvil. Great documents, not fake passports. The name was suspiciously available.
+A blacksmith's forge shapes raw metal through heat and pressure into something stronger. DocForge does the same with documents: Claude drafts the raw form, Gemini applies critical heat, Claude hammers out the final shape. The adversarial loop is the anvil. Great documents, not fake passports. The name was suspiciously available.
 
 ## Document Types
 
