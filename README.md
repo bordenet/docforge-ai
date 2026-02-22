@@ -11,8 +11,6 @@
 ⚒️🔥 <em>Forge documents on the anvil of adversarial review</em> 🔥⚒️
 </p>
 
-> Great documents, not fake passports. The name was suspiciously available.
-
 ---
 
 Forge business documents through adversarial AI review. Claude drafts, Gemini critiques, Claude synthesizes.
@@ -37,7 +35,7 @@ Copy each prompt to the respective LLM. Paste outputs back. The adversarial loop
 
 ### Why "DocForge"?
 
-A blacksmith's forge shapes raw metal through heat and pressure into something stronger. DocForge does the same with documents — Claude drafts the raw form, Gemini applies critical heat, Claude hammers out the final shape. The adversarial loop is the anvil. Nothing counterfeit; just craft.
+A blacksmith's forge shapes raw metal through heat and pressure into something stronger. DocForge does the same with documents — Claude drafts the raw form, Gemini applies critical heat, Claude hammers out the final shape. The adversarial loop is the anvil. Great documents, not fake passports. The name was suspiciously available.
 
 ## Document Types
 
