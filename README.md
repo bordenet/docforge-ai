@@ -11,7 +11,7 @@
 ⚒️🔥 <em>Forge documents on the anvil of adversarial review</em> 🔥⚒️
 </p>
 
-> **Naming note:** "Forge" as in blacksmith craft, not counterfeit documents. Think hammer-and-anvil, not courtroom exhibit.
+> Great documents, not fake passports. The name was suspiciously available.
 
 ---
 
