@@ -53,18 +53,6 @@ A blacksmith's forge shapes raw metal through heat and pressure into something s
 
 Switch types via URL: `?type=prd`, `?type=adr`, etc.
 
-### What's a PR-FAQ?
-
-A PR/FAQ (Press Release / Frequently Asked Questions) is Amazon's "Working Backwards" document format. You write a future press release announcing the finished product *as if it already shipped*, then answer anticipated customer and stakeholder questions. This forces clarity on customer benefit before building anything.
-
-The format has two sections:
-
-1. **Press Release** — A ~1 page announcement written from the customer's perspective. Includes headline, subheadline, problem statement, solution, customer quote, and call to action.
-
-2. **FAQs** — Questions stakeholders will ask, split into External (customer) and Internal (business) categories. Covers pricing, technical feasibility, risks, timeline, and success metrics.
-
-For background, see [Working Backwards PR/FAQ](https://workingbackwards.com/resources/working-backwards-pr-faq/) or watch [this explainer video](https://www.youtube.com/watch?v=T1HZM6ybORk).
-
 ## Why Adversarial Review?
 
 Single-pass LLM generation produces plausible-sounding text that often lacks:
@@ -126,6 +114,12 @@ DocForge consolidates [Genesis](https://github.com/bordenet/genesis) (now archiv
 ## Acceptable Use
 
 DocForge AI generates business documentation — one-pagers, PRDs, ADRs, job descriptions, and more. It is **not** intended for creating fraudulent, misleading, or legally deceptive content. Don't use it for fake credentials, forged signatures, or misrepresentation of any kind.
+
+---
+
+<p align="center">
+<img src="docs/docforge-social-preview.png" width="200" alt="DocForge AI forge and anvil">
+</p>
 
 ## License
 
