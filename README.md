@@ -5,7 +5,17 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Successor to genesis](https://img.shields.io/badge/←_Successor_to-genesis_(archived)-lightgrey)](https://github.com/bordenet/genesis)
 
-Generate business documents with AI critique. Claude drafts, Gemini critiques, Claude synthesizes.
+---
+
+<p align="center">
+⚒️🔥 <em>Forge documents on the anvil of adversarial review</em> 🔥⚒️
+</p>
+
+> **Naming note:** "Forge" as in blacksmith craft, not counterfeit documents. Think hammer-and-anvil, not courtroom exhibit.
+
+---
+
+Forge business documents through adversarial AI review. Claude drafts, Gemini critiques, Claude synthesizes.
 
 **🚀 Live:** [bordenet.github.io/docforge-ai](https://bordenet.github.io/docforge-ai/) — [Assistant](https://bordenet.github.io/docforge-ai/assistant/) | [Validator](https://bordenet.github.io/docforge-ai/validator/)
 
@@ -24,6 +34,10 @@ You fill out a form. DocForge generates three prompts:
 3. **Synthesis** (Claude) — Incorporates critique into final version
 
 Copy each prompt to the respective LLM. Paste outputs back. The adversarial loop catches weak arguments, missing data, and vague language that a single-pass generation misses.
+
+### Why "DocForge"?
+
+A blacksmith's forge shapes raw metal through heat and pressure into something stronger. DocForge does the same with documents — Claude drafts the raw form, Gemini applies critical heat, Claude hammers out the final shape. The adversarial loop is the anvil. Nothing counterfeit; just craft.
 
 ## Document Types
 
@@ -110,6 +124,10 @@ Coverage target: 80%. Current: 87%.
 ## Predecessor
 
 DocForge consolidates [Genesis](https://github.com/bordenet/genesis) (now archived), which ran the same workflow across 9 separate repos. Genesis proved the adversarial pattern works but created maintenance overhead—every bug fix required 9 PRs. DocForge keeps the workflow, drops the duplication. The genesis repo remains available for historical reference.
+
+## Acceptable Use
+
+DocForge AI generates business documentation — one-pagers, PRDs, ADRs, job descriptions, and more. It is **not** intended for creating fraudulent, misleading, or legally deceptive content. Don't use it for fake credentials, forged signatures, or misrepresentation of any kind.
 
 ## License
 
