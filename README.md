@@ -41,17 +41,15 @@ A blacksmith's forge shapes raw metal through heat and pressure into something s
 
 | Type | Use Case | Notable Features |
 |------|----------|------------------|
-| `one-pager` | Executive summary for go/no-go decisions | Urgency/Why Now scoring, alternatives detection |
-| `prd` | Product requirements with acceptance criteria | MoSCoW prioritization, competitive landscape, customer evidence, leading/lagging indicators, stakeholder pitches, pressure-testing |
-| `adr` | Architecture decisions with tradeoff analysis | MADR 3.0 + KEP patterns: 46 detection patterns including Decision Drivers, Y-statements, Goals/Non-Goals, Risks/Mitigations, Security, Observability |
-| `pr-faq` | Amazon-style "Working Backwards" press release + FAQ | Customer quote validation, FAQ structure |
-| `power-statement` | Role-based achievement statements | CAR format detection |
-| `acceptance-criteria` | User story test conditions | Given/When/Then format scoring |
-| `jd` | Job descriptions with leveling criteria | Inclusive language detection |
-| `business-justification` | ROI analysis for budget approval | NPV/IRR detection |
-| `strategic-proposal` | Initiative proposals with success metrics | OKR alignment scoring |
-
-Switch types via URL: `?type=prd`, `?type=adr`, etc.
+| [`one-pager`](https://bordenet.github.io/docforge-ai/assistant/?type=one-pager) | Executive summary for go/no-go decisions | Urgency/Why Now scoring, alternatives detection |
+| [`prd`](https://bordenet.github.io/docforge-ai/assistant/?type=prd) | Product requirements with acceptance criteria | MoSCoW prioritization, competitive landscape, customer evidence, leading/lagging indicators, stakeholder pitches, pressure-testing |
+| [`adr`](https://bordenet.github.io/docforge-ai/assistant/?type=adr) | Architecture decisions with tradeoff analysis | MADR 3.0 + KEP patterns: 46 detection patterns including Decision Drivers, Y-statements, Goals/Non-Goals, Risks/Mitigations, Security, Observability |
+| [`pr-faq`](https://bordenet.github.io/docforge-ai/assistant/?type=pr-faq) | Amazon-style "Working Backwards" press release + FAQ | Customer quote validation, FAQ structure |
+| [`power-statement`](https://bordenet.github.io/docforge-ai/assistant/?type=power-statement) | Role-based achievement statements | CAR format detection |
+| [`acceptance-criteria`](https://bordenet.github.io/docforge-ai/assistant/?type=acceptance-criteria) | User story test conditions | Given/When/Then format scoring |
+| [`jd`](https://bordenet.github.io/docforge-ai/assistant/?type=jd) | Job descriptions with leveling criteria | Inclusive language detection |
+| [`business-justification`](https://bordenet.github.io/docforge-ai/assistant/?type=business-justification) | ROI analysis for budget approval | NPV/IRR detection |
+| [`strategic-proposal`](https://bordenet.github.io/docforge-ai/assistant/?type=strategic-proposal) | Initiative proposals with success metrics | OKR alignment scoring |
 
 ## Why Adversarial Review?
 
