@@ -13,7 +13,7 @@
 
 ---
 
-Forge business documents through adversarial AI review. Claude drafts, Gemini critiques, Claude synthesizes.
+Create business documents through adversarial AI review. Claude drafts, Gemini critiques, Claude synthesizes.
 
 **🚀 Live:** [bordenet.github.io/docforge-ai](https://bordenet.github.io/docforge-ai/) — [Assistant](https://bordenet.github.io/docforge-ai/assistant/) | [Validator](https://bordenet.github.io/docforge-ai/validator/)
 
@@ -25,7 +25,7 @@ npm install && npm run serve
 
 ## What It Does
 
-You fill out a form. DocForge generates three prompts:
+You fill out a form. It generates three prompts:
 
 1. **Draft** (Claude) — Creates initial document from your inputs
 2. **Critique** (Gemini) — Scores the draft on 5 dimensions, identifies gaps
@@ -109,11 +109,11 @@ Coverage target: 80%. Current: 87%.
 
 ## Predecessor
 
-DocForge consolidates [Genesis](https://github.com/bordenet/genesis) (now archived), which ran the same workflow across 9 separate repos. Genesis tested the level of effort required to constrain AI coding agents to produce predictable code. The ensuing guardrails cost more than doing this with a more traditional plugin-like architecture around a single project. The adversarial loop worked; the agentic templating was a case of fighting against nature.
+This project consolidates [Genesis](https://github.com/bordenet/genesis) (now archived), which ran the same workflow across 9 separate repos. Genesis tested the level of effort required to constrain AI coding agents to produce predictable code. The ensuing guardrails cost more than doing this with a more traditional plugin-like architecture around a single project. The adversarial loop worked; the agentic templating was a case of fighting against nature.
 
 ## Acceptable Use
 
-DocForge AI generates business documentation — one-pagers, PRDs, ADRs, job descriptions, and more. It is **not** intended for creating fraudulent, misleading, or legally deceptive content. Don't use it for fake credentials, forged signatures, or misrepresentation of any kind.
+This tool generates business documentation — one-pagers, PRDs, ADRs, job descriptions, and more. It is **not** intended for creating fraudulent, misleading, or legally deceptive content. Don't use it for fake credentials, forged signatures, or misrepresentation of any kind.
 
 ---
 
