@@ -109,10 +109,6 @@ Coverage target: 80%. Current: 87%.
 
 This project consolidates [Genesis](https://github.com/bordenet/genesis) (now archived), which ran the same workflow across 9 separate repos. Genesis tested the level of effort required to constrain AI coding agents to produce predictable code. The ensuing guardrails cost more than doing this with a more traditional plugin-like architecture around a single project. The adversarial loop worked; the agentic templating was a case of fighting against nature.
 
-## Acceptable Use
-
-This tool generates business documentation — one-pagers, PRDs, ADRs, job descriptions, and more. It is **not** intended for creating fraudulent, misleading, or legally deceptive content. Don't use it for fake credentials, forged signatures, or misrepresentation of any kind.
-
 ---
 
 <p align="center">
