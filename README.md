@@ -93,7 +93,7 @@ npm run lint          # ESLint
 npm run serve         # Local server on :8080
 ```
 
-Coverage target: 80%. Current: 87%.
+Coverage target: 80%.
 
 ## Architecture Decisions
 
