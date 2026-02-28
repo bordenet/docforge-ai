@@ -113,6 +113,13 @@ This project consolidates [Genesis](https://github.com/bordenet/genesis) (now ar
 <img src="docs/docforge-social-preview.png" width="200" alt="DocForge AI forge and anvil">
 </p>
 
+## Related Projects
+
+| Project | Purpose |
+|---------|---------|
+| [golden-agents](https://github.com/bordenet/golden-agents) | Self-maintaining AI guidance files |
+| [superpowers-plus](https://github.com/bordenet/superpowers-plus) | 33 AI coding skills for assistants |
+
 ## License
 
 MIT
