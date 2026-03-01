@@ -162,20 +162,41 @@ Evaluate the **16 required sections** (per Phase1.md):
 
 **This dimension catches "Document Theater" - impressive-looking PRDs that won't help engineers build the right thing.**
 
+**Metric Validity (0-8 pts):**
 | Points | Check |
 |--------|-------|
-| 4 pts | **Competitive Analysis** (2+ competitors, differentiation, moat) |
 | 2 pts | Leading indicators defined (predictive metrics) |
 | 2 pts | Counter-metrics defined (prevent perverse incentives) |
-| 1 pt | Source of truth for all metrics (Mixpanel, Datadog, etc.) |
+| 2 pts | Source of truth for metrics (Mixpanel, Datadog, etc.) |
+| 2 pts | Baseline→target metric pairs (e.g., "reduce from X to Y") |
+
+**Scope Realism (0-5 pts):**
+| Points | Check |
+|--------|-------|
 | 2 pts | Kill switch defined (what proves failure?) |
-| 2 pts | Alternatives considered with rejection reasons |
+| 2 pts | Door types tagged (🚪 One-Way / 🔄 Two-Way) |
+| 1 pt | Alternatives considered with rejection reasons |
+
+**Risk & Mitigation Quality (0-5 pts):**
+| Points | Check |
+|--------|-------|
+| 3 pts | Specific risks with actionable mitigations |
 | 2 pts | Dissenting opinions documented |
-| 2 pts | Traceability (requirements → problems → metrics) |
-| 2 pts | Risk quality (specific risks, actionable mitigations) |
-| 1 pt | Scope realism (achievable within timeline) |
-| 3 pts | **Rollout Strategy** (staged rollout, feature flags, rollback triggers) |
-| 2 pts | **Out-of-Scope Rationale** (WHY each item is excluded, not just listed) |
+
+**Traceability (0-4 pts):**
+| Points | Check |
+|--------|-------|
+| 2 pts | Traceability section present |
+| 2 pts | Requirements traceable to problems and metrics |
+
+**Competitive Depth (0-4 pts):**
+| Points | Check |
+|--------|-------|
+| 2 pts | 2+ competitors analyzed |
+| 1 pt | Differentiation articulated |
+| 1 pt | Competitive moat explained |
+
+**Note:** Theoretical max is 26 pts but dimension is capped at 20 pts. Focus on getting fundamentals right.
 
 **Red Flags (each costs 2-5 pts):**
 - ❌ "Increase user engagement" without defining engagement
