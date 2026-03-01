@@ -138,9 +138,65 @@ describe('Prompt-Rubric Alignment', () => {
     test.each(pluginIds)('%s plugin dimensions sum to 100 points', (pluginId) => {
       const plugin = getPlugin(pluginId);
       if (!plugin) return; // Skip if plugin doesn't exist
-      
+
       const total = plugin.scoringDimensions.reduce((sum, d) => sum + d.maxPoints, 0);
       expect(total).toBe(100);
+    });
+  });
+
+  describe('Strategic Viability Rubric Alignment (Bug 2 Prevention)', () => {
+    let phase2Content;
+
+    beforeAll(() => {
+      const phase2Path = join(projectRoot, 'plugins/prd/prompts/phase2.md');
+      phase2Content = readFileSync(phase2Path, 'utf-8');
+    });
+
+    test('Strategic Viability max is 20 pts', () => {
+      expect(phase2Content).toMatch(/Strategic Viability\s*\(20 pts max\)/i);
+    });
+
+    test('prompt includes Metric Validity scoring (matches JS validator)', () => {
+      // JS validator: metricValidityScore up to 8 pts (leading 2, counter 2, source 2, baseline-target 2)
+      expect(phase2Content).toContain('Metric Validity');
+      expect(phase2Content).toContain('Leading indicators');
+      expect(phase2Content).toContain('Counter-metrics');
+      expect(phase2Content).toContain('Source of truth');
+    });
+
+    test('prompt includes Scope Realism scoring (matches JS validator)', () => {
+      // JS validator: scopeRealismScore up to 5 pts (kill switch 2, door type 2, alternatives 1)
+      expect(phase2Content).toContain('Scope Realism');
+      expect(phase2Content).toContain('Kill switch');
+      expect(phase2Content).toContain('Door type');
+    });
+
+    test('prompt includes Risk Quality scoring (matches JS validator)', () => {
+      // JS validator: riskScore up to 5 pts (risks+mitigations 3, dissenting 2)
+      expect(phase2Content).toContain('Risk');
+      expect(phase2Content).toContain('Dissenting opinions');
+    });
+
+    test('prompt includes Traceability scoring (matches JS validator)', () => {
+      // JS validator: traceabilityScore up to 4 pts
+      expect(phase2Content).toContain('Traceability');
+    });
+
+    test('prompt includes Competitive Depth scoring (matches JS validator)', () => {
+      // JS validator: competitiveDepthScore up to 4 pts
+      expect(phase2Content).toContain('Competitive');
+    });
+
+    test('prompt does NOT include removed items from old rubric', () => {
+      // These items caused Bug 2 - they were in prompt but not in JS validator
+      // Removed: Rollout Strategy (3 pts), Out-of-Scope Rationale (2 pts)
+      expect(phase2Content).not.toMatch(/\|\s*3 pts\s*\|\s*\*\*Rollout Strategy\*\*/i);
+      expect(phase2Content).not.toMatch(/\|\s*2 pts\s*\|\s*\*\*Out-of-Scope Rationale\*\*/i);
+    });
+
+    test('prompt notes theoretical max exceeds 20 pts (capped)', () => {
+      // The JS validator can theoretically score 26 pts but caps at 20
+      expect(phase2Content).toContain('capped at 20');
     });
   });
 });
