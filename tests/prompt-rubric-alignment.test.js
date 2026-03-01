@@ -133,6 +133,51 @@ describe('Prompt-Rubric Alignment', () => {
     });
   });
 
+  describe('PR-FAQ Plugin (Bug 2 pattern - cross-plugin audit)', () => {
+    const prFaqPlugin = getPlugin('pr-faq');
+    let phase2Content;
+
+    beforeAll(() => {
+      const phase2Path = join(projectRoot, 'plugins/pr-faq/prompts/phase2.md');
+      phase2Content = readFileSync(phase2Path, 'utf-8');
+    });
+
+    test('config dimensions sum to 100 points', () => {
+      const total = prFaqPlugin.scoringDimensions.reduce((sum, d) => sum + d.maxPoints, 0);
+      expect(total).toBe(100);
+    });
+
+    test('config has 5 dimensions matching validator', () => {
+      // PR-FAQ validator has: structure (20), content (20), professional (15), evidence (10), faqQuality (35)
+      expect(prFaqPlugin.scoringDimensions.length).toBe(5);
+    });
+
+    test('config dimension maxPoints match validator exactly', () => {
+      // Must match validator.js: Structure (20), Content (20), Professional (15), Evidence (10), FAQ (35)
+      const expectedPoints = [20, 20, 15, 10, 35];
+      prFaqPlugin.scoringDimensions.forEach((dim, i) => {
+        expect(dim.maxPoints).toBe(expectedPoints[i]);
+      });
+    });
+
+    test('Phase 2 prompt dimension points match config', () => {
+      // Structure & Hook: 20 pts
+      expect(phase2Content).toMatch(/Structure & Hook \(20 points\)/i);
+      // Content Quality: 20 pts
+      expect(phase2Content).toMatch(/Content Quality \(20 points\)/i);
+      // Professional Tone: 15 pts
+      expect(phase2Content).toMatch(/Professional Tone \(15 points\)/i);
+      // Customer Evidence: 10 pts
+      expect(phase2Content).toMatch(/Customer Evidence \(10 points\)/i);
+      // FAQ Quality: 35 pts
+      expect(phase2Content).toMatch(/FAQ Quality \(35 points\)/i);
+    });
+
+    test('Phase 2 prompt total matches 100 pts', () => {
+      expect(phase2Content).toMatch(/100 pts total/i);
+    });
+  });
+
   describe('All Plugins', () => {
     const pluginIds = ['prd', 'one-pager', 'adr', 'acceptance-criteria', 'power-statement', 'business-justification', 'jd', 'strategic-proposal'];
 

@@ -32,41 +32,36 @@ LLMs consistently score PR-FAQs 20-30 points higher than they deserve. You must 
 - "Almost" meeting criteria = 0 points for that item
 - If you have to justify why something "kind of" counts, it doesn't count
 
-## SCORING CRITERIA (Aligned with Validator)
+## SCORING CRITERIA (5 Dimensions - 100 pts total, ALIGNED WITH VALIDATOR)
 
-### Structure & Hook (25 points)
-- [ ] Headline: 8-15 words? Action verb + MECHANISM + metric? (not just outcome)
-- [ ] Dateline: City, state abbreviation, date present?
-- [ ] Opening: Answers WHO, WHAT, WHEN, WHERE, WHY in first paragraph?
-- [ ] Customer pain described with empathy, then relief with specifics?
+### 1. Structure & Hook (20 points)
+- **Headline Quality (12 pts)**: 8-15 words, action verb + MECHANISM + metric, no weak language
+- **Dateline (2 pts)**: City, state abbreviation, date present
+- **Newsworthy Hook (4 pts)**: Opening answers WHO, WHAT, WHEN, WHERE, WHY in first paragraph
+- **Timeliness (2 pts)**: Time-sensitive language (today, now, this week)
 
-### Content Quality (25 points)
-- [ ] Inverted pyramid structure (most important first)?
-- [ ] All 5 Ws clearly covered with SPECIFICS, not generalities?
-- [ ] Concrete MECHANISM explained (HOW it works, not just WHAT it does)?
-- [ ] Competitive differentiation clear (why not use [Alternative])?
-- [ ] Price and Availability paragraph present?
+### 2. Content Quality (20 points)
+- **5 Ws Coverage (15 pts)**: WHO, WHAT, WHEN, WHERE, WHY all clearly covered with SPECIFICS
+- **Inverted Pyramid (3 pts)**: Most important information first
+- **Mechanism (2 pts)**: Concrete HOW it works, not just WHAT it does
 
-### Professional Tone (15 points)
-- [ ] ZERO marketing fluff words? (revolutionary, groundbreaking, exciting, seamless, robust, etc.)
-- [ ] Factual, direct language throughout?
-- [ ] Good readability (sentences under 25 words)?
-- [ ] Active voice dominant?
+### 3. Professional Tone (15 points)
+- **No Fluff (6 pts)**: ZERO marketing words (revolutionary, groundbreaking, exciting, seamless, robust)
+- **Factual Language (5 pts)**: Direct, measurable claims
+- **Readability (4 pts)**: Sentences under 25 words, active voice dominant
 
-### Customer Evidence (10 points)
-- [ ] Exactly 2 quotes (1 Executive Vision, 1 Customer Relief)?
-- [ ] EVERY quote has QUANTITATIVE metrics? (%, $, hours, ratios)
-- [ ] ZERO emotional fluff in quotes? (excited, thrilled, pleased, love)
-- [ ] Quotes sound like different people with different purposes?
+### 4. Customer Evidence (10 points)
+- **Quote Count (4 pts)**: Exactly 2 quotes (1 Executive Vision, 1 Customer Relief)
+- **Quantified Quotes (4 pts)**: EVERY quote has metrics (%, $, hours, ratios)
+- **Distinct Voices (2 pts)**: Quotes sound like different people
 
-### FAQ Quality (25 points) — THE "WORKING BACKWARDS" TEST
-- [ ] External FAQ present with 5-7 questions?
-- [ ] External FAQ includes "How is this different from [Alternative]?"
-- [ ] Internal FAQ present with 5-7 questions?
-- [ ] Internal FAQ includes RISK question ("What is the most likely reason this fails?")?
-- [ ] Internal FAQ includes REVERSIBILITY ("One-Way Door or Two-Way Door?")?
-- [ ] Internal FAQ includes OPPORTUNITY COST ("What are we NOT doing?")?
-- [ ] Internal FAQ addresses unit economics / pricing logic?
+### 5. FAQ Quality (35 points) — THE "WORKING BACKWARDS" TEST
+- **External FAQ (10 pts)**: 5-7 questions, includes "How different from [Alternative]?"
+- **Internal FAQ Count (8 pts)**: 5-7 questions present
+- **Risk Question (6 pts)**: "What is the most likely reason this fails?"
+- **Reversibility (4 pts)**: "One-Way Door or Two-Way Door?" addressed
+- **Opportunity Cost (4 pts)**: "What are we NOT doing?" addressed
+- **Unit Economics (3 pts)**: Pricing/cost logic explained
 
 **FAQ PENALTY:** If Internal FAQ is missing or contains only "softball" questions, cap the total score at 50.
 

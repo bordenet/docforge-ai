@@ -125,20 +125,29 @@ export const prFaqPlugin = {
 
   scoringDimensions: [
     {
-      name: 'Customer Focus',
-      maxPoints: 25,
-      description: 'Clear customer problem, working backwards mindset',
+      name: 'Structure & Hook',
+      maxPoints: 20,
+      description: 'Headline quality, newsworthy hook, dateline, release structure',
     },
     {
-      name: 'Press Release Quality',
-      maxPoints: 25,
-      description: 'Compelling narrative, clear benefits, quotable',
+      name: 'Content Quality',
+      maxPoints: 20,
+      description: '5 Ws coverage, inverted pyramid, mechanism clarity',
     },
-    { name: 'FAQ Completeness', maxPoints: 25, description: 'Addresses key stakeholder questions' },
     {
-      name: 'Business Case',
-      maxPoints: 25,
-      description: 'Metrics, feasibility, risk acknowledgment',
+      name: 'Professional Tone',
+      maxPoints: 15,
+      description: 'No fluff words, factual language, readability',
+    },
+    {
+      name: 'Customer Evidence',
+      maxPoints: 10,
+      description: 'Quantified customer quotes, distinct voices',
+    },
+    {
+      name: 'FAQ Quality',
+      maxPoints: 35,
+      description: 'External + Internal FAQs, risk questions, working backwards test',
     },
   ],
 
