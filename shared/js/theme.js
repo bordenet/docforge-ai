@@ -20,15 +20,15 @@ export function toggleDarkMode() {
     html.classList.remove('dark');
     body.classList.remove('bg-slate-950', 'text-slate-100');
     body.classList.add('bg-white', 'text-slate-900');
-    
-    // Update header
+
+    // Update header - background AND text colors
     const header = document.querySelector('header');
     if (header) {
       header.classList.remove('bg-slate-600', 'border-slate-500');
       header.classList.add('bg-slate-200', 'border-slate-300');
     }
-    
-    // Update panels
+
+    // Update panel backgrounds
     document.querySelectorAll('.bg-slate-900').forEach(el => {
       el.classList.remove('bg-slate-900');
       el.classList.add('bg-slate-100');
@@ -41,7 +41,45 @@ export function toggleDarkMode() {
       el.classList.remove('border-slate-800');
       el.classList.add('border-slate-300');
     });
-    
+    document.querySelectorAll('.border-slate-700').forEach(el => {
+      el.classList.remove('border-slate-700');
+      el.classList.add('border-slate-400');
+    });
+
+    // Update TEXT colors for light mode contrast
+    document.querySelectorAll('.text-white').forEach(el => {
+      el.classList.remove('text-white');
+      el.classList.add('text-slate-900');
+    });
+    document.querySelectorAll('.text-slate-100').forEach(el => {
+      el.classList.remove('text-slate-100');
+      el.classList.add('text-slate-800');
+    });
+    document.querySelectorAll('.text-slate-300').forEach(el => {
+      el.classList.remove('text-slate-300');
+      el.classList.add('text-slate-600');
+    });
+    document.querySelectorAll('.text-slate-400').forEach(el => {
+      el.classList.remove('text-slate-400');
+      el.classList.add('text-slate-500');
+    });
+
+    // Update placeholder colors
+    document.querySelectorAll('.placeholder-slate-500').forEach(el => {
+      el.classList.remove('placeholder-slate-500');
+      el.classList.add('placeholder-slate-400');
+    });
+
+    // Update hover states
+    document.querySelectorAll('.hover\\:bg-slate-500').forEach(el => {
+      el.classList.remove('hover:bg-slate-500');
+      el.classList.add('hover:bg-slate-300');
+    });
+    document.querySelectorAll('.hover\\:bg-slate-700').forEach(el => {
+      el.classList.remove('hover:bg-slate-700');
+      el.classList.add('hover:bg-slate-300');
+    });
+
     // Update button icon to sun
     updateThemeIcon(false);
     localStorage.setItem(THEME_STORAGE_KEY, 'light');
@@ -50,15 +88,15 @@ export function toggleDarkMode() {
     html.classList.add('dark');
     body.classList.remove('bg-white', 'text-slate-900');
     body.classList.add('bg-slate-950', 'text-slate-100');
-    
-    // Update header
+
+    // Update header - background AND text colors
     const header = document.querySelector('header');
     if (header) {
       header.classList.remove('bg-slate-200', 'border-slate-300');
       header.classList.add('bg-slate-600', 'border-slate-500');
     }
-    
-    // Update panels
+
+    // Update panel backgrounds
     document.querySelectorAll('.bg-slate-100').forEach(el => {
       el.classList.remove('bg-slate-100');
       el.classList.add('bg-slate-900');
@@ -71,7 +109,44 @@ export function toggleDarkMode() {
       el.classList.remove('border-slate-300');
       el.classList.add('border-slate-800');
     });
-    
+    document.querySelectorAll('.border-slate-400').forEach(el => {
+      el.classList.remove('border-slate-400');
+      el.classList.add('border-slate-700');
+    });
+
+    // Update TEXT colors for dark mode contrast
+    document.querySelectorAll('.text-slate-900').forEach(el => {
+      // Skip the body element as it's handled separately
+      if (el !== body) {
+        el.classList.remove('text-slate-900');
+        el.classList.add('text-white');
+      }
+    });
+    document.querySelectorAll('.text-slate-800').forEach(el => {
+      el.classList.remove('text-slate-800');
+      el.classList.add('text-slate-100');
+    });
+    document.querySelectorAll('.text-slate-600').forEach(el => {
+      el.classList.remove('text-slate-600');
+      el.classList.add('text-slate-300');
+    });
+    document.querySelectorAll('.text-slate-500').forEach(el => {
+      el.classList.remove('text-slate-500');
+      el.classList.add('text-slate-400');
+    });
+
+    // Update placeholder colors
+    document.querySelectorAll('.placeholder-slate-400').forEach(el => {
+      el.classList.remove('placeholder-slate-400');
+      el.classList.add('placeholder-slate-500');
+    });
+
+    // Update hover states
+    document.querySelectorAll('.hover\\:bg-slate-300').forEach(el => {
+      el.classList.remove('hover:bg-slate-300');
+      el.classList.add('hover:bg-slate-500');
+    });
+
     // Update button icon to moon
     updateThemeIcon(true);
     localStorage.setItem(THEME_STORAGE_KEY, 'dark');

@@ -4,7 +4,7 @@
  * Addresses: Bug 1 (Dark Mode Toggle Non-Functional)
  */
 
-import { describe, test, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
 import { toggleDarkMode, initTheme, getCurrentTheme, isDarkMode } from '../shared/js/theme.js';
 
 describe('Theme Module', () => {
@@ -155,9 +155,73 @@ describe('Theme Module', () => {
 
     test('should update border classes when switching to light', () => {
       toggleDarkMode();
-      
+
       const panel = document.querySelector('.border-slate-300');
       expect(panel).toBeTruthy();
+    });
+  });
+
+  describe('Text color contrast (Bug fix: light mode readability)', () => {
+    beforeEach(() => {
+      // Add elements with text colors that need swapping
+      document.body.innerHTML = `
+        <html class="dark">
+          <body class="bg-slate-950 text-slate-100">
+            <header class="bg-slate-600 border-slate-500">
+              <h1 class="text-white">Title</h1>
+              <span class="text-slate-300">Subtitle</span>
+            </header>
+            <div class="bg-slate-900 border-slate-800">
+              <label class="text-white">Label</label>
+              <p class="text-slate-300">Help text</p>
+              <span class="text-slate-400">Secondary</span>
+            </div>
+          </body>
+        </html>
+      `;
+      document.documentElement.classList.add('dark');
+    });
+
+    test('should swap text-white to text-slate-900 in light mode', () => {
+      toggleDarkMode();
+
+      const h1 = document.querySelector('h1');
+      expect(h1.classList.contains('text-slate-900')).toBe(true);
+      expect(h1.classList.contains('text-white')).toBe(false);
+    });
+
+    test('should swap text-slate-300 to text-slate-600 in light mode', () => {
+      toggleDarkMode();
+
+      const span = document.querySelector('span');
+      expect(span.classList.contains('text-slate-600')).toBe(true);
+      expect(span.classList.contains('text-slate-300')).toBe(false);
+    });
+
+    test('should swap text-slate-400 to text-slate-500 in light mode', () => {
+      toggleDarkMode();
+
+      const secondary = document.querySelectorAll('span')[1];
+      expect(secondary.classList.contains('text-slate-500')).toBe(true);
+      expect(secondary.classList.contains('text-slate-400')).toBe(false);
+    });
+
+    test('should restore text-white when switching back to dark mode', () => {
+      toggleDarkMode(); // to light
+      toggleDarkMode(); // back to dark
+
+      const h1 = document.querySelector('h1');
+      expect(h1.classList.contains('text-white')).toBe(true);
+      expect(h1.classList.contains('text-slate-900')).toBe(false);
+    });
+
+    test('should restore text-slate-300 when switching back to dark mode', () => {
+      toggleDarkMode(); // to light
+      toggleDarkMode(); // back to dark
+
+      const span = document.querySelector('span');
+      expect(span.classList.contains('text-slate-300')).toBe(true);
+      expect(span.classList.contains('text-slate-600')).toBe(false);
     });
   });
 

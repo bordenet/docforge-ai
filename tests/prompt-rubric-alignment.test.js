@@ -25,13 +25,14 @@ function parseRubricFromPrompt(promptContent) {
   
   // Match patterns like "### 1. Document Structure (20 pts max)"
   const dimensionPattern = /###\s*\d+\.\s*(.+?)\s*\((\d+)\s*pts?\s*max\)/gi;
-  let match;
-  
-  while ((match = dimensionPattern.exec(promptContent)) !== null) {
+  let match = dimensionPattern.exec(promptContent);
+
+  while (match !== null) {
     dimensions.push({
       name: match[1].trim(),
       maxPoints: parseInt(match[2], 10),
     });
+    match = dimensionPattern.exec(promptContent);
   }
   
   return dimensions;

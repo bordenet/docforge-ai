@@ -108,10 +108,6 @@ describe('Prompt Scope Validation', () => {
 
   describe('Length Checkpoint Thresholds (Fix 11)', () => {
     test('Feature checkpoint threshold is lower than Epic', () => {
-      // Feature: ~700 words, Epic: ~1500 words
-      const featureMatch = phase1Content.match(/Feature.*?(\d+)\s*words.*checkpoint/i);
-      const epicMatch = phase1Content.match(/Epic.*?(\d+)\s*words.*checkpoint/i);
-      
       // Just verify the checkpoint section exists with correct structure
       expect(phase1Content).toContain('Checkpoint Threshold');
     });
