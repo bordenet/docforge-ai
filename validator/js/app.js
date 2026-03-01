@@ -180,13 +180,20 @@ function runValidation() {
   renderExpansionStubs(currentResult.expansionStubs);
   renderIssues(currentResult.issues);
 
-  // Show AI power-ups if content is substantial
+  // Show AI power-ups if content is substantial (>200 chars)
   const aiPowerups = document.getElementById('ai-powerups');
-  if (aiPowerups && content.length > 200) {
-    aiPowerups.classList.remove('hidden');
+  if (aiPowerups) {
+    if (content.length > 200) {
+      aiPowerups.classList.remove('hidden');
+    } else {
+      aiPowerups.classList.add('hidden');
+    }
   }
 
-  showToast('Document validated!', 'success');
+  const message = content.length > 200
+    ? 'Document validated!'
+    : 'Document validated! (AI Power-ups require 200+ characters)';
+  showToast(message, 'success');
 }
 
 function clearEditor() {
