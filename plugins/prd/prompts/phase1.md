@@ -119,17 +119,29 @@ Hedging language undermines credibility and precision.
 
 #### Length Targets by Document Scope
 
-| Scope | Target Length | Page 1 | Core Sections | Appendix |
-|-------|---------------|--------|---------------|----------|
-| **Feature** | 1-3 pages | Executive Summary (standalone, decision-ready) | Problem, Solution, Requirements, Metrics | None or minimal |
-| **Epic** | 4-8 pages | Executive Summary (1 page max) | Full core sections | Deep dives, edge cases |
-| **Product** | 8-15 pages | Executive Summary (1 page max) | Comprehensive coverage | Technical appendices, research data |
+| Scope | Target Length | Word Count | Page 1 | Core Sections | Appendix |
+|-------|---------------|------------|--------|---------------|----------|
+| **Feature** | 1-3 pages | ~700-1,500 words | Executive Summary (standalone, decision-ready) | Problem, Solution, Requirements, Metrics | None or minimal |
+| **Epic** | 4-8 pages | ~1,500-3,000 words | Executive Summary (1 page max) | Full core sections | Deep dives, edge cases |
+| **Product** | 8-15 pages | ~3,000-6,000 words | Executive Summary (1 page max) | Comprehensive coverage | Technical appendices, research data |
 
-**If {{DOCUMENT_SCOPE}} is:**
-- **"feature"** → Be aggressive. Cut anything that doesn't directly answer "what are we building and why?" Combine sections where possible. Skip optional subsections.
-- **"epic"** → Standard depth. Include all core sections but keep each concise. Use appendix for details.
-- **"product"** → Comprehensive, but still structured. Use appendix for data-heavy content (research, competitor analysis details).
-- **Empty/unspecified** → Default to "epic" (4-8 pages). Ask user if unsure.
+**⚠️ CRITICAL: Scope Detection and Defaults**
+
+**Step 1: Check for brevity signals in user input.**
+If the user's problem statement, context, or any field contains words like "short", "quick", "brief", "concise", "simple", "lightweight", "minimal", or "just need basics":
+→ Treat as **Feature scope** regardless of {{DOCUMENT_SCOPE}} value
+→ Target: 1,500-2,000 words MAX
+→ Include ONLY: Executive Summary, Problem, Solution, Requirements, Metrics
+→ Skip ALL other sections
+
+**Step 2: If no brevity signals, interpret {{DOCUMENT_SCOPE}}:**
+- **"feature"** → Be aggressive. Cut anything that doesn't directly answer "what are we building and why?" Combine sections where possible. Skip optional subsections. Target: 1,500 words.
+- **"epic"** → Standard depth. Include all core sections but keep each concise. Use appendix for details. Target: 2,500 words.
+- **"product"** → Comprehensive, but still structured. Use appendix for data-heavy content. Target: 4,000 words.
+- **Empty/unspecified** → **Default to "feature" scope (1-3 pages, ~1,500 words).** Only escalate to Epic if the problem description clearly involves multiple features or a multi-month initiative.
+
+**Step 3: Self-check before generating.**
+Before outputting, ask yourself: "Is this document longer than necessary for a busy PM to make a decision?" If yes, cut.
 
 #### Tiered Structure (REQUIRED for all scopes)
 
@@ -163,12 +175,13 @@ Every PRD MUST be readable at three levels:
 
 #### Length Thresholds by Scope
 
-| Scope | Checkpoint Threshold | Approximate Words |
-|-------|---------------------|-------------------|
-| **Feature** | ~2.5 pages | ~875 words |
-| **Epic** | ~6 pages | ~2,100 words |
-| **Product** | ~12 pages | ~4,200 words |
-| **Unspecified** | Use Epic thresholds | ~2,100 words |
+| Scope | Checkpoint Threshold | Approximate Words | Action at Threshold |
+|-------|---------------------|-------------------|---------------------|
+| **Feature** | ~2 pages | ~700 words | STOP - wrap up immediately |
+| **Epic** | ~4 pages | ~1,500 words | Pause and ask user |
+| **Product** | ~8 pages | ~3,000 words | Pause and ask user |
+| **Unspecified** | Use Feature thresholds | ~700 words | STOP - wrap up immediately |
+| **Brevity requested** | ~2 pages | ~700 words | STOP - do not exceed |
 
 #### Checkpoint Protocol
 
@@ -679,28 +692,26 @@ CRITICAL - Your PRD must be COPY-PASTE READY:
 
 ### Section Requirements by Scope
 
-**Feature Scope (1-3 pages):** Include sections 1-4, 7-9, 13, 15. Merge others or omit if not relevant.
+**⚠️ CRITICAL: Feature Scope is the DEFAULT. Only escalate if user explicitly requests Epic/Product.**
+
+**Feature Scope (1-3 pages, ~700-1,500 words):** Essential sections ONLY.
 
 | Section | Required? | Notes |
 |---------|-----------|-------|
-| 1. Executive Summary | ✅ Required | Decision-ready standalone (Tier 1) |
-| 2. Problem Statement | ✅ Required | Keep concise |
-| 3. Value Proposition | ✅ Required | Can merge with Problem Statement |
-| 4. Goals and Objectives | ✅ Required | 2-3 metrics max |
-| 5. Customer FAQ | ⚠️ Optional | Include if user provided evidence |
-| 6. Competitive Landscape | ⚠️ Optional | Brief if included |
-| 7. Proposed Solution | ✅ Required | Core functionality only |
-| 8. Scope | ✅ Required | In/out of scope |
-| 9. Requirements | ✅ Required | 3-8 requirements typical |
-| 10-12. Personas/Stakeholders/Timeline | ⚠️ Optional | Often handled elsewhere for features |
-| 13. Risks and Mitigation | ✅ Required | Top 2-3 risks |
-| 14. Traceability | ❌ Skip | Overkill for features |
-| 15. Open Questions | ✅ Required | List blockers |
-| 16. Dissenting Opinions | ⚠️ Optional | If relevant |
+| 1. Executive Summary | ✅ Required | 2-3 sentences max |
+| 2. Problem Statement | ✅ Required | 1 paragraph |
+| 4. Goals & Metrics | ✅ Required | 2-3 metrics, table format |
+| 7. Proposed Solution | ✅ Required | Core functionality, 1 paragraph + bullet list |
+| 9. Requirements | ✅ Required | 3-5 requirements max, table format |
+| 13. Risks | ⚠️ Brief | 2-3 bullet points only |
+| 15. Open Questions | ⚠️ Brief | 2-3 bullet points only |
+| **ALL OTHERS** | ❌ Skip | Sections 3, 5, 6, 8, 10-12, 14, 16 - SKIP for Feature scope |
 
-**Epic Scope (4-8 pages):** Include all 16 sections (see detailed templates above), but keep each concise.
+**If user requested "short", "quick", "brief", etc.:** Follow Feature scope exactly. Do NOT exceed 1,500 words. Do NOT add optional sections.
 
-**Product Scope (8-15 pages):** Full 16 sections with appendices for deep dives.
+**Epic Scope (4-8 pages, ~1,500-3,000 words):** Include sections 1-9, 13, 15. Sections 10-12, 14, 16 optional.
+
+**Product Scope (8-15 pages, ~3,000-6,000 words):** Full 16 sections with appendices for deep dives.
 
 ---
 
