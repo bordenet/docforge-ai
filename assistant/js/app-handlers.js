@@ -116,6 +116,11 @@ export function setupNewFormEventHandlers(plugin, templates, editingProjectId = 
       btn.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
       btn.classList.remove('border-gray-200', 'dark:border-gray-600');
 
+      // Clear all form fields first, then apply template values
+      plugin.formFields.forEach((field) => {
+        const input = document.getElementById(field.id);
+        if (input) input.value = '';
+      });
       if (template?.fields) {
         Object.keys(template.fields).forEach((fieldId) => {
           const input = document.getElementById(fieldId);
