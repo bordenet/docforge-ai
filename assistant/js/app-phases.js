@@ -12,6 +12,7 @@ import { generatePrompt } from '../../shared/js/prompt-generator.js';
 import { renderPhaseContent } from '../../shared/js/views.js';
 import { logger } from '../../shared/js/logger.js';
 import { initDiffModule, handleSaveResponse, showDiffModal } from './app-phases-diff.js';
+import { trackPhase } from '../../shared/js/analytics.js';
 
 /**
  * Update phase tab styles
@@ -55,6 +56,9 @@ export function attachPhaseEventListeners(plugin, project, phase) {
         const prompt = await generatePrompt(plugin, phase, project.formData, previousResponses, options);
         await copyToClipboard(prompt);
         showToast('Prompt copied to clipboard!', 'success');
+
+        // Track phase prompt copy
+        trackPhase(phase, 'copy', plugin.id);
 
         if (!project.phases) project.phases = {};
         if (!project.phases[phase]) project.phases[phase] = { prompt: '', response: '', completed: false };

@@ -12,6 +12,7 @@ import { renderPhaseContent } from '../../shared/js/views.js';
 import { logger } from '../../shared/js/logger.js';
 import { computeWordDiff, renderDiffHtml, getDiffStats } from '../../shared/js/diff-view.js';
 import { detectPrompt } from '../../shared/js/validator.js';
+import { trackPhase } from '../../shared/js/analytics.js';
 
 // Module state - injected via init
 let updatePhaseTabStyles = null;
@@ -54,6 +55,9 @@ export async function handleSaveResponse(plugin, project, phase, responseTextare
 
     freshProject.phases[phase].response = response;
     freshProject.phases[phase].completed = true;
+
+    // Track phase save
+    trackPhase(phase, 'save', plugin.id);
 
     if (phase < 3) {
       freshProject.currentPhase = phase + 1;

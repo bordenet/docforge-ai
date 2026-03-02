@@ -11,6 +11,7 @@ import { validateDocument } from '../../shared/js/validator.js';
 import { logger } from '../../shared/js/logger.js';
 import { toggleDarkMode, initTheme } from '../../shared/js/theme.js';
 import { createStorage } from '../../shared/js/validator-storage.js';
+import { initAnalytics, trackValidation } from '../../shared/js/analytics.js';
 // Display functions
 import { updateScoreDisplay, renderSlopDetection, renderIssues, renderExpansionStubs } from './app-display.js';
 // AI Power-ups functions
@@ -68,6 +69,9 @@ function initValidator() {
   renderDimensionScores(currentPlugin);
   setupEventListeners();
   setupDocTypeSelector();
+
+  // Initialize analytics (tracks tool open)
+  initAnalytics();
 
   // Load saved draft if available
   const draft = storage.loadDraft();
@@ -284,6 +288,9 @@ function runValidation() {
   renderSlopDetection(currentResult.slopDetection);
   renderExpansionStubs(currentResult.expansionStubs);
   renderIssues(currentResult.issues);
+
+  // Track validation event
+  trackValidation('validate', currentPlugin.id, currentResult.totalScore);
 
   // Show AI power-ups if content is substantial (>200 chars)
   const aiPowerups = document.getElementById('ai-powerups');

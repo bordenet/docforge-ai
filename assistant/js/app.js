@@ -28,6 +28,7 @@ import { showToast, showLoading, hideLoading, setupGlobalErrorHandler } from '..
 import { logger } from '../../shared/js/logger.js';
 import { setupListEventHandlers, setupNewFormEventHandlers, attachProjectEventListeners } from './app-handlers.js';
 import { setupGlobalEventListeners } from './app-global.js';
+import { initAnalytics } from '../../shared/js/analytics.js';
 
 // Setup global error handler for uncaught errors
 setupGlobalErrorHandler();
@@ -74,6 +75,9 @@ async function initApp() {
 
     // Update storage info
     updateStorageInfo();
+
+    // Initialize analytics (tracks tool open)
+    initAnalytics();
 
     logger.info(`App initialized with plugin: ${currentPlugin.id}`, 'app');
   } catch (error) {
