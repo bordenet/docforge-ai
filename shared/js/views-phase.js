@@ -95,9 +95,14 @@ export function renderPhaseContent(plugin, project, phase) {
         <!-- Inline Quality Score -->
         <div class="mt-4 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
           <div class="flex items-center justify-between mb-3">
-            <h5 class="font-semibold text-gray-900 dark:text-white flex items-center">
-              📊 Document Quality Rating
-            </h5>
+            <div>
+              <h5 class="font-semibold text-gray-900 dark:text-white flex items-center">
+                📊 Automated Validation Score
+              </h5>
+              <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                Pattern-based checks • May differ from AI critique scores
+              </p>
+            </div>
             <div class="flex items-center gap-2">
               <span class="text-3xl font-bold text-${scoreColor}-600 dark:text-${scoreColor}-400">${validationResult.totalScore}</span>
               <span class="text-gray-500 dark:text-gray-400">/100</span>
