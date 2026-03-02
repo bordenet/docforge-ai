@@ -360,12 +360,12 @@
       </main>
 
       <!-- Footer with Save/Version Controls -->
-      <footer class="bg-slate-600 border-t border-slate-500">
+      <footer class="bg-slate-200 dark:bg-slate-600 border-t border-slate-300 dark:border-slate-500">
         <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
           <div class="flex items-center gap-3">
             <button
               id="btn-save"
-              class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors"
+              class="px-4 py-2 bg-green-600 hover:bg-green-700 !text-white font-medium rounded-lg transition-colors"
               title="Save current version (Cmd+S)"
             >
               💾 Save
@@ -373,7 +373,7 @@
             <div class="flex items-center gap-1">
               <button
                 id="btn-back"
-                class="px-3 py-2 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:text-slate-500 text-white rounded-lg transition-colors disabled:cursor-not-allowed"
+                class="px-3 py-2 bg-slate-400 dark:bg-slate-700 hover:bg-slate-500 dark:hover:bg-slate-600 disabled:bg-slate-300 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-500 !text-white rounded-lg transition-colors disabled:cursor-not-allowed"
                 title="Previous version"
                 disabled
               >
@@ -381,16 +381,16 @@
               </button>
               <button
                 id="btn-forward"
-                class="px-3 py-2 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:text-slate-500 text-white rounded-lg transition-colors disabled:cursor-not-allowed"
+                class="px-3 py-2 bg-slate-400 dark:bg-slate-700 hover:bg-slate-500 dark:hover:bg-slate-600 disabled:bg-slate-300 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-500 !text-white rounded-lg transition-colors disabled:cursor-not-allowed"
                 title="Next version"
                 disabled
               >
                 ▶
               </button>
             </div>
-            <span id="version-info" class="text-sm text-slate-300">No saved versions</span>
+            <span id="version-info" class="text-sm text-slate-600 dark:text-slate-300">No saved versions</span>
           </div>
-          <div class="text-sm text-slate-300 text-right">
+          <div class="text-sm text-slate-600 dark:text-slate-300 text-right">
             <div id="last-saved"></div>
           </div>
         </div>

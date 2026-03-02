@@ -47,7 +47,9 @@ export function toggleDarkMode() {
     });
 
     // Update TEXT colors for light mode contrast
+    // Skip elements with !text-white (Tailwind important modifier) - they should stay white
     document.querySelectorAll('.text-white').forEach(el => {
+      if (el.classList.contains('!text-white')) return;
       el.classList.remove('text-white');
       el.classList.add('text-slate-900');
     });
@@ -56,6 +58,8 @@ export function toggleDarkMode() {
       el.classList.add('text-slate-800');
     });
     document.querySelectorAll('.text-slate-300').forEach(el => {
+      // Skip elements using dark: variant (they handle their own theming)
+      if (el.classList.contains('dark:text-slate-300')) return;
       el.classList.remove('text-slate-300');
       el.classList.add('text-slate-600');
     });
@@ -127,6 +131,8 @@ export function toggleDarkMode() {
       el.classList.add('text-slate-100');
     });
     document.querySelectorAll('.text-slate-600').forEach(el => {
+      // Skip elements using dark: variant (they handle their own theming)
+      if (el.classList.contains('dark:text-slate-300')) return;
       el.classList.remove('text-slate-600');
       el.classList.add('text-slate-300');
     });
