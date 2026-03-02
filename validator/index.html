@@ -290,53 +290,52 @@
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- AI Power-ups Section (hidden by default) -->
-        <div
-          id="ai-powerups"
-          class="hidden bg-slate-900 border border-slate-800 rounded-lg p-6 shadow-sm"
-        >
-          <h2 class="text-lg font-semibold text-white mb-2">AI Power-ups</h2>
-          <ol class="text-sm text-slate-400 mb-4 list-decimal list-inside space-y-1">
-            <li>Click a button below to copy a prompt to your clipboard</li>
-            <li>Paste into Claude.ai and submit</li>
-            <li>Copy the revised document from Claude's response</li>
-            <li>Select all text in the editor above (Cmd+A) and paste to replace</li>
-          </ol>
-          <div class="flex gap-3 mb-6 flex-wrap">
-            <button
-              id="btn-critique"
-              class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
-            >
-              📋 Copy Critique Prompt
-            </button>
-            <button
-              id="btn-rewrite"
-              class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors"
-            >
-              📋 Copy Rewrite Prompt
-            </button>
-            <button
-              id="btn-view-prompt"
-              class="px-4 py-2 bg-slate-600 text-slate-400 font-medium rounded-lg transition-colors cursor-not-allowed"
-              disabled
-              aria-disabled="true"
-            >
-              👁️ View Prompt
-            </button>
-            <a
-              id="btn-open-claude"
-              href="https://claude.ai"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="px-4 py-2 bg-slate-600 text-slate-400 font-medium rounded-lg transition-colors inline-flex items-center gap-2 cursor-not-allowed pointer-events-none"
-              aria-disabled="true"
-            >
-              Open Claude.ai →
-            </a>
+          <!-- AI Power-ups Section (hidden by default) -->
+          <div
+            id="ai-powerups"
+            class="hidden bg-slate-900 border border-slate-800 rounded-lg p-6 shadow-sm"
+          >
+            <h2 class="text-lg font-semibold text-white mb-2">AI Power-ups</h2>
+            <ol class="text-sm text-slate-400 mb-4 list-decimal list-inside space-y-1">
+              <li>Click a button below to copy a prompt to your clipboard</li>
+              <li>Paste into Claude.ai and submit</li>
+              <li>Copy the revised document from Claude's response</li>
+              <li>Select all text in the editor above (Cmd+A) and paste to replace</li>
+            </ol>
+            <div class="flex gap-3 mb-6 flex-wrap">
+              <button
+                id="btn-critique"
+                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+              >
+                📋 Copy Critique Prompt
+              </button>
+              <button
+                id="btn-rewrite"
+                class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors"
+              >
+                📋 Copy Rewrite Prompt
+              </button>
+              <button
+                id="btn-view-prompt"
+                class="px-4 py-2 bg-slate-600 text-slate-400 font-medium rounded-lg transition-colors cursor-not-allowed"
+                disabled
+                aria-disabled="true"
+              >
+                👁️ View Prompt
+              </button>
+              <a
+                id="btn-open-claude"
+                href="https://claude.ai"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="px-4 py-2 bg-slate-600 text-slate-400 font-medium rounded-lg transition-colors inline-flex items-center gap-2 cursor-not-allowed pointer-events-none"
+                aria-disabled="true"
+              >
+                Open Claude.ai →
+              </a>
+            </div>
           </div>
-        </div>
 
           <!-- Feedback Panel -->
           <div
