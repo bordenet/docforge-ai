@@ -351,14 +351,46 @@
         </div>
       </main>
 
-      <!-- Toast Container -->
-      <div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
-
-      <!-- Invisible version timestamp - same color as background, visible on selection -->
-      <div class="text-center py-2">
-        <span class="text-white dark:text-gray-800 select-all" aria-hidden="true">v:2026-02-16T20:47:37-08:00</span>
-      </div>
+      <!-- Footer with Save/Version Controls -->
+      <footer class="bg-slate-600 border-t border-slate-500">
+        <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <button
+              id="btn-save"
+              class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors"
+              title="Save current version (Cmd+S)"
+            >
+              💾 Save
+            </button>
+            <div class="flex items-center gap-1">
+              <button
+                id="btn-back"
+                class="px-3 py-2 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:text-slate-500 text-white rounded-lg transition-colors disabled:cursor-not-allowed"
+                title="Previous version"
+                disabled
+              >
+                ◀
+              </button>
+              <button
+                id="btn-forward"
+                class="px-3 py-2 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:text-slate-500 text-white rounded-lg transition-colors disabled:cursor-not-allowed"
+                title="Next version"
+                disabled
+              >
+                ▶
+              </button>
+            </div>
+            <span id="version-info" class="text-sm text-slate-300">No saved versions</span>
+          </div>
+          <div class="text-sm text-slate-300 text-right">
+            <div id="last-saved"></div>
+          </div>
+        </div>
+      </footer>
     </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 space-y-3 pointer-events-none z-50"></div>
 
     <script type="module" src="js/app.js"></script>
 

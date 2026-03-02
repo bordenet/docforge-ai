@@ -10,6 +10,7 @@ import { showToast, escapeHtml, setupGlobalErrorHandler } from '../../shared/js/
 import { validateDocument } from '../../shared/js/validator.js';
 import { logger } from '../../shared/js/logger.js';
 import { toggleDarkMode, initTheme } from '../../shared/js/theme.js';
+import { createStorage } from '../../shared/js/validator-storage.js';
 // Display functions
 import { updateScoreDisplay, renderSlopDetection, renderIssues, renderExpansionStubs } from './app-display.js';
 // AI Power-ups functions
@@ -33,6 +34,7 @@ setupGlobalErrorHandler();
 let currentPlugin = null;
 let currentResult = null;
 let currentPrompt = null;
+let storage = null; // Initialized per document type
 
 // State accessor functions for modules
 function getState() {
@@ -54,6 +56,9 @@ function initValidator() {
   const docType = getCurrentDocumentType();
   currentPlugin = getPlugin(docType) || getPlugin('one-pager');
 
+  // Initialize storage with document-type-specific key
+  storage = createStorage(`${currentPlugin.id}-validator-history`);
+
   // Initialize sub-modules with state accessors
   initPowerups(getState, setPrompt);
   initLLMMode(getState, setPrompt);
@@ -63,6 +68,18 @@ function initValidator() {
   renderDimensionScores(currentPlugin);
   setupEventListeners();
   setupDocTypeSelector();
+
+  // Load saved draft if available
+  const draft = storage.loadDraft();
+  if (draft && draft.markdown) {
+    const editor = document.getElementById('editor');
+    if (editor) {
+      editor.value = draft.markdown;
+      // Run validation on restored content
+      runValidation();
+    }
+  }
+  updateVersionDisplay();
 
   logger.info(`Validator initialized for: ${currentPlugin.id}`, 'validator');
 }
@@ -116,6 +133,78 @@ function renderDimensionScores(plugin) {
   container.innerHTML = html;
 }
 
+// ============================================================
+// Version Control
+// ============================================================
+
+function updateVersionDisplay() {
+  const versionInfo = document.getElementById('version-info');
+  const lastSaved = document.getElementById('last-saved');
+  const btnBack = document.getElementById('btn-back');
+  const btnForward = document.getElementById('btn-forward');
+
+  if (!storage) return;
+
+  const version = storage.getCurrentVersion();
+  if (version) {
+    if (versionInfo) versionInfo.textContent = `Version ${version.versionNumber} of ${version.totalVersions}`;
+    if (lastSaved) lastSaved.textContent = storage.getTimeSince(version.savedAt);
+    if (btnBack) btnBack.disabled = !version.canGoBack;
+    if (btnForward) btnForward.disabled = !version.canGoForward;
+  } else {
+    if (versionInfo) versionInfo.textContent = 'No saved versions';
+    if (lastSaved) lastSaved.textContent = '';
+    if (btnBack) btnBack.disabled = true;
+    if (btnForward) btnForward.disabled = true;
+  }
+}
+
+function handleSave() {
+  const editor = document.getElementById('editor');
+  const content = editor?.value || '';
+
+  if (!content.trim()) {
+    showToast('Nothing to save', 'warning');
+    return;
+  }
+
+  const result = storage.saveVersion(content);
+  if (result.success) {
+    showToast(`Saved as version ${result.versionNumber}`, 'success');
+    updateVersionDisplay();
+  } else if (result.reason === 'no-change') {
+    showToast('No changes to save', 'info');
+  } else {
+    showToast('Failed to save', 'error');
+  }
+}
+
+function handleGoBack() {
+  const editor = document.getElementById('editor');
+  const version = storage.goBack();
+  if (version && editor) {
+    editor.value = version.markdown;
+    runValidation();
+    updateVersionDisplay();
+    showToast(`Restored version ${version.versionNumber}`, 'info');
+  }
+}
+
+function handleGoForward() {
+  const editor = document.getElementById('editor');
+  const version = storage.goForward();
+  if (version && editor) {
+    editor.value = version.markdown;
+    runValidation();
+    updateVersionDisplay();
+    showToast(`Restored version ${version.versionNumber}`, 'info');
+  }
+}
+
+// ============================================================
+// Event Listeners
+// ============================================================
+
 /**
  * Setup event listeners
  */
@@ -143,6 +232,22 @@ function setupEventListeners() {
   document.getElementById('btn-toggle-mode')?.addEventListener('click', toggleScoringMode);
   document.getElementById('btn-copy-llm-prompt')?.addEventListener('click', handleCopyLLMPrompt);
   document.getElementById('btn-view-llm-prompt')?.addEventListener('click', () => handleViewLLMPrompt(currentPrompt));
+
+  // Version control
+  document.getElementById('btn-save')?.addEventListener('click', handleSave);
+  document.getElementById('btn-back')?.addEventListener('click', handleGoBack);
+  document.getElementById('btn-forward')?.addEventListener('click', handleGoForward);
+
+  // Keyboard shortcut: Ctrl/Cmd+S to save
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+      e.preventDefault();
+      handleSave();
+    }
+  });
+
+  // Update version display periodically (every 60 seconds)
+  setInterval(updateVersionDisplay, 60000);
 }
 
 /**
