@@ -43,6 +43,13 @@ export function attachPhaseEventListeners(plugin, project, phase) {
   if (copyPromptBtn) {
     copyPromptBtn.addEventListener('click', async () => {
       try {
+        // Debug: Log formData to help diagnose empty prompt issues
+        if (!project.formData || Object.keys(project.formData).length === 0) {
+          logger.warn('Project formData is empty - prompt will have no user inputs', 'app-phases');
+          console.warn('[DocForge Debug] project.formData is empty:', project.formData);
+          console.warn('[DocForge Debug] Full project object:', project);
+        }
+
         const previousResponses = { 1: project.phases?.[1]?.response || '', 2: project.phases?.[2]?.response || '' };
         const options = { isImported: project.isImported || false };
         const prompt = await generatePrompt(plugin, phase, project.formData, previousResponses, options);

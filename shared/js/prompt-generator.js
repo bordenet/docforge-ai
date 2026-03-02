@@ -138,6 +138,13 @@ Create the final, polished document.
 export async function generatePrompt(plugin, phase, formData, previousResponses = {}, options = {}) {
   const template = await loadPromptTemplate(plugin.id, phase);
 
+  // Defensive check: warn if formData is empty or missing key fields
+  if (!formData || Object.keys(formData).length === 0) {
+    logger.warn('generatePrompt called with empty formData - prompt will have no user inputs', 'prompt-generator');
+  } else if (phase === 1 && !formData.title && !formData.problem) {
+    logger.warn('Phase 1 prompt missing title and problem - user may not have filled out the form', 'prompt-generator');
+  }
+
   // Build combined data for template filling
   // Templates use PHASE1_OUTPUT and PHASE2_OUTPUT (not RESPONSE)
   const data = {
@@ -149,7 +156,7 @@ export async function generatePrompt(plugin, phase, formData, previousResponses 
     PHASE2_RESPONSE: previousResponses[2] || '',
     // Pass import status for conditional prompts
     IS_IMPORTED: options.isImported ? 'true' : '',
-    IMPORTED_CONTENT: options.isImported ? (formData.importedContent || previousResponses[1] || '') : '',
+    IMPORTED_CONTENT: options.isImported ? (formData?.importedContent || previousResponses[1] || '') : '',
   };
 
   return fillPromptTemplate(template, data);
