@@ -42,6 +42,8 @@ export function toggleScoringMode() {
   const modeLabelLLM = document.getElementById('mode-label-llm');
   const quickPanel = document.getElementById('quick-score-panel');
   const llmPanel = document.getElementById('llm-score-panel');
+  const btnValidate = document.getElementById('btn-validate');
+  const btnClear = document.getElementById('btn-clear');
 
   if (isLLMMode) {
     btnToggle?.classList.remove('bg-slate-500');
@@ -54,6 +56,9 @@ export function toggleScoringMode() {
     modeLabelLLM?.classList.add('text-white');
     quickPanel?.classList.add('hidden');
     llmPanel?.classList.remove('hidden');
+    // Hide Quick mode action buttons in LLM mode
+    btnValidate?.classList.add('hidden');
+    btnClear?.classList.add('hidden');
   } else {
     btnToggle?.classList.remove('bg-indigo-600');
     btnToggle?.classList.add('bg-slate-500');
@@ -65,6 +70,9 @@ export function toggleScoringMode() {
     modeLabelLLM?.classList.add('text-slate-400');
     quickPanel?.classList.remove('hidden');
     llmPanel?.classList.add('hidden');
+    // Show Quick mode action buttons in Quick mode
+    btnValidate?.classList.remove('hidden');
+    btnClear?.classList.remove('hidden');
   }
 
   localStorage.setItem('docforge-scoring-mode', isLLMMode ? 'llm' : 'quick');
