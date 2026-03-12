@@ -256,6 +256,44 @@ Tests:       54 passed, 54 total
 Time:        12.5 s
 ```
 
+## Test Environment Setup
+
+### Template Loading
+
+`generatePrompt()` uses `fetch()` to load templates from `plugins/{type}/prompts/phase{N}.md`. In Jest:
+
+```javascript
+// Mock fetch to read from filesystem
+global.fetch = jest.fn((url) => {
+  const filePath = url.replace(/^\//, ''); // Remove leading slash
+  const content = fs.readFileSync(path.join(process.cwd(), filePath), 'utf-8');
+  return Promise.resolve({ ok: true, text: () => Promise.resolve(content) });
+});
+```
+
+### Plugin Registry
+
+Access all 9 plugins via:
+
+```javascript
+const DOCUMENT_TYPES = [
+  'acceptance-criteria', 'adr', 'business-justification', 'jd',
+  'one-pager', 'power-statement', 'pr-faq', 'prd', 'strategic-proposal'
+];
+
+// For each type, use: { id: docType }
+```
+
+### Fixture Field Derivation
+
+Form data fixtures derive required fields from `plugins/{type}/config.js`:
+
+```javascript
+import { prdPlugin } from '../../plugins/prd/config.js';
+const requiredFields = prdPlugin.formFields.filter(f => f.required).map(f => f.id);
+// => ['title', 'problem', 'userPersona', 'goals', 'requirements']
+```
+
 ## References
 
 - `shared/js/prompt-generator.js` — Core function under test
