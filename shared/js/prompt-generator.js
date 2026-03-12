@@ -161,6 +161,69 @@ Create the final, polished document.
  */
 
 /**
+ * Validate DOCFORGE marker pairing in a template.
+ * Logs warnings for unclosed START markers or orphan END markers.
+ *
+ * @param {string} template - Template to validate
+ * @returns {void}
+ */
+function validateMarkerPairing(template) {
+  const startMarker = '<!-- DOCFORGE:STRIP_FOR_IMPORT_START -->';
+  const endMarker = '<!-- DOCFORGE:STRIP_FOR_IMPORT_END -->';
+
+  const startCount = (template.match(new RegExp(startMarker.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
+  const endCount = (template.match(new RegExp(endMarker.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
+
+  if (startCount > endCount) {
+    logger.warn(
+      `Unclosed DOCFORGE marker: ${startCount} START markers but only ${endCount} END markers`,
+      'prompt-generator'
+    );
+  } else if (endCount > startCount) {
+    logger.warn(
+      `Orphan DOCFORGE marker: ${endCount} END markers but only ${startCount} START markers`,
+      'prompt-generator'
+    );
+  }
+
+  // Also check for proper ordering (START before END)
+  // This catches cases like END...START...END...START
+  let depth = 0;
+  const startRegex = new RegExp(startMarker.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+  const endRegex = new RegExp(endMarker.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+
+  // Find all marker positions
+  const markers = [];
+  let startMatch = startRegex.exec(template);
+  while (startMatch !== null) {
+    markers.push({ type: 'start', index: startMatch.index });
+    startMatch = startRegex.exec(template);
+  }
+  let endMatch = endRegex.exec(template);
+  while (endMatch !== null) {
+    markers.push({ type: 'end', index: endMatch.index });
+    endMatch = endRegex.exec(template);
+  }
+  markers.sort((a, b) => a.index - b.index);
+
+  // Verify proper nesting
+  for (const marker of markers) {
+    if (marker.type === 'start') {
+      depth++;
+    } else {
+      depth--;
+      if (depth < 0) {
+        logger.warn(
+          'Mismatched DOCFORGE markers: END marker appears before START marker',
+          'prompt-generator'
+        );
+        break;
+      }
+    }
+  }
+}
+
+/**
  * Strip content between DOCFORGE:STRIP_FOR_IMPORT markers.
  * This is the preferred method - more explicit and maintainable.
  *
@@ -170,6 +233,9 @@ Create the final, polished document.
 function stripMarkedSections(template) {
   const startMarker = '<!-- DOCFORGE:STRIP_FOR_IMPORT_START -->';
   const endMarker = '<!-- DOCFORGE:STRIP_FOR_IMPORT_END -->';
+
+  // Validate marker pairing before stripping
+  validateMarkerPairing(template);
 
   let result = template;
 
@@ -220,7 +286,10 @@ function stripCreationSectionsFromTemplate(template, plugin = {}) {
   const reviewInstruction = plugin?.importConfig?.reviewInstruction || DEFAULT_REVIEW_INSTRUCTION;
 
   // Check if template uses marker-based stripping (preferred)
-  const hasMarkers = result.includes('DOCFORGE:STRIP_FOR_IMPORT_START');
+  // Check for either START or END markers to catch orphan markers too
+  const hasStartMarkers = result.includes('DOCFORGE:STRIP_FOR_IMPORT_START');
+  const hasEndMarkers = result.includes('DOCFORGE:STRIP_FOR_IMPORT_END');
+  const hasMarkers = hasStartMarkers || hasEndMarkers;
 
   if (hasMarkers) {
     // Use explicit markers - more reliable than regex
