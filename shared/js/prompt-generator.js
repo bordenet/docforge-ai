@@ -26,8 +26,9 @@ const DOCFORGE_MARKERS = {
 
 /**
  * Regex for the creation-mode anchor text that gets replaced with review instructions.
+ * Case-insensitive, no /g flag to avoid stateful lastIndex issues.
  */
-const CREATION_ANCHOR_REGEX = /\*\*BEGIN WITH THE HEADLINE NOW:\*\*/gi;
+const CREATION_ANCHOR_REGEX = /\*\*BEGIN WITH THE HEADLINE NOW:\*\*/i;
 
 // =============================================================================
 // UTILITY FUNCTIONS
@@ -52,8 +53,6 @@ function escapeRegex(str) {
  */
 function injectReviewInstruction(text, reviewInstruction) {
   if (CREATION_ANCHOR_REGEX.test(text)) {
-    // Reset regex lastIndex since we're using /g flag
-    CREATION_ANCHOR_REGEX.lastIndex = 0;
     return text.replace(CREATION_ANCHOR_REGEX, reviewInstruction);
   }
   // No anchor - append at end with separator
@@ -495,7 +494,7 @@ export async function generatePrompt(plugin, phase, formData, previousResponses 
     // not identically-named sections in the user's imported document.
     // Pass plugin to allow plugin-specific review instructions
     template = stripCreationSectionsFromTemplate(template, plugin);
-  } else if (template.includes('DOCFORGE:STRIP_FOR_IMPORT')) {
+  } else if (template.includes(DOCFORGE_MARKERS.START) || template.includes(DOCFORGE_MARKERS.END)) {
     // Creation mode: remove marker comments but preserve content
     template = removeMarkerComments(template);
   }
