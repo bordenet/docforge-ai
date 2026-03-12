@@ -136,40 +136,75 @@ Create the final, polished document.
  * @returns {Promise<string>} Complete prompt
  */
 /**
- * Strip creation-mode sections from prompt for imported documents
- * When users import a document, they skip the form, so INPUT DATA fields are empty.
- * This removes confusing empty sections and replaces creation instructions with review instructions.
+ * Strip creation-mode sections from a TEMPLATE (before imported content is injected).
+ * This ensures we only strip template sections, not user content.
  *
- * @param {string} prompt - The filled prompt template
- * @returns {string} Prompt with creation-mode sections stripped
+ * @param {string} template - The raw template with {{IMPORTED_CONTENT}} placeholder
+ * @returns {string} Template with creation-mode sections stripped
  */
-function stripCreationSectionsForImport(prompt) {
-  let result = prompt;
+function stripCreationSectionsFromTemplate(template) {
+  let result = template;
 
-  // Remove ## INPUT DATA section (from heading to next ## heading or end of content)
-  // This regex matches from "## INPUT DATA" to the next "##" heading (non-greedy)
-  result = result.replace(/## INPUT DATA[\s\S]*?(?=\n## |\n\*\*BEGIN WITH|\n---\s*$|$)/g, '');
+  // Strategy: Strip sections that appear AFTER {{IMPORTED_CONTENT}} placeholder
+  // This ensures we never touch user content since it hasn't been injected yet
 
-  // Remove ## Context section for imports (contains empty form fields)
-  // Match "## Context" followed by content until next major section
-  result = result.replace(/## Context\n[\s\S]*?(?=\n## |\n---\n|$)/g, '');
+  // Find where IMPORTED_CONTENT is injected - we only strip after this point
+  const importedContentMarker = '{{IMPORTED_CONTENT}}';
+  const markerIndex = result.indexOf(importedContentMarker);
+
+  if (markerIndex === -1) {
+    // No imported content placeholder - return as-is
+    return result;
+  }
+
+  // Split template into before and after the marker
+  const beforeMarker = result.substring(0, markerIndex + importedContentMarker.length);
+  let afterMarker = result.substring(markerIndex + importedContentMarker.length);
+
+  // Strip sections ONLY from the part after {{IMPORTED_CONTENT}}
+  // This is where template sections live; user content goes IN the placeholder
+
+  // Remove ## INPUT DATA section
+  afterMarker = afterMarker.replace(/## INPUT DATA[\s\S]*?(?=\n## |\n\*\*BEGIN WITH|\n---\s*$|$)/g, '');
+
+  // Remove ## Context section (with empty form fields like {{TITLE}})
+  // Only match if followed by template field patterns (**, {{)
+  afterMarker = afterMarker.replace(/## Context\n[\s\S]*?(?=\n## |\n---\n|$)/g, '');
 
   // Remove ## Context Grounding section (ADR-specific)
-  result = result.replace(/## Context Grounding[\s\S]*?(?=\n## |\n---\n|$)/g, '');
+  afterMarker = afterMarker.replace(/## Context Grounding[\s\S]*?(?=\n## |\n---\n|$)/g, '');
 
-  // Remove ## OUTPUT FORMAT section (contains creation-specific instructions)
-  result = result.replace(/## OUTPUT FORMAT[\s\S]*?(?=\n## |\n\*\*BEGIN WITH|$)/g, '');
+  // Remove ## OUTPUT FORMAT section
+  afterMarker = afterMarker.replace(/## OUTPUT FORMAT[\s\S]*?(?=\n## |\n\*\*BEGIN WITH|$)/g, '');
 
-  // Remove "### Required Sections" table if still present
-  result = result.replace(/### Required Sections[\s\S]*?(?=\n## |\n\*\*BEGIN WITH|$)/g, '');
+  // Remove "### Required Sections" table
+  afterMarker = afterMarker.replace(/### Required Sections[\s\S]*?(?=\n## |\n\*\*BEGIN WITH|$)/g, '');
 
-  // Replace creation-mode closing instruction with review-mode instruction
-  result = result.replace(
+  // Replace creation-mode closing instruction
+  afterMarker = afterMarker.replace(
     /\*\*BEGIN WITH THE HEADLINE NOW:\*\*/gi,
     '**REVIEW THE IMPORTED DOCUMENT ABOVE. Identify weaknesses, gaps, and areas for improvement. Then provide an enhanced version that addresses these issues.**'
   );
 
-  // Fix broken prose from empty inline placeholders
+  // Recombine
+  result = beforeMarker + afterMarker;
+
+  // Clean up excessive newlines
+  result = result.replace(/\n{4,}/g, '\n\n\n');
+
+  return result;
+}
+
+/**
+ * Fix broken prose from empty inline placeholders (post-substitution)
+ * Only fixes patterns that are clearly broken prose, not user content.
+ *
+ * @param {string} prompt - The filled prompt after substitution
+ * @returns {string} Prompt with fixed prose
+ */
+function fixBrokenPlaceholderProse(prompt) {
+  let result = prompt;
+
   // Pattern: "a  word" or "A  word" (article + double space + word)
   result = result.replace(/\b([Aa]n?)\s{2,}(\w)/g, '$1 $2');
 
@@ -179,23 +214,24 @@ function stripCreationSectionsForImport(prompt) {
   // Pattern: "create a  document" -> "create a document" (specific case)
   result = result.replace(/create\s+a\s{2,}/gi, 'create a ');
 
-  // Pattern: generic double/multiple spaces within sentences (but preserve newlines)
-  result = result.replace(/([^\n]) {2,}([^\n])/g, '$1 $2');
-
-  // Clean up excessive newlines that may result from removals
-  result = result.replace(/\n{4,}/g, '\n\n\n');
-
   return result;
 }
 
 export async function generatePrompt(plugin, phase, formData, previousResponses = {}, options = {}) {
-  const template = await loadPromptTemplate(plugin.id, phase);
+  let template = await loadPromptTemplate(plugin.id, phase);
 
   // Defensive check: warn if formData is empty or missing key fields
   if (!formData || Object.keys(formData).length === 0) {
     logger.warn('generatePrompt called with empty formData - prompt will have no user inputs', 'prompt-generator');
   } else if (phase === 1 && !formData.title && !formData.problem) {
     logger.warn('Phase 1 prompt missing title and problem - user may not have filled out the form', 'prompt-generator');
+  }
+
+  // CRITICAL: For imports, strip template sections BEFORE injecting user content
+  // This ensures we only strip template sections (like ## Context with {{TITLE}}),
+  // not identically-named sections in the user's imported document.
+  if (options.isImported && phase === 1) {
+    template = stripCreationSectionsFromTemplate(template);
   }
 
   // Build combined data for template filling
@@ -225,10 +261,10 @@ export async function generatePrompt(plugin, phase, formData, previousResponses 
 
   let prompt = fillPromptTemplate(template, data);
 
-  // For imported documents in Phase 1, strip creation-mode sections
-  // These sections have empty form fields which confuse the AI
+  // For imports, fix broken prose from empty inline placeholders
+  // This runs AFTER substitution to catch "A  executive" patterns
   if (options.isImported && phase === 1) {
-    prompt = stripCreationSectionsForImport(prompt);
+    prompt = fixBrokenPlaceholderProse(prompt);
   }
 
   return prompt;
