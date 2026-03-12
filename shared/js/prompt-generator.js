@@ -135,6 +135,39 @@ Create the final, polished document.
  * @param {boolean} [options.isImported] - Whether the document was imported
  * @returns {Promise<string>} Complete prompt
  */
+/**
+ * Strip creation-mode sections from prompt for imported documents
+ * When users import a document, they skip the form, so INPUT DATA fields are empty.
+ * This removes confusing empty sections and replaces creation instructions with review instructions.
+ *
+ * @param {string} prompt - The filled prompt template
+ * @returns {string} Prompt with creation-mode sections stripped
+ */
+function stripCreationSectionsForImport(prompt) {
+  let result = prompt;
+
+  // Remove ## INPUT DATA section (from heading to next ## heading or end of content)
+  // This regex matches from "## INPUT DATA" to the next "##" heading (non-greedy)
+  result = result.replace(/## INPUT DATA[\s\S]*?(?=\n## |\n\*\*BEGIN WITH|\n---\s*$|$)/g, '');
+
+  // Remove ## OUTPUT FORMAT section (contains creation-specific instructions)
+  result = result.replace(/## OUTPUT FORMAT[\s\S]*?(?=\n## |\n\*\*BEGIN WITH|$)/g, '');
+
+  // Remove "### Required Sections" table if still present
+  result = result.replace(/### Required Sections[\s\S]*?(?=\n## |\n\*\*BEGIN WITH|$)/g, '');
+
+  // Replace creation-mode closing instruction with review-mode instruction
+  result = result.replace(
+    /\*\*BEGIN WITH THE HEADLINE NOW:\*\*/gi,
+    '**REVIEW THE IMPORTED DOCUMENT ABOVE. Identify weaknesses, gaps, and areas for improvement. Then provide an enhanced version that addresses these issues.**'
+  );
+
+  // Clean up excessive newlines that may result from removals
+  result = result.replace(/\n{4,}/g, '\n\n\n');
+
+  return result;
+}
+
 export async function generatePrompt(plugin, phase, formData, previousResponses = {}, options = {}) {
   const template = await loadPromptTemplate(plugin.id, phase);
 
@@ -147,6 +180,14 @@ export async function generatePrompt(plugin, phase, formData, previousResponses 
 
   // Build combined data for template filling
   // Templates use PHASE1_OUTPUT and PHASE2_OUTPUT (not RESPONSE)
+
+  // Compute imported content value once - used for both camelCase and UPPER_CASE keys
+  // When isImported: true, inject the imported document
+  // When isImported: false, set to empty string to prevent content leaking via formData spread
+  const importedContentValue = options.isImported
+    ? (formData?.importedContent || previousResponses[1] || '')
+    : '';
+
   const data = {
     ...formData,
     // Support both naming conventions for backwards compatibility
@@ -156,8 +197,19 @@ export async function generatePrompt(plugin, phase, formData, previousResponses 
     PHASE2_RESPONSE: previousResponses[2] || '',
     // Pass import status for conditional prompts
     IS_IMPORTED: options.isImported ? 'true' : '',
-    IMPORTED_CONTENT: options.isImported ? (formData?.importedContent || previousResponses[1] || '') : '',
+    // Set BOTH camelCase and UPPER_CASE keys to ensure fillPromptTemplate uses our value
+    // fillPromptTemplate looks up camelCase first, so we must override formData.importedContent
+    importedContent: importedContentValue,
+    IMPORTED_CONTENT: importedContentValue,
   };
 
-  return fillPromptTemplate(template, data);
+  let prompt = fillPromptTemplate(template, data);
+
+  // For imported documents in Phase 1, strip creation-mode sections
+  // These sections have empty form fields which confuse the AI
+  if (options.isImported && phase === 1) {
+    prompt = stripCreationSectionsForImport(prompt);
+  }
+
+  return prompt;
 }
