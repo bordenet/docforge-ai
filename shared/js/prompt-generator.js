@@ -6,6 +6,12 @@
 import { logger } from './logger.js';
 
 /**
+ * Default review instruction for imported documents.
+ * Used when plugin doesn't specify a custom importConfig.reviewInstruction
+ */
+export const DEFAULT_REVIEW_INSTRUCTION = '**REVIEW THE IMPORTED DOCUMENT ABOVE. Identify weaknesses, gaps, and areas for improvement. Then provide an enhanced version that addresses these issues.**';
+
+/**
  * Replace template variables in a prompt
  * Variables are in format {{FIELD_ID}}
  *
@@ -200,10 +206,16 @@ function removeMarkerComments(template) {
  * Stripped sections are defined in IMPORT_STRIPPABLE_SECTIONS.
  *
  * @param {string} template - The raw template with {{IMPORTED_CONTENT}} placeholder
+ * @param {Object} [plugin={}] - Plugin configuration (optional)
+ * @param {Object} [plugin.importConfig] - Import-specific configuration
+ * @param {string} [plugin.importConfig.reviewInstruction] - Custom review instruction
  * @returns {string} Template with creation-mode sections stripped
  */
-function stripCreationSectionsFromTemplate(template) {
+function stripCreationSectionsFromTemplate(template, plugin = {}) {
   let result = template;
+
+  // Get review instruction: use plugin-specific or default
+  const reviewInstruction = plugin?.importConfig?.reviewInstruction || DEFAULT_REVIEW_INSTRUCTION;
 
   // Check if template uses marker-based stripping (preferred)
   const hasMarkers = result.includes('DOCFORGE:STRIP_FOR_IMPORT_START');
@@ -212,10 +224,10 @@ function stripCreationSectionsFromTemplate(template) {
     // Use explicit markers - more reliable than regex
     result = stripMarkedSections(result);
 
-    // Still need to replace creation-mode closing instruction
+    // Replace creation-mode closing instruction with review instruction
     result = result.replace(
       /\*\*BEGIN WITH THE HEADLINE NOW:\*\*/gi,
-      '**REVIEW THE IMPORTED DOCUMENT ABOVE. Identify weaknesses, gaps, and areas for improvement. Then provide an enhanced version that addresses these issues.**'
+      reviewInstruction
     );
 
     // Clean up excessive newlines
@@ -261,10 +273,10 @@ function stripCreationSectionsFromTemplate(template) {
   // Remove "### Required Sections" table
   afterMarker = afterMarker.replace(/### Required Sections[\s\S]*?(?=\n## |\n\*\*BEGIN WITH|$)/g, '');
 
-  // Replace creation-mode closing instruction
+  // Replace creation-mode closing instruction with review instruction
   afterMarker = afterMarker.replace(
     /\*\*BEGIN WITH THE HEADLINE NOW:\*\*/gi,
-    '**REVIEW THE IMPORTED DOCUMENT ABOVE. Identify weaknesses, gaps, and areas for improvement. Then provide an enhanced version that addresses these issues.**'
+    reviewInstruction
   );
 
   // Validation: Warn if sections that should have been stripped still exist
@@ -368,7 +380,8 @@ export async function generatePrompt(plugin, phase, formData, previousResponses 
     // CRITICAL: Strip template sections BEFORE injecting user content
     // This ensures we only strip template sections (like ## Context with {{TITLE}}),
     // not identically-named sections in the user's imported document.
-    template = stripCreationSectionsFromTemplate(template);
+    // Pass plugin to allow plugin-specific review instructions
+    template = stripCreationSectionsFromTemplate(template, plugin);
   } else if (template.includes('DOCFORGE:STRIP_FOR_IMPORT')) {
     // Creation mode: remove marker comments but preserve content
     template = removeMarkerComments(template);
