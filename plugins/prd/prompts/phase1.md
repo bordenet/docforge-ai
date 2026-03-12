@@ -19,6 +19,7 @@ You are a principal Product Manager for a technology company. You will help crea
 
 ---
 
+<!-- DOCFORGE:STRIP_FOR_IMPORT_START -->
 ## Context
 
 The user has provided the following information:
@@ -42,6 +43,7 @@ The user has provided the following information:
 **Constraints & Dependencies:** {{CONSTRAINTS}}
 
 **Document Scope:** {{DOCUMENT_SCOPE}}
+<!-- DOCFORGE:STRIP_FOR_IMPORT_END -->
 
 ## Your Task
 

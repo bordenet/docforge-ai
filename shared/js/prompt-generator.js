@@ -153,9 +153,50 @@ Create the final, polished document.
  */
 
 /**
+ * Strip content between DOCFORGE:STRIP_FOR_IMPORT markers.
+ * This is the preferred method - more explicit and maintainable.
+ *
+ * @param {string} template - Template with marker pairs
+ * @returns {string} Template with marked sections removed
+ */
+function stripMarkedSections(template) {
+  const startMarker = '<!-- DOCFORGE:STRIP_FOR_IMPORT_START -->';
+  const endMarker = '<!-- DOCFORGE:STRIP_FOR_IMPORT_END -->';
+
+  let result = template;
+
+  // Strip all content between marker pairs (including the markers)
+  // Use non-greedy match to handle multiple pairs
+  const markerRegex = new RegExp(
+    startMarker.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') +  // Escape special chars
+    '[\\s\\S]*?' +  // Non-greedy match any content
+    endMarker.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+    'g'
+  );
+
+  result = result.replace(markerRegex, '');
+
+  return result;
+}
+
+/**
+ * Remove DOCFORGE markers from template (for creation mode).
+ * Keeps content but removes the marker comments.
+ *
+ * @param {string} template - Template with markers
+ * @returns {string} Template with markers removed but content preserved
+ */
+function removeMarkerComments(template) {
+  return template
+    .replace(/<!-- DOCFORGE:STRIP_FOR_IMPORT_START -->\n?/g, '')
+    .replace(/<!-- DOCFORGE:STRIP_FOR_IMPORT_END -->\n?/g, '');
+}
+
+/**
  * Strip creation-mode sections from a TEMPLATE (before imported content is injected).
  * This ensures we only strip template sections, not user content.
  *
+ * Uses marker-based stripping if markers present, falls back to regex.
  * Stripped sections are defined in IMPORT_STRIPPABLE_SECTIONS.
  *
  * @param {string} template - The raw template with {{IMPORTED_CONTENT}} placeholder
@@ -164,6 +205,26 @@ Create the final, polished document.
 function stripCreationSectionsFromTemplate(template) {
   let result = template;
 
+  // Check if template uses marker-based stripping (preferred)
+  const hasMarkers = result.includes('DOCFORGE:STRIP_FOR_IMPORT_START');
+
+  if (hasMarkers) {
+    // Use explicit markers - more reliable than regex
+    result = stripMarkedSections(result);
+
+    // Still need to replace creation-mode closing instruction
+    result = result.replace(
+      /\*\*BEGIN WITH THE HEADLINE NOW:\*\*/gi,
+      '**REVIEW THE IMPORTED DOCUMENT ABOVE. Identify weaknesses, gaps, and areas for improvement. Then provide an enhanced version that addresses these issues.**'
+    );
+
+    // Clean up excessive newlines
+    result = result.replace(/\n{4,}/g, '\n\n\n');
+
+    return result;
+  }
+
+  // Fallback: Regex-based stripping for templates without markers
   // Strategy: Strip sections that appear AFTER {{IMPORTED_CONTENT}} placeholder
   // This ensures we never touch user content since it hasn't been injected yet
 
@@ -300,11 +361,17 @@ export async function generatePrompt(plugin, phase, formData, previousResponses 
     logger.warn('Phase 1 prompt missing title and problem - user may not have filled out the form', 'prompt-generator');
   }
 
-  // CRITICAL: For imports, strip template sections BEFORE injecting user content
-  // This ensures we only strip template sections (like ## Context with {{TITLE}}),
-  // not identically-named sections in the user's imported document.
+  // Handle DOCFORGE markers in templates
+  // For imports: strip content between markers (and the markers themselves)
+  // For creation: remove markers but keep content
   if (options.isImported && phase === 1) {
+    // CRITICAL: Strip template sections BEFORE injecting user content
+    // This ensures we only strip template sections (like ## Context with {{TITLE}}),
+    // not identically-named sections in the user's imported document.
     template = stripCreationSectionsFromTemplate(template);
+  } else if (template.includes('DOCFORGE:STRIP_FOR_IMPORT')) {
+    // Creation mode: remove marker comments but preserve content
+    template = removeMarkerComments(template);
   }
 
   // Build combined data for template filling

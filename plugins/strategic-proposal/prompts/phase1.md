@@ -27,6 +27,7 @@ You are a management consultant hired to evaluate a potential vendor or solution
 - If a field is empty or says "[Not provided]", acknowledge the gap and ask for the information.
 - Use the EXACT names, locations, and details as provided - do not substitute or embellish.
 
+<!-- DOCFORGE:STRIP_FOR_IMPORT_START -->
 ## Context
 
 **Organization Information:**
@@ -58,6 +59,7 @@ You are a management consultant hired to evaluate a potential vendor or solution
 
 ### Additional Context
 {{ADDITIONAL_CONTEXT}}
+<!-- DOCFORGE:STRIP_FOR_IMPORT_END -->
 
 ## Your Task
 

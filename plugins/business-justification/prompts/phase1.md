@@ -24,6 +24,7 @@ You are a principal-level expert helping create a {{DOCUMENT_TYPE}} document.
 
 ---
 
+<!-- DOCFORGE:STRIP_FOR_IMPORT_START -->
 ## Context
 
 **Document Title:** {{TITLE}}
@@ -33,6 +34,7 @@ You are a principal-level expert helping create a {{DOCUMENT_TYPE}} document.
 **Alternatives Considered:** {{ALTERNATIVES}}
 **ROI / Business Impact:** {{ROI}}
 **Risks & Mitigations:** {{RISKS}}
+<!-- DOCFORGE:STRIP_FOR_IMPORT_END -->
 
 ## Your Task
 

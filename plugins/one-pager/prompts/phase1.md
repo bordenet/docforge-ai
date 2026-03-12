@@ -19,6 +19,7 @@ You are an expert business analyst helping to create a concise one-pager documen
 
 ---
 
+<!-- DOCFORGE:STRIP_FOR_IMPORT_START -->
 ## Context
 
 The user has provided the following information:
@@ -48,6 +49,7 @@ The user has provided the following information:
 **The Investment:** {{THE_INVESTMENT}}
 
 **Risks & Assumptions:** {{RISKS_ASSUMPTIONS}}
+<!-- DOCFORGE:STRIP_FOR_IMPORT_END -->
 
 ## Your Task: Analyze-First Approach
 

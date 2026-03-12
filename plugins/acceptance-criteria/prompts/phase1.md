@@ -19,11 +19,13 @@ You are a senior software engineer helping write acceptance criteria for a Linea
 
 ---
 
+<!-- DOCFORGE:STRIP_FOR_IMPORT_START -->
 ## Context
 
 **Issue Title:** {{ISSUE_TITLE}}
 **What needs to be done:** {{WHAT_NEEDS_TO_BE_DONE}}
 **Related context:** {{RELATED_CONTEXT}}
+<!-- DOCFORGE:STRIP_FOR_IMPORT_END -->
 
 ## Your Task
 

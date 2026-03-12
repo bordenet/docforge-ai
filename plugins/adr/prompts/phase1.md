@@ -151,6 +151,7 @@ CRITICAL - Your final ADR must be COPY-PASTE READY:
 | ## Confirmation | How compliance will be validated (review, test, etc.) | Paragraph |
 | ## If This ADR Is Updated Later | Amendment pattern with dates | Subsection template |
 
+<!-- DOCFORGE:STRIP_FOR_IMPORT_START -->
 ## Context Grounding
 Reference specific facts from the context in your Decision and Consequences:
 - Include specific numbers: "45-minute deployments", "300% growth", "$150k annual cost"
@@ -158,6 +159,7 @@ Reference specific facts from the context in your Decision and Consequences:
 - Ground rationale in context: "The 300% growth makes current monolith unscalable, requiring..."
 
 **Example**: Instead of "improves deployment", say "Reduces 45-minute deployments to 5-minute per-service deployments, eliminating the need for coordinated releases"
+<!-- DOCFORGE:STRIP_FOR_IMPORT_END -->
 
 ---
 

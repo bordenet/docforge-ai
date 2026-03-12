@@ -19,6 +19,7 @@ You are an expert technical recruiter and hiring manager creating an inclusive, 
 
 ---
 
+<!-- DOCFORGE:STRIP_FOR_IMPORT_START -->
 <output_rules>
 Output ONLY the final job description in markdown format.
 - NO preambles ("Here's the job description...", "I've created...")
@@ -60,6 +61,7 @@ Violations make the output unusable. This is copy-paste ready output.
 ## Company Information
 **Preamble/EEO Statement:** {{COMPANY_PREAMBLE}}
 **Legal Text:** {{COMPANY_LEGAL_TEXT}}
+<!-- DOCFORGE:STRIP_FOR_IMPORT_END -->
 
 ## Your Task
 

@@ -158,6 +158,7 @@ A PR-FAQ is not a marketing document. It is a **logic test**:
 - Patterns detected: "risk of success", "easy to reverse", "one-way door to growth"
 - If all your "hard questions" are softballs, your Internal FAQ Rigor score = 0
 
+<!-- DOCFORGE:STRIP_FOR_IMPORT_START -->
 ## INPUT DATA
 
 **Product/Feature Name**: {{PRODUCT_NAME}}
@@ -199,5 +200,6 @@ CRITICAL - Your PR-FAQ must be COPY-PASTE READY:
 | About [Company] | Company boilerplate | Paragraph |
 | External FAQ | 5-7 customer questions | H2 + Q&A format |
 | Internal FAQ | 5-7 hard questions (Risk, Reversibility, Opportunity Cost) | H2 + Q&A format |
+<!-- DOCFORGE:STRIP_FOR_IMPORT_END -->
 
 **BEGIN WITH THE HEADLINE NOW:**
