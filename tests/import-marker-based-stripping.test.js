@@ -136,6 +136,54 @@ Do something.
     expect(prompt).toContain('## Your Task');
   });
 
+  it('should handle multiple IMPORTED_CONTENT placeholders', async () => {
+    // Edge case: Template has multiple import locations
+    global.fetch = async () => ({
+      ok: true,
+      text: async () => `# Phase 1
+
+{{IMPORTED_CONTENT}}
+
+<!-- DOCFORGE:STRIP_FOR_IMPORT_START -->
+## Section A
+Content A
+<!-- DOCFORGE:STRIP_FOR_IMPORT_END -->
+
+## Middle Section
+
+Keep this.
+
+{{IMPORTED_CONTENT}}
+
+<!-- DOCFORGE:STRIP_FOR_IMPORT_START -->
+## Section B
+Content B
+<!-- DOCFORGE:STRIP_FOR_IMPORT_END -->
+
+**BEGIN WITH THE HEADLINE NOW:**
+`,
+    });
+
+    const formData = {
+      title: 'Test',
+      importedContent: '# User Content',
+    };
+
+    const prompt = await generatePrompt({ id: 'test' }, 1, formData, {}, { isImported: true });
+
+    // Both marked sections should be stripped (regardless of IMPORTED_CONTENT position)
+    expect(prompt).not.toContain('## Section A');
+    expect(prompt).not.toContain('## Section B');
+    expect(prompt).not.toContain('Content A');
+    expect(prompt).not.toContain('Content B');
+
+    // Unmarked section should remain
+    expect(prompt).toContain('## Middle Section');
+
+    // Review instruction should replace creation instruction
+    expect(prompt).toContain('REVIEW THE IMPORTED DOCUMENT');
+  });
+
   it('should NOT strip markers when isImported is false', async () => {
     global.fetch = async () => ({
       ok: true,
