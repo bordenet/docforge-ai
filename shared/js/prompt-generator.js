@@ -86,6 +86,18 @@ function getFallbackPrompt(phase) {
 
 You are an expert assistant helping to create a high-quality document.
 
+{{IMPORTED_CONTENT}}
+
+## ⚠️ MODE SELECTION (READ FIRST)
+
+**If an imported document appears above this section:**
+- You are in **REVIEW MODE**. Review, critique, and improve the imported document.
+
+**If no imported document appears above:**
+- You are in **CREATION MODE**. Generate a new document from the inputs below.
+
+---
+
 ## Context
 **Title:** {{TITLE}}
 
@@ -126,18 +138,25 @@ Create the final, polished document.
 }
 
 /**
- * Generate a complete prompt for a phase
- * @param {import('./plugin-registry.js').DocumentTypePlugin} plugin - Plugin
- * @param {number} phase - Phase number
- * @param {Object} formData - Form data
- * @param {Object} [previousResponses] - Previous phase responses
- * @param {Object} [options] - Additional options
- * @param {boolean} [options.isImported] - Whether the document was imported
- * @returns {Promise<string>} Complete prompt
+ * Section headers that are stripped from templates during import.
+ * These sections contain form field placeholders that will be empty.
+ *
+ * MAINTENANCE NOTE: If you add/rename sections in templates, update these regexes.
+ * Tests in import-prompt-rendering.test.js verify these are stripped correctly.
+ *
+ * Current sections stripped:
+ * - ## INPUT DATA
+ * - ## Context
+ * - ## Context Grounding
+ * - ## OUTPUT FORMAT
+ * - ### Required Sections
  */
+
 /**
  * Strip creation-mode sections from a TEMPLATE (before imported content is injected).
  * This ensures we only strip template sections, not user content.
+ *
+ * Stripped sections are defined in IMPORT_STRIPPABLE_SECTIONS.
  *
  * @param {string} template - The raw template with {{IMPORTED_CONTENT}} placeholder
  * @returns {string} Template with creation-mode sections stripped
@@ -217,6 +236,22 @@ function fixBrokenPlaceholderProse(prompt) {
   return result;
 }
 
+/**
+ * Generate a complete prompt for a phase
+ *
+ * For imports (options.isImported=true, phase=1):
+ * 1. Strips creation-mode sections from template BEFORE substitution
+ * 2. Injects imported content via {{IMPORTED_CONTENT}} placeholder
+ * 3. Fixes broken prose from empty inline placeholders
+ *
+ * @param {import('./plugin-registry.js').DocumentTypePlugin} plugin - Plugin
+ * @param {number} phase - Phase number (1, 2, or 3)
+ * @param {Object} formData - Form data including importedContent for imports
+ * @param {Object} [previousResponses] - Previous phase responses keyed by phase number
+ * @param {Object} [options] - Additional options
+ * @param {boolean} [options.isImported] - Whether the document was imported (triggers section stripping)
+ * @returns {Promise<string>} Complete prompt ready for LLM
+ */
 export async function generatePrompt(plugin, phase, formData, previousResponses = {}, options = {}) {
   let template = await loadPromptTemplate(plugin.id, phase);
 
