@@ -152,10 +152,10 @@ describe('Import Prompt Rendering - All Document Types', () => {
         // Should have MODE SELECTION section pointing to REVIEW MODE
         expect(prompt).toContain('REVIEW MODE');
 
-        // If original had creation-mode closer, should have review-mode instead
-        if (realTemplate.includes('BEGIN WITH THE HEADLINE NOW')) {
-          expect(prompt).toContain('REVIEW THE IMPORTED DOCUMENT');
-        }
+        // ALL plugins must have review instruction injected
+        // This is unconditional - the injectReviewInstruction utility handles
+        // both anchor replacement and fallback append
+        expect(prompt).toContain('REVIEW THE IMPORTED DOCUMENT');
       });
 
       it('should not have broken inline placeholders', async () => {

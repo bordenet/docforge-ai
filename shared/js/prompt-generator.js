@@ -5,11 +5,60 @@
 
 import { logger } from './logger.js';
 
+// =============================================================================
+// CONSTANTS
+// =============================================================================
+
 /**
  * Default review instruction for imported documents.
  * Used when plugin doesn't specify a custom importConfig.reviewInstruction
  */
 export const DEFAULT_REVIEW_INSTRUCTION = '**REVIEW THE IMPORTED DOCUMENT ABOVE. Identify weaknesses, gaps, and areas for improvement. Then provide an enhanced version that addresses these issues.**';
+
+/**
+ * DOCFORGE marker constants for import stripping.
+ * Content between these markers is stripped for imports, preserved for creation.
+ */
+const DOCFORGE_MARKERS = {
+  START: '<!-- DOCFORGE:STRIP_FOR_IMPORT_START -->',
+  END: '<!-- DOCFORGE:STRIP_FOR_IMPORT_END -->',
+};
+
+/**
+ * Regex for the creation-mode anchor text that gets replaced with review instructions.
+ */
+const CREATION_ANCHOR_REGEX = /\*\*BEGIN WITH THE HEADLINE NOW:\*\*/gi;
+
+// =============================================================================
+// UTILITY FUNCTIONS
+// =============================================================================
+
+/**
+ * Escape special regex characters in a string.
+ * @param {string} str - String to escape
+ * @returns {string} Escaped string safe for use in RegExp
+ */
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Inject review instruction into a template/prompt.
+ * Replaces creation-mode anchor if present, otherwise appends at end.
+ *
+ * @param {string} text - Text to inject into
+ * @param {string} reviewInstruction - The review instruction to inject
+ * @returns {string} Text with review instruction injected
+ */
+function injectReviewInstruction(text, reviewInstruction) {
+  if (CREATION_ANCHOR_REGEX.test(text)) {
+    // Reset regex lastIndex since we're using /g flag
+    CREATION_ANCHOR_REGEX.lastIndex = 0;
+    return text.replace(CREATION_ANCHOR_REGEX, reviewInstruction);
+  }
+  // No anchor - append at end with separator
+  return text.trimEnd() + '\n\n---\n\n' + reviewInstruction + '\n';
+}
 
 /**
  * Replace template variables in a prompt
@@ -168,11 +217,11 @@ Create the final, polished document.
  * @returns {void}
  */
 function validateMarkerPairing(template) {
-  const startMarker = '<!-- DOCFORGE:STRIP_FOR_IMPORT_START -->';
-  const endMarker = '<!-- DOCFORGE:STRIP_FOR_IMPORT_END -->';
+  const startRegex = new RegExp(escapeRegex(DOCFORGE_MARKERS.START), 'g');
+  const endRegex = new RegExp(escapeRegex(DOCFORGE_MARKERS.END), 'g');
 
-  const startCount = (template.match(new RegExp(startMarker.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
-  const endCount = (template.match(new RegExp(endMarker.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
+  const startCount = (template.match(startRegex) || []).length;
+  const endCount = (template.match(endRegex) || []).length;
 
   if (startCount > endCount) {
     logger.warn(
@@ -189,8 +238,10 @@ function validateMarkerPairing(template) {
   // Also check for proper ordering (START before END)
   // This catches cases like END...START...END...START
   let depth = 0;
-  const startRegex = new RegExp(startMarker.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-  const endRegex = new RegExp(endMarker.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+
+  // Reset regex lastIndex for reuse
+  startRegex.lastIndex = 0;
+  endRegex.lastIndex = 0;
 
   // Find all marker positions
   const markers = [];
@@ -231,26 +282,19 @@ function validateMarkerPairing(template) {
  * @returns {string} Template with marked sections removed
  */
 function stripMarkedSections(template) {
-  const startMarker = '<!-- DOCFORGE:STRIP_FOR_IMPORT_START -->';
-  const endMarker = '<!-- DOCFORGE:STRIP_FOR_IMPORT_END -->';
-
   // Validate marker pairing before stripping
   validateMarkerPairing(template);
-
-  let result = template;
 
   // Strip all content between marker pairs (including the markers)
   // Use non-greedy match to handle multiple pairs
   const markerRegex = new RegExp(
-    startMarker.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') +  // Escape special chars
+    escapeRegex(DOCFORGE_MARKERS.START) +
     '[\\s\\S]*?' +  // Non-greedy match any content
-    endMarker.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+    escapeRegex(DOCFORGE_MARKERS.END),
     'g'
   );
 
-  result = result.replace(markerRegex, '');
-
-  return result;
+  return template.replace(markerRegex, '');
 }
 
 /**
@@ -261,9 +305,9 @@ function stripMarkedSections(template) {
  * @returns {string} Template with markers removed but content preserved
  */
 function removeMarkerComments(template) {
-  return template
-    .replace(/<!-- DOCFORGE:STRIP_FOR_IMPORT_START -->\n?/g, '')
-    .replace(/<!-- DOCFORGE:STRIP_FOR_IMPORT_END -->\n?/g, '');
+  const startRegex = new RegExp(escapeRegex(DOCFORGE_MARKERS.START) + '\\n?', 'g');
+  const endRegex = new RegExp(escapeRegex(DOCFORGE_MARKERS.END) + '\\n?', 'g');
+  return template.replace(startRegex, '').replace(endRegex, '');
 }
 
 /**
@@ -287,27 +331,16 @@ function stripCreationSectionsFromTemplate(template, plugin = {}) {
 
   // Check if template uses marker-based stripping (preferred)
   // Check for either START or END markers to catch orphan markers too
-  const hasStartMarkers = result.includes('DOCFORGE:STRIP_FOR_IMPORT_START');
-  const hasEndMarkers = result.includes('DOCFORGE:STRIP_FOR_IMPORT_END');
+  const hasStartMarkers = result.includes(DOCFORGE_MARKERS.START);
+  const hasEndMarkers = result.includes(DOCFORGE_MARKERS.END);
   const hasMarkers = hasStartMarkers || hasEndMarkers;
 
   if (hasMarkers) {
     // Use explicit markers - more reliable than regex
     result = stripMarkedSections(result);
 
-    // Inject review instruction:
-    // 1. Try to replace "BEGIN WITH THE HEADLINE NOW:" anchor
-    // 2. If no anchor, append at end of template
-    const hasAnchor = /\*\*BEGIN WITH THE HEADLINE NOW:\*\*/gi.test(result);
-    if (hasAnchor) {
-      result = result.replace(
-        /\*\*BEGIN WITH THE HEADLINE NOW:\*\*/gi,
-        reviewInstruction
-      );
-    } else {
-      // No anchor - append review instruction at end
-      result = result.trimEnd() + '\n\n---\n\n' + reviewInstruction + '\n';
-    }
+    // Inject review instruction (replaces anchor or appends)
+    result = injectReviewInstruction(result, reviewInstruction);
 
     // Clean up excessive newlines
     result = result.replace(/\n{4,}/g, '\n\n\n');
@@ -352,19 +385,8 @@ function stripCreationSectionsFromTemplate(template, plugin = {}) {
   // Remove "### Required Sections" table
   afterMarker = afterMarker.replace(/### Required Sections[\s\S]*?(?=\n## |\n\*\*BEGIN WITH|$)/g, '');
 
-  // Inject review instruction:
-  // 1. Try to replace "BEGIN WITH THE HEADLINE NOW:" anchor
-  // 2. If no anchor, append at end
-  const hasAnchor = /\*\*BEGIN WITH THE HEADLINE NOW:\*\*/gi.test(afterMarker);
-  if (hasAnchor) {
-    afterMarker = afterMarker.replace(
-      /\*\*BEGIN WITH THE HEADLINE NOW:\*\*/gi,
-      reviewInstruction
-    );
-  } else {
-    // No anchor - append review instruction at end
-    afterMarker = afterMarker.trimEnd() + '\n\n---\n\n' + reviewInstruction + '\n';
-  }
+  // Inject review instruction (replaces anchor or appends)
+  afterMarker = injectReviewInstruction(afterMarker, reviewInstruction);
 
   // Validation: Warn if sections that should have been stripped still exist
   // This catches template structure changes that break our regexes
