@@ -104,8 +104,10 @@ You are an expert assistant helping to create a high-quality document.
 
 ---
 
+<!-- DOCFORGE:STRIP_FOR_IMPORT_START -->
 ## Context
 **Title:** {{TITLE}}
+<!-- DOCFORGE:STRIP_FOR_IMPORT_END -->
 
 ## Your Task
 Generate a well-structured first draft based on the provided context.
@@ -224,11 +226,19 @@ function stripCreationSectionsFromTemplate(template, plugin = {}) {
     // Use explicit markers - more reliable than regex
     result = stripMarkedSections(result);
 
-    // Replace creation-mode closing instruction with review instruction
-    result = result.replace(
-      /\*\*BEGIN WITH THE HEADLINE NOW:\*\*/gi,
-      reviewInstruction
-    );
+    // Inject review instruction:
+    // 1. Try to replace "BEGIN WITH THE HEADLINE NOW:" anchor
+    // 2. If no anchor, append at end of template
+    const hasAnchor = /\*\*BEGIN WITH THE HEADLINE NOW:\*\*/gi.test(result);
+    if (hasAnchor) {
+      result = result.replace(
+        /\*\*BEGIN WITH THE HEADLINE NOW:\*\*/gi,
+        reviewInstruction
+      );
+    } else {
+      // No anchor - append review instruction at end
+      result = result.trimEnd() + '\n\n---\n\n' + reviewInstruction + '\n';
+    }
 
     // Clean up excessive newlines
     result = result.replace(/\n{4,}/g, '\n\n\n');
@@ -273,14 +283,26 @@ function stripCreationSectionsFromTemplate(template, plugin = {}) {
   // Remove "### Required Sections" table
   afterMarker = afterMarker.replace(/### Required Sections[\s\S]*?(?=\n## |\n\*\*BEGIN WITH|$)/g, '');
 
-  // Replace creation-mode closing instruction with review instruction
-  afterMarker = afterMarker.replace(
-    /\*\*BEGIN WITH THE HEADLINE NOW:\*\*/gi,
-    reviewInstruction
-  );
+  // Inject review instruction:
+  // 1. Try to replace "BEGIN WITH THE HEADLINE NOW:" anchor
+  // 2. If no anchor, append at end
+  const hasAnchor = /\*\*BEGIN WITH THE HEADLINE NOW:\*\*/gi.test(afterMarker);
+  if (hasAnchor) {
+    afterMarker = afterMarker.replace(
+      /\*\*BEGIN WITH THE HEADLINE NOW:\*\*/gi,
+      reviewInstruction
+    );
+  } else {
+    // No anchor - append review instruction at end
+    afterMarker = afterMarker.trimEnd() + '\n\n---\n\n' + reviewInstruction + '\n';
+  }
 
   // Validation: Warn if sections that should have been stripped still exist
   // This catches template structure changes that break our regexes
+  // NOTE: This validation only runs for templates WITHOUT DOCFORGE markers.
+  // All 9 built-in plugins use markers, so this is mainly for:
+  // - Third-party plugins without markers
+  // - Future templates that haven't adopted markers yet
   const sectionsToValidate = [
     { name: '## INPUT DATA', pattern: /## INPUT DATA/i },
     { name: '## Context', pattern: /## Context(?! Grounding)/i }, // Negative lookahead to not double-match

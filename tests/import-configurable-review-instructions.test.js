@@ -93,5 +93,37 @@ describe('Configurable Review Instructions', () => {
     expect(prompt).toContain(customInstruction);
     expect(prompt).not.toContain('BEGIN WITH THE HEADLINE');
   });
+
+  it('should inject review instruction even when template has no BEGIN WITH anchor', async () => {
+    // This tests the REAL scenario - most templates don't have BEGIN WITH THE HEADLINE
+    global.fetch = async () => ({
+      ok: true,
+      text: async () => `# Phase 1
+
+{{IMPORTED_CONTENT}}
+
+## MODE SELECTION
+
+Choose your mode.
+
+<!-- DOCFORGE:STRIP_FOR_IMPORT_START -->
+## Context
+**Title:** {{TITLE}}
+<!-- DOCFORGE:STRIP_FOR_IMPORT_END -->
+
+## Your Task
+
+Do something important.
+`,
+    });
+
+    const plugin = { id: 'test' };
+    const formData = { importedContent: '# User Content' };
+
+    const prompt = await generatePrompt(plugin, 1, formData, {}, { isImported: true });
+
+    // Should still have the review instruction SOMEWHERE in the prompt
+    expect(prompt).toContain('REVIEW THE IMPORTED DOCUMENT');
+  });
 });
 
