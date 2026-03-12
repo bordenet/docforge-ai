@@ -9,9 +9,9 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { describe, it, expect, beforeAll, beforeEach } from '@jest/globals';
+import { describe, it, expect, beforeAll } from '@jest/globals';
 import { generatePrompt } from '../../shared/js/prompt-generator.js';
-import { runAllChecks } from './evaluators/index.js';
+import { runAllChecks } from "./evaluators";
 import phaseOutputs from './fixtures/phase-outputs.js';
 
 /**

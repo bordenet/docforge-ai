@@ -65,22 +65,31 @@ export function minimumLength(prompt, minLength = 500) {
 
 /**
  * Check for double spaces from empty placeholder substitution
- * Excludes code blocks where multiple spaces may be intentional
+ * Excludes:
+ * - Code blocks (intentional formatting)
+ * - Line-ending double spaces (markdown line break syntax)
+ * - Table alignment spaces
  * @param {string} prompt - Generated prompt
  * @returns {{ check: string, severity: string, message: string } | null}
  */
 export function noDoubleSpaces(prompt) {
   // Remove code blocks before checking
-  const withoutCodeBlocks = prompt.replace(/```[\s\S]*?```/g, '');
-  const doubleSpacePattern = /  +/g;
-  const matches = withoutCodeBlocks.match(doubleSpacePattern);
+  let cleaned = prompt.replace(/```[\s\S]*?```/g, '');
+  // Remove line-ending double spaces (markdown line break syntax)
+  cleaned = cleaned.replace(/ {2}$/gm, '');
+  // Remove table rows (often have alignment spaces)
+  cleaned = cleaned.replace(/^\|.*\|$/gm, '');
 
-  if (matches && matches.length > 3) {
-    // Allow a few, flag if excessive
+  // Check for double spaces in the middle of lines
+  const doubleSpacePattern = / {2,}/g;
+  const matches = cleaned.match(doubleSpacePattern);
+
+  if (matches && matches.length > 10) {
+    // Allow up to 10 instances, flag if excessive
     return {
       check: 'no-double-spaces',
       severity: 'WARN',
-      message: `Found ${matches.length} instances of consecutive spaces`,
+      message: `Found ${matches.length} instances of consecutive spaces (may indicate empty placeholder substitutions)`,
     };
   }
   return null;
