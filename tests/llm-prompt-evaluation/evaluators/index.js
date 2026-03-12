@@ -28,7 +28,7 @@ export { runPhaseChecks } from './phase-checks.js';
 export function runAllChecks(prompt, workflow, phase, fixtures) {
   const allResults = [
     ...runStructuralChecks(prompt),
-    ...runWorkflowChecks(prompt, workflow, fixtures),
+    ...runWorkflowChecks(prompt, workflow, fixtures, phase),
     ...runPhaseChecks(prompt, phase, fixtures),
   ];
 
