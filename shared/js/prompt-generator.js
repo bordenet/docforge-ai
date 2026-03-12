@@ -236,24 +236,42 @@ function stripCreationSectionsFromTemplate(template) {
 
 /**
  * Fix broken prose from empty inline placeholders (post-substitution)
- * Only fixes patterns that are clearly broken prose, not user content.
+ * Only fixes patterns in TEMPLATE portions, NOT user-imported content.
  *
  * @param {string} prompt - The filled prompt after substitution
- * @returns {string} Prompt with fixed prose
+ * @param {number} userContentStart - Start index of user content in prompt
+ * @param {number} userContentEnd - End index of user content in prompt
+ * @returns {string} Prompt with fixed prose (user content untouched)
  */
-function fixBrokenPlaceholderProse(prompt) {
-  let result = prompt;
+function fixBrokenPlaceholderProse(prompt, userContentStart = -1, userContentEnd = -1) {
+  // If no user content bounds provided, apply to entire prompt (backwards compatibility)
+  if (userContentStart < 0 || userContentEnd < 0) {
+    let result = prompt;
+    result = result.replace(/\b([Aa]n?)\s{2,}(\w)/g, '$1 $2');
+    result = result.replace(/\b([Tt]he)\s{2,}(\w)/g, '$1 $2');
+    result = result.replace(/create\s+a\s{2,}/gi, 'create a ');
+    return result;
+  }
 
-  // Pattern: "a  word" or "A  word" (article + double space + word)
-  result = result.replace(/\b([Aa]n?)\s{2,}(\w)/g, '$1 $2');
+  // Split prompt into: before user content, user content, after user content
+  const beforeUser = prompt.substring(0, userContentStart);
+  const userContent = prompt.substring(userContentStart, userContentEnd);
+  const afterUser = prompt.substring(userContentEnd);
 
-  // Pattern: "the  word" (article + double space + word)
-  result = result.replace(/\b([Tt]he)\s{2,}(\w)/g, '$1 $2');
+  // Apply prose fixes ONLY to template portions (before and after user content)
+  const fixProse = (text) => {
+    let result = text;
+    // Pattern: "a  word" or "A  word" (article + double space + word)
+    result = result.replace(/\b([Aa]n?)\s{2,}(\w)/g, '$1 $2');
+    // Pattern: "the  word" (article + double space + word)
+    result = result.replace(/\b([Tt]he)\s{2,}(\w)/g, '$1 $2');
+    // Pattern: "create a  document" -> "create a document"
+    result = result.replace(/create\s+a\s{2,}/gi, 'create a ');
+    return result;
+  };
 
-  // Pattern: "create a  document" -> "create a document" (specific case)
-  result = result.replace(/create\s+a\s{2,}/gi, 'create a ');
-
-  return result;
+  // Recombine: fixed template before + untouched user content + fixed template after
+  return fixProse(beforeUser) + userContent + fixProse(afterUser);
 }
 
 /**
@@ -299,6 +317,12 @@ export async function generatePrompt(plugin, phase, formData, previousResponses 
     ? (formData?.importedContent || previousResponses[1] || '')
     : '';
 
+  // Track where user content will be inserted (for scoped prose normalization)
+  // We need to find the marker position BEFORE substitution
+  const importedContentMarker = '{{IMPORTED_CONTENT}}';
+  const markerIndex = template.indexOf(importedContentMarker);
+  const userContentLength = importedContentValue.length;
+
   const data = {
     ...formData,
     // Support both naming conventions for backwards compatibility
@@ -318,8 +342,19 @@ export async function generatePrompt(plugin, phase, formData, previousResponses 
 
   // For imports, fix broken prose from empty inline placeholders
   // This runs AFTER substitution to catch "A  executive" patterns
+  // IMPORTANT: Only fix prose in template portions, NOT in user content
   if (options.isImported && phase === 1) {
-    prompt = fixBrokenPlaceholderProse(prompt);
+    if (markerIndex >= 0 && userContentLength > 0) {
+      // Calculate where user content ended up in the final prompt
+      // Note: Other placeholders before the marker may have changed positions,
+      // but we can find user content by searching for it directly
+      const userContentStart = prompt.indexOf(importedContentValue);
+      const userContentEnd = userContentStart + userContentLength;
+      prompt = fixBrokenPlaceholderProse(prompt, userContentStart, userContentEnd);
+    } else {
+      // No user content or marker - apply to entire prompt
+      prompt = fixBrokenPlaceholderProse(prompt);
+    }
   }
 
   return prompt;
