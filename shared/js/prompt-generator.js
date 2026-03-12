@@ -179,6 +179,7 @@ function stripCreationSectionsFromTemplate(template) {
   // Split template into before and after the marker
   const beforeMarker = result.substring(0, markerIndex + importedContentMarker.length);
   let afterMarker = result.substring(markerIndex + importedContentMarker.length);
+  const originalAfterMarker = afterMarker; // Keep original for validation
 
   // Strip sections ONLY from the part after {{IMPORTED_CONTENT}}
   // This is where template sections live; user content goes IN the placeholder
@@ -204,6 +205,25 @@ function stripCreationSectionsFromTemplate(template) {
     /\*\*BEGIN WITH THE HEADLINE NOW:\*\*/gi,
     '**REVIEW THE IMPORTED DOCUMENT ABOVE. Identify weaknesses, gaps, and areas for improvement. Then provide an enhanced version that addresses these issues.**'
   );
+
+  // Validation: Warn if sections that should have been stripped still exist
+  // This catches template structure changes that break our regexes
+  const sectionsToValidate = [
+    { name: '## INPUT DATA', pattern: /## INPUT DATA/i },
+    { name: '## Context', pattern: /## Context(?! Grounding)/i }, // Negative lookahead to not double-match
+    { name: '## Context Grounding', pattern: /## Context Grounding/i },
+    { name: '## OUTPUT FORMAT', pattern: /## OUTPUT FORMAT/i },
+  ];
+
+  for (const section of sectionsToValidate) {
+    // Only warn if section existed in original AND still exists after stripping
+    if (section.pattern.test(originalAfterMarker) && section.pattern.test(afterMarker)) {
+      logger.warn(
+        `Failed to strip "${section.name}" section - template structure may have changed`,
+        'prompt-generator'
+      );
+    }
+  }
 
   // Recombine
   result = beforeMarker + afterMarker;
