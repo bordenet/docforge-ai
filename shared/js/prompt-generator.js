@@ -478,11 +478,19 @@ function fixBrokenPlaceholderProse(prompt, userContentStart = -1, userContentEnd
 export async function generatePrompt(plugin, phase, formData, previousResponses = {}, options = {}) {
   let template = await loadPromptTemplate(plugin.id, phase);
 
-  // Defensive check: warn if formData is empty or missing key fields
+  // Defensive check: warn if formData is empty (but not for imports, which only have importedContent)
   if (!formData || Object.keys(formData).length === 0) {
     logger.warn('generatePrompt called with empty formData - prompt will have no user inputs', 'prompt-generator');
-  } else if (phase === 1 && !formData.title && !formData.problem) {
-    logger.warn('Phase 1 prompt missing title and problem - user may not have filled out the form', 'prompt-generator');
+  } else if (phase === 1 && !options.isImported) {
+    // For CREATE workflow, check if ANY content fields are populated
+    // Different document types have different required fields, so we just check
+    // that at least one field has substantial content (not just the workflow flag)
+    const contentFields = Object.entries(formData).filter(
+      ([key, value]) => key !== 'importedContent' && typeof value === 'string' && value.length > 0
+    );
+    if (contentFields.length === 0) {
+      logger.warn('Phase 1 CREATE prompt has no form field values - user may not have filled out the form', 'prompt-generator');
+    }
   }
 
   // Handle DOCFORGE markers in templates
