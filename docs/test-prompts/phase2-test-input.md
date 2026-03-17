@@ -16,11 +16,17 @@
 ## Expected Outputs (Based on Phase 2 Prompt Rules)
 
 ### Review Structure
-- [ ] Initial Assessment Scores table (5 dimensions, 100 pts max)
-- [ ] Key Issues Identified section
-- [ ] Suggested Improvements section
-- [ ] Pressure-Test Questions section (3+ devil's advocate questions)
-- [ ] Improved PRD starting with "# {Document Title}"
+- [ ] Initial Assessment Scores table (5 dimensions, 100 pts max) — first interaction only
+- [ ] Key Issues Identified section — first interaction only
+- [ ] Suggested Improvements section — first interaction only
+- [ ] Pressure-Test Questions section (3+ devil's advocate questions) — first interaction only
+- [ ] Improved PRD wrapped in a ` ```markdown ` code fence
+- [ ] On revision iterations: scoring table omitted, only improved PRD in code fence
+
+### Length Constraint
+- [ ] Improved PRD stays within ±25% of Phase 1 word count
+- [ ] No excessive inflation ("epic tomes")
+- [ ] If additional content needed beyond threshold, asks user first
 
 ### Scope Awareness
 - [ ] Reviewer identifies scope as "Feature"

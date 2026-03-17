@@ -245,5 +245,86 @@ describe('Prompt-Rubric Alignment', () => {
       expect(phase2Content).toContain('capped at 20');
     });
   });
+
+  describe('Phase 2 Output Format Rules', () => {
+    let phase2Content;
+
+    beforeAll(() => {
+      const phase2Path = join(projectRoot, 'plugins/prd/prompts/phase2.md');
+      phase2Content = readFileSync(phase2Path, 'utf-8');
+    });
+
+    describe('Issue 1: Scoring context - initial vs revision iterations', () => {
+      test('prompt distinguishes initial review from revision iterations', () => {
+        expect(phase2Content).toMatch(/initial review.*revision/i);
+      });
+
+      test('prompt instructs to omit scoring table on subsequent interactions', () => {
+        expect(phase2Content).toMatch(/omit.*scoring table/i);
+      });
+
+      test('prompt specifies first interaction includes all sections', () => {
+        expect(phase2Content).toMatch(/first interaction.*initial review/i);
+      });
+
+      test('subsequent interactions output only revised PRD in code fence', () => {
+        expect(phase2Content).toMatch(/subsequent interactions/i);
+        expect(phase2Content).toMatch(/ONLY the revised improved PRD inside a markdown code fence/i);
+      });
+
+      test('output structure table is labeled first interaction only', () => {
+        expect(phase2Content).toMatch(/Required Output Structure \(First Interaction Only\)/i);
+      });
+    });
+
+    describe('Issue 2: Length constraint (±25% word count)', () => {
+      test('prompt includes ±25% word count constraint', () => {
+        expect(phase2Content).toMatch(/±25%/);
+      });
+
+      test('prompt requires counting Phase 1 word count', () => {
+        expect(phase2Content).toMatch(/count.*word count.*Phase 1/i);
+      });
+
+      test('prompt instructs to STOP and ASK user if exceeding threshold', () => {
+        expect(phase2Content).toMatch(/stop and ask the user/i);
+      });
+
+      test('prompt references scope length targets', () => {
+        expect(phase2Content).toMatch(/Feature.*1-3 pages.*Epic.*4-8 pages.*Product.*8-15 pages/i);
+      });
+
+      test('length check is step 2 in the process', () => {
+        expect(phase2Content).toMatch(/2\.\s*\*\*Length Check\*\*/);
+      });
+
+      test('prompt warns against epic tomes', () => {
+        expect(phase2Content).toMatch(/epic tomes/i);
+      });
+    });
+
+    describe('Issue 3: Markdown code fence for improved PRD', () => {
+      test('prompt requires improved PRD in markdown code fence', () => {
+        expect(phase2Content).toMatch(/code fence/i);
+      });
+
+      test('output_rules no longer says NO markdown code fences unconditionally', () => {
+        // Old rule was "NO markdown code fences" — now should only apply to review sections
+        expect(phase2Content).not.toMatch(/NO markdown code fences.*wrapping the output/i);
+      });
+
+      test('output_rules specifies code fences only around final improved PRD', () => {
+        expect(phase2Content).toMatch(/only around the final improved PRD/i);
+      });
+
+      test('prompt shows the code fence format example', () => {
+        expect(phase2Content).toContain('```markdown');
+      });
+
+      test('prompt mentions copy-paste readiness for the code fence', () => {
+        expect(phase2Content).toMatch(/trivial to copy.*programmatically/i);
+      });
+    });
+  });
 });
 

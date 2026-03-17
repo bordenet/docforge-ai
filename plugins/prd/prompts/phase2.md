@@ -211,17 +211,18 @@ Evaluate the **16 required sections** (per Phase1.md):
 ## Your Process
 
 1. **Initial Assessment**: Score EACH of the 5 dimensions (not 10 criteria)
-2. **Identify Issues**: Point out vague statements, missing sections, weak areas
+2. **Length Check**: Count the word count of the Phase 1 document. Your improved PRD MUST stay within **±25% of that word count**. If you believe the PRD genuinely requires content beyond this threshold, **STOP and ASK the user** before adding it. Respect the Document Scope length targets (Feature: 1-3 pages, Epic: 4-8 pages, Product: 8-15 pages). Do NOT inflate the document — users report "epic tomes" as a top complaint.
+3. **Identify Issues**: Point out vague statements, missing sections, weak areas
    - Flag undefined formulas or scoring mechanisms
    - Identify missing API/integration specifics
    - Note absent compliance requirements
    - Highlight vague terms ("fast", "scalable", "near-real-time")
    - Check for missing failure/edge case ACs
    - **⚠️ Flag any "HOW" violations** (technology prescriptions that should be business requirements)
-3. **Ask Clarifying Questions**: Work with the user to fill gaps
-4. **Suggest Improvements**: Recommend specific changes with examples
-5. **Pressure-Test Assumptions**: Challenge the PRD with devil's advocate questions (see below)
-6. **Final Output**: Provide the improved PRD as markdown
+4. **Ask Clarifying Questions**: Work with the user to fill gaps
+5. **Suggest Improvements**: Recommend specific changes with examples
+6. **Pressure-Test Assumptions**: Challenge the PRD with devil's advocate questions (see below)
+7. **Final Output**: Provide the improved PRD as markdown inside a code fence (see Output Format)
 
 ## 🔥 Pressure-Testing Section (Devil's Advocate)
 
@@ -290,14 +291,24 @@ The PRD must NEVER include:
 <output_rules>
 CRITICAL - Your review AND improved PRD must be COPY-PASTE READY:
 - Start IMMEDIATELY with "## Initial Assessment Scores" (no preamble like "Here's my review...")
-- After scores and analysis, provide improved PRD starting with "# {Document Title}"
-- End after section 14 (no sign-off like "Let me know if...")
-- NO markdown code fences (```markdown) wrapping the output
+- After scores and analysis, provide the improved PRD inside a markdown code fence (see below)
+- End after the closing code fence (no sign-off like "Let me know if...")
+- NO markdown code fences around the review/commentary sections — only around the final improved PRD
 - NO explanations of what you did or why outside designated sections
 - The user will paste your ENTIRE response directly into the tool
 </output_rules>
 
-### Required Output Structure
+### ⚠️ Initial Review vs. Revision Iterations
+
+**First interaction (initial review of Phase 1 output):**
+- Include ALL sections below: scores, issues, improvements, pressure-test questions, AND the improved PRD in a code fence
+
+**Subsequent interactions (after user provides feedback or requests revisions):**
+- **OMIT the scoring table entirely** — do not re-score
+- Output ONLY the revised improved PRD inside a markdown code fence
+- You may include a brief summary of changes made (2-3 bullet points max) before the code fence
+
+### Required Output Structure (First Interaction Only)
 
 | Section | Content | Format |
 |---------|---------|--------|
@@ -305,8 +316,18 @@ CRITICAL - Your review AND improved PRD must be COPY-PASTE READY:
 | ## Key Issues Identified | Vague terms, missing info, weak areas | Numbered list |
 | ## Suggested Improvements | Specific changes with examples | Numbered list |
 | ## Pressure-Test Questions | 3+ devil's advocate challenges | Numbered list |
-| # {Document Title} | Improved PRD starting here | H1 header |
-| (All 16 PRD sections) | Improved versions of each section | Standard PRD format |
+| Improved PRD | Wrapped in ` ```markdown ` code fence | See below |
+
+### Improved PRD Code Fence Format
+
+After the review sections (or on revision iterations, as the sole output), output the improved PRD inside a **single markdown code block**:
+
+` ```markdown `
+`# {Document Title}`
+`...full improved PRD content...`
+` ``` `
+
+This makes it trivial to copy the PRD content programmatically or manually.
 
 **Score Table Format (5 dimensions, 100 pts max):**
 
