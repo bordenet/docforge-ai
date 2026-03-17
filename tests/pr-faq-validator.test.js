@@ -262,5 +262,29 @@ A: Break-even expected within 24 months.`;
       expect(getScoreLabel(15)).toBe('Incomplete');
     });
   });
+
+  describe('Issues Rollup', () => {
+    it('should include top-level issues array', () => {
+      const text = '# Headline\nAcme launches new product.\n## FAQ\n**Q: Why?**\nA: Because.';
+      const result = validateDocument(text);
+      expect(Array.isArray(result.issues)).toBe(true);
+    });
+  });
+
+  describe('Unicode Normalization', () => {
+    it('zero-width spaces should not affect scores', () => {
+      const text = '# Headline\nAcme launches new product.\n## FAQ\n**Q: Why?**\nA: Because.';
+      const clean = validateDocument(text);
+      const withZWS = validateDocument(text.replace(/# /g, '#\u200B '));
+      expect(withZWS.totalScore).toBe(clean.totalScore);
+    });
+
+    it('BOM should not affect scores', () => {
+      const text = '# Headline\nAcme launches new product.\n## FAQ\n**Q: Why?**\nA: Because.';
+      const clean = validateDocument(text);
+      const withBOM = validateDocument('\uFEFF' + text);
+      expect(withBOM.totalScore).toBe(clean.totalScore);
+    });
+  });
 });
 

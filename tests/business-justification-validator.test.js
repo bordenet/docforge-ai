@@ -282,5 +282,41 @@ ROI is 200% with 6 months payback.`;
       expect(getScoreLabel(20)).toBe('Incomplete');
     });
   });
+
+  describe('Issues Rollup', () => {
+    it('should include top-level issues array', () => {
+      const text = '## Problem\nRevenue declining 15% quarterly.\n## Financial Analysis\nROI of 200%.';
+      const result = validateDocument(text);
+      expect(Array.isArray(result.issues)).toBe(true);
+    });
+
+    it('should aggregate all dimension issues', () => {
+      const text = '## Problem\nRevenue declining 15% quarterly.\n## Financial Analysis\nROI of 200%.';
+      const result = validateDocument(text);
+      const expectedCount =
+        result.strategicEvidence.issues.length +
+        result.financialJustification.issues.length +
+        result.optionsAnalysis.issues.length +
+        result.executionCompleteness.issues.length +
+        (result.slopDetection?.issues?.length || 0);
+      expect(result.issues.length).toBe(expectedCount);
+    });
+  });
+
+  describe('Unicode Normalization', () => {
+    it('zero-width spaces should not affect scores', () => {
+      const text = '## Problem\nRevenue declining 15% quarterly.\n## Financial Analysis\nROI of 200%.';
+      const clean = validateDocument(text);
+      const withZWS = validateDocument(text.replace(/## /g, '##\u200B '));
+      expect(withZWS.totalScore).toBe(clean.totalScore);
+    });
+
+    it('BOM should not affect scores', () => {
+      const text = '## Problem\nRevenue declining 15% quarterly.\n## Financial Analysis\nROI of 200%.';
+      const clean = validateDocument(text);
+      const withBOM = validateDocument('\uFEFF' + text);
+      expect(withBOM.totalScore).toBe(clean.totalScore);
+    });
+  });
   // Helper detection function tests moved to business-justification-validator-helpers.test.js
 });

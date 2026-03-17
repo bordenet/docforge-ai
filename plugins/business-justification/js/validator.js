@@ -9,6 +9,7 @@
  */
 
 import { getSlopPenalty } from '../../../shared/js/slop-scoring.js';
+import { normalizeText } from '../../../shared/js/validator.js';
 import {
   scoreStrategicEvidence,
   scoreFinancialJustification,
@@ -77,13 +78,16 @@ export function validateBusinessJustification(text) {
   }
 
   // Score using unified 4-pillar taxonomy
-  const strategicEvidence = scoreStrategicEvidence(text);
-  const financialJustification = scoreFinancialJustification(text);
-  const optionsAnalysis = scoreOptionsAnalysis(text);
-  const executionCompleteness = scoreExecutionCompleteness(text);
+  // Normalize text to strip invisible Unicode characters (ZWS, BOM, NBSP, etc.)
+  const normalized = normalizeText(text);
+
+  const strategicEvidence = scoreStrategicEvidence(normalized);
+  const financialJustification = scoreFinancialJustification(normalized);
+  const optionsAnalysis = scoreOptionsAnalysis(normalized);
+  const executionCompleteness = scoreExecutionCompleteness(normalized);
 
   // AI slop detection
-  const slopPenalty = getSlopPenalty(text);
+  const slopPenalty = getSlopPenalty(normalized);
   let slopDeduction = 0;
   const slopIssues = [];
 

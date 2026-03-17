@@ -330,5 +330,55 @@ Real-time data enables faster, smarter decisions.
       expect(getScoreLabel(20)).toBe('Incomplete');
     });
   });
+
+  describe('Issues Rollup', () => {
+    it('should include top-level issues array', () => {
+      const text = 'Led migration of 50 microservices to Kubernetes at Acme Corp, reducing deployment time by 75%.';
+      const result = validateDocument(text);
+      expect(Array.isArray(result.issues)).toBe(true);
+    });
+
+    it('should aggregate all dimension issues', () => {
+      const text = 'Led migration of 50 microservices to Kubernetes at Acme Corp, reducing deployment time by 75%.';
+      const result = validateDocument(text);
+      const expectedCount =
+        result.clarity.issues.length +
+        result.impact.issues.length +
+        result.action.issues.length +
+        result.specificity.issues.length +
+        (result.slopDetection?.issues?.length || 0) +
+        (result.versionDetection?.issues?.length || 0);
+      expect(result.issues.length).toBe(expectedCount);
+    });
+  });
+
+  describe('Regex Determinism', () => {
+    it('detectSpecificity should produce consistent results across repeated calls', () => {
+      const text = 'Led a team of 12 engineers at Acme Corp department to deliver the project in Q1 2024.';
+      const results = [];
+      for (let i = 0; i < 5; i++) {
+        results.push(detectSpecificity(text));
+      }
+      const teamContexts = results.map(r => r.hasTeamContext);
+      expect(new Set(teamContexts).size).toBe(1);
+    });
+  });
+
+  describe('Unicode Normalization', () => {
+    it('zero-width spaces should not affect scores', () => {
+      const text = 'Led migration of 50 microservices to Kubernetes at Acme Corp, reducing deployment time by 75%.';
+      const clean = validateDocument(text);
+      // Insert ZWS between words without changing word content
+      const withZWS = validateDocument(text.replace(/migration/g, 'migra\u200Btion'));
+      expect(withZWS.totalScore).toBe(clean.totalScore);
+    });
+
+    it('BOM should not affect scores', () => {
+      const text = 'Led migration of 50 microservices to Kubernetes at Acme Corp, reducing deployment time by 75%.';
+      const clean = validateDocument(text);
+      const withBOM = validateDocument('\uFEFF' + text);
+      expect(withBOM.totalScore).toBe(clean.totalScore);
+    });
+  });
 });
 

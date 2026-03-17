@@ -24,6 +24,7 @@ import {
   detectAlternatives,
   detectUrgency
 } from '../plugins/one-pager/js/validator.js';
+import { detectStakeholderTableQuality } from '../plugins/one-pager/js/validator-detection.js';
 
 describe('One-Pager Validator', () => {
   describe('detectSections', () => {
@@ -383,6 +384,58 @@ describe('One-Pager Fixture Regression Tests', () => {
 
       const average = allScores.reduce((a, b) => a + b, 0) / allScores.length;
       expect(average).toBeGreaterThanOrEqual(55); // Reasonable threshold
+    });
+  });
+
+  describe('Issues Rollup', () => {
+    it('should include top-level issues array', () => {
+      const text = '## Problem\nCustomers wait too long.\n## Solution\nAutomate the process.';
+      const result = validateDocument(text);
+      expect(Array.isArray(result.issues)).toBe(true);
+    });
+
+    it('should aggregate all dimension issues', () => {
+      const text = '## Problem\nCustomers wait too long.\n## Solution\nAutomate the process.';
+      const result = validateDocument(text);
+      const expectedCount =
+        result.problemClarity.issues.length +
+        result.solution.issues.length +
+        result.scope.issues.length +
+        result.completeness.issues.length +
+        (result.slopDetection?.issues?.length || 0) +
+        (result.circularLogic?.issues?.length || 0) +
+        (result.baselineTarget?.issues?.length || 0) +
+        (result.vagueQuantifiers?.issues?.length || 0) +
+        (result.wordCount?.issues?.length || 0);
+      expect(result.issues.length).toBe(expectedCount);
+    });
+  });
+
+  describe('Regex Determinism', () => {
+    it('detectStakeholderTableQuality should produce consistent results across repeated calls', () => {
+      const text = '| Role | Responsible | Accountable | Consulted | Informed |\n|---|---|---|---|---|\n| PM | x | | x | |';
+      const results = [];
+      for (let i = 0; i < 5; i++) {
+        results.push(detectStakeholderTableQuality(text));
+      }
+      const scores = results.map(r => r.qualityScore);
+      expect(new Set(scores).size).toBe(1);
+    });
+  });
+
+  describe('Unicode Normalization', () => {
+    it('zero-width spaces should not affect scores', () => {
+      const text = '## Problem\nCustomers wait too long.\n## Solution\nAutomate the process.';
+      const clean = validateDocument(text);
+      const withZWS = validateDocument(text.replace(/## /g, '##\u200B '));
+      expect(withZWS.totalScore).toBe(clean.totalScore);
+    });
+
+    it('BOM should not affect scores', () => {
+      const text = '## Problem\nCustomers wait too long.\n## Solution\nAutomate the process.';
+      const clean = validateDocument(text);
+      const withBOM = validateDocument('\uFEFF' + text);
+      expect(withBOM.totalScore).toBe(clean.totalScore);
     });
   });
 });

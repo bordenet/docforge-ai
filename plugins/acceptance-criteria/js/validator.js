@@ -5,6 +5,7 @@
  */
 
 import { getSlopPenalty, calculateSlopScore } from '../../../shared/js/slop-scoring.js';
+import { normalizeText } from '../../../shared/js/validator.js';
 
 import {
   scoreStructure,
@@ -63,13 +64,16 @@ export function validateDocument(text) {
     };
   }
 
-  const structure = scoreStructure(text);
-  const clarity = scoreClarity(text);
-  const testability = scoreTestability(text);
-  const completeness = scoreCompleteness(text);
+  // Normalize text to strip invisible Unicode characters (ZWS, BOM, NBSP, etc.)
+  const normalized = normalizeText(text);
+
+  const structure = scoreStructure(normalized);
+  const clarity = scoreClarity(normalized);
+  const testability = scoreTestability(normalized);
+  const completeness = scoreCompleteness(normalized);
 
   // AI slop detection - acceptance criteria must be precise and testable
-  const slopPenalty = getSlopPenalty(text);
+  const slopPenalty = getSlopPenalty(normalized);
   let slopDeduction = 0;
   const slopIssues = [];
 

@@ -4,6 +4,7 @@
  */
 
 import { calculateSlopScore } from '../../../shared/js/slop-scoring.js';
+import { normalizeText } from '../../../shared/js/validator.js';
 import { stripMarkdown, extractTitle } from './validator-utils.js';
 import { scoreCustomerEvidence, detectMetricsInText } from './validator-customer-evidence.js';
 import { scoreStructureAndHook } from './validator-structure.js';
@@ -36,16 +37,19 @@ export function validatePRFAQ(markdown) {
     };
   }
 
+  // Normalize text to strip invisible Unicode characters (ZWS, BOM, NBSP, etc.)
+  const normalized = normalizeText(markdown);
+
   // Extract title and strip markdown
-  const title = extractTitle(markdown);
-  const plainText = stripMarkdown(markdown);
+  const title = extractTitle(normalized);
+  const plainText = stripMarkdown(normalized);
 
   // Run all dimension scorers
   const structure = scoreStructureAndHook(plainText, title);
   const content = scoreContentQuality(plainText);
   const professional = scoreProfessionalQuality(plainText);
   const evidence = scoreCustomerEvidence(plainText);
-  const faqQuality = scoreFAQQuality(markdown); // Use raw markdown to find FAQ sections
+  const faqQuality = scoreFAQQuality(normalized); // Use normalized markdown to find FAQ sections
 
   // Calculate total score
   let totalScore = structure.score + content.score + professional.score + evidence.score + faqQuality.score;

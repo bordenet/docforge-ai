@@ -9,6 +9,7 @@
  */
 
 import { getSlopPenalty, calculateSlopScore } from '../../../shared/js/slop-scoring.js';
+import { normalizeText } from '../../../shared/js/validator.js';
 import { WORD_LIMIT } from './validator-config.js';
 import {
   detectCircularLogic,
@@ -75,13 +76,16 @@ export function validateOnePager(text) {
     };
   }
 
-  const problemClarity = scoreProblemClarity(text);
-  const solution = scoreSolutionQuality(text);
-  const scope = scoreScopeDiscipline(text);
-  const completeness = scoreCompleteness(text);
+  // Normalize text to strip invisible Unicode characters (ZWS, BOM, NBSP, etc.)
+  const normalized = normalizeText(text);
+
+  const problemClarity = scoreProblemClarity(normalized);
+  const solution = scoreSolutionQuality(normalized);
+  const scope = scoreScopeDiscipline(normalized);
+  const completeness = scoreCompleteness(normalized);
 
   // Circular logic detection - per prompts.js line 49, cap at 50 if detected
-  const circularLogic = detectCircularLogic(text);
+  const circularLogic = detectCircularLogic(normalized);
   const circularIssues = [];
   if (circularLogic.isCircular) {
     circularIssues.push(
@@ -90,7 +94,7 @@ export function validateOnePager(text) {
   }
 
   // Baseline→Target format detection
-  const baselineTarget = detectBaselineTarget(text);
+  const baselineTarget = detectBaselineTarget(normalized);
   const baselineIssues = [];
   if (baselineTarget.hasVagueMetrics && !baselineTarget.hasBaselineTarget) {
     baselineIssues.push(
@@ -99,7 +103,7 @@ export function validateOnePager(text) {
   }
 
   // AI slop detection - executive summaries should be crisp and specific
-  const slopPenalty = getSlopPenalty(text);
+  const slopPenalty = getSlopPenalty(normalized);
   let slopDeduction = 0;
   const slopIssues = [];
 
@@ -112,7 +116,7 @@ export function validateOnePager(text) {
   }
 
   // Vague quantifier detection (P2 improvement) - penalize TBD, "some amount", etc.
-  const vagueQuantifiers = detectVagueQuantifiers(text);
+  const vagueQuantifiers = detectVagueQuantifiers(normalized);
   let vagueDeduction = 0;
   const vagueIssues = [];
 
@@ -125,7 +129,7 @@ export function validateOnePager(text) {
   }
 
   // Word count enforcement - increased to 600 words for full Amazon-style structure
-  const wordCount = text.split(/\s+/).filter(w => w.length > 0).length;
+  const wordCount = normalized.split(/\s+/).filter(w => w.length > 0).length;
   let wordCountDeduction = 0;
   const wordCountIssues = [];
   if (wordCount > WORD_LIMIT) {

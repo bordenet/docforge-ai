@@ -260,5 +260,72 @@ describe('JD Validator', () => {
       expect(getScoreLabel(20)).toBe('Incomplete');
     });
   });
+
+  describe('Issues Rollup', () => {
+    it('should include top-level issues array', () => {
+      const text = 'word '.repeat(450) + 'Salary: $100,000 - $150,000.';
+      const result = validateDocument(text);
+      expect(Array.isArray(result.issues)).toBe(true);
+    });
+
+    it('should aggregate all dimension issues', () => {
+      const text = 'word '.repeat(450) + 'Salary: $100,000 - $150,000.';
+      const result = validateDocument(text);
+      const expectedCount =
+        result.length.issues.length +
+        result.inclusivity.issues.length +
+        result.culture.issues.length +
+        result.transparency.issues.length;
+      expect(result.issues.length).toBe(expectedCount);
+    });
+  });
+
+  describe('Regex Determinism', () => {
+    it('detectMasculineCoded should produce consistent results across repeated calls', () => {
+      const text = 'We need a rockstar ninja who is aggressive and dominant.';
+      const results = [];
+      for (let i = 0; i < 5; i++) {
+        results.push(detectMasculineCoded(text));
+      }
+      const counts = results.map(r => r.count);
+      expect(new Set(counts).size).toBe(1);
+    });
+
+    it('detectExtrovertBias should produce consistent results across repeated calls', () => {
+      const text = 'Must be outgoing and high-energy in a fast-paced environment.';
+      const results = [];
+      for (let i = 0; i < 5; i++) {
+        results.push(detectExtrovertBias(text));
+      }
+      const counts = results.map(r => r.count);
+      expect(new Set(counts).size).toBe(1);
+    });
+
+    it('detectRedFlags should produce consistent results across repeated calls', () => {
+      const text = 'Must be a culture fit and work hard play hard.';
+      const results = [];
+      for (let i = 0; i < 5; i++) {
+        results.push(detectRedFlags(text));
+      }
+      const counts = results.map(r => r.count);
+      expect(new Set(counts).size).toBe(1);
+    });
+  });
+
+  describe('Unicode Normalization', () => {
+    it('zero-width spaces should not affect scores', () => {
+      const text = 'word '.repeat(450) + 'Salary: $100,000 - $150,000.';
+      const clean = validateDocument(text);
+      const withZWS = validateDocument(text.replace(/word /g, 'word\u200B '));
+      expect(withZWS.totalScore).toBe(clean.totalScore);
+    });
+
+    it('BOM should not affect scores', () => {
+      const text = 'word '.repeat(450) + 'Salary: $100,000 - $150,000.';
+      const clean = validateDocument(text);
+      const withBOM = validateDocument('\uFEFF' + text);
+      expect(withBOM.totalScore).toBe(clean.totalScore);
+    });
+  });
 });
 

@@ -271,5 +271,48 @@ A login feature.
       expect(getScoreLabel(20)).toBe('Incomplete');
     });
   });
+
+  describe('Issues Rollup', () => {
+    it('should include top-level issues array', () => {
+      const text = '# Summary\nA login feature.\n- [ ] Display login form\n- [ ] Validate email';
+      const result = validateDocument(text);
+      expect(Array.isArray(result.issues)).toBe(true);
+    });
+
+    it('should aggregate all dimension issues', () => {
+      const text = '# Summary\nA login feature.\n- [ ] Display login form\n- [ ] Validate email';
+      const result = validateDocument(text);
+      const expectedCount =
+        result.structure.issues.length +
+        result.clarity.issues.length +
+        result.testability.issues.length +
+        result.completeness.issues.length +
+        (result.slopDetection?.issues?.length || 0);
+      expect(result.issues.length).toBe(expectedCount);
+    });
+  });
+
+  describe('Unicode Normalization', () => {
+    it('zero-width spaces should not affect scores', () => {
+      const text = '# Summary\nA login feature.\n- [ ] Display login form within 200ms\n- [ ] Validate email format';
+      const clean = validateDocument(text);
+      const withZWS = validateDocument(text.replace(/# /g, '#\u200B '));
+      expect(withZWS.totalScore).toBe(clean.totalScore);
+    });
+
+    it('BOM should not affect scores', () => {
+      const text = '# Summary\nA login feature.\n- [ ] Display login form within 200ms';
+      const clean = validateDocument(text);
+      const withBOM = validateDocument('\uFEFF' + text);
+      expect(withBOM.totalScore).toBe(clean.totalScore);
+    });
+
+    it('NBSP should not affect scores', () => {
+      const text = '# Summary\nA login feature.\n- [ ] Display login form within 200ms';
+      const clean = validateDocument(text);
+      const withNBSP = validateDocument(text.replace(/ /g, '\u00A0'));
+      expect(withNBSP.totalScore).toBe(clean.totalScore);
+    });
+  });
 });
 

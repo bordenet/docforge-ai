@@ -9,6 +9,7 @@
  */
 
 import { getSlopPenalty } from '../../../shared/js/slop-scoring.js';
+import { normalizeText } from '../../../shared/js/validator.js';
 import { scoreClarity, scoreImpact, scoreAction, scoreSpecificity } from './validator-scoring.js';
 import { detectVersions } from './validator-detection.js';
 
@@ -45,13 +46,16 @@ export function validatePowerStatement(text) {
     };
   }
 
-  const clarity = scoreClarity(text);
-  const impact = scoreImpact(text);
-  const action = scoreAction(text);
-  const specificity = scoreSpecificity(text);
+  // Normalize text to strip invisible Unicode characters (ZWS, BOM, NBSP, etc.)
+  const normalized = normalizeText(text);
+
+  const clarity = scoreClarity(normalized);
+  const impact = scoreImpact(normalized);
+  const action = scoreAction(normalized);
+  const specificity = scoreSpecificity(normalized);
 
   // Detect Version A/B format
-  const versionDetection = detectVersions(text);
+  const versionDetection = detectVersions(normalized);
   let versionBonus = 0;
   const versionStrengths = [];
   const versionIssues = [];
@@ -70,7 +74,7 @@ export function validatePowerStatement(text) {
   }
 
   // AI slop detection
-  const slopPenalty = getSlopPenalty(text);
+  const slopPenalty = getSlopPenalty(normalized);
   let slopDeduction = 0;
   const slopIssues = [];
 

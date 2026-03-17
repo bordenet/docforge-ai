@@ -265,5 +265,41 @@ KPI: 30% improvement in customer satisfaction scores within 12 months.`;
       expect(getScoreLabel(15)).toBe('Incomplete');
     });
   });
+
+  describe('Issues Rollup', () => {
+    it('should include top-level issues array', () => {
+      const text = '## Problem\nRevenue declining 15%.\n## Solution\nImplement automation.';
+      const result = validateDocument(text);
+      expect(Array.isArray(result.issues)).toBe(true);
+    });
+
+    it('should aggregate all dimension issues', () => {
+      const text = '## Problem\nRevenue declining 15%.\n## Solution\nImplement automation.';
+      const result = validateDocument(text);
+      const expectedCount =
+        result.problemStatement.issues.length +
+        result.proposedSolution.issues.length +
+        result.businessImpact.issues.length +
+        result.implementationPlan.issues.length +
+        (result.slopDetection?.issues?.length || 0);
+      expect(result.issues.length).toBe(expectedCount);
+    });
+  });
+
+  describe('Unicode Normalization', () => {
+    it('zero-width spaces should not affect scores', () => {
+      const text = '## Problem\nRevenue declining 15%.\n## Solution\nImplement automation.';
+      const clean = validateDocument(text);
+      const withZWS = validateDocument(text.replace(/## /g, '##\u200B '));
+      expect(withZWS.totalScore).toBe(clean.totalScore);
+    });
+
+    it('BOM should not affect scores', () => {
+      const text = '## Problem\nRevenue declining 15%.\n## Solution\nImplement automation.';
+      const clean = validateDocument(text);
+      const withBOM = validateDocument('\uFEFF' + text);
+      expect(withBOM.totalScore).toBe(clean.totalScore);
+    });
+  });
 });
 

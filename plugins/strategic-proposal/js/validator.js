@@ -9,6 +9,7 @@
  */
 
 import { getSlopPenalty } from '../../../shared/js/slop-scoring.js';
+import { normalizeText } from '../../../shared/js/validator.js';
 import {
   scoreProblemStatement,
   scoreProposedSolution,
@@ -33,13 +34,16 @@ export function validateStrategicProposal(text) {
     };
   }
 
-  const problemStatement = scoreProblemStatement(text);
-  const proposedSolution = scoreProposedSolution(text);
-  const businessImpact = scoreBusinessImpact(text);
-  const implementationPlan = scoreImplementationPlan(text);
+  // Normalize text to strip invisible Unicode characters (ZWS, BOM, NBSP, etc.)
+  const normalized = normalizeText(text);
+
+  const problemStatement = scoreProblemStatement(normalized);
+  const proposedSolution = scoreProposedSolution(normalized);
+  const businessImpact = scoreBusinessImpact(normalized);
+  const implementationPlan = scoreImplementationPlan(normalized);
 
   // AI slop detection
-  const slopPenalty = getSlopPenalty(text);
+  const slopPenalty = getSlopPenalty(normalized);
   let slopDeduction = 0;
   const slopIssues = [];
 

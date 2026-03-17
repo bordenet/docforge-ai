@@ -12,6 +12,7 @@ import {
 } from './validator-config.js';
 
 import { extractMandatedSections, isInMandatedSection } from './validator-detection.js';
+import { normalizeText } from '../../../shared/js/validator.js';
 
 import {
   scoreWordCount,
@@ -101,20 +102,23 @@ export function validateDocument(text, postingType = 'external') {
     return createEmptyResult();
   }
 
+  // Normalize text to strip invisible Unicode characters (ZWS, BOM, NBSP, etc.)
+  const normalized = normalizeText(text);
+
   const feedback = [];
   let score = 100;
   const deductions = [];
 
   // Detect internal posting
   const isInternal = postingType === 'internal' ||
-                     /\*\*INTERNAL POSTING\*\*/i.test(text) ||
-                     /internal posting/i.test(text);
+                     /\*\*INTERNAL POSTING\*\*/i.test(normalized) ||
+                     /internal posting/i.test(normalized);
 
   // Get JD content validation
-  const jdValidation = validateJDContent(text);
+  const jdValidation = validateJDContent(normalized);
 
   // Score each dimension
-  const wordCountResult = scoreWordCount(text);
+  const wordCountResult = scoreWordCount(normalized);
   feedback.push(wordCountResult.feedback);
   if (wordCountResult.penalty > 0) {
     score -= wordCountResult.penalty;
@@ -142,21 +146,21 @@ export function validateDocument(text, postingType = 'external') {
     deductions.push(redFlagResult.deduction);
   }
 
-  const compensationResult = scoreCompensation(text, isInternal);
+  const compensationResult = scoreCompensation(normalized, isInternal);
   feedback.push(compensationResult.feedback);
   if (compensationResult.penalty > 0) {
     score -= compensationResult.penalty;
     deductions.push(compensationResult.deduction);
   }
 
-  const encouragementResult = scoreEncouragement(text);
+  const encouragementResult = scoreEncouragement(normalized);
   feedback.push(encouragementResult.feedback);
   if (encouragementResult.penalty > 0) {
     score -= encouragementResult.penalty;
     deductions.push(encouragementResult.deduction);
   }
 
-  const slopResult = scoreSlopPenalty(text);
+  const slopResult = scoreSlopPenalty(normalized);
   if (slopResult.feedback) {
     feedback.push(slopResult.feedback);
   }

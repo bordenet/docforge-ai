@@ -9,6 +9,7 @@
  */
 
 import { getSlopPenalty } from '../../../shared/js/slop-scoring.js';
+import { normalizeText } from '../../../shared/js/validator.js';
 import { scoreContext, scoreDecision, scoreConsequences, scoreStatus } from './validator-scoring.js';
 
 // Re-export detection functions for testing
@@ -46,13 +47,16 @@ export function validateADR(text) {
     };
   }
 
-  const context = scoreContext(text);
-  const decision = scoreDecision(text);
-  const consequences = scoreConsequences(text);
-  const status = scoreStatus(text);
+  // Normalize text to strip invisible Unicode characters (ZWS, BOM, NBSP, etc.)
+  const normalized = normalizeText(text);
+
+  const context = scoreContext(normalized);
+  const decision = scoreDecision(normalized);
+  const consequences = scoreConsequences(normalized);
+  const status = scoreStatus(normalized);
 
   // AI slop detection - ADRs should be precise and technical
-  const slopPenalty = getSlopPenalty(text);
+  const slopPenalty = getSlopPenalty(normalized);
   let slopDeduction = 0;
   const slopIssues = [];
 

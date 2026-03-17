@@ -286,5 +286,41 @@ Because our benchmark demonstrates clear advantages.`;
       expect(getScoreLabel(15)).toBe('Incomplete');
     });
   });
+
+  describe('Issues Rollup', () => {
+    it('should include top-level issues array', () => {
+      const text = '## Context\nWe need a decision.\n## Decision\nWe chose option A.';
+      const result = validateDocument(text);
+      expect(Array.isArray(result.issues)).toBe(true);
+    });
+
+    it('should aggregate all dimension issues', () => {
+      const text = '## Context\nWe need a decision.\n## Decision\nWe chose option A.';
+      const result = validateDocument(text);
+      const expectedCount =
+        result.context.issues.length +
+        result.decision.issues.length +
+        result.consequences.issues.length +
+        result.status.issues.length +
+        (result.slopDetection?.issues?.length || 0);
+      expect(result.issues.length).toBe(expectedCount);
+    });
+  });
+
+  describe('Unicode Normalization', () => {
+    it('zero-width spaces should not affect scores', () => {
+      const text = '## Context\nWe need a decision about scalability.\n## Decision\nWe chose option A.';
+      const clean = validateDocument(text);
+      const withZWS = validateDocument(text.replace(/## /g, '##\u200B '));
+      expect(withZWS.totalScore).toBe(clean.totalScore);
+    });
+
+    it('BOM should not affect scores', () => {
+      const text = '## Context\nWe need a decision.\n## Decision\nWe chose option A.';
+      const clean = validateDocument(text);
+      const withBOM = validateDocument('\uFEFF' + text);
+      expect(withBOM.totalScore).toBe(clean.totalScore);
+    });
+  });
 });
 
