@@ -14,9 +14,14 @@ export function scoreStrategicViability(text) {
   let score = 0;
   const maxScore = 20;
 
-  // Reset regex lastIndex for global patterns
+  // Reset regex lastIndex for ALL global patterns to prevent non-deterministic
+  // scoring when module-level regex objects retain state between calls.
+  // Must cover both STRATEGIC_VIABILITY_PATTERNS and COMPETITIVE_DEPTH_PATTERNS.
   const resetPatterns = () => {
     Object.values(STRATEGIC_VIABILITY_PATTERNS).forEach(p => {
+      if (p.global) p.lastIndex = 0;
+    });
+    Object.values(COMPETITIVE_DEPTH_PATTERNS).forEach(p => {
       if (p.global) p.lastIndex = 0;
     });
   };

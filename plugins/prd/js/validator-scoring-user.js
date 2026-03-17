@@ -92,6 +92,9 @@ export function scoreUserFocus(text) {
 
   // Customer evidence (0-5 pts)
   const customerEvidence = detectCustomerEvidence(text);
+  // Reset lastIndex on global patterns before .test() to prevent stale state
+  if (STRATEGIC_VIABILITY_PATTERNS.customerFAQ.global) STRATEGIC_VIABILITY_PATTERNS.customerFAQ.lastIndex = 0;
+  if (STRATEGIC_VIABILITY_PATTERNS.ahaQuote.global) STRATEGIC_VIABILITY_PATTERNS.ahaQuote.lastIndex = 0;
   const hasCustomerFAQ = STRATEGIC_VIABILITY_PATTERNS.customerFAQ.test(text);
   const hasAhaQuote = STRATEGIC_VIABILITY_PATTERNS.ahaQuote.test(text);
 

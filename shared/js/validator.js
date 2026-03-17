@@ -34,6 +34,38 @@ export { calculateSlopScore };
 export const detectSections = _detectSections;
 export const analyzeContentQuality = _analyzeContentQuality;
 
+/**
+ * Normalize text for consistent validation scoring.
+ * Strips invisible Unicode characters that vary between copy-paste sources
+ * (AI chat interfaces, rich text editors, different OS clipboards).
+ *
+ * Without this, the same document can score differently depending on
+ * how it was pasted — zero-width spaces break regex section detection,
+ * BOM/NBSP alter pattern matching, etc.
+ *
+ * @param {string} text - Raw text to normalize
+ * @returns {string} Normalized text
+ */
+export function normalizeText(text) {
+  if (!text) return text;
+  return text
+    // Remove BOM (U+FEFF) — added by some editors/clipboard operations
+    .replace(/\uFEFF/g, '')
+    // Remove zero-width spaces (U+200B) — inserted by browsers during copy-paste
+    .replace(/\u200B/g, '')
+    // Remove zero-width non-joiner (U+200C) and zero-width joiner (U+200D)
+    .replace(/[\u200C\u200D]/g, '')
+    // Remove word joiner (U+2060) and zero-width no-break space (U+FEFF already handled)
+    .replace(/\u2060/g, '')
+    // Remove left-to-right and right-to-left marks
+    .replace(/[\u200E\u200F\u202A-\u202E\u2066-\u2069]/g, '')
+    // Replace non-breaking spaces (U+00A0) with regular spaces
+    .replace(/\u00A0/g, ' ')
+    // Normalize line endings to Unix-style
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n');
+}
+
 // ============================================================================
 // Main Validation Function
 // ============================================================================
@@ -83,8 +115,12 @@ export function validateDocument(text, plugin) {
     return createEmptyResult(plugin);
   }
 
+  // Normalize text to strip invisible Unicode characters that cause
+  // non-deterministic scoring across different copy-paste sources
+  const normalizedText = normalizeText(text);
+
   // Check if this is a prompt rather than a document
-  const promptDetection = detectPrompt(text);
+  const promptDetection = detectPrompt(normalizedText);
   if (promptDetection.isPrompt) {
     return createPromptDetectedResult(plugin, promptDetection);
   }
@@ -93,7 +129,7 @@ export function validateDocument(text, plugin) {
   // Each plugin can define its own validateDocument function with domain-specific
   // scoring patterns (e.g., PRD checks for metrics, JD checks for inclusivity)
   if (plugin?.validateDocument && typeof plugin.validateDocument === 'function') {
-    return plugin.validateDocument(text);
+    return plugin.validateDocument(normalizedText);
   }
 
   // Fall back to generic dimension-based scoring if no plugin-specific validator
@@ -102,9 +138,9 @@ export function validateDocument(text, plugin) {
   let totalScore = 0;
   const allIssues = [];
 
-  // Score each dimension
+  // Score each dimension (using normalizedText)
   dimensions.forEach((dim, index) => {
-    const dimResult = scoreDimension(text, dim);
+    const dimResult = scoreDimension(normalizedText, dim);
     results[dim.name] = dimResult;
     results[`dimension${index + 1}`] = dimResult; // For app.js compatibility
     totalScore += dimResult.score;
@@ -112,8 +148,8 @@ export function validateDocument(text, plugin) {
   });
 
   // Apply slop penalty
-  const slopResult = calculateSlopScore(text);
-  const slopPenaltyResult = getSlopPenalty(text);
+  const slopResult = calculateSlopScore(normalizedText);
+  const slopPenaltyResult = getSlopPenalty(normalizedText);
   const slopPenalty = slopPenaltyResult.penalty || 0;
   totalScore = Math.max(0, totalScore - slopPenalty);
 

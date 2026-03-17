@@ -10,6 +10,7 @@
  */
 
 import { getSlopPenalty, calculateSlopScore } from '../../../shared/js/slop-scoring.js';
+import { normalizeText } from '../../../shared/js/validator.js';
 import { scoreDocumentStructure, scoreRequirementsClarity, scoreUserFocus, scoreTechnicalQuality } from './validator-scoring.js';
 import { scoreStrategicViability } from './validator-strategic.js';
 import { detectExpansionStubs } from './validator-detection.js';
@@ -49,17 +50,23 @@ export function validatePRD(text) {
     };
   }
 
-  const structure = scoreDocumentStructure(text);
-  const clarity = scoreRequirementsClarity(text);
-  const userFocus = scoreUserFocus(text);
-  const technical = scoreTechnicalQuality(text);
-  const strategicViability = scoreStrategicViability(text);
+  // Normalize text to strip invisible Unicode characters (ZWS, BOM, NBSP, etc.)
+  // that cause non-deterministic scoring across different copy-paste sources.
+  // Without this, the same document can score 17+ points differently depending
+  // on whether it was pasted from Claude, Gemini, or a rich text editor.
+  const normalized = normalizeText(text);
+
+  const structure = scoreDocumentStructure(normalized);
+  const clarity = scoreRequirementsClarity(normalized);
+  const userFocus = scoreUserFocus(normalized);
+  const technical = scoreTechnicalQuality(normalized);
+  const strategicViability = scoreStrategicViability(normalized);
 
   // Detect intentional expansion stubs from length checkpoint feature
-  const expansionStubs = detectExpansionStubs(text);
+  const expansionStubs = detectExpansionStubs(normalized);
 
   // AI slop detection (aligned with inline validator)
-  const slopPenalty = getSlopPenalty(text);
+  const slopPenalty = getSlopPenalty(normalized);
   let slopDeduction = 0;
   const slopIssues = [];
 
@@ -73,6 +80,17 @@ export function validatePRD(text) {
   const totalScore = Math.max(0,
     structure.score + clarity.score + userFocus.score + technical.score + strategicViability.score - slopDeduction
   );
+
+  // Aggregate all issues from all dimensions for the assistant completion banner
+  // (views-phase.js reads validationResult.issues for improvement suggestions)
+  const allIssues = [
+    ...structure.issues,
+    ...clarity.issues,
+    ...userFocus.issues,
+    ...technical.issues,
+    ...strategicViability.issues,
+    ...slopIssues,
+  ];
 
   return {
     totalScore,
@@ -93,6 +111,8 @@ export function validatePRD(text) {
       deduction: slopDeduction,
       issues: slopIssues,
     },
+    // Top-level issues array for assistant completion banner display
+    issues: allIssues,
     // Expansion stubs from length checkpoint feature (informational, no penalty)
     expansionStubs,
   };

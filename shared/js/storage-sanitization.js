@@ -18,9 +18,16 @@ export const MAX_CONTENT_LENGTH = 500000; // 500KB of text
 export function sanitizeString(value, maxLength = MAX_CONTENT_LENGTH) {
   if (value === null || value === undefined) return '';
   const str = String(value);
-  // Remove null bytes and other control characters (except newlines and tabs)
-  // eslint-disable-next-line no-control-regex
-  const cleaned = str.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+  const cleaned = str
+    // Remove null bytes and other control characters (except newlines and tabs)
+    // eslint-disable-next-line no-control-regex
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+    // Remove invisible Unicode characters that cause non-deterministic validator scoring
+    // BOM, zero-width spaces, zero-width joiners, word joiner
+    // eslint-disable-next-line no-misleading-character-class
+    .replace(/[\uFEFF\u200B\u200C\u200D\u2060\u200E\u200F\u202A-\u202E\u2066-\u2069]/g, '')
+    // Replace non-breaking spaces with regular spaces
+    .replace(/\u00A0/g, ' ');
   return cleaned.slice(0, maxLength);
 }
 

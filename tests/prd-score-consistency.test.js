@@ -72,6 +72,74 @@ describe('PRD Validator Score Consistency', () => {
     });
   });
 
+  describe('Unicode Normalization - Copy-Paste Resilience', () => {
+    test('zero-width spaces should not affect scores', () => {
+      // ZWS (U+200B) is commonly inserted by browsers during copy-paste from AI chat interfaces
+      const withZWS = fixtureContent.replace(/## /g, '##\u200B ');
+      const result = validatePRD(withZWS);
+      expect(result.totalScore).toBe(validationResult.totalScore);
+    });
+
+    test('BOM should not affect scores', () => {
+      // BOM (U+FEFF) is added by some text editors and clipboard operations
+      const withBOM = '\uFEFF' + fixtureContent;
+      const result = validatePRD(withBOM);
+      expect(result.totalScore).toBe(validationResult.totalScore);
+    });
+
+    test('non-breaking spaces should not affect scores', () => {
+      // NBSP (U+00A0) is common in copy-paste from web pages
+      const withNBSP = fixtureContent.replace(/ /g, '\u00A0');
+      const result = validatePRD(withNBSP);
+      expect(result.totalScore).toBe(validationResult.totalScore);
+    });
+
+    test('zero-width joiners should not affect scores', () => {
+      const withZWJ = fixtureContent.replace(/# /g, '#\u200D ');
+      const result = validatePRD(withZWJ);
+      expect(result.totalScore).toBe(validationResult.totalScore);
+    });
+
+    test('directional marks should not affect scores', () => {
+      const withLRM = fixtureContent.replace(/## /g, '##\u200E ');
+      const result = validatePRD(withLRM);
+      expect(result.totalScore).toBe(validationResult.totalScore);
+    });
+
+    test('Windows line endings should not affect scores', () => {
+      const withCRLF = fixtureContent.replace(/\n/g, '\r\n');
+      const result = validatePRD(withCRLF);
+      expect(result.totalScore).toBe(validationResult.totalScore);
+    });
+
+    test('multiple invisible characters combined should not affect scores', () => {
+      // Simulate worst-case copy-paste: BOM + ZWS + NBSP + directional marks
+      const corrupted = '\uFEFF' + fixtureContent
+        .replace(/## /g, '##\u200B ')
+        .replace(/\| /g, '|\u00A0')
+        .replace(/# /g, '#\u200E ');
+      const result = validatePRD(corrupted);
+      expect(result.totalScore).toBe(validationResult.totalScore);
+    });
+  });
+
+  describe('Issues Rollup', () => {
+    test('validatePRD should include top-level issues array', () => {
+      expect(Array.isArray(validationResult.issues)).toBe(true);
+    });
+
+    test('top-level issues should aggregate all dimension issues', () => {
+      const expectedIssueCount =
+        validationResult.structure.issues.length +
+        validationResult.clarity.issues.length +
+        validationResult.userFocus.issues.length +
+        validationResult.technical.issues.length +
+        validationResult.strategicViability.issues.length +
+        (validationResult.slopDetection?.issues?.length || 0);
+      expect(validationResult.issues.length).toBe(expectedIssueCount);
+    });
+  });
+
   describe('Dimension Alignment - Config', () => {
     test('should have exactly 5 scoring dimensions in config.js', () => {
       expect(prdConfig.scoringDimensions).toHaveLength(5);
