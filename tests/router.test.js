@@ -41,6 +41,8 @@ import {
   navigateTo,
   initRouter,
 } from '../shared/js/router.js';
+// eslint-disable-next-line import-x/first
+import { getAllPlugins } from '../shared/js/plugin-registry.js';
 
 describe('Router', () => {
   describe('getCurrentDocumentType', () => {
@@ -229,4 +231,50 @@ describe('Router', () => {
       expect(lastParams.phase).toBe(2);
     });
   });
+
+  describe('Validator URL routing contract', () => {
+    it('should resolve PRD type from URL parameter', () => {
+      mockLocation.search = '?type=prd';
+      expect(getCurrentDocumentType()).toBe('prd');
+    });
+
+    it('should resolve all registered plugin types from URL', () => {
+      const pluginIds = ['one-pager', 'prd', 'adr', 'pr-faq', 'power-statement',
+        'acceptance-criteria', 'jd', 'business-justification', 'strategic-proposal'];
+
+      for (const id of pluginIds) {
+        mockLocation.search = `?type=${id}`;
+        expect(getCurrentDocumentType()).toBe(id);
+      }
+    });
+
+    it('should default to one-pager when type parameter is empty', () => {
+      mockLocation.search = '?type=';
+      expect(getCurrentDocumentType()).toBe('one-pager');
+    });
+
+    it('should default to one-pager when type parameter is missing', () => {
+      mockLocation.search = '';
+      expect(getCurrentDocumentType()).toBe('one-pager');
+    });
+
+    it('plugin configs should use id (not type) for validator URL routing', () => {
+      // Regression test: views-phase.js previously used plugin.type which doesn't exist,
+      // causing all validator URLs to fall through to one-pager default.
+      // The fix uses plugin.id which is a required field on all plugins.
+      const plugins = getAllPlugins();
+
+      for (const plugin of plugins) {
+        // Every plugin must have an id (used for URL routing)
+        expect(plugin.id).toBeDefined();
+        expect(typeof plugin.id).toBe('string');
+        expect(plugin.id.length).toBeGreaterThan(0);
+
+        // The id must be recognized by the router
+        mockLocation.search = `?type=${plugin.id}`;
+        expect(getCurrentDocumentType()).toBe(plugin.id);
+      }
+    });
+  });
 });
+

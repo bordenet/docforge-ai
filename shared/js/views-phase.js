@@ -86,7 +86,7 @@ export function renderPhaseContent(plugin, project, phase) {
             <button id="export-final-btn" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
               📋 Copy Final Document
             </button>
-            <button id="validate-btn" data-validator-url="../validator/?type=${encodeURIComponent(plugin.type || '')}" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+            <button id="validate-btn" data-validator-url="../validator/?type=${encodeURIComponent(plugin.id || '')}" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
               📊 Copy & Validate ↗
             </button>
           </div>
