@@ -67,7 +67,7 @@ export function detectSpecificity(text) {
   const comparisonMatches = text.match(/\b(increased|decreased|reduced|improved|grew|doubled|tripled|halved|cut)\s+by\s+\d+/gi) || [];
 
   const hasContext = /\b(at|for|with|across|within)\s+[A-Z][a-zA-Z]*/i.test(text);
-  const hasTeamContext = /\b(team|department|organization|company|division|corp|inc|llc)\b/gi.test(text);
+  const hasTeamContext = /\b(team|department|organization|company|division|corp|inc|llc)\b/i.test(text);
   const hasTimeMetrics = timeMatches.length > 0 || timeframeMatches.length > 0;
   const timeCount = timeMatches.length + timeframeMatches.length;
 

@@ -140,6 +140,19 @@ export function validateOnePager(text) {
   const isCircularCapped = circularLogic.isCircular && rawScore > 50;
   const totalScore = Math.max(0, isCircularCapped ? 50 : rawScore);
 
+  // Aggregate all issues from all dimensions for the assistant completion banner
+  const allIssues = [
+    ...problemClarity.issues,
+    ...solution.issues,
+    ...scope.issues,
+    ...completeness.issues,
+    ...slopIssues,
+    ...circularIssues,
+    ...baselineIssues,
+    ...vagueIssues,
+    ...wordCountIssues,
+  ];
+
   return {
     totalScore,
     problemClarity,
@@ -175,7 +188,9 @@ export function validateOnePager(text) {
       limit: WORD_LIMIT,
       deduction: wordCountDeduction,
       issues: wordCountIssues
-    }
+    },
+    // Top-level issues array for assistant completion banner display
+    issues: allIssues,
   };
 }
 

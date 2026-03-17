@@ -85,6 +85,15 @@ export function validateDocument(text) {
     structure.score + clarity.score + testability.score + completeness.score - slopDeduction
   );
 
+  // Aggregate all issues from all dimensions for the assistant completion banner
+  const allIssues = [
+    ...structure.issues,
+    ...clarity.issues,
+    ...testability.issues,
+    ...completeness.issues,
+    ...slopIssues,
+  ];
+
   return {
     totalScore,
     structure,
@@ -102,7 +111,9 @@ export function validateDocument(text) {
       ...slopPenalty,
       deduction: slopDeduction,
       issues: slopIssues
-    }
+    },
+    // Top-level issues array for assistant completion banner display
+    issues: allIssues,
   };
 }
 

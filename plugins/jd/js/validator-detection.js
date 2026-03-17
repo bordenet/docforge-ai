@@ -63,7 +63,7 @@ export function detectMasculineCoded(text) {
   const foundWords = [];
 
   MASCULINE_CODED.forEach(word => {
-    const regex = new RegExp(`\\b${word}\\b`, 'gi');
+    const regex = new RegExp(`\\b${word}\\b`, 'i');
     if (regex.test(cleanText)) {
       if (!isInMandatedSection(word, mandatedSections)) {
         foundWords.push(word.toLowerCase());
@@ -89,7 +89,7 @@ export function detectExtrovertBias(text) {
 
   EXTROVERT_BIAS.forEach(phrase => {
     const flexiblePattern = phrase.replace(/[-\s]+/g, '[-\\s]+');
-    const regex = new RegExp(`\\b${flexiblePattern}\\b`, 'gi');
+    const regex = new RegExp(`\\b${flexiblePattern}\\b`, 'i');
     if (regex.test(cleanText)) {
       if (!isInMandatedSection(phrase, mandatedSections)) {
         foundPhrases.push(phrase.toLowerCase());
@@ -115,7 +115,7 @@ export function detectRedFlags(text) {
 
   RED_FLAGS.forEach(phrase => {
     const flexiblePattern = phrase.replace(/[-\s]+/g, '[-\\s]+');
-    const regex = new RegExp(`\\b${flexiblePattern}\\b`, 'gi');
+    const regex = new RegExp(`\\b${flexiblePattern}\\b`, 'i');
     if (regex.test(cleanText)) {
       if (!isInMandatedSection(phrase, mandatedSections)) {
         foundPhrases.push(phrase.toLowerCase());

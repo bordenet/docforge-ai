@@ -349,6 +349,9 @@ export function detectVagueQuantifiers(text) {
  * @returns {Object} Stakeholder table quality results
  */
 export function detectStakeholderTableQuality(text) {
+  // Reset lastIndex on global patterns before .test() to prevent stale state
+  if (STAKEHOLDER_TABLE_PATTERNS.raciTable.global) STAKEHOLDER_TABLE_PATTERNS.raciTable.lastIndex = 0;
+  if (STAKEHOLDER_TABLE_PATTERNS.roleTable.global) STAKEHOLDER_TABLE_PATTERNS.roleTable.lastIndex = 0;
   const hasRaciTable = STAKEHOLDER_TABLE_PATTERNS.raciTable.test(text);
   const hasRoleTable = STAKEHOLDER_TABLE_PATTERNS.roleTable.test(text);
   const simpleListMatches = text.match(STAKEHOLDER_TABLE_PATTERNS.simpleList) || [];

@@ -54,6 +54,15 @@ export function validateStrategicProposal(text) {
     problemStatement.score + proposedSolution.score + businessImpact.score + implementationPlan.score - slopDeduction
   );
 
+  // Aggregate all issues from all dimensions for the assistant completion banner
+  const allIssues = [
+    ...problemStatement.issues,
+    ...proposedSolution.issues,
+    ...businessImpact.issues,
+    ...implementationPlan.issues,
+    ...slopIssues,
+  ];
+
   return {
     totalScore,
     problemStatement,
@@ -69,7 +78,9 @@ export function validateStrategicProposal(text) {
       ...slopPenalty,
       deduction: slopDeduction,
       issues: slopIssues
-    }
+    },
+    // Top-level issues array for assistant completion banner display
+    issues: allIssues,
   };
 }
 

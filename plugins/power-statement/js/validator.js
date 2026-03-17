@@ -85,6 +85,16 @@ export function validatePowerStatement(text) {
     clarity.score + impact.score + action.score + specificity.score + versionBonus - slopDeduction
   ));
 
+  // Aggregate all issues from all dimensions for the assistant completion banner
+  const allIssues = [
+    ...clarity.issues,
+    ...impact.issues,
+    ...action.issues,
+    ...specificity.issues,
+    ...slopIssues,
+    ...versionIssues,
+  ];
+
   return {
     totalScore,
     clarity,
@@ -106,7 +116,9 @@ export function validatePowerStatement(text) {
       ...slopPenalty,
       deduction: slopDeduction,
       issues: slopIssues
-    }
+    },
+    // Top-level issues array for assistant completion banner display
+    issues: allIssues,
   };
 }
 

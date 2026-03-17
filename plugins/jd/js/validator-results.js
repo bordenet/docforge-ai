@@ -67,6 +67,14 @@ export function assembleResult(score, feedback, deductions, wordCountResult, jdV
     ...(encouragementDeduction > 0 ? ['Missing encouragement statement'] : [])
   ];
 
+  // Aggregate all issues from all dimensions for the assistant completion banner
+  const allIssues = [
+    ...lengthIssues,
+    ...inclusivityIssues,
+    ...cultureIssues,
+    ...transparencyIssues,
+  ];
+
   return {
     score,
     totalScore: score,
@@ -85,7 +93,9 @@ export function assembleResult(score, feedback, deductions, wordCountResult, jdV
     length: { score: rawLength, maxScore: 25, issues: lengthIssues },
     inclusivity: { score: rawInclusivity, maxScore: 25, issues: inclusivityIssues },
     culture: { score: rawCulture, maxScore: 25, issues: cultureIssues },
-    transparency: { score: rawTransparency, maxScore: 25, issues: transparencyIssues }
+    transparency: { score: rawTransparency, maxScore: 25, issues: transparencyIssues },
+    // Top-level issues array for assistant completion banner display
+    issues: allIssues,
   };
 }
 

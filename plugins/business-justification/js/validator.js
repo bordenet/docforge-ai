@@ -99,6 +99,15 @@ export function validateBusinessJustification(text) {
     optionsAnalysis.score + executionCompleteness.score - slopDeduction
   );
 
+  // Aggregate all issues from all dimensions for the assistant completion banner
+  const allIssues = [
+    ...strategicEvidence.issues,
+    ...financialJustification.issues,
+    ...optionsAnalysis.issues,
+    ...executionCompleteness.issues,
+    ...slopIssues,
+  ];
+
   return {
     totalScore,
     strategicEvidence,
@@ -123,7 +132,9 @@ export function validateBusinessJustification(text) {
       ...slopPenalty,
       deduction: slopDeduction,
       issues: slopIssues
-    }
+    },
+    // Top-level issues array for assistant completion banner display
+    issues: allIssues,
   };
 }
 

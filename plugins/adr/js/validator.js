@@ -68,6 +68,15 @@ export function validateADR(text) {
     context.score + decision.score + consequences.score + status.score - slopDeduction
   );
 
+  // Aggregate all issues from all dimensions for the assistant completion banner
+  const allIssues = [
+    ...context.issues,
+    ...decision.issues,
+    ...consequences.issues,
+    ...status.issues,
+    ...slopIssues,
+  ];
+
   return {
     totalScore,
     context,
@@ -83,7 +92,9 @@ export function validateADR(text) {
       ...slopPenalty,
       deduction: slopDeduction,
       issues: slopIssues
-    }
+    },
+    // Top-level issues array for assistant completion banner display
+    issues: allIssues,
   };
 }
 
