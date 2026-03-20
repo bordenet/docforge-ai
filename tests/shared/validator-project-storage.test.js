@@ -3,7 +3,12 @@
  * Ensures validator state is project-scoped (not a global singleton)
  */
 
-import { saveProject, getProject, clearAllProjects } from '../../shared/js/storage.js';
+import {
+  saveProject,
+  getProject,
+  getValidatorState,
+  clearAllProjects,
+} from '../../shared/js/storage.js';
 import { createProjectValidatorStorage } from '../../shared/js/validator-project-storage.js';
 
 const DB = 'one-pager-docforge-db';
@@ -63,6 +68,14 @@ describe('Validator Project Storage (project-scoped)', () => {
     const current = await storage.getCurrentVersion();
     expect(current.totalVersions).toBe(2);
     expect(current.markdown).toBe('# V3');
+  });
+
+  test('does not create validator state for missing project', async () => {
+    const projectId = 'does-not-exist';
+    const storage = createProjectValidatorStorage({ dbName: DB, projectId, phaseNumber: 3 });
+
+    await expect(storage.loadDraft()).rejects.toThrow('Project not found');
+    expect(await getValidatorState(DB, projectId)).toBeNull();
   });
 });
 

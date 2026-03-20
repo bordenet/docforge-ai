@@ -43,7 +43,7 @@ let currentPlugin = null;
 let currentResult = null;
 let currentPrompt = null;
 let storage = null; // Initialized per document type
-let attachedContext = null; // { projectId, phaseNumber } when in attached mode
+let attachedContext = null; // { projectId, phaseNumber, canonicalMarkdown } when in attached mode
 
 // State accessor functions for modules
 function getState() {
@@ -70,16 +70,22 @@ async function initValidator() {
   const attachedPhase = attachedProjectId ? phaseFromQuery || 3 : null;
 
 	  attachedContext = attachedProjectId
-	    ? { projectId: attachedProjectId, phaseNumber: attachedPhase || 3 }
+	    ? { projectId: attachedProjectId, phaseNumber: attachedPhase || 3, canonicalMarkdown: '' }
+	    : null;
+
+	  const attachedProject = attachedProjectId
+	    ? await getProject(currentPlugin.dbName, attachedProjectId)
 	    : null;
 
   // Initialize storage
   storage = attachedProjectId
-    ? createProjectValidatorStorage({
-      dbName: currentPlugin.dbName,
-      projectId: attachedProjectId,
-      phaseNumber: attachedPhase || 3,
-    })
+    ? (attachedProject
+	      ? createProjectValidatorStorage({
+	        dbName: currentPlugin.dbName,
+	        projectId: attachedProjectId,
+	        phaseNumber: attachedPhase || 3,
+	      })
+	      : null)
     : createStorage(`${currentPlugin.id}-validator-history`);
 
   // Initialize sub-modules with state accessors
@@ -98,24 +104,39 @@ async function initValidator() {
   const editor = document.getElementById('editor');
 
   if (attachedProjectId && editor) {
-    const draft = await storage.loadDraft();
-    if (draft && draft.markdown) {
-	      showAttachedError(null);
-      editor.value = draft.markdown;
-      runValidation();
+    if (!attachedProject) {
+      // Hard error: do not allow editing/saving when the project doesn't exist.
+      showAttachedError('Project not found');
+      showAttachedStatus('Attached: Project not found');
+      setMainControlsEnabled(false);
     } else {
-      // If the state store is empty, attempt to surface a helpful error message.
-      const { error } = await loadAttachedMarkdown({
-        plugin: currentPlugin,
-        projectId: attachedProjectId,
-        phase: attachedPhase || 3,
-      });
-	      const msg = error || 'Unable to load project document';
-	      showAttachedError(msg);
-	      showToast(msg, 'warning');
+      setMainControlsEnabled(true);
+
+      const canonical = getPhaseOutputInternal(attachedProject, attachedPhase || 3) || '';
+      attachedContext.canonicalMarkdown = canonical;
+      if (!canonical.trim()) {
+        showAttachedError(`Phase ${attachedPhase || 3} output is empty`);
+      } else {
+        showAttachedError(null);
+      }
+
+      const draft = await storage.loadDraft();
+      editor.value = draft?.markdown || '';
+
+      if (editor.value.trim()) {
+        runValidation();
+      }
+
+      if (editor.value === canonical) {
+        showAttachedStatus('Attached: Editing project output');
+      } else {
+        showAttachedStatus('Attached: Editing draft (autosaved)');
+      }
     }
   } else {
 	    showAttachedError(null);
+    showAttachedStatus(null);
+    setMainControlsEnabled(true);
     // Standalone mode: Load saved draft if available
     const draft = storage.loadDraft();
     if (draft && draft.markdown && editor) {
@@ -196,21 +217,28 @@ function showAttachedError(message) {
   }
 }
 
-async function loadAttachedMarkdown({ plugin, projectId, phase }) {
-  try {
-    const project = await getProject(plugin.dbName, projectId);
-    if (!project) return { markdown: '', error: 'Project not found' };
+function showAttachedStatus(message) {
+  const el = document.getElementById('attached-status');
+  if (!el) return;
 
-    const markdown = getPhaseOutputInternal(project, phase);
-    if (!markdown || !markdown.trim()) {
-      return { markdown: '', error: `Phase ${phase} output is empty` };
-    }
-
-    return { markdown, error: null };
-  } catch (error) {
-    logger.error('Failed to load attached project markdown', error, 'validator');
-    return { markdown: '', error: 'Unable to access project storage' };
+  if (message) {
+    el.textContent = message;
+    el.classList.remove('hidden');
+  } else {
+    el.textContent = '';
+    el.classList.add('hidden');
   }
+}
+
+function setMainControlsEnabled(enabled) {
+  const editor = document.getElementById('editor');
+  if (editor) editor.disabled = !enabled;
+
+  const ids = ['btn-apply', 'btn-save', 'btn-back', 'btn-forward', 'btn-validate', 'btn-clear'];
+  ids.forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.disabled = !enabled;
+  });
 }
 
 /**
@@ -269,6 +297,11 @@ async function updateVersionDisplay() {
 }
 
 async function handleSave() {
+  if (!storage) {
+    showToast('No document loaded to save', 'warning');
+    return;
+  }
+
   const editor = document.getElementById('editor');
   const content = editor?.value || '';
 
@@ -289,6 +322,8 @@ async function handleSave() {
 }
 
 async function handleGoBack() {
+  if (!storage) return;
+
   const editor = document.getElementById('editor');
   const version = await storage.goBack();
   if (version && editor) {
@@ -300,6 +335,8 @@ async function handleGoBack() {
 }
 
 async function handleGoForward() {
+  if (!storage) return;
+
   const editor = document.getElementById('editor');
   const version = await storage.goForward();
   if (version && editor) {
@@ -316,26 +353,53 @@ async function handleApplyToProject() {
     return;
   }
 
+  const applyBtn = document.getElementById('btn-apply');
+  const priorLabel = applyBtn?.textContent || null;
+  if (applyBtn) {
+    applyBtn.disabled = true;
+    applyBtn.textContent = 'Applying…';
+  }
+
   const editor = document.getElementById('editor');
   const content = editor?.value || '';
   if (content.trim().length < 3) {
+    if (applyBtn) {
+      applyBtn.disabled = false;
+      if (priorLabel) applyBtn.textContent = priorLabel;
+    }
     showToast('Nothing to apply', 'warning');
     return;
   }
 
-  const updated = await updateProjectPhaseOutput(
-    currentPlugin.dbName,
-    attachedContext.projectId,
-    attachedContext.phaseNumber,
-    content
-  );
+  try {
+    const updated = await updateProjectPhaseOutput(
+      currentPlugin.dbName,
+      attachedContext.projectId,
+      attachedContext.phaseNumber,
+      content
+    );
 
-  if (!updated) {
-    showToast('Project not found', 'error');
-    return;
+    if (!updated) {
+      showAttachedError('Project not found');
+      showToast('Project not found', 'error');
+      return;
+    }
+
+    // Update local attached-mode context.
+    attachedContext.canonicalMarkdown = content;
+    showAttachedError(null);
+    showAttachedStatus(`Applied to project at ${new Date().toLocaleTimeString()}`);
+    showToast('Applied to project!', 'success');
+  } finally {
+    if (applyBtn) {
+      // Keep the disabled state observable (and UX-consistent) even if IndexedDB writes are very fast.
+      await new Promise((resolve) => {
+        setTimeout(resolve, 50);
+      });
+      applyBtn.disabled = false;
+      applyBtn.textContent = priorLabel || '⬆️ Apply to Project';
+    }
   }
-
-  showToast('Applied to project!', 'success');
 }
 
 // ============================================================
@@ -369,6 +433,14 @@ function setupEventListeners() {
     const DEBOUNCE_MS = 400;
 
     editor.addEventListener('input', () => {
+	      if (attachedContext) {
+	        showAttachedStatus('Attached: Editing draft (autosaved)');
+	        if (!attachedContext.canonicalMarkdown?.trim() && editor.value.trim()) {
+	          // User started writing; clear the "empty phase output" warning.
+	          showAttachedError(null);
+	        }
+	      }
+
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => {
         storage.saveDraft(editor.value).catch((error) => {
@@ -378,6 +450,10 @@ function setupEventListeners() {
     });
 
     editor.addEventListener('blur', () => {
+	      if (attachedContext) {
+	        showAttachedStatus('Attached: Editing draft (autosaved)');
+	      }
+
       storage.saveDraft(editor.value).catch((error) => {
         logger.error('Failed to save validator draft', error, 'validator');
       });

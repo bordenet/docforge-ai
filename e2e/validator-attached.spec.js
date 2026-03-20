@@ -96,10 +96,17 @@ test.describe('Validator (project-attached mode)', () => {
 
     const edited = `${seed}\n\n## Applied\nThis should save back to the project.`;
     await page.fill('#editor', edited);
+
+    const applyBtn = page.locator('#btn-apply');
+    await expect(applyBtn).toBeEnabled();
     await page.click('#btn-apply');
+    await expect(applyBtn).toBeDisabled();
 
     // Wait for apply to complete (toast is emitted after IndexedDB write)
     await expect(page.locator('#toast-container')).toContainText('Applied to project!');
+
+    await expect(page.locator('#attached-status')).toContainText('Applied');
+    await expect(applyBtn).toBeEnabled();
 
     await page.goto(`/assistant/?type=one-pager#project/${projectId}`);
     await expect(page.locator('#response-textarea')).toHaveValue(edited);
@@ -140,6 +147,9 @@ test.describe('Validator (project-attached mode)', () => {
     await expect(page.locator('#attached-badge')).toBeVisible();
     await expect(page.locator('#attached-error')).toBeVisible();
     await expect(page.locator('#attached-error')).toContainText('Project not found');
+
+    // Should not allow editing/saving when the project doesn't exist.
+    await expect(page.locator('#editor')).toBeDisabled();
   });
 
   test('shows an attached-mode error state when phase output is empty', async ({ page }) => {

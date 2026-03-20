@@ -43,8 +43,12 @@ export function createProjectValidatorStorage({ dbName, projectId, phaseNumber, 
     let state = await getValidatorState(dbName, projectId);
 
     if (!state) {
-      const project = await getProject(dbName, projectId);
-      const seed = project ? getPhaseOutputInternal(project, phaseNumber) : '';
+	      const project = await getProject(dbName, projectId);
+	      if (!project) {
+	        // Hard contract: do not create validatorState for non-existent projects.
+	        throw new Error('Project not found');
+	      }
+	      const seed = getPhaseOutputInternal(project, phaseNumber) || '';
       const now = new Date().toISOString();
 
       const history = createEmptyHistory();
@@ -71,8 +75,11 @@ export function createProjectValidatorStorage({ dbName, projectId, phaseNumber, 
 
     if (!state.phases) state.phases = {};
     if (!state.phases[phaseKey]) {
-      const project = await getProject(dbName, projectId);
-      const seed = project ? getPhaseOutputInternal(project, phaseNumber) : '';
+	      const project = await getProject(dbName, projectId);
+	      if (!project) {
+	        throw new Error('Project not found');
+	      }
+	      const seed = getPhaseOutputInternal(project, phaseNumber) || '';
       const now = new Date().toISOString();
 
       const history = createEmptyHistory();
