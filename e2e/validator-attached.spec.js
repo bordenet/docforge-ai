@@ -67,5 +67,39 @@ test.describe('Validator (project-attached mode)', () => {
     await expect(page.locator('#attached-badge')).toBeVisible();
     await expect(page.locator('#editor')).toHaveValue(edited);
   });
+
+  test('can apply validator edits back to the Assistant project phase output', async ({ page }) => {
+    await page.goto('/assistant/?type=one-pager');
+    await page.waitForLoadState('networkidle');
+
+    const projectId = 'e2e-attached-project-3';
+    const seed = '# Seed\n\nHello';
+
+    await page.evaluate(
+      async ({ projectId: pid, seed: md }) => {
+        const { saveProject } = await import('/shared/js/storage.js');
+        await saveProject('one-pager-docforge-db', {
+          id: pid,
+          title: 'Attached Mode Apply',
+          currentPhase: 3,
+          phases: {
+            3: { response: md, completed: true },
+          },
+          phase3_output: md,
+        });
+      },
+      { projectId, seed }
+    );
+
+    await page.goto(`/validator/?type=one-pager&project=${projectId}&phase=3`);
+    await expect(page.locator('#attached-badge')).toBeVisible();
+
+    const edited = `${seed}\n\n## Applied\nThis should save back to the project.`;
+    await page.fill('#editor', edited);
+    await page.click('#btn-apply');
+
+    await page.goto(`/assistant/?type=one-pager#project/${projectId}`);
+    await expect(page.locator('#response-textarea')).toHaveValue(edited);
+  });
 });
 

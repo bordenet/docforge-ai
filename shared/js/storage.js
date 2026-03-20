@@ -228,6 +228,46 @@ export async function deleteProject(dbName, id) {
 }
 
 /**
+ * Update (or create) a phase response/output for an existing project.
+ * Used by the Validator in project-attached mode to write back improvements.
+ *
+ * NOTE: This intentionally updates the canonical project record (and therefore updatedAt)
+ * only on explicit user action.
+ *
+ * @param {string} dbName - Database name
+ * @param {string} projectId - Project ID
+ * @param {number} phaseNumber - Phase number (1-3)
+ * @param {string} markdown - Phase output markdown
+ * @returns {Promise<Object|null>} Updated project or null if not found
+ */
+export async function updateProjectPhaseOutput(dbName, projectId, phaseNumber, markdown) {
+  const project = await getProject(dbName, projectId);
+  if (!project) return null;
+
+  const phase = Number(phaseNumber);
+  if (![1, 2, 3].includes(phase)) {
+    throw new Error('phaseNumber must be 1, 2, or 3');
+  }
+
+  if (!project.phases) project.phases = {};
+  if (!project.phases[phase]) {
+    project.phases[phase] = { prompt: '', response: '', completed: false };
+  }
+
+  project.phases[phase].response = markdown;
+  project.phases[phase].completed = true;
+
+  // Backward-compatible legacy field (used by older exports and some helpers)
+  project[`phase${phase}_output`] = markdown;
+
+  if (!project.currentPhase || project.currentPhase < phase) {
+    project.currentPhase = phase;
+  }
+
+  return saveProject(dbName, project);
+}
+
+/**
  * Clear all projects (for testing)
  * @param {string} dbName - Database name
  * @returns {Promise<void>}

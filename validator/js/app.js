@@ -16,7 +16,7 @@ import { logger } from '../../shared/js/logger.js';
 import { toggleDarkMode, initTheme } from '../../shared/js/theme.js';
 import { createStorage } from '../../shared/js/validator-storage.js';
 import { createProjectValidatorStorage } from '../../shared/js/validator-project-storage.js';
-import { getProject } from '../../shared/js/storage.js';
+import { getProject, updateProjectPhaseOutput } from '../../shared/js/storage.js';
 import { getPhaseOutputInternal } from '../../shared/js/workflow-config.js';
 import { initAnalytics, trackValidation } from '../../shared/js/analytics.js';
 // Display functions
@@ -43,6 +43,7 @@ let currentPlugin = null;
 let currentResult = null;
 let currentPrompt = null;
 let storage = null; // Initialized per document type
+let attachedContext = null; // { projectId, phaseNumber } when in attached mode
 
 // State accessor functions for modules
 function getState() {
@@ -67,6 +68,10 @@ async function initValidator() {
   const attachedProjectId = getProjectIdFromQuery();
   const phaseFromQuery = getPhaseFromQuery();
   const attachedPhase = attachedProjectId ? phaseFromQuery || 3 : null;
+
+	  attachedContext = attachedProjectId
+	    ? { projectId: attachedProjectId, phaseNumber: attachedPhase || 3 }
+	    : null;
 
   // Initialize storage
   storage = attachedProjectId
@@ -142,6 +147,7 @@ function updateHeader(plugin, { attachedProjectId } = {}) {
   }
 
   const attachedBadge = document.getElementById('attached-badge');
+	  const applyBtn = document.getElementById('btn-apply');
   if (attachedBadge) {
     if (attachedProjectId) {
       attachedBadge.classList.remove('hidden');
@@ -149,6 +155,14 @@ function updateHeader(plugin, { attachedProjectId } = {}) {
       attachedBadge.classList.add('hidden');
     }
   }
+
+	  if (applyBtn) {
+	    if (attachedProjectId) {
+	      applyBtn.classList.remove('hidden');
+	    } else {
+	      applyBtn.classList.add('hidden');
+	    }
+	  }
 }
 
 async function loadAttachedMarkdown({ plugin, projectId, phase }) {
@@ -265,6 +279,34 @@ async function handleGoForward() {
   }
 }
 
+async function handleApplyToProject() {
+  if (!attachedContext) {
+    showToast('Not in project-attached mode', 'warning');
+    return;
+  }
+
+  const editor = document.getElementById('editor');
+  const content = editor?.value || '';
+  if (content.trim().length < 3) {
+    showToast('Nothing to apply', 'warning');
+    return;
+  }
+
+  const updated = await updateProjectPhaseOutput(
+    currentPlugin.dbName,
+    attachedContext.projectId,
+    attachedContext.phaseNumber,
+    content
+  );
+
+  if (!updated) {
+    showToast('Project not found', 'error');
+    return;
+  }
+
+  showToast('Applied to project!', 'success');
+}
+
 // ============================================================
 // Event Listeners
 // ============================================================
@@ -328,6 +370,12 @@ function setupEventListeners() {
       showToast('Failed to save', 'error');
     });
   });
+	  document.getElementById('btn-apply')?.addEventListener('click', () => {
+	    handleApplyToProject().catch((error) => {
+	      logger.error('Apply to project failed', error, 'validator');
+	      showToast('Failed to apply to project', 'error');
+	    });
+	  });
   document.getElementById('btn-back')?.addEventListener('click', () => {
     handleGoBack().catch((error) => {
       logger.error('Go back failed', error, 'validator');
