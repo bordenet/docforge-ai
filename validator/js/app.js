@@ -15,6 +15,7 @@ import { validateDocument } from '../../shared/js/validator.js';
 import { logger } from '../../shared/js/logger.js';
 import { toggleDarkMode, initTheme } from '../../shared/js/theme.js';
 import { createStorage } from '../../shared/js/validator-storage.js';
+import { createProjectValidatorStorage } from '../../shared/js/validator-project-storage.js';
 import { getProject } from '../../shared/js/storage.js';
 import { getPhaseOutputInternal } from '../../shared/js/workflow-config.js';
 import { initAnalytics, trackValidation } from '../../shared/js/analytics.js';
@@ -63,16 +64,22 @@ async function initValidator() {
   const docType = getCurrentDocumentType();
   currentPlugin = getPlugin(docType) || getPlugin('one-pager');
 
-  // Initialize storage with document-type-specific key
-  storage = createStorage(`${currentPlugin.id}-validator-history`);
+  const attachedProjectId = getProjectIdFromQuery();
+  const phaseFromQuery = getPhaseFromQuery();
+  const attachedPhase = attachedProjectId ? phaseFromQuery || 3 : null;
+
+  // Initialize storage
+  storage = attachedProjectId
+    ? createProjectValidatorStorage({
+      dbName: currentPlugin.dbName,
+      projectId: attachedProjectId,
+      phaseNumber: attachedPhase || 3,
+    })
+    : createStorage(`${currentPlugin.id}-validator-history`);
 
   // Initialize sub-modules with state accessors
   initPowerups(getState, setPrompt);
   initLLMMode(getState, setPrompt);
-
-  const attachedProjectId = getProjectIdFromQuery();
-  const phaseFromQuery = getPhaseFromQuery();
-  const attachedPhase = attachedProjectId ? phaseFromQuery || 3 : null;
 
   // Update UI for current plugin
   updateHeader(currentPlugin, { attachedProjectId });
@@ -86,23 +93,18 @@ async function initValidator() {
   const editor = document.getElementById('editor');
 
   if (attachedProjectId && editor) {
-    const { markdown, error } = await loadAttachedMarkdown({
-      plugin: currentPlugin,
-      projectId: attachedProjectId,
-      phase: attachedPhase || 3,
-    });
-
-    if (markdown) {
-      editor.value = markdown;
+    const draft = await storage.loadDraft();
+    if (draft && draft.markdown) {
+      editor.value = draft.markdown;
       runValidation();
     } else {
-      // Milestone 4 adds a dedicated UX state; for now we warn and fall back to standalone draft.
+      // If the state store is empty, attempt to surface a helpful error message.
+      const { error } = await loadAttachedMarkdown({
+        plugin: currentPlugin,
+        projectId: attachedProjectId,
+        phase: attachedPhase || 3,
+      });
       showToast(error || 'Unable to load project document', 'warning');
-      const draft = storage.loadDraft();
-      if (draft && draft.markdown) {
-        editor.value = draft.markdown;
-        runValidation();
-      }
     }
   } else {
     // Standalone mode: Load saved draft if available
@@ -113,7 +115,7 @@ async function initValidator() {
       runValidation();
     }
   }
-  updateVersionDisplay();
+  await updateVersionDisplay();
 
   logger.info(`Validator initialized for: ${currentPlugin.id}`, 'validator');
 }
@@ -199,7 +201,7 @@ function renderDimensionScores(plugin) {
 // Version Control
 // ============================================================
 
-function updateVersionDisplay() {
+async function updateVersionDisplay() {
   const versionInfo = document.getElementById('version-info');
   const lastSaved = document.getElementById('last-saved');
   const btnBack = document.getElementById('btn-back');
@@ -207,7 +209,7 @@ function updateVersionDisplay() {
 
   if (!storage) return;
 
-  const version = storage.getCurrentVersion();
+  const version = await storage.getCurrentVersion();
   if (version) {
     if (versionInfo) versionInfo.textContent = `Version ${version.versionNumber} of ${version.totalVersions}`;
     if (lastSaved) lastSaved.textContent = storage.getTimeSince(version.savedAt);
@@ -221,7 +223,7 @@ function updateVersionDisplay() {
   }
 }
 
-function handleSave() {
+async function handleSave() {
   const editor = document.getElementById('editor');
   const content = editor?.value || '';
 
@@ -230,10 +232,10 @@ function handleSave() {
     return;
   }
 
-  const result = storage.saveVersion(content);
+  const result = await storage.saveVersion(content);
   if (result.success) {
     showToast(`Saved as version ${result.versionNumber}`, 'success');
-    updateVersionDisplay();
+    await updateVersionDisplay();
   } else if (result.reason === 'no-change') {
     showToast('No changes to save', 'info');
   } else {
@@ -241,24 +243,24 @@ function handleSave() {
   }
 }
 
-function handleGoBack() {
+async function handleGoBack() {
   const editor = document.getElementById('editor');
-  const version = storage.goBack();
+  const version = await storage.goBack();
   if (version && editor) {
     editor.value = version.markdown;
     runValidation();
-    updateVersionDisplay();
+    await updateVersionDisplay();
     showToast(`Restored version ${version.versionNumber}`, 'info');
   }
 }
 
-function handleGoForward() {
+async function handleGoForward() {
   const editor = document.getElementById('editor');
-  const version = storage.goForward();
+  const version = await storage.goForward();
   if (version && editor) {
     editor.value = version.markdown;
     runValidation();
-    updateVersionDisplay();
+    await updateVersionDisplay();
     showToast(`Restored version ${version.versionNumber}`, 'info');
   }
 }
@@ -288,6 +290,27 @@ function setupEventListeners() {
     setTimeout(() => runValidation(), 100);
   });
 
+  // Project-attached draft persistence (debounced)
+  if (editor && typeof storage?.saveDraft === 'function') {
+    let debounceTimer = null;
+    const DEBOUNCE_MS = 400;
+
+    editor.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        storage.saveDraft(editor.value).catch((error) => {
+          logger.error('Failed to save validator draft', error, 'validator');
+        });
+      }, DEBOUNCE_MS);
+    });
+
+    editor.addEventListener('blur', () => {
+      storage.saveDraft(editor.value).catch((error) => {
+        logger.error('Failed to save validator draft', error, 'validator');
+      });
+    });
+  }
+
   // AI Power-ups
   document.getElementById('btn-critique')?.addEventListener('click', handleCritique);
   document.getElementById('btn-rewrite')?.addEventListener('click', handleRewrite);
@@ -299,20 +322,42 @@ function setupEventListeners() {
   document.getElementById('btn-view-llm-prompt')?.addEventListener('click', () => handleViewLLMPrompt(currentPrompt));
 
   // Version control
-  document.getElementById('btn-save')?.addEventListener('click', handleSave);
-  document.getElementById('btn-back')?.addEventListener('click', handleGoBack);
-  document.getElementById('btn-forward')?.addEventListener('click', handleGoForward);
+  document.getElementById('btn-save')?.addEventListener('click', () => {
+    handleSave().catch((error) => {
+      logger.error('Save version failed', error, 'validator');
+      showToast('Failed to save', 'error');
+    });
+  });
+  document.getElementById('btn-back')?.addEventListener('click', () => {
+    handleGoBack().catch((error) => {
+      logger.error('Go back failed', error, 'validator');
+      showToast('Failed to restore version', 'error');
+    });
+  });
+  document.getElementById('btn-forward')?.addEventListener('click', () => {
+    handleGoForward().catch((error) => {
+      logger.error('Go forward failed', error, 'validator');
+      showToast('Failed to restore version', 'error');
+    });
+  });
 
   // Keyboard shortcut: Ctrl/Cmd+S to save
   document.addEventListener('keydown', (e) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 's') {
       e.preventDefault();
-      handleSave();
+      handleSave().catch((error) => {
+        logger.error('Save version failed', error, 'validator');
+        showToast('Failed to save', 'error');
+      });
     }
   });
 
   // Update version display periodically (every 60 seconds)
-  setInterval(updateVersionDisplay, 60000);
+  setInterval(() => {
+    updateVersionDisplay().catch((error) => {
+      logger.error('Failed to update version display', error, 'validator');
+    });
+  }, 60000);
 }
 
 /**

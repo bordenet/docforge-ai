@@ -8,8 +8,9 @@ import { sanitizeProject } from './storage-sanitization.js';
 // Re-export sanitization functions for external use
 export { sanitizeFormData, sanitizePhases } from './storage-sanitization.js';
 
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const STORE_NAME = 'projects';
+const VALIDATOR_STORE_NAME = 'validatorState';
 
 /** @type {Map<string, IDBDatabase>} */
 const dbCache = new Map();
@@ -42,7 +43,73 @@ async function getDB(dbName) {
         store.createIndex('updatedAt', 'updatedAt', { unique: false });
         store.createIndex('title', 'title', { unique: false });
       }
+	      if (!db.objectStoreNames.contains(VALIDATOR_STORE_NAME)) {
+	        db.createObjectStore(VALIDATOR_STORE_NAME, { keyPath: 'projectId' });
+	      }
     };
+  });
+}
+
+/**
+ * Get validator state for a project
+ * @param {string} dbName - Database name
+ * @param {string} projectId - Project ID
+ * @returns {Promise<Object|null>}
+ */
+export async function getValidatorState(dbName, projectId) {
+  const db = await getDB(dbName);
+
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(VALIDATOR_STORE_NAME, 'readonly');
+    const store = tx.objectStore(VALIDATOR_STORE_NAME);
+    const request = store.get(projectId);
+
+    request.onsuccess = () => resolve(request.result || null);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+/**
+ * Save validator state for a project
+ * @param {string} dbName - Database name
+ * @param {Object} state - State object (must include projectId)
+ * @returns {Promise<Object>} Saved state
+ */
+export async function saveValidatorState(dbName, state) {
+  if (!state || typeof state !== 'object') {
+    throw new Error('state must be an object');
+  }
+  if (!state.projectId) {
+    throw new Error('state.projectId is required');
+  }
+
+  const db = await getDB(dbName);
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(VALIDATOR_STORE_NAME, 'readwrite');
+    const store = tx.objectStore(VALIDATOR_STORE_NAME);
+    const request = store.put(state);
+
+    request.onsuccess = () => resolve(state);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+/**
+ * Delete validator state for a project
+ * @param {string} dbName - Database name
+ * @param {string} projectId - Project ID
+ * @returns {Promise<void>}
+ */
+export async function deleteValidatorState(dbName, projectId) {
+  const db = await getDB(dbName);
+
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(VALIDATOR_STORE_NAME, 'readwrite');
+    const store = tx.objectStore(VALIDATOR_STORE_NAME);
+    const request = store.delete(projectId);
+
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
   });
 }
 
@@ -169,11 +236,10 @@ export async function clearAllProjects(dbName) {
   const db = await getDB(dbName);
 
   return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readwrite');
-    const store = tx.objectStore(STORE_NAME);
-    const request = store.clear();
-
-    request.onsuccess = () => resolve();
-    request.onerror = () => reject(request.error);
+	  const tx = db.transaction([STORE_NAME, VALIDATOR_STORE_NAME], 'readwrite');
+	  tx.objectStore(STORE_NAME).clear();
+	  tx.objectStore(VALIDATOR_STORE_NAME).clear();
+	  tx.oncomplete = () => resolve();
+	  tx.onerror = () => reject(tx.error);
   });
 }

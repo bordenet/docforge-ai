@@ -35,5 +35,37 @@ test.describe('Validator (project-attached mode)', () => {
     await expect(page.locator('#editor')).toHaveValue(markdown);
     await expect(page.locator('#score-total')).not.toContainText('--');
   });
+
+  test('persists draft edits to project-scoped validator state (survives reload)', async ({ page }) => {
+    await page.goto('/assistant/?type=one-pager');
+    await page.waitForLoadState('networkidle');
+
+    const projectId = 'e2e-attached-project-2';
+    const seed = '# Seed v1\n\nHello';
+
+    await page.evaluate(
+      async ({ projectId: pid, seed: md }) => {
+        const { saveProject } = await import('/shared/js/storage.js');
+        await saveProject('one-pager-docforge-db', {
+          id: pid,
+          title: 'Attached Mode Draft Persistence',
+          currentPhase: 3,
+          phase3_output: md,
+        });
+      },
+      { projectId, seed }
+    );
+
+    await page.goto(`/validator/?type=one-pager&project=${projectId}&phase=3`);
+    await expect(page.locator('#attached-badge')).toBeVisible();
+
+    const edited = `${seed}\n\n## Extra\nDraft edit that should persist.`;
+    await page.fill('#editor', edited);
+    await page.waitForTimeout(700); // debounce window
+
+    await page.reload();
+    await expect(page.locator('#attached-badge')).toBeVisible();
+    await expect(page.locator('#editor')).toHaveValue(edited);
+  });
 });
 
