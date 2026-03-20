@@ -37,6 +37,8 @@ import {
   getCurrentView,
   getProjectIdFromHash,
   getPhaseFromHash,
+  getProjectIdFromQuery,
+  getPhaseFromQuery,
   getDocTypeUrl,
   navigateTo,
   initRouter,
@@ -275,6 +277,36 @@ describe('Router', () => {
         expect(getCurrentDocumentType()).toBe(plugin.id);
       }
     });
+
+	    it('should resolve project id from query string when present', () => {
+	      mockLocation.search = '?type=one-pager&project=proj-123';
+	      expect(getProjectIdFromQuery()).toBe('proj-123');
+	    });
+
+	    it('should return null when project query param is missing', () => {
+	      mockLocation.search = '?type=one-pager';
+	      expect(getProjectIdFromQuery()).toBeNull();
+	    });
+
+	    it('should return null when project query param is empty', () => {
+	      mockLocation.search = '?type=one-pager&project=';
+	      expect(getProjectIdFromQuery()).toBeNull();
+	    });
+
+	    it('should resolve phase number from query string when valid', () => {
+	      mockLocation.search = '?type=one-pager&phase=3';
+	      expect(getPhaseFromQuery()).toBe(3);
+	    });
+
+	    it('should return null when phase query param is missing', () => {
+	      mockLocation.search = '?type=one-pager';
+	      expect(getPhaseFromQuery()).toBeNull();
+	    });
+
+	    it('should return null when phase query param is invalid', () => {
+	      mockLocation.search = '?type=one-pager&phase=99';
+	      expect(getPhaseFromQuery()).toBeNull();
+	    });
   });
 });
 
