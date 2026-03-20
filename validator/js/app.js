@@ -45,6 +45,66 @@ let currentPrompt = null;
 let storage = null; // Initialized per document type
 let attachedContext = null; // { projectId, phaseNumber, canonicalMarkdown, lastAppliedAt } when in attached mode
 
+function createBlockedValidatorStorage() {
+  return {
+    async loadDraft() {
+      return null;
+    },
+    async saveDraft() {
+      // no-op
+    },
+    async getCurrentVersion() {
+      return null;
+    },
+    getTimeSince() {
+      return '';
+    },
+    async saveVersion() {
+      return { success: false, reason: 'blocked' };
+    },
+    async goBack() {
+      return null;
+    },
+    async goForward() {
+      return null;
+    },
+  };
+}
+
+async function resolveModeContext(plugin) {
+  const attachedProjectId = getProjectIdFromQuery();
+  const phaseFromQuery = getPhaseFromQuery();
+  const phaseNumber = attachedProjectId ? phaseFromQuery || 3 : null;
+
+  if (!attachedProjectId) {
+    return { mode: 'standalone', attachedProjectId: null, phaseNumber: null, project: null };
+  }
+
+  const project = await getProject(plugin.dbName, attachedProjectId);
+  if (!project) {
+    return {
+      mode: 'blocked',
+      attachedProjectId,
+      phaseNumber: phaseNumber || 3,
+      project: null,
+      canonicalMarkdown: '',
+      errorMessage: 'Project not found',
+    };
+  }
+
+  const canonicalMarkdown = getPhaseOutputInternal(project, phaseNumber || 3) || '';
+  const errorMessage = !canonicalMarkdown.trim() ? `Phase ${phaseNumber || 3} output is empty` : null;
+
+  return {
+    mode: 'attached',
+    attachedProjectId,
+    phaseNumber: phaseNumber || 3,
+    project,
+    canonicalMarkdown,
+    errorMessage,
+  };
+}
+
 // State accessor functions for modules
 function getState() {
   return { plugin: currentPlugin, result: currentResult };
@@ -65,40 +125,35 @@ async function initValidator() {
   const docType = getCurrentDocumentType();
   currentPlugin = getPlugin(docType) || getPlugin('one-pager');
 
-  const attachedProjectId = getProjectIdFromQuery();
-  const phaseFromQuery = getPhaseFromQuery();
-  const attachedPhase = attachedProjectId ? phaseFromQuery || 3 : null;
+	const modeContext = await resolveModeContext(currentPlugin);
 
-	  attachedContext = attachedProjectId
-	    ? {
-	        projectId: attachedProjectId,
-	        phaseNumber: attachedPhase || 3,
-	        canonicalMarkdown: '',
-	        lastAppliedAt: null,
-	      }
-	    : null;
-
-	  const attachedProject = attachedProjectId
-	    ? await getProject(currentPlugin.dbName, attachedProjectId)
-	    : null;
+	attachedContext = modeContext.attachedProjectId
+	  ? {
+	      projectId: modeContext.attachedProjectId,
+	      phaseNumber: modeContext.phaseNumber || 3,
+	      canonicalMarkdown: '',
+	      lastAppliedAt: null,
+	    }
+	  : null;
 
   // Initialize storage
-  storage = attachedProjectId
-    ? (attachedProject
+	storage =
+	  modeContext.mode === 'standalone'
+	    ? createStorage(`${currentPlugin.id}-validator-history`)
+	    : modeContext.mode === 'attached'
 	      ? createProjectValidatorStorage({
 	        dbName: currentPlugin.dbName,
-	        projectId: attachedProjectId,
-	        phaseNumber: attachedPhase || 3,
+	        projectId: modeContext.attachedProjectId,
+	        phaseNumber: modeContext.phaseNumber,
 	      })
-	      : null)
-    : createStorage(`${currentPlugin.id}-validator-history`);
+	      : createBlockedValidatorStorage();
 
   // Initialize sub-modules with state accessors
   initPowerups(getState, setPrompt);
   initLLMMode(getState, setPrompt);
 
   // Update UI for current plugin
-  updateHeader(currentPlugin, { attachedProjectId });
+	updateHeader(currentPlugin, { attachedProjectId: modeContext.attachedProjectId });
   renderDimensionScores(currentPlugin);
   setupEventListeners();
   setupDocTypeSelector();
@@ -108,48 +163,45 @@ async function initValidator() {
 
   const editor = document.getElementById('editor');
 
-  if (attachedProjectId && editor) {
-    if (!attachedProject) {
-      // Hard error: do not allow editing/saving when the project doesn't exist.
-	      setAttachedBlocked(true);
-      showAttachedError('Project not found');
-      showAttachedStatus('Attached: Project not found');
-	      attachedContext.lastAppliedAt = null;
-      setMainControlsEnabled(false);
-    } else {
-	      setAttachedBlocked(false);
-      setMainControlsEnabled(true);
+	if (modeContext.mode === 'blocked' && editor) {
+	  // Hard error: do not allow editing/saving when the project doesn't exist.
+	  setAttachedBlocked(true);
+	  showAttachedError(modeContext.errorMessage || 'Project not found');
+	  showAttachedStatus('Attached: Project not found');
+	  if (attachedContext) attachedContext.lastAppliedAt = null;
+	  setMainControlsEnabled(false);
+	} else if (modeContext.mode === 'attached' && editor) {
+	  setAttachedBlocked(false);
+	  setMainControlsEnabled(true);
 
-      const canonical = getPhaseOutputInternal(attachedProject, attachedPhase || 3) || '';
-      attachedContext.canonicalMarkdown = canonical;
-      if (!canonical.trim()) {
-        showAttachedError(`Phase ${attachedPhase || 3} output is empty`);
-      } else {
-        showAttachedError(null);
-      }
-
-      const draft = await storage.loadDraft();
-      editor.value = draft?.markdown || '';
-
-      if (editor.value.trim()) {
-        runValidation();
-      }
-
-	      syncAttachedViewState();
-    }
-  } else {
+	  attachedContext.canonicalMarkdown = modeContext.canonicalMarkdown || '';
+	  if (modeContext.errorMessage) {
+	    showAttachedError(modeContext.errorMessage);
+	  } else {
 	    showAttachedError(null);
-    showAttachedStatus(null);
-	    setAttachedBlocked(false);
-    setMainControlsEnabled(true);
-    // Standalone mode: Load saved draft if available
-    const draft = storage.loadDraft();
-    if (draft && draft.markdown && editor) {
-      editor.value = draft.markdown;
-      // Run validation on restored content
-      runValidation();
-    }
-  }
+	  }
+
+	  const draft = await storage.loadDraft();
+	  editor.value = draft?.markdown || '';
+
+	  if (editor.value.trim()) {
+	    runValidation();
+	  }
+
+	  syncAttachedViewState();
+	} else {
+	  showAttachedError(null);
+	  showAttachedStatus(null);
+	  setAttachedBlocked(false);
+	  setMainControlsEnabled(true);
+	  // Standalone mode: Load saved draft if available
+	  const draft = storage.loadDraft();
+	  if (draft && draft.markdown && editor) {
+	    editor.value = draft.markdown;
+	    // Run validation on restored content
+	    runValidation();
+	  }
+	}
   await updateVersionDisplay();
 
   logger.info(`Validator initialized for: ${currentPlugin.id}`, 'validator');
