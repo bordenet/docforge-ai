@@ -7,12 +7,171 @@
  */
 
 import { getProject, saveProject, deleteProject } from '../../shared/js/storage.js';
-import { showToast, copyToClipboard, confirm, createActionMenu, showPromptModal } from '../../shared/js/ui.js';
+import {
+  showToast,
+  copyToClipboard,
+  confirm,
+  createActionMenu,
+  showPromptModal,
+  downloadFile,
+  renderMarkdown,
+} from '../../shared/js/ui.js';
 import { generatePrompt } from '../../shared/js/prompt-generator.js';
 import { renderPhaseContent } from '../../shared/js/views.js';
 import { logger } from '../../shared/js/logger.js';
 import { initDiffModule, handleSaveResponse, showDiffModal } from './app-phases-diff.js';
 import { trackPhase } from '../../shared/js/analytics.js';
+import { getExportFilename } from '../../shared/js/workflow.js';
+
+// Cache script-load promises so we only pull third-party exporters once per page
+const SCRIPT_LOADS = new Map();
+
+function loadScriptOnce(url, globalVar) {
+  if (globalVar && window[globalVar]) return Promise.resolve();
+  if (SCRIPT_LOADS.has(url)) return SCRIPT_LOADS.get(url);
+
+  const promise = new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = url;
+    script.async = true;
+    script.onload = () => {
+      if (!globalVar || window[globalVar]) {
+        resolve();
+      } else {
+        reject(new Error(`Script loaded but global '${globalVar}' was not found`));
+      }
+    };
+    script.onerror = () => reject(new Error(`Failed to load script: ${url}`));
+    document.head.appendChild(script);
+  });
+
+  SCRIPT_LOADS.set(url, promise);
+  return promise;
+}
+
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function getExportBaseFilename(project) {
+  const md = getExportFilename(project);
+  return md.endsWith('.md') ? md.slice(0, -3) : md;
+}
+
+const EXPORT_CSS = `
+  body { font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif; color: #111827; }
+  h1, h2, h3 { margin: 1.1em 0 0.6em; }
+  p { margin: 0.6em 0; }
+  ul, ol { margin: 0.6em 0 0.6em 1.25em; }
+  pre { background: #f3f4f6; padding: 12px; border-radius: 8px; overflow: auto; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { border: 1px solid #e5e7eb; padding: 8px; vertical-align: top; }
+  th { background: #f9fafb; }
+  a { color: #2563eb; text-decoration: none; }
+`;
+
+function buildExportHtmlDocument({ title, bodyHtml }) {
+  // TODO(superpower-fast-follow): Export from Markdown AST -> a document model (DOCX/PDF)
+  // for higher fidelity tables, page breaks, and predictable typography.
+  const safeTitle = String(title || 'Document').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return `<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>${safeTitle}</title>
+    <style>
+      ${EXPORT_CSS}
+    </style>
+  </head>
+  <body>
+    ${bodyHtml}
+  </body>
+</html>`;
+}
+
+async function exportFinalAsMarkdown(plugin, project) {
+  const freshProject = await getProject(plugin.dbName, project.id);
+  const finalResponse = freshProject.phases?.[3]?.response || '';
+  if (!finalResponse) {
+    showToast('No final document to download', 'warning');
+    return;
+  }
+  const filename = getExportFilename(freshProject);
+  downloadFile(finalResponse, filename, 'text/markdown');
+  trackPhase(3, 'download-md', plugin.id);
+  showToast('Downloaded Markdown', 'success');
+}
+
+async function exportFinalAsDocx(plugin, project) {
+  const freshProject = await getProject(plugin.dbName, project.id);
+  const finalResponse = freshProject.phases?.[3]?.response || '';
+  if (!finalResponse) {
+    showToast('No final document to download', 'warning');
+    return;
+  }
+
+  showToast('Preparing Word export...', 'info');
+  // html-docx-js exposes window.htmlDocx
+  await loadScriptOnce('https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.min.js', 'htmlDocx');
+
+  const bodyHtml = renderMarkdown(finalResponse);
+  const html = buildExportHtmlDocument({ title: freshProject.title || freshProject.name, bodyHtml });
+  const blob = window.htmlDocx.asBlob(html);
+  const filename = `${getExportBaseFilename(freshProject)}.docx`;
+  downloadBlob(blob, filename);
+  trackPhase(3, 'download-docx', plugin.id);
+  showToast('Downloaded Word document', 'success');
+}
+
+async function exportFinalAsPdf(plugin, project) {
+  const freshProject = await getProject(plugin.dbName, project.id);
+  const finalResponse = freshProject.phases?.[3]?.response || '';
+  if (!finalResponse) {
+    showToast('No final document to download', 'warning');
+    return;
+  }
+
+  showToast('Preparing PDF export...', 'info');
+  // html2pdf bundle exposes window.html2pdf
+  await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js', 'html2pdf');
+
+  const container = document.createElement('div');
+  container.style.position = 'fixed';
+  container.style.left = '-10000px';
+  container.style.top = '0';
+  container.style.width = '800px';
+  container.style.background = 'white';
+  container.style.padding = '24px';
+  container.innerHTML = `<style>${EXPORT_CSS}</style><div>${renderMarkdown(finalResponse)}</div>`;
+  document.body.appendChild(container);
+
+  const filename = `${getExportBaseFilename(freshProject)}.pdf`;
+  try {
+    await window
+      .html2pdf()
+      .set({
+        margin: 10,
+        filename,
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      })
+      .from(container)
+      .save();
+
+    trackPhase(3, 'download-pdf', plugin.id);
+    showToast('Downloaded PDF', 'success');
+  } finally {
+    container.remove();
+  }
+}
 
 /**
  * Update phase tab styles
@@ -39,6 +198,7 @@ export function attachPhaseEventListeners(plugin, project, phase) {
   const responseTextarea = document.getElementById('response-textarea');
   const nextPhaseBtn = document.getElementById('next-phase-btn');
   const exportFinalBtn = document.getElementById('export-final-btn');
+  const downloadMenuBtn = document.getElementById('download-menu-btn');
 
   // Copy prompt button
   if (copyPromptBtn) {
@@ -148,6 +308,56 @@ export function attachPhaseEventListeners(plugin, project, phase) {
       } else {
         showToast('No document to validate', 'warning');
       }
+    });
+  }
+
+  // Download menu (Phase 3 complete) - Markdown / Word / PDF
+  if (downloadMenuBtn) {
+    const hasFinal = Boolean(project.phases?.[3]?.response);
+    createActionMenu({
+      triggerElement: downloadMenuBtn,
+      items: [
+        {
+          label: 'Markdown (.md)',
+          icon: '📝',
+          disabled: !hasFinal,
+          onClick: async () => {
+            try {
+              await exportFinalAsMarkdown(plugin, project);
+            } catch (error) {
+              logger.error('Markdown export failed', error, 'app-phases');
+              showToast('Markdown export failed', 'error');
+            }
+          },
+        },
+        {
+          label: 'Word (.docx)',
+          icon: '📄',
+          disabled: !hasFinal,
+          onClick: async () => {
+            try {
+              await exportFinalAsDocx(plugin, project);
+            } catch (error) {
+              logger.error('DOCX export failed', error, 'app-phases');
+              showToast('Word export failed', 'error');
+            }
+          },
+        },
+        {
+          label: 'PDF (.pdf)',
+          icon: '🧾',
+          disabled: !hasFinal,
+          onClick: async () => {
+            try {
+              await exportFinalAsPdf(plugin, project);
+            } catch (error) {
+              logger.error('PDF export failed', error, 'app-phases');
+              showToast('PDF export failed', 'error');
+            }
+          },
+        },
+      ],
+      position: 'bottom-end',
     });
   }
 
