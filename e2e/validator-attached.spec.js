@@ -98,6 +98,9 @@ test.describe('Validator (project-attached mode)', () => {
     await page.fill('#editor', edited);
     await page.click('#btn-apply');
 
+    // Wait for apply to complete (toast is emitted after IndexedDB write)
+    await expect(page.locator('#toast-container')).toContainText('Applied to project!');
+
     await page.goto(`/assistant/?type=one-pager#project/${projectId}`);
     await expect(page.locator('#response-textarea')).toHaveValue(edited);
   });
