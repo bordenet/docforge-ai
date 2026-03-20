@@ -93,9 +93,11 @@ test.describe('Validator (project-attached mode)', () => {
 
     await page.goto(`/validator/?type=one-pager&project=${projectId}&phase=3`);
     await expect(page.locator('#attached-badge')).toBeVisible();
+	    await expect(page.locator('#attached-status')).toContainText('Editing project output');
 
     const edited = `${seed}\n\n## Applied\nThis should save back to the project.`;
     await page.fill('#editor', edited);
+	    await expect(page.locator('#attached-status')).toContainText('not applied to project');
 
     const applyBtn = page.locator('#btn-apply');
     await expect(applyBtn).toBeEnabled();
@@ -105,7 +107,7 @@ test.describe('Validator (project-attached mode)', () => {
     // Wait for apply to complete (toast is emitted after IndexedDB write)
     await expect(page.locator('#toast-container')).toContainText('Applied to project!');
 
-    await expect(page.locator('#attached-status')).toContainText('Applied');
+	    await expect(page.locator('#attached-status')).toContainText('Applied');
     await expect(applyBtn).toBeEnabled();
 
     await page.goto(`/assistant/?type=one-pager#project/${projectId}`);

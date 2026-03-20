@@ -43,7 +43,7 @@ let currentPlugin = null;
 let currentResult = null;
 let currentPrompt = null;
 let storage = null; // Initialized per document type
-let attachedContext = null; // { projectId, phaseNumber, canonicalMarkdown } when in attached mode
+let attachedContext = null; // { projectId, phaseNumber, canonicalMarkdown, lastAppliedAt } when in attached mode
 
 // State accessor functions for modules
 function getState() {
@@ -70,7 +70,12 @@ async function initValidator() {
   const attachedPhase = attachedProjectId ? phaseFromQuery || 3 : null;
 
 	  attachedContext = attachedProjectId
-	    ? { projectId: attachedProjectId, phaseNumber: attachedPhase || 3, canonicalMarkdown: '' }
+	    ? {
+	        projectId: attachedProjectId,
+	        phaseNumber: attachedPhase || 3,
+	        canonicalMarkdown: '',
+	        lastAppliedAt: null,
+	      }
 	    : null;
 
 	  const attachedProject = attachedProjectId
@@ -109,6 +114,7 @@ async function initValidator() {
 	      setAttachedBlocked(true);
       showAttachedError('Project not found');
       showAttachedStatus('Attached: Project not found');
+	      attachedContext.lastAppliedAt = null;
       setMainControlsEnabled(false);
     } else {
 	      setAttachedBlocked(false);
@@ -129,11 +135,7 @@ async function initValidator() {
         runValidation();
       }
 
-      if (editor.value === canonical) {
-        showAttachedStatus('Attached: Editing project output');
-      } else {
-        showAttachedStatus('Attached: Editing draft (autosaved)');
-      }
+	      syncAttachedViewState();
     }
   } else {
 	    showAttachedError(null);
@@ -255,6 +257,31 @@ function setAttachedBlocked(isBlocked) {
   }
 }
 
+function syncAttachedViewState() {
+  if (!attachedContext) return;
+
+  const editor = document.getElementById('editor');
+  const value = editor?.value || '';
+  const canonical = attachedContext.canonicalMarkdown || '';
+  const isCanonical = value === canonical;
+
+  // If the user changes text after an apply, we're back to a draft state.
+  if (!isCanonical && attachedContext.lastAppliedAt) {
+    attachedContext.lastAppliedAt = null;
+  }
+
+  if (isCanonical && attachedContext.lastAppliedAt) {
+    showAttachedStatus(`Applied to project at ${attachedContext.lastAppliedAt}`);
+    return;
+  }
+
+  if (isCanonical) {
+    showAttachedStatus('Attached: Editing project output');
+  } else {
+    showAttachedStatus('Attached: Editing draft (not applied to project)');
+  }
+}
+
 /**
  * Render scoring dimension placeholders
  */
@@ -343,6 +370,7 @@ async function handleGoBack() {
   if (version && editor) {
     editor.value = version.markdown;
     runValidation();
+	      syncAttachedViewState();
     await updateVersionDisplay();
     showToast(`Restored version ${version.versionNumber}`, 'info');
   }
@@ -356,6 +384,7 @@ async function handleGoForward() {
   if (version && editor) {
     editor.value = version.markdown;
     runValidation();
+	      syncAttachedViewState();
     await updateVersionDisplay();
     showToast(`Restored version ${version.versionNumber}`, 'info');
   }
@@ -401,8 +430,11 @@ async function handleApplyToProject() {
 
     // Update local attached-mode context.
     attachedContext.canonicalMarkdown = content;
+	    attachedContext.lastAppliedAt = new Date().toLocaleTimeString();
+	    // Keep the draft aligned with canonical so reloads don't re-open in "not applied" state.
+	    await storage?.saveDraft?.(content);
     showAttachedError(null);
-    showAttachedStatus(`Applied to project at ${new Date().toLocaleTimeString()}`);
+	    syncAttachedViewState();
     showToast('Applied to project!', 'success');
   } finally {
     if (applyBtn) {
@@ -448,11 +480,11 @@ function setupEventListeners() {
 
     editor.addEventListener('input', () => {
 	      if (attachedContext) {
-	        showAttachedStatus('Attached: Editing draft (autosaved)');
+	        // User started writing; clear the "empty phase output" warning.
 	        if (!attachedContext.canonicalMarkdown?.trim() && editor.value.trim()) {
-	          // User started writing; clear the "empty phase output" warning.
 	          showAttachedError(null);
 	        }
+	        syncAttachedViewState();
 	      }
 
       clearTimeout(debounceTimer);
@@ -465,7 +497,7 @@ function setupEventListeners() {
 
     editor.addEventListener('blur', () => {
 	      if (attachedContext) {
-	        showAttachedStatus('Attached: Editing draft (autosaved)');
+	        syncAttachedViewState();
 	      }
 
       storage.saveDraft(editor.value).catch((error) => {
