@@ -148,8 +148,19 @@ test.describe('Validator (project-attached mode)', () => {
     await expect(page.locator('#attached-error')).toBeVisible();
     await expect(page.locator('#attached-error')).toContainText('Project not found');
 
+    // Blocked-state UI should be visible and no scoring should run.
+    await expect(page.locator('#attached-blocked')).toBeVisible();
+    await expect(page.locator('#score-total')).toContainText('--');
+
     // Should not allow editing/saving when the project doesn't exist.
     await expect(page.locator('#editor')).toBeDisabled();
+
+    // Must not create validator state for non-existent projects.
+    const validatorState = await page.evaluate(async () => {
+      const { getValidatorState } = await import('/shared/js/storage.js');
+      return getValidatorState('one-pager-docforge-db', 'does-not-exist');
+    });
+    expect(validatorState).toBeNull();
   });
 
   test('shows an attached-mode error state when phase output is empty', async ({ page }) => {

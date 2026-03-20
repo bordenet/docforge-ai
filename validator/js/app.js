@@ -106,10 +106,12 @@ async function initValidator() {
   if (attachedProjectId && editor) {
     if (!attachedProject) {
       // Hard error: do not allow editing/saving when the project doesn't exist.
+	      setAttachedBlocked(true);
       showAttachedError('Project not found');
       showAttachedStatus('Attached: Project not found');
       setMainControlsEnabled(false);
     } else {
+	      setAttachedBlocked(false);
       setMainControlsEnabled(true);
 
       const canonical = getPhaseOutputInternal(attachedProject, attachedPhase || 3) || '';
@@ -136,6 +138,7 @@ async function initValidator() {
   } else {
 	    showAttachedError(null);
     showAttachedStatus(null);
+	    setAttachedBlocked(false);
     setMainControlsEnabled(true);
     // Standalone mode: Load saved draft if available
     const draft = storage.loadDraft();
@@ -239,6 +242,17 @@ function setMainControlsEnabled(enabled) {
     const el = document.getElementById(id);
     if (el) el.disabled = !enabled;
   });
+}
+
+function setAttachedBlocked(isBlocked) {
+  const el = document.getElementById('attached-blocked');
+  if (!el) return;
+
+  if (isBlocked) {
+    el.classList.remove('hidden');
+  } else {
+    el.classList.add('hidden');
+  }
 }
 
 /**
