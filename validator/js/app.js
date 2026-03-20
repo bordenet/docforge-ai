@@ -100,6 +100,7 @@ async function initValidator() {
   if (attachedProjectId && editor) {
     const draft = await storage.loadDraft();
     if (draft && draft.markdown) {
+	      showAttachedError(null);
       editor.value = draft.markdown;
       runValidation();
     } else {
@@ -109,9 +110,12 @@ async function initValidator() {
         projectId: attachedProjectId,
         phase: attachedPhase || 3,
       });
-      showToast(error || 'Unable to load project document', 'warning');
+	      const msg = error || 'Unable to load project document';
+	      showAttachedError(msg);
+	      showToast(msg, 'warning');
     }
   } else {
+	    showAttachedError(null);
     // Standalone mode: Load saved draft if available
     const draft = storage.loadDraft();
     if (draft && draft.markdown && editor) {
@@ -148,6 +152,8 @@ function updateHeader(plugin, { attachedProjectId } = {}) {
 
   const attachedBadge = document.getElementById('attached-badge');
 	  const applyBtn = document.getElementById('btn-apply');
+	  const docTypeBtn = document.getElementById('doc-type-btn');
+	  const docTypeSelector = document.getElementById('doc-type-selector');
   if (attachedBadge) {
     if (attachedProjectId) {
       attachedBadge.classList.remove('hidden');
@@ -163,6 +169,31 @@ function updateHeader(plugin, { attachedProjectId } = {}) {
 	      applyBtn.classList.add('hidden');
 	    }
 	  }
+
+	  // Attached-mode contract: do not allow switching document type.
+	  if (docTypeBtn) {
+	    if (attachedProjectId) {
+	      docTypeBtn.classList.add('hidden');
+	    } else {
+	      docTypeBtn.classList.remove('hidden');
+	    }
+	  }
+	  if (docTypeSelector) {
+	    docTypeSelector.disabled = Boolean(attachedProjectId);
+	  }
+}
+
+function showAttachedError(message) {
+  const el = document.getElementById('attached-error');
+  if (!el) return;
+
+  if (message) {
+    el.textContent = message;
+    el.classList.remove('hidden');
+  } else {
+    el.textContent = '';
+    el.classList.add('hidden');
+  }
 }
 
 async function loadAttachedMarkdown({ plugin, projectId, phase }) {

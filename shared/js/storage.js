@@ -218,12 +218,12 @@ export async function deleteProject(dbName, id) {
   const db = await getDB(dbName);
 
   return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readwrite');
-    const store = tx.objectStore(STORE_NAME);
-    const request = store.delete(id);
+	  const tx = db.transaction([STORE_NAME, VALIDATOR_STORE_NAME], 'readwrite');
+	  tx.objectStore(STORE_NAME).delete(id);
+	  tx.objectStore(VALIDATOR_STORE_NAME).delete(id);
 
-    request.onsuccess = () => resolve();
-    request.onerror = () => reject(request.error);
+	  tx.oncomplete = () => resolve();
+	  tx.onerror = () => reject(tx.error);
   });
 }
 

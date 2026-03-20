@@ -104,5 +104,68 @@ test.describe('Validator (project-attached mode)', () => {
     await page.goto(`/assistant/?type=one-pager#project/${projectId}`);
     await expect(page.locator('#response-textarea')).toHaveValue(edited);
   });
+
+  test('locks document type switching controls in attached mode', async ({ page }) => {
+    await page.goto('/assistant/?type=one-pager');
+    await page.waitForLoadState('networkidle');
+
+    const projectId = 'e2e-attached-project-4';
+    const seed = '# Seed\n\nHello';
+
+    await page.evaluate(
+      async ({ projectId: pid, seed: md }) => {
+        const { saveProject } = await import('/shared/js/storage.js');
+        await saveProject('one-pager-docforge-db', {
+          id: pid,
+          title: 'Attached Mode Lock',
+          currentPhase: 3,
+          phases: { 3: { response: md, completed: true } },
+          phase3_output: md,
+        });
+      },
+      { projectId, seed }
+    );
+
+    await page.goto(`/validator/?type=one-pager&project=${projectId}&phase=3`);
+    await expect(page.locator('#attached-badge')).toBeVisible();
+
+    // In attached mode, switching document types must be disabled/hidden.
+    await expect(page.locator('#doc-type-btn')).toBeHidden();
+    await expect(page.locator('#doc-type-selector')).toBeDisabled();
+  });
+
+  test('shows an attached-mode error state when project is missing', async ({ page }) => {
+    await page.goto('/validator/?type=one-pager&project=does-not-exist&phase=3');
+
+    await expect(page.locator('#attached-badge')).toBeVisible();
+    await expect(page.locator('#attached-error')).toBeVisible();
+    await expect(page.locator('#attached-error')).toContainText('Project not found');
+  });
+
+  test('shows an attached-mode error state when phase output is empty', async ({ page }) => {
+    await page.goto('/assistant/?type=one-pager');
+    await page.waitForLoadState('networkidle');
+
+    const projectId = 'e2e-attached-project-5';
+
+    await page.evaluate(
+      async ({ projectId: pid }) => {
+        const { saveProject } = await import('/shared/js/storage.js');
+        await saveProject('one-pager-docforge-db', {
+          id: pid,
+          title: 'Attached Mode Empty',
+          currentPhase: 3,
+          phases: { 3: { response: '', completed: true } },
+          phase3_output: '',
+        });
+      },
+      { projectId }
+    );
+
+    await page.goto(`/validator/?type=one-pager&project=${projectId}&phase=3`);
+    await expect(page.locator('#attached-badge')).toBeVisible();
+    await expect(page.locator('#attached-error')).toBeVisible();
+    await expect(page.locator('#attached-error')).toContainText('Phase 3 output is empty');
+  });
 });
 
