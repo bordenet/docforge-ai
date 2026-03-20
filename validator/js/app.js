@@ -4,13 +4,19 @@
  * @module validator-app
  */
 
-import { getCurrentDocumentType } from '../../shared/js/router.js';
+import {
+  getCurrentDocumentType,
+  getProjectIdFromQuery,
+  getPhaseFromQuery,
+} from '../../shared/js/router.js';
 import { getPlugin } from '../../shared/js/plugin-registry.js';
 import { showToast, escapeHtml, setupGlobalErrorHandler } from '../../shared/js/ui.js';
 import { validateDocument } from '../../shared/js/validator.js';
 import { logger } from '../../shared/js/logger.js';
 import { toggleDarkMode, initTheme } from '../../shared/js/theme.js';
 import { createStorage } from '../../shared/js/validator-storage.js';
+import { getProject } from '../../shared/js/storage.js';
+import { getPhaseOutputInternal } from '../../shared/js/workflow-config.js';
 import { initAnalytics, trackValidation } from '../../shared/js/analytics.js';
 // Display functions
 import { updateScoreDisplay, renderSlopDetection, renderIssues, renderExpansionStubs } from './app-display.js';
@@ -49,7 +55,7 @@ function setPrompt(prompt) {
 /**
  * Initialize the validator
  */
-function initValidator() {
+async function initValidator() {
   // Initialize theme before rendering
   initTheme();
 
@@ -64,8 +70,12 @@ function initValidator() {
   initPowerups(getState, setPrompt);
   initLLMMode(getState, setPrompt);
 
+  const attachedProjectId = getProjectIdFromQuery();
+  const phaseFromQuery = getPhaseFromQuery();
+  const attachedPhase = attachedProjectId ? phaseFromQuery || 3 : null;
+
   // Update UI for current plugin
-  updateHeader(currentPlugin);
+  updateHeader(currentPlugin, { attachedProjectId });
   renderDimensionScores(currentPlugin);
   setupEventListeners();
   setupDocTypeSelector();
@@ -73,11 +83,31 @@ function initValidator() {
   // Initialize analytics (tracks tool open)
   initAnalytics();
 
-  // Load saved draft if available
-  const draft = storage.loadDraft();
-  if (draft && draft.markdown) {
-    const editor = document.getElementById('editor');
-    if (editor) {
+  const editor = document.getElementById('editor');
+
+  if (attachedProjectId && editor) {
+    const { markdown, error } = await loadAttachedMarkdown({
+      plugin: currentPlugin,
+      projectId: attachedProjectId,
+      phase: attachedPhase || 3,
+    });
+
+    if (markdown) {
+      editor.value = markdown;
+      runValidation();
+    } else {
+      // Milestone 4 adds a dedicated UX state; for now we warn and fall back to standalone draft.
+      showToast(error || 'Unable to load project document', 'warning');
+      const draft = storage.loadDraft();
+      if (draft && draft.markdown) {
+        editor.value = draft.markdown;
+        runValidation();
+      }
+    }
+  } else {
+    // Standalone mode: Load saved draft if available
+    const draft = storage.loadDraft();
+    if (draft && draft.markdown && editor) {
       editor.value = draft.markdown;
       // Run validation on restored content
       runValidation();
@@ -91,7 +121,7 @@ function initValidator() {
 /**
  * Update header for current document type
  */
-function updateHeader(plugin) {
+function updateHeader(plugin, { attachedProjectId } = {}) {
   document.getElementById('header-icon').textContent = plugin.icon;
   document.getElementById('header-title').textContent = `${plugin.name} Validator`;
   document.getElementById('doc-type-label').textContent = plugin.name;
@@ -104,7 +134,35 @@ function updateHeader(plugin) {
 
   const helpText = document.getElementById('editor-help');
   if (helpText) {
-    helpText.textContent = `Generate a ${plugin.name} with the Assistant, then paste the markdown here.`;
+    helpText.textContent = attachedProjectId
+      ? `Loaded from Assistant project storage (ID: ${attachedProjectId}).`
+      : `Generate a ${plugin.name} with the Assistant, then paste the markdown here.`;
+  }
+
+  const attachedBadge = document.getElementById('attached-badge');
+  if (attachedBadge) {
+    if (attachedProjectId) {
+      attachedBadge.classList.remove('hidden');
+    } else {
+      attachedBadge.classList.add('hidden');
+    }
+  }
+}
+
+async function loadAttachedMarkdown({ plugin, projectId, phase }) {
+  try {
+    const project = await getProject(plugin.dbName, projectId);
+    if (!project) return { markdown: '', error: 'Project not found' };
+
+    const markdown = getPhaseOutputInternal(project, phase);
+    if (!markdown || !markdown.trim()) {
+      return { markdown: '', error: `Phase ${phase} output is empty` };
+    }
+
+    return { markdown, error: null };
+  } catch (error) {
+    logger.error('Failed to load attached project markdown', error, 'validator');
+    return { markdown: '', error: 'Unable to access project storage' };
   }
 }
 
@@ -434,7 +492,15 @@ function showAboutModal(plugin) {
 
 // Initialize
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initValidator);
+  document.addEventListener('DOMContentLoaded', () => {
+    initValidator().catch((error) => {
+      logger.error('Validator initialization failed', error, 'validator');
+      showToast('Validator failed to initialize', 'error');
+    });
+  });
 } else {
-  initValidator();
+  initValidator().catch((error) => {
+    logger.error('Validator initialization failed', error, 'validator');
+    showToast('Validator failed to initialize', 'error');
+  });
 }
