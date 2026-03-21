@@ -114,7 +114,7 @@ export function renderPhaseContent(plugin, project, phase) {
 		              <span class="px-2 py-1 text-xs font-medium rounded-full bg-${scoreColor}-100 dark:bg-${scoreColor}-900/30 text-${scoreColor}-700 dark:text-${scoreColor}-300">${scoreLabel}</span>
 		            </div>
 		            <button type="button" id="validate-btn" data-validator-url="../validator/?type=${encodeURIComponent(plugin.id || '')}${project?.id ? `&project=${encodeURIComponent(project.id)}&phase=${encodeURIComponent(String(phase))}` : ''}" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium min-w-0">
-		              🎛️ Tune & Refine<span class="whitespace-nowrap"> ↗</span>
+		              🎛️ Tune & Refine&nbsp;↗
 		            </button>
 		          </div>
 		        </div>
