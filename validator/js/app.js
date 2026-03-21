@@ -169,6 +169,7 @@ async function initValidator() {
 	  showAttachedError(modeContext.errorMessage || 'Project not found');
 	  showAttachedStatus('Attached: Project not found');
 	  showAttachedEmpty(null);
+	  setLoadCanonicalVisible(false);
 	  if (attachedContext) attachedContext.lastAppliedAt = null;
 	  setMainControlsEnabled(false);
 	} else if (modeContext.mode === 'attached' && editor) {
@@ -196,6 +197,7 @@ async function initValidator() {
 	  showAttachedError(null);
 	  showAttachedStatus(null);
 	  showAttachedEmpty(null);
+	  setLoadCanonicalVisible(false);
 	  setAttachedBlocked(false);
 	  setMainControlsEnabled(true);
 	  // Standalone mode: Load saved draft if available
@@ -315,11 +317,26 @@ function setMainControlsEnabled(enabled) {
   const editor = document.getElementById('editor');
   if (editor) editor.disabled = !enabled;
 
-  const ids = ['btn-apply', 'btn-save', 'btn-back', 'btn-forward', 'btn-validate', 'btn-clear'];
+  const ids = [
+    'btn-apply',
+    'btn-load-canonical',
+    'btn-save',
+    'btn-back',
+    'btn-forward',
+    'btn-validate',
+    'btn-clear',
+  ];
   ids.forEach((id) => {
     const el = document.getElementById(id);
     if (el) el.disabled = !enabled;
   });
+}
+
+function setLoadCanonicalVisible(visible) {
+  const btn = document.getElementById('btn-load-canonical');
+  if (!btn) return;
+  if (visible) btn.classList.remove('hidden');
+  else btn.classList.add('hidden');
 }
 
 function setAttachedBlocked(isBlocked) {
@@ -342,6 +359,9 @@ function syncAttachedViewState() {
   const canonicalEmpty = !canonical.trim();
   const valueEmpty = !value.trim();
   const isCanonical = value === canonical;
+
+  // Show "Load Project Output" only when there is canonical content to revert to and the editor differs.
+  setLoadCanonicalVisible(!canonicalEmpty && !isCanonical);
 
   // If the user changes text after an apply, we're back to a draft state.
   if (!isCanonical && attachedContext.lastAppliedAt) {
@@ -529,6 +549,31 @@ async function handleApplyToProject() {
   }
 }
 
+async function handleLoadCanonical() {
+  if (!attachedContext) {
+    showToast('Not in project-attached mode', 'warning');
+    return;
+  }
+
+  const canonical = attachedContext.canonicalMarkdown || '';
+  if (!canonical.trim()) {
+    showToast('No project output to load', 'warning');
+    return;
+  }
+
+  const editor = document.getElementById('editor');
+  if (!editor) return;
+
+  editor.value = canonical;
+  attachedContext.lastAppliedAt = null;
+  await storage?.saveDraft?.(canonical);
+  showAttachedEmpty(null);
+  showAttachedError(null);
+  runValidation();
+  syncAttachedViewState();
+  showToast('Loaded project output into editor', 'info');
+}
+
 // ============================================================
 // Event Listeners
 // ============================================================
@@ -541,10 +586,12 @@ function setupEventListeners() {
   const validateBtn = document.getElementById('btn-validate');
   const clearBtn = document.getElementById('btn-clear');
   const darkModeBtn = document.getElementById('btn-dark-mode');
+  const loadCanonicalBtn = document.getElementById('btn-load-canonical');
 
   validateBtn?.addEventListener('click', () => runValidation());
   clearBtn?.addEventListener('click', () => clearEditor());
   darkModeBtn?.addEventListener('click', () => toggleDarkMode());
+  loadCanonicalBtn?.addEventListener('click', () => handleLoadCanonical());
 
   // About button
   document.getElementById('btn-about')?.addEventListener('click', () => showAboutModal(currentPlugin));

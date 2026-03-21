@@ -156,6 +156,7 @@ test.describe('Validator (project-attached mode)', () => {
 
     // Should not allow editing/saving when the project doesn't exist.
     await expect(page.locator('#editor')).toBeDisabled();
+	    await expect(page.locator('#btn-load-canonical')).toBeHidden();
 
     // Must not create validator state for non-existent projects.
     const validatorState = await page.evaluate(async () => {
@@ -164,6 +165,60 @@ test.describe('Validator (project-attached mode)', () => {
     });
     expect(validatorState).toBeNull();
   });
+
+	  test('can revert a diverged draft back to the canonical project output', async ({ page }) => {
+	    await page.goto('/assistant/?type=one-pager');
+	    await page.waitForLoadState('networkidle');
+
+	    const projectId = 'e2e-attached-project-7';
+	    const canonical = '# Canonical\n\nHello';
+	    const draft = '# Draft\n\nThis diverged.';
+
+	    await page.evaluate(
+	      async ({ projectId: pid, canonical: can, draft: dr }) => {
+	        const { saveProject, saveValidatorState } = await import('/shared/js/storage.js');
+	        await saveProject('one-pager-docforge-db', {
+	          id: pid,
+	          title: 'Attached Mode Revert Draft',
+	          currentPhase: 3,
+	          phases: { 3: { response: can, completed: true } },
+	          phase3_output: can,
+	        });
+
+	        const now = new Date().toISOString();
+	        await saveValidatorState('one-pager-docforge-db', {
+	          projectId: pid,
+	          schemaVersion: 1,
+	          phases: {
+	            '3': {
+	              draftMarkdown: dr,
+	              draftUpdatedAt: now,
+	              history: {
+	                versions: [{ markdown: dr, savedAt: now }],
+	                currentIndex: 0,
+	              },
+	            },
+	          },
+	        });
+	      },
+	      { projectId, canonical, draft }
+	    );
+
+	    await page.goto(`/validator/?type=one-pager&project=${projectId}&phase=3`);
+	    await expect(page.locator('#attached-badge')).toBeVisible();
+	    await expect(page.locator('#editor')).toHaveValue(draft);
+	    await expect(page.locator('#attached-status')).toContainText('not applied to project');
+	    await expect(page.locator('#btn-load-canonical')).toBeVisible();
+
+	    await page.click('#btn-load-canonical');
+	    await expect(page.locator('#editor')).toHaveValue(canonical);
+	    await expect(page.locator('#attached-status')).toContainText('Editing project output');
+	    await expect(page.locator('#btn-load-canonical')).toBeHidden();
+
+	    // Draft should be aligned after revert so reload doesn't re-open the diverged text.
+	    await page.reload();
+	    await expect(page.locator('#editor')).toHaveValue(canonical);
+	  });
 
   test('shows an attached-mode error state when phase output is empty', async ({ page }) => {
     await page.goto('/assistant/?type=one-pager');
