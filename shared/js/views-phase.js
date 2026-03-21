@@ -79,7 +79,7 @@ export function renderPhaseContent(plugin, project, phase) {
               <span class="mr-2">🎉</span> Your ${escapeHtml(plugin.name)} is Complete!
             </h4>
             <p class="text-green-700 dark:text-green-400 mt-1">
-		          <strong>Next steps:</strong> Copy, download, or validate for detailed feedback.
+		          <strong>Next steps:</strong> Copy, download, or tune & refine for detailed feedback.
             </p>
           </div>
           <div class="flex gap-3 flex-wrap">
@@ -90,7 +90,7 @@ export function renderPhaseContent(plugin, project, phase) {
 		          ⬇️ Download ▾
 		        </button>
 		        <button id="validate-btn" data-validator-url="../validator/?type=${encodeURIComponent(plugin.id || '')}${project?.id ? `&project=${encodeURIComponent(project.id)}&phase=${encodeURIComponent(String(phase))}` : ''}" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
-              📊 Copy & Validate ↗
+		          🎛️ Tune & Refine ↗
             </button>
           </div>
         </div>

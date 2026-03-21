@@ -290,7 +290,7 @@ export function attachPhaseEventListeners(plugin, project, phase) {
     });
   }
 
-  // Copy & Validate button - copies document to clipboard AND opens validator
+  // Tune & Refine button - copies document to clipboard AND opens validator
   const validateBtn = document.getElementById('validate-btn');
   if (validateBtn) {
     validateBtn.addEventListener('click', async () => {
@@ -300,7 +300,7 @@ export function attachPhaseEventListeners(plugin, project, phase) {
 
       if (finalResponse) {
         await copyToClipboard(finalResponse);
-        showToast('Document copied! Opening validator...', 'success');
+        showToast('Document copied! Opening Tune & Refine...', 'success');
         // Small delay to ensure toast is visible before new tab opens
         setTimeout(() => {
           window.open(validatorUrl, '_blank', 'noopener,noreferrer');
