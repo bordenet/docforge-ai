@@ -293,7 +293,11 @@ export function attachPhaseEventListeners(plugin, project, phase) {
   // Tune & Refine button - copies document to clipboard AND opens validator
   const validateBtn = document.getElementById('validate-btn');
   if (validateBtn) {
-    validateBtn.addEventListener('click', async () => {
+	  validateBtn.addEventListener('click', async (e) => {
+	    // When the button is placed inside a <summary> expando row, prevent toggling the <details>.
+	    e?.preventDefault?.();
+	    e?.stopPropagation?.();
+
       const freshProject = await getProject(plugin.dbName, project.id);
       const finalResponse = freshProject.phases?.[3]?.response || '';
       const validatorUrl = validateBtn.dataset.validatorUrl;
