@@ -15,7 +15,7 @@
 
 Create business documents through adversarial AI review. Claude drafts, Gemini critiques, Claude synthesizes.
 
-**🚀 Live:** [bordenet.github.io/docforge-ai](https://bordenet.github.io/docforge-ai/) — [Assistant](https://bordenet.github.io/docforge-ai/assistant/) | [Validator](https://bordenet.github.io/docforge-ai/validator/)
+**🚀 Live:** [bordenet.github.io/docforge-ai](https://bordenet.github.io/docforge-ai/)
 
 ```bash
 git clone https://github.com/bordenet/docforge-ai && cd docforge-ai
