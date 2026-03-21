@@ -95,7 +95,9 @@ export function renderPhaseContent(plugin, project, phase) {
 		    <!-- Automated Validation Score (collapsed by default) -->
 		    <details class="group mt-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
 		      <summary class="cursor-pointer list-none [&::-webkit-details-marker]:hidden [&::marker]:content-[''] grid grid-cols-[auto,1fr] items-center gap-2">
-		        <span aria-hidden="true" class="self-center leading-none flex-shrink-0 text-gray-400 dark:text-gray-300 transition-transform group-open:rotate-90">▸</span>
+		        <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="self-center flex-shrink-0 w-5 h-5 text-gray-500 dark:text-gray-300 transition-transform group-open:rotate-90">
+		          <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 0 1 .02-1.06L10.94 10 7.23 6.29a.75.75 0 1 1 1.06-1.06l4.24 4.24c.3.3.3.77 0 1.06l-4.24 4.24a.75.75 0 0 1-1.08-.01Z" clip-rule="evenodd" />
+		        </svg>
 		        <div class="flex flex-wrap items-center gap-3 min-w-0">
 		          <div class="min-w-0 flex-1">
 		            <div class="font-semibold text-gray-900 dark:text-white flex items-center">
