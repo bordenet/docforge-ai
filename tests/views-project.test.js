@@ -168,6 +168,10 @@ describe('Views Project Module', () => {
       expect(html).toContain('Your Test Document is Complete');
       expect(html).toContain('export-final-btn');
       expect(html).toContain('Copy Final Document');
+	      expect(html).toContain('download-menu-btn');
+	      expect(html).toContain('bg-green-600');
+	      expect(html).toContain('validate-btn');
+	      expect(html).toContain('data-validator-url="../validator/?type=test-plugin&project=completed-project-456&phase=3"');
     });
 
     test('should not render completion banner for incomplete phase 3', () => {
