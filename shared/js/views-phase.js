@@ -136,8 +136,7 @@ export function renderPhaseContent(plugin, project, phase) {
 		            💡 Top suggestions to improve your score
 		          </div>
 		          <ul class="mt-2 text-xs text-gray-600 dark:text-gray-400 space-y-1 list-disc list-inside">
-		            ${allIssues.slice(0, 5).map((issue) => `<li>${escapeHtml(issue)}</li>`).join('')}
-		            ${allIssues.length > 5 ? `<li class="text-gray-400 dark:text-gray-500">...and ${allIssues.length - 5} more</li>` : ''}
+				            ${allIssues.map((issue) => `<li>${escapeHtml(issue)}</li>`).join('')}
 		          </ul>
 		        </div>
 		        ` : ''}
