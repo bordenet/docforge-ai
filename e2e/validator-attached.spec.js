@@ -210,12 +210,23 @@ test.describe('Validator (project-attached mode)', () => {
 	    await expect(page.locator('#attached-status')).toContainText('not applied to project');
 	    await expect(page.locator('#btn-load-canonical')).toBeVisible();
 
+	    // Cancel keeps draft intact (and should not rewrite validator state).
 	    await page.click('#btn-load-canonical');
+	    await expect(page.locator('#confirm-modal')).toBeVisible();
+	    await page.click('#confirm-cancel');
+	    await expect(page.locator('#editor')).toHaveValue(draft);
+
+	    await page.reload();
+	    await expect(page.locator('#editor')).toHaveValue(draft);
+
+	    // Confirm loads canonical and aligns draft for reloads.
+	    await page.click('#btn-load-canonical');
+	    await expect(page.locator('#confirm-modal')).toBeVisible();
+	    await page.click('#confirm-ok');
 	    await expect(page.locator('#editor')).toHaveValue(canonical);
 	    await expect(page.locator('#attached-status')).toContainText('Editing project output');
 	    await expect(page.locator('#btn-load-canonical')).toBeHidden();
 
-	    // Draft should be aligned after revert so reload doesn't re-open the diverged text.
 	    await page.reload();
 	    await expect(page.locator('#editor')).toHaveValue(canonical);
 	  });

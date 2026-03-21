@@ -10,7 +10,7 @@ import {
   getPhaseFromQuery,
 } from '../../shared/js/router.js';
 import { getPlugin } from '../../shared/js/plugin-registry.js';
-import { showToast, escapeHtml, setupGlobalErrorHandler } from '../../shared/js/ui.js';
+import { showToast, escapeHtml, setupGlobalErrorHandler, confirm } from '../../shared/js/ui.js';
 import { validateDocument } from '../../shared/js/validator.js';
 import { logger } from '../../shared/js/logger.js';
 import { toggleDarkMode, initTheme } from '../../shared/js/theme.js';
@@ -563,6 +563,21 @@ async function handleLoadCanonical() {
 
   const editor = document.getElementById('editor');
   if (!editor) return;
+
+  const current = editor.value || '';
+  const isDifferent = current !== canonical;
+  const nonTrivial = current.trim().length >= 20;
+  if (isDifferent && nonTrivial) {
+    const ok = await confirm(
+      'This will replace the current draft in the editor with the project output. Your draft will remain in version history unless you overwrite it.',
+      'Load Project Output?',
+      { okText: 'Load Project Output', cancelText: 'Keep Draft', okVariant: 'primary' }
+    );
+    if (!ok) {
+      showToast('Kept current draft', 'info');
+      return;
+    }
+  }
 
   editor.value = canonical;
   attachedContext.lastAppliedAt = null;

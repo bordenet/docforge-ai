@@ -31,10 +31,20 @@ function showInlineToast(message, type = 'success') {
  * @param {string} [title='Confirm'] - Dialog title
  * @returns {Promise<boolean>} True if confirmed
  */
-export function confirm(message, title = 'Confirm') {
+export function confirm(message, title = 'Confirm', options = {}) {
   return new Promise((resolve) => {
     const existing = document.getElementById('confirm-modal');
     if (existing) existing.remove();
+
+    const okText = options.okText || 'Delete';
+    const cancelText = options.cancelText || 'Cancel';
+    const okVariant = options.okVariant || 'danger';
+    const okClass =
+      okVariant === 'primary'
+        ? 'bg-blue-600 hover:bg-blue-700'
+        : okVariant === 'neutral'
+          ? 'bg-slate-600 hover:bg-slate-700'
+          : 'bg-red-600 hover:bg-red-700';
 
     const modal = document.createElement('div');
     modal.id = 'confirm-modal';
@@ -47,10 +57,10 @@ export function confirm(message, title = 'Confirm') {
         </div>
         <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
           <button id="confirm-cancel" class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 rounded-lg">
-            Cancel
+            ${escapeHtml(cancelText)}
           </button>
-          <button id="confirm-ok" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg">
-            Delete
+          <button id="confirm-ok" class="px-4 py-2 ${okClass} text-white font-medium rounded-lg">
+            ${escapeHtml(okText)}
           </button>
         </div>
       </div>

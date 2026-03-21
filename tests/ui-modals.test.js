@@ -75,6 +75,20 @@ describe('UI Modals Module', () => {
       await promise;
     });
 
+	    test('supports custom OK/Cancel labels via options', async () => {
+	      const promise = confirm('Replace draft?', 'Load project output', {
+	        okText: 'Load',
+	        cancelText: 'Keep',
+	        okVariant: 'primary',
+	      });
+
+	      expect(document.getElementById('confirm-ok').textContent).toContain('Load');
+	      expect(document.getElementById('confirm-cancel').textContent).toContain('Keep');
+
+	      document.getElementById('confirm-cancel').click();
+	      await promise;
+	    });
+
     test('escapes HTML in message and title', async () => {
       const promise = confirm('<script>alert("xss")</script>', '<b>Title</b>');
 
