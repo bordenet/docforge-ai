@@ -95,7 +95,7 @@ export function renderPhaseContent(plugin, project, phase) {
 		    <!-- Automated Validation Score (collapsed by default) -->
 		    <details class="mt-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
 		      <summary class="cursor-pointer">
-		        <div class="flex flex-wrap items-center justify-between gap-4">
+		        <div class="flex flex-wrap items-center gap-3">
 		          <div class="min-w-0 flex-1">
 		            <div class="font-semibold text-gray-900 dark:text-white flex items-center">
 		              📊 Automated Validation Score
@@ -108,14 +108,14 @@ export function renderPhaseContent(plugin, project, phase) {
 		            </p>
 		          </div>
 		          <div class="flex items-center gap-3 ml-auto flex-shrink-0">
-		            <button type="button" id="validate-btn" data-validator-url="../validator/?type=${encodeURIComponent(plugin.id || '')}${project?.id ? `&project=${encodeURIComponent(project.id)}&phase=${encodeURIComponent(String(phase))}` : ''}" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium min-w-0">
-		              🎛️ Tune & Refine ↗
-		            </button>
 		            <div class="flex items-center gap-2 whitespace-nowrap flex-shrink-0">
 		              <span class="text-2xl font-bold text-${scoreColor}-600 dark:text-${scoreColor}-400">${validationResult.totalScore}</span>
 		              <span class="text-gray-500 dark:text-gray-400">/100</span>
 		              <span class="px-2 py-1 text-xs font-medium rounded-full bg-${scoreColor}-100 dark:bg-${scoreColor}-900/30 text-${scoreColor}-700 dark:text-${scoreColor}-300">${scoreLabel}</span>
 		            </div>
+		            <button type="button" id="validate-btn" data-validator-url="../validator/?type=${encodeURIComponent(plugin.id || '')}${project?.id ? `&project=${encodeURIComponent(project.id)}&phase=${encodeURIComponent(String(phase))}` : ''}" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium min-w-0">
+		              🎛️ Tune & Refine<span class="whitespace-nowrap"> ↗</span>
+		            </button>
 		          </div>
 		        </div>
 		      </summary>
