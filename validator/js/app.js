@@ -444,6 +444,11 @@ async function handleSave() {
   }
 
   const editor = document.getElementById('editor');
+  if (editor?.disabled) {
+    showToast('Saving is disabled in blocked mode', 'warning');
+    return;
+  }
+
   const content = editor?.value || '';
 
   if (!content.trim()) {
@@ -452,9 +457,48 @@ async function handleSave() {
   }
 
   const result = await storage.saveVersion(content);
-  if (result.success) {
-    showToast(`Saved as version ${result.versionNumber}`, 'success');
-    await updateVersionDisplay();
+	const didSaveVersion = Boolean(result?.success);
+
+	// In attached mode, "Save" should also persist to the canonical Assistant project output.
+	// Apply when editor differs from our last-known canonical (even if version history had no change).
+	const shouldApply = Boolean(attachedContext && content !== (attachedContext.canonicalMarkdown || ''));
+
+	if (attachedContext && shouldApply) {
+	  const updated = await updateProjectPhaseOutput(
+	    currentPlugin.dbName,
+	    attachedContext.projectId,
+	    attachedContext.phaseNumber,
+	    content
+	  );
+
+	  if (!updated) {
+	    showAttachedError('Project not found');
+	    if (didSaveVersion) {
+	      showToast('Saved draft version, but project was not found to apply', 'warning');
+	    } else {
+	      showToast('Project not found to apply', 'error');
+	    }
+	  } else {
+	    attachedContext.canonicalMarkdown = content;
+	    attachedContext.lastAppliedAt = new Date().toLocaleTimeString();
+	    await storage?.saveDraft?.(content);
+	    showAttachedEmpty(null);
+	    showAttachedError(null);
+	    syncAttachedViewState();
+	    if (didSaveVersion) {
+	      showToast(`Saved & applied (v${result.versionNumber})`, 'success');
+	    } else {
+	      showToast('Applied to project', 'success');
+	    }
+	  }
+
+	  await updateVersionDisplay();
+	  return;
+	}
+
+	if (didSaveVersion) {
+	  showToast(`Saved as version ${result.versionNumber}`, 'success');
+	  await updateVersionDisplay();
   } else if (result.reason === 'no-change') {
     showToast('No changes to save', 'info');
   } else {
