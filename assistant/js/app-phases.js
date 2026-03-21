@@ -164,13 +164,26 @@ async function exportFinalAsPdf(plugin, project) {
   // html2pdf bundle exposes window.html2pdf
   await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js', 'html2pdf');
 
+	// NOTE: html2canvas/html2pdf can produce a blank PDF if the source element is placed
+	// far off-screen (e.g. large negative `left`). Keep the render target in-viewport and
+	// cover it with an overlay so it never flashes in the UI.
+	const overlay = document.createElement('div');
+	overlay.style.position = 'fixed';
+	overlay.style.inset = '0';
+	overlay.style.background = 'rgba(0, 0, 0, 0.10)';
+	overlay.style.zIndex = '2147483647';
+	overlay.style.pointerEvents = 'all';
+	document.body.appendChild(overlay);
+
   const container = document.createElement('div');
   container.style.position = 'fixed';
-  container.style.left = '-10000px';
+	container.style.left = '0';
   container.style.top = '0';
   container.style.width = '800px';
+	container.style.boxSizing = 'border-box';
   container.style.background = 'white';
   container.style.padding = '24px';
+	container.style.zIndex = '2147483646';
   container.innerHTML = `<style>${EXPORT_CSS}</style><div>${renderMarkdown(finalResponse)}</div>`;
   document.body.appendChild(container);
 
@@ -181,7 +194,7 @@ async function exportFinalAsPdf(plugin, project) {
       .set({
         margin: 10,
         filename,
-        html2canvas: { scale: 2, useCORS: true },
+				html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0, windowWidth: 800 },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
       })
       .from(container)
@@ -190,6 +203,7 @@ async function exportFinalAsPdf(plugin, project) {
     trackPhase(3, 'download-pdf', plugin.id);
     showToast('Downloaded PDF', 'success');
   } finally {
+		overlay.remove();
     container.remove();
   }
 }
