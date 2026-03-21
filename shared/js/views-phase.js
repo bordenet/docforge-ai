@@ -71,31 +71,32 @@ export function renderPhaseContent(plugin, project, phase) {
     // Collect all issues
     const allIssues = validationResult.issues || [];
 
-			completionBanner = `
-	      <div class="mb-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-	        <div class="flex items-center justify-between flex-wrap gap-3">
-	          <div class="min-w-0">
-            <h4 class="text-lg font-semibold text-green-800 dark:text-green-300 flex items-center">
-              <span class="mr-2">🎉</span> Your ${escapeHtml(plugin.name)} is Complete!
-            </h4>
-	            <p class="text-green-700 dark:text-green-400 mt-0.5">
-		          <strong>Next steps:</strong> Copy, download, or tune & refine for detailed feedback.
-            </p>
-          </div>
-	          <div class="flex gap-3 flex-wrap flex-shrink-0">
-            <button id="export-final-btn" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
-	              📋 Copy Final
-            </button>
+				completionBanner = `
+		      <div class="mb-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+		        <div class="flex items-center justify-between flex-wrap gap-3">
+		          <div class="min-w-0">
+	            <h4 class="text-lg font-semibold text-green-800 dark:text-green-300 flex items-center">
+	              <span class="mr-2">🎉</span> Your ${escapeHtml(plugin.name)} is Complete!
+	            </h4>
+		            <p class="text-green-700 dark:text-green-400 mt-0.5">
+			          <strong>Next steps:</strong> Copy, download, or tune & refine for detailed feedback.
+	            </p>
+	          </div>
+		          <div class="flex gap-3 flex-wrap flex-shrink-0">
+	            <button id="export-final-btn" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
+		              📋 Copy Final
+	            </button>
 		        <button id="download-menu-btn" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
-		          ⬇️ Download ▾
-		        </button>
-          </div>
-        </div>
+			          ⬇️ Download ▾
+			        </button>
+	          </div>
+	        </div>
 
 		    <!-- Automated Validation Score (collapsed by default) -->
-		    <details class="mt-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-		      <summary class="cursor-pointer">
-		        <div class="flex flex-wrap items-center gap-3">
+		    <details class="group mt-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+		      <summary class="cursor-pointer list-none [&::-webkit-details-marker]:hidden flex items-center gap-2">
+		        <span aria-hidden="true" class="flex-shrink-0 text-gray-400 dark:text-gray-500 transition-transform group-open:rotate-90">▸</span>
+		        <div class="flex flex-wrap items-center gap-3 flex-1 min-w-0">
 		          <div class="min-w-0 flex-1">
 		            <div class="font-semibold text-gray-900 dark:text-white flex items-center">
 		              📊 Automated Validation Score
