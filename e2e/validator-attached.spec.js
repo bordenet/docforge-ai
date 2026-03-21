@@ -187,8 +187,45 @@ test.describe('Validator (project-attached mode)', () => {
 
     await page.goto(`/validator/?type=one-pager&project=${projectId}&phase=3`);
     await expect(page.locator('#attached-badge')).toBeVisible();
-    await expect(page.locator('#attached-error')).toBeVisible();
-    await expect(page.locator('#attached-error')).toContainText('Phase 3 output is empty');
+	    await expect(page.locator('#attached-error')).toBeHidden();
+	    await expect(page.locator('#attached-empty')).toBeVisible();
+	    await expect(page.locator('#attached-empty')).toContainText('Phase 3 output is empty');
+	    await expect(page.locator('#attached-open-assistant')).toHaveAttribute('href', `/assistant/?type=one-pager#project/${projectId}`);
   });
+
+	  test('can draft from an empty phase output and apply back to the Assistant project', async ({ page }) => {
+	    await page.goto('/assistant/?type=one-pager');
+	    await page.waitForLoadState('networkidle');
+
+	    const projectId = 'e2e-attached-project-6';
+	    await page.evaluate(
+	      async ({ projectId: pid }) => {
+	        const { saveProject } = await import('/shared/js/storage.js');
+	        await saveProject('one-pager-docforge-db', {
+	          id: pid,
+	          title: 'Attached Mode Empty Apply',
+	          currentPhase: 3,
+	          phases: { 3: { response: '', completed: true } },
+	          phase3_output: '',
+	        });
+	      },
+	      { projectId }
+	    );
+
+	    await page.goto(`/validator/?type=one-pager&project=${projectId}&phase=3`);
+	    await expect(page.locator('#attached-empty')).toBeVisible();
+
+	    const drafted = '# Drafted\n\nThis was created in Validator.';
+	    await page.fill('#editor', drafted);
+	    await expect(page.locator('#attached-empty')).toBeHidden();
+	    await expect(page.locator('#attached-status')).toContainText('not applied to project');
+
+	    await page.click('#btn-apply');
+	    await expect(page.locator('#toast-container')).toContainText('Applied to project!');
+	    await expect(page.locator('#attached-status')).toContainText('Applied');
+
+	    await page.goto(`/assistant/?type=one-pager#project/${projectId}`);
+	    await expect(page.locator('#response-textarea')).toHaveValue(drafted);
+	  });
 });
 

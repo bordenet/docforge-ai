@@ -93,7 +93,7 @@ async function resolveModeContext(plugin) {
   }
 
   const canonicalMarkdown = getPhaseOutputInternal(project, phaseNumber || 3) || '';
-  const errorMessage = !canonicalMarkdown.trim() ? `Phase ${phaseNumber || 3} output is empty` : null;
+	const warningMessage = !canonicalMarkdown.trim() ? `Phase ${phaseNumber || 3} output is empty` : null;
 
   return {
     mode: 'attached',
@@ -101,7 +101,7 @@ async function resolveModeContext(plugin) {
     phaseNumber: phaseNumber || 3,
     project,
     canonicalMarkdown,
-    errorMessage,
+	  warningMessage,
   };
 }
 
@@ -168,6 +168,7 @@ async function initValidator() {
 	  setAttachedBlocked(true);
 	  showAttachedError(modeContext.errorMessage || 'Project not found');
 	  showAttachedStatus('Attached: Project not found');
+	  showAttachedEmpty(null);
 	  if (attachedContext) attachedContext.lastAppliedAt = null;
 	  setMainControlsEnabled(false);
 	} else if (modeContext.mode === 'attached' && editor) {
@@ -175,10 +176,12 @@ async function initValidator() {
 	  setMainControlsEnabled(true);
 
 	  attachedContext.canonicalMarkdown = modeContext.canonicalMarkdown || '';
-	  if (modeContext.errorMessage) {
-	    showAttachedError(modeContext.errorMessage);
+	  showAttachedError(null);
+	  const assistantUrl = `/assistant/?type=${currentPlugin.id}#project/${attachedContext.projectId}`;
+	  if (modeContext.warningMessage) {
+	    showAttachedEmpty({ message: modeContext.warningMessage, assistantUrl });
 	  } else {
-	    showAttachedError(null);
+	    showAttachedEmpty(null);
 	  }
 
 	  const draft = await storage.loadDraft();
@@ -192,6 +195,7 @@ async function initValidator() {
 	} else {
 	  showAttachedError(null);
 	  showAttachedStatus(null);
+	  showAttachedEmpty(null);
 	  setAttachedBlocked(false);
 	  setMainControlsEnabled(true);
 	  // Standalone mode: Load saved draft if available
@@ -287,6 +291,26 @@ function showAttachedStatus(message) {
   }
 }
 
+function showAttachedEmpty(args) {
+  const el = document.getElementById('attached-empty');
+  const textEl = document.getElementById('attached-empty-text');
+  const linkEl = document.getElementById('attached-open-assistant');
+  if (!el || !textEl || !linkEl) return;
+
+  const message = args?.message;
+  const assistantUrl = args?.assistantUrl;
+
+  if (message) {
+    textEl.textContent = message;
+    linkEl.href = assistantUrl || '#';
+    el.classList.remove('hidden');
+  } else {
+    textEl.textContent = '';
+    linkEl.href = '#';
+    el.classList.add('hidden');
+  }
+}
+
 function setMainControlsEnabled(enabled) {
   const editor = document.getElementById('editor');
   if (editor) editor.disabled = !enabled;
@@ -315,6 +339,8 @@ function syncAttachedViewState() {
   const editor = document.getElementById('editor');
   const value = editor?.value || '';
   const canonical = attachedContext.canonicalMarkdown || '';
+  const canonicalEmpty = !canonical.trim();
+  const valueEmpty = !value.trim();
   const isCanonical = value === canonical;
 
   // If the user changes text after an apply, we're back to a draft state.
@@ -327,7 +353,9 @@ function syncAttachedViewState() {
     return;
   }
 
-  if (isCanonical) {
+  if (canonicalEmpty && valueEmpty) {
+    showAttachedStatus('Attached: Phase output is empty (start drafting)');
+  } else if (isCanonical) {
     showAttachedStatus('Attached: Editing project output');
   } else {
     showAttachedStatus('Attached: Editing draft (not applied to project)');
@@ -485,6 +513,7 @@ async function handleApplyToProject() {
 	    attachedContext.lastAppliedAt = new Date().toLocaleTimeString();
 	    // Keep the draft aligned with canonical so reloads don't re-open in "not applied" state.
 	    await storage?.saveDraft?.(content);
+	    showAttachedEmpty(null);
     showAttachedError(null);
 	    syncAttachedViewState();
     showToast('Applied to project!', 'success');
@@ -533,8 +562,16 @@ function setupEventListeners() {
     editor.addEventListener('input', () => {
 	      if (attachedContext) {
 	        // User started writing; clear the "empty phase output" warning.
-	        if (!attachedContext.canonicalMarkdown?.trim() && editor.value.trim()) {
-	          showAttachedError(null);
+	        if (!attachedContext.canonicalMarkdown?.trim()) {
+	          const assistantUrl = `/assistant/?type=${currentPlugin.id}#project/${attachedContext.projectId}`;
+	          if (editor.value.trim()) {
+	            showAttachedEmpty(null);
+	          } else {
+	            showAttachedEmpty({
+	              message: `Phase ${attachedContext.phaseNumber} output is empty`,
+	              assistantUrl,
+	            });
+	          }
 	        }
 	        syncAttachedViewState();
 	      }
