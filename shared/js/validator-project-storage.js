@@ -39,64 +39,111 @@ function getTimeSince(isoDate) {
 export function createProjectValidatorStorage({ dbName, projectId, phaseNumber, maxVersions = 10 }) {
   const phaseKey = String(phaseNumber);
 
+	function isIsoAfter(a, b) {
+		if (!a || !b) return false;
+		try {
+			return new Date(a).getTime() > new Date(b).getTime();
+		} catch {
+			return false;
+		}
+	}
+
+	function trimHistory(history) {
+		if (!history || history.versions.length <= maxVersions) return;
+		history.versions = history.versions.slice(-maxVersions);
+		history.currentIndex = history.versions.length - 1;
+	}
+
+	function maybePushVersion(history, markdown, savedAt) {
+		const clean = sanitizeString(markdown || '');
+		if (!clean) return;
+		const last = history.versions.length ? history.versions[history.versions.length - 1].markdown : null;
+		if (last === clean) return;
+		history.versions.push({ markdown: clean, savedAt: savedAt || new Date().toISOString() });
+	}
+
   async function ensureState() {
-    let state = await getValidatorState(dbName, projectId);
+		let state = await getValidatorState(dbName, projectId);
 
-    if (!state) {
-	      const project = await getProject(dbName, projectId);
-	      if (!project) {
-	        // Hard contract: do not create validatorState for non-existent projects.
-	        throw new Error('Project not found');
-	      }
-	      const seed = getPhaseOutputInternal(project, phaseNumber) || '';
-      const now = new Date().toISOString();
+		const project = await getProject(dbName, projectId);
+		if (!project) {
+			// Hard contract: do not create validatorState for non-existent projects.
+			throw new Error('Project not found');
+		}
+		const seed = getPhaseOutputInternal(project, phaseNumber) || '';
+		const now = new Date().toISOString();
+		const projectUpdatedAt = project.updatedAt || null;
 
-      const history = createEmptyHistory();
-      if (seed) {
-        history.versions.push({ markdown: seed, savedAt: now });
-        history.currentIndex = 0;
-      }
+		let didMutate = false;
 
-      state = {
-        projectId,
-        schemaVersion: 1,
-        phases: {
-          [phaseKey]: {
-            draftMarkdown: seed,
-            draftUpdatedAt: seed ? now : null,
-            history,
-          },
-        },
-      };
+		if (!state) {
+			const history = createEmptyHistory();
+			if (seed) {
+				history.versions.push({ markdown: sanitizeString(seed), savedAt: projectUpdatedAt || now });
+				history.currentIndex = 0;
+			}
 
-      await saveValidatorState(dbName, state);
-      return state;
-    }
+			state = {
+				projectId,
+				schemaVersion: 1,
+				phases: {
+					[phaseKey]: {
+						draftMarkdown: sanitizeString(seed),
+						draftUpdatedAt: seed ? now : null,
+						history,
+					},
+				},
+			};
+			didMutate = true;
+		} else {
+			if (!state.phases) state.phases = {};
+			if (!state.phases[phaseKey]) {
+				const history = createEmptyHistory();
+				if (seed) {
+					history.versions.push({ markdown: sanitizeString(seed), savedAt: projectUpdatedAt || now });
+					history.currentIndex = 0;
+				}
 
-    if (!state.phases) state.phases = {};
-    if (!state.phases[phaseKey]) {
-	      const project = await getProject(dbName, projectId);
-	      if (!project) {
-	        throw new Error('Project not found');
-	      }
-	      const seed = getPhaseOutputInternal(project, phaseNumber) || '';
-      const now = new Date().toISOString();
+				state.phases[phaseKey] = {
+					draftMarkdown: sanitizeString(seed),
+					draftUpdatedAt: seed ? now : null,
+					history,
+				};
+				didMutate = true;
+			}
+		}
 
-      const history = createEmptyHistory();
-      if (seed) {
-        history.versions.push({ markdown: seed, savedAt: now });
-        history.currentIndex = 0;
-      }
+		// If the canonical project output was updated after the last validator draft update,
+		// update the draft to match the latest project output so attached-mode always opens
+		// with the newest saved Assistant content (while preserving prior drafts in history).
+		const phaseState = state.phases?.[phaseKey];
+		if (phaseState) {
+			const draftUpdatedAt = phaseState.draftUpdatedAt;
+			const projectNewerThanDraft = Boolean(projectUpdatedAt && (!draftUpdatedAt || isIsoAfter(projectUpdatedAt, draftUpdatedAt)));
+			const cleanSeed = sanitizeString(seed);
+			const cleanDraft = sanitizeString(phaseState.draftMarkdown || '');
+			if (projectNewerThanDraft && cleanSeed && cleanSeed !== cleanDraft) {
+				const history = phaseState.history || createEmptyHistory();
 
-      state.phases[phaseKey] = {
-        draftMarkdown: seed,
-        draftUpdatedAt: seed ? now : null,
-        history,
-      };
-      await saveValidatorState(dbName, state);
-    }
+				// Preserve the prior draft (if any) as a version before switching to the new canonical.
+				if (cleanDraft) {
+					maybePushVersion(history, cleanDraft, draftUpdatedAt || now);
+				}
+				maybePushVersion(history, cleanSeed, projectUpdatedAt || now);
+				trimHistory(history);
+				history.currentIndex = history.versions.length - 1;
 
-    return state;
+				phaseState.history = history;
+				phaseState.draftMarkdown = cleanSeed;
+				phaseState.draftUpdatedAt = now;
+				didMutate = true;
+			}
+		}
+
+		if (didMutate) {
+			await saveValidatorState(dbName, state);
+		}
+		return state;
   }
 
   function buildVersionView(history) {
