@@ -444,6 +444,11 @@ async function handleSave() {
   }
 
   const editor = document.getElementById('editor');
+  if (editor?.disabled) {
+    showToast('Saving is disabled in blocked mode', 'warning');
+    return;
+  }
+
   const content = editor?.value || '';
 
   if (!content.trim()) {
@@ -453,8 +458,32 @@ async function handleSave() {
 
   const result = await storage.saveVersion(content);
   if (result.success) {
-    showToast(`Saved as version ${result.versionNumber}`, 'success');
-    await updateVersionDisplay();
+	  // In attached mode, "Save" should persist improvements back to the canonical Assistant project output
+	  // so Phase 3 in Assistant reflects the latest saved content.
+	  if (attachedContext) {
+	    const updated = await updateProjectPhaseOutput(
+	      currentPlugin.dbName,
+	      attachedContext.projectId,
+	      attachedContext.phaseNumber,
+	      content
+	    );
+
+	    if (!updated) {
+	      showAttachedError('Project not found');
+	      showToast('Saved draft version, but project was not found to apply', 'warning');
+	    } else {
+	      attachedContext.canonicalMarkdown = content;
+	      attachedContext.lastAppliedAt = new Date().toLocaleTimeString();
+	      await storage?.saveDraft?.(content);
+	      showAttachedEmpty(null);
+	      showAttachedError(null);
+	      syncAttachedViewState();
+	      showToast(`Saved & applied (v${result.versionNumber})`, 'success');
+	    }
+	  } else {
+	    showToast(`Saved as version ${result.versionNumber}`, 'success');
+	  }
+	  await updateVersionDisplay();
   } else if (result.reason === 'no-change') {
     showToast('No changes to save', 'info');
   } else {

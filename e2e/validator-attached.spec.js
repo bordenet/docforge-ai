@@ -231,6 +231,39 @@ test.describe('Validator (project-attached mode)', () => {
 	    await expect(page.locator('#editor')).toHaveValue(canonical);
 	  });
 
+	  test('Validator Save persists to project so Assistant Phase 3 reflects latest saved content', async ({ page }) => {
+	    await page.goto('/assistant/?type=one-pager');
+	    await page.waitForLoadState('networkidle');
+
+	    const projectId = 'e2e-attached-project-6';
+	    const seed = '# Seed\n\nHello';
+
+	    await page.evaluate(
+	      async ({ projectId: pid, seed: md }) => {
+	        const { saveProject } = await import('/shared/js/storage.js');
+	        await saveProject('one-pager-docforge-db', {
+	          id: pid,
+	          title: 'Attached Mode Save Applies',
+	          currentPhase: 3,
+	          phases: { 3: { response: md, completed: true } },
+	          phase3_output: md,
+	        });
+	      },
+	      { projectId, seed }
+	    );
+
+	    await page.goto(`/validator/?type=one-pager&project=${projectId}&phase=3`);
+	    await expect(page.locator('#attached-badge')).toBeVisible();
+
+	    const edited = `${seed}\n\n## Saved\nThis should save back to the project when clicking Save.`;
+	    await page.fill('#editor', edited);
+	    await page.click('#btn-save');
+	    await expect(page.locator('#toast-container')).toContainText('Saved & applied');
+
+	    await page.goto(`/assistant/?type=one-pager#project/${projectId}`);
+	    await expect(page.locator('#response-textarea')).toHaveValue(edited);
+	  });
+
   test('shows an attached-mode error state when phase output is empty', async ({ page }) => {
     await page.goto('/assistant/?type=one-pager');
     await page.waitForLoadState('networkidle');
