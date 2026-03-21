@@ -97,18 +97,16 @@ test.describe('Validator (project-attached mode)', () => {
 
     const edited = `${seed}\n\n## Applied\nThis should save back to the project.`;
     await page.fill('#editor', edited);
-	    await expect(page.locator('#attached-status')).toContainText('not applied to project');
+		    await expect(page.locator('#attached-status')).toContainText('NOT saved to project');
 
-    const applyBtn = page.locator('#btn-apply');
-    await expect(applyBtn).toBeEnabled();
-    await page.click('#btn-apply');
-    await expect(applyBtn).toBeDisabled();
+	    const saveBtn = page.locator('#btn-save');
+	    await expect(saveBtn).toBeEnabled();
+	    await page.click('#btn-save');
 
-    // Wait for apply to complete (toast is emitted after IndexedDB write)
-    await expect(page.locator('#toast-container')).toContainText('Applied to project!');
+	    // Wait for save+apply to complete (toast is emitted after IndexedDB write)
+	    await expect(page.locator('#toast-container')).toContainText('Saved to project');
 
-	    await expect(page.locator('#attached-status')).toContainText('Applied');
-    await expect(applyBtn).toBeEnabled();
+		    await expect(page.locator('#attached-status')).toContainText('Applied');
 
     await page.goto(`/assistant/?type=one-pager#project/${projectId}`);
     await expect(page.locator('#response-textarea')).toHaveValue(edited);
@@ -207,7 +205,7 @@ test.describe('Validator (project-attached mode)', () => {
 	    await page.goto(`/validator/?type=one-pager&project=${projectId}&phase=3`);
 	    await expect(page.locator('#attached-badge')).toBeVisible();
 	    await expect(page.locator('#editor')).toHaveValue(draft);
-	    await expect(page.locator('#attached-status')).toContainText('not applied to project');
+		    await expect(page.locator('#attached-status')).toContainText('NOT saved to project');
 	    await expect(page.locator('#btn-load-canonical')).toBeVisible();
 
 	    // Cancel keeps draft intact (and should not rewrite validator state).
@@ -258,7 +256,7 @@ test.describe('Validator (project-attached mode)', () => {
 	    const edited = `${seed}\n\n## Saved\nThis should save back to the project when clicking Save.`;
 	    await page.fill('#editor', edited);
 	    await page.click('#btn-save');
-	    await expect(page.locator('#toast-container')).toContainText('Saved & applied');
+		    await expect(page.locator('#toast-container')).toContainText('Saved to project');
 
 	    await page.goto(`/assistant/?type=one-pager#project/${projectId}`);
 	    await expect(page.locator('#response-textarea')).toHaveValue(edited);
@@ -465,10 +463,10 @@ test.describe('Validator (project-attached mode)', () => {
 	    const drafted = '# Drafted\n\nThis was created in Validator.';
 	    await page.fill('#editor', drafted);
 	    await expect(page.locator('#attached-empty')).toBeHidden();
-	    await expect(page.locator('#attached-status')).toContainText('not applied to project');
+		    await expect(page.locator('#attached-status')).toContainText('NOT saved to project');
 
-	    await page.click('#btn-apply');
-	    await expect(page.locator('#toast-container')).toContainText('Applied to project!');
+		    await page.click('#btn-save');
+		    await expect(page.locator('#toast-container')).toContainText('Saved to project');
 	    await expect(page.locator('#attached-status')).toContainText('Applied');
 
 	    await page.goto(`/assistant/?type=one-pager#project/${projectId}`);

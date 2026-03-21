@@ -396,17 +396,10 @@
             <button
               id="btn-save"
               class="px-4 py-2 bg-green-600 hover:bg-green-700 !text-white font-medium rounded-lg transition-colors"
-              title="Save current version (Cmd+S)"
+	              title="Save current draft version (Cmd+S)"
             >
               💾 Save
             </button>
-	            <button
-	              id="btn-apply"
-	              class="hidden px-4 py-2 bg-blue-600 hover:bg-blue-700 !text-white font-medium rounded-lg transition-colors"
-	              title="Apply current editor content back to the Assistant project"
-	            >
-	              ⬆️ Apply to Project
-	            </button>
 	            <button
 	              id="btn-load-canonical"
 	              class="hidden px-4 py-2 bg-slate-600 hover:bg-slate-700 !text-white font-medium rounded-lg transition-colors"
@@ -418,7 +411,7 @@
               <button
                 id="btn-back"
                 class="px-3 py-2 bg-slate-600 dark:bg-slate-700 hover:bg-slate-700 dark:hover:bg-slate-600 disabled:bg-slate-400 dark:disabled:bg-slate-800 disabled:text-slate-300 dark:disabled:text-slate-500 !text-white rounded-lg transition-colors disabled:cursor-not-allowed"
-                title="Previous version"
+	                title="Previous draft (does not change Assistant until you Save)"
                 disabled
               >
                 ◀
@@ -426,13 +419,14 @@
               <button
                 id="btn-forward"
                 class="px-3 py-2 bg-slate-600 dark:bg-slate-700 hover:bg-slate-700 dark:hover:bg-slate-600 disabled:bg-slate-400 dark:disabled:bg-slate-800 disabled:text-slate-300 dark:disabled:text-slate-500 !text-white rounded-lg transition-colors disabled:cursor-not-allowed"
-                title="Next version"
+	                title="Next draft (does not change Assistant until you Save)"
                 disabled
               >
                 ▶
               </button>
             </div>
-            <span id="version-info" class="text-sm text-slate-600 dark:text-slate-300">No saved versions</span>
+	            <span id="version-info" class="text-sm text-slate-600 dark:text-slate-300">No draft versions</span>
+	            <span id="project-sync-info" class="hidden text-xs text-slate-500 dark:text-slate-200"></span>
           </div>
           <div class="text-sm text-slate-600 dark:text-slate-300 text-right">
             <div id="last-saved"></div>

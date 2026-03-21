@@ -234,8 +234,9 @@ function updateHeader(plugin, { attachedProjectId } = {}) {
       : `Generate a ${plugin.name} with the Assistant, then paste the markdown here.`;
   }
 
-  const attachedBadge = document.getElementById('attached-badge');
-	  const applyBtn = document.getElementById('btn-apply');
+		  const attachedBadge = document.getElementById('attached-badge');
+			  const saveBtn = document.getElementById('btn-save');
+			  const footerInfo = document.getElementById('project-sync-info');
 	  const docTypeBtn = document.getElementById('doc-type-btn');
 	  const docTypeSelector = document.getElementById('doc-type-selector');
   if (attachedBadge) {
@@ -246,13 +247,28 @@ function updateHeader(plugin, { attachedProjectId } = {}) {
     }
   }
 
-	  if (applyBtn) {
-	    if (attachedProjectId) {
-	      applyBtn.classList.remove('hidden');
-	    } else {
-	      applyBtn.classList.add('hidden');
-	    }
-	  }
+
+		  // Attached-mode contract: "Save" must mean "save to the Assistant project".
+		  // In standalone mode, Save only records a local draft version history.
+		  if (saveBtn) {
+		    if (attachedProjectId) {
+		      saveBtn.textContent = '💾 Save to Project';
+		      saveBtn.title = 'Save a draft version and update the Assistant project output (Cmd+S)';
+		    } else {
+		      saveBtn.textContent = '💾 Save';
+		      saveBtn.title = 'Save current draft version (Cmd+S)';
+		    }
+		  }
+
+		  // Footer hint is only meaningful in attached mode.
+		  if (footerInfo) {
+		    if (attachedProjectId) {
+		      footerInfo.classList.remove('hidden');
+		    } else {
+		      footerInfo.textContent = '';
+		      footerInfo.classList.add('hidden');
+		    }
+		  }
 
 	  // Attached-mode contract: do not allow switching document type.
 	  if (docTypeBtn) {
@@ -318,7 +334,6 @@ function setMainControlsEnabled(enabled) {
   if (editor) editor.disabled = !enabled;
 
   const ids = [
-    'btn-apply',
     'btn-load-canonical',
     'btn-save',
     'btn-back',
@@ -360,6 +375,19 @@ function syncAttachedViewState() {
   const valueEmpty = !value.trim();
   const isCanonical = value === canonical;
 
+	  // Footer helper text: make it explicit what affects the Assistant project output.
+	  const footerInfo = document.getElementById('project-sync-info');
+	  if (footerInfo) {
+	    footerInfo.classList.remove('hidden');
+	    if (canonicalEmpty && valueEmpty) {
+	      footerInfo.textContent = '• Project: empty';
+	    } else if (isCanonical) {
+	      footerInfo.textContent = '• Project: in sync';
+	    } else {
+	      footerInfo.textContent = '• Project: NOT saved (press Save)';
+	    }
+	  }
+
   // Show "Load Project Output" only when there is canonical content to revert to and the editor differs.
   setLoadCanonicalVisible(!canonicalEmpty && !isCanonical);
 
@@ -377,9 +405,9 @@ function syncAttachedViewState() {
     showAttachedStatus('Attached: Phase output is empty (start drafting)');
   } else if (isCanonical) {
     showAttachedStatus('Attached: Editing project output');
-  } else {
-    showAttachedStatus('Attached: Editing draft (not applied to project)');
-  }
+	} else {
+	  showAttachedStatus('Attached: Editing draft (NOT saved to project)');
+	}
 }
 
 /**
@@ -425,12 +453,12 @@ async function updateVersionDisplay() {
 
   const version = await storage.getCurrentVersion();
   if (version) {
-    if (versionInfo) versionInfo.textContent = `Version ${version.versionNumber} of ${version.totalVersions}`;
+    if (versionInfo) versionInfo.textContent = `Draft ${version.versionNumber} of ${version.totalVersions}`;
     if (lastSaved) lastSaved.textContent = storage.getTimeSince(version.savedAt);
     if (btnBack) btnBack.disabled = !version.canGoBack;
     if (btnForward) btnForward.disabled = !version.canGoForward;
   } else {
-    if (versionInfo) versionInfo.textContent = 'No saved versions';
+    if (versionInfo) versionInfo.textContent = 'No draft versions';
     if (lastSaved) lastSaved.textContent = '';
     if (btnBack) btnBack.disabled = true;
     if (btnForward) btnForward.disabled = true;
@@ -486,9 +514,9 @@ async function handleSave() {
 	    showAttachedError(null);
 	    syncAttachedViewState();
 	    if (didSaveVersion) {
-	      showToast(`Saved & applied (v${result.versionNumber})`, 'success');
+		      showToast(`Saved to project (draft v${result.versionNumber})`, 'success');
 	    } else {
-	      showToast('Applied to project', 'success');
+		      showToast('Saved to project', 'success');
 	    }
 	  }
 
@@ -497,7 +525,7 @@ async function handleSave() {
 	}
 
 	if (didSaveVersion) {
-	  showToast(`Saved as version ${result.versionNumber}`, 'success');
+		  showToast(`Saved draft v${result.versionNumber}`, 'success');
 	  await updateVersionDisplay();
   } else if (result.reason === 'no-change') {
     showToast('No changes to save', 'info');
@@ -516,7 +544,7 @@ async function handleGoBack() {
     runValidation();
 	      syncAttachedViewState();
     await updateVersionDisplay();
-    showToast(`Restored version ${version.versionNumber}`, 'info');
+	  showToast(`Restored draft v${version.versionNumber}`, 'info');
   }
 }
 
@@ -530,7 +558,7 @@ async function handleGoForward() {
     runValidation();
 	      syncAttachedViewState();
     await updateVersionDisplay();
-    showToast(`Restored version ${version.versionNumber}`, 'info');
+	  showToast(`Restored draft v${version.versionNumber}`, 'info');
   }
 }
 
