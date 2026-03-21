@@ -357,6 +357,59 @@ test.describe('Validator (project-attached mode)', () => {
 	      await expect(popup.locator('#attached-badge')).toBeVisible();
 	      await expect(popup.locator('#editor')).toHaveValue(updated);
 	    });
+
+		    test(`Assistant Save Response then Copy Final + Tune & Refine always use latest Phase 3 content even with existing validator draft (${doc.type})`, async ({ page }) => {
+		      // Clipboard APIs require explicit permissions in Playwright.
+		      await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+
+		      await page.goto(`/assistant/?type=${doc.type}`);
+		      await page.waitForLoadState('networkidle');
+
+		      const projectId = `e2e-attached-copy-final-${doc.type}-1`;
+		      const seed = `# Seed (${doc.type})\n\nHello`;
+		      const updated = `# TESTING 1-2-3\n\n${seed}`;
+
+		      // Seed a completed Phase 3 project.
+		      await page.evaluate(
+		        async ({ dbName, projectId: pid, seed: md }) => {
+		          const { saveProject } = await import('/shared/js/storage.js');
+		          await saveProject(dbName, {
+		            id: pid,
+		            title: 'Copy Final Regression Seed',
+		            currentPhase: 3,
+		            phases: { 3: { prompt: 'seed prompt', response: md, completed: true } },
+		            phase3_output: md,
+		          });
+		        },
+		        { dbName: doc.dbName, projectId, seed }
+		      );
+
+		      // Create existing validatorState by visiting attached-mode once (this is what makes the bug non-deterministic).
+		      await page.goto(`/validator/?type=${doc.type}&project=${projectId}&phase=3`);
+		      await expect(page.locator('#attached-badge')).toBeVisible();
+		      await expect(page.locator('#editor')).toHaveValue(seed);
+
+		      // Back to Assistant, edit Phase 3 and save.
+		      await page.goto(`/assistant/?type=${doc.type}#project/${projectId}`);
+		      await expect(page.locator('#response-textarea')).toHaveValue(seed);
+		      await page.fill('#response-textarea', updated);
+
+		      // Important: click Copy Final immediately after Save (no explicit wait), to match the user repro.
+		      await page.click('#save-response-btn');
+		      await page.click('#export-final-btn');
+		      await expect(page.locator('#toast-container')).toContainText('Final document copied', { timeout: 10000 });
+
+		      const clipboard = await page.evaluate(() => navigator.clipboard.readText());
+		      expect(clipboard).toBe(updated);
+
+		      const [popup] = await Promise.all([
+		        page.waitForEvent('popup'),
+		        page.click('#validate-btn'),
+		      ]);
+		      await popup.waitForLoadState('networkidle');
+		      await expect(popup.locator('#attached-badge')).toBeVisible();
+		      await expect(popup.locator('#editor')).toHaveValue(updated);
+		    });
 	  }
 
   test('shows an attached-mode error state when phase output is empty', async ({ page }) => {

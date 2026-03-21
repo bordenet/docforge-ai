@@ -26,6 +26,24 @@ import { getExportFilename } from '../../shared/js/workflow.js';
 // Cache script-load promises so we only pull third-party exporters once per page
 const SCRIPT_LOADS = new Map();
 
+// Phase output saves are async (IndexedDB). Track in-flight saves per project so actions like
+// Copy Final / Tune & Refine always use the most recently saved Phase 3 content.
+/** @type {Map<string, Promise<any>>} */
+const RESPONSE_SAVE_IN_FLIGHT = new Map();
+
+async function awaitResponseSave(projectId) {
+	const p = RESPONSE_SAVE_IN_FLIGHT.get(projectId);
+	if (!p) return;
+	try {
+		await p;
+	} finally {
+		// Only clear if the same promise is still registered.
+		if (RESPONSE_SAVE_IN_FLIGHT.get(projectId) === p) {
+			RESPONSE_SAVE_IN_FLIGHT.delete(projectId);
+		}
+	}
+}
+
 function loadScriptOnce(url, globalVar) {
   if (globalVar && window[globalVar]) return Promise.resolve();
   if (SCRIPT_LOADS.has(url)) return SCRIPT_LOADS.get(url);
@@ -98,6 +116,7 @@ function buildExportHtmlDocument({ title, bodyHtml }) {
 }
 
 async function exportFinalAsMarkdown(plugin, project) {
+	await awaitResponseSave(project.id);
   const freshProject = await getProject(plugin.dbName, project.id);
   const finalResponse = freshProject.phases?.[3]?.response || '';
   if (!finalResponse) {
@@ -111,6 +130,7 @@ async function exportFinalAsMarkdown(plugin, project) {
 }
 
 async function exportFinalAsDocx(plugin, project) {
+	await awaitResponseSave(project.id);
   const freshProject = await getProject(plugin.dbName, project.id);
   const finalResponse = freshProject.phases?.[3]?.response || '';
   if (!finalResponse) {
@@ -132,6 +152,7 @@ async function exportFinalAsDocx(plugin, project) {
 }
 
 async function exportFinalAsPdf(plugin, project) {
+	await awaitResponseSave(project.id);
   const freshProject = await getProject(plugin.dbName, project.id);
   const finalResponse = freshProject.phases?.[3]?.response || '';
   if (!finalResponse) {
@@ -260,7 +281,32 @@ export function attachPhaseEventListeners(plugin, project, phase) {
   if (saveResponseBtn) {
     // Initialize diff module with callbacks on first use
     initDiffModule(updatePhaseTabStyles, attachPhaseEventListeners);
-    saveResponseBtn.addEventListener('click', () => handleSaveResponse(plugin, project, phase, responseTextarea));
+	  saveResponseBtn.addEventListener('click', async () => {
+			if (!project?.id) return;
+			if (RESPONSE_SAVE_IN_FLIGHT.has(project.id)) return;
+
+			// Prevent duplicate save clicks; other actions will await this save via awaitResponseSave().
+			saveResponseBtn.disabled = true;
+
+			const p = handleSaveResponse(plugin, project, phase, responseTextarea);
+			RESPONSE_SAVE_IN_FLIGHT.set(project.id, p);
+			try {
+				await p;
+			} finally {
+				// Best-effort re-enable; content may have re-rendered.
+				if (RESPONSE_SAVE_IN_FLIGHT.get(project.id) === p) {
+					RESPONSE_SAVE_IN_FLIGHT.delete(project.id);
+				}
+				// Phase content may have re-rendered.
+				// Let the input listener decide disabled state based on content.
+				if (responseTextarea) {
+					const hasContent = responseTextarea.value.trim().length >= 3;
+					saveResponseBtn.disabled = !hasContent;
+				} else {
+					saveResponseBtn.disabled = false;
+				}
+			}
+		});
   }
 
   // Next phase button
@@ -279,6 +325,7 @@ export function attachPhaseEventListeners(plugin, project, phase) {
   // Export final document button (Phase 3 complete)
   if (exportFinalBtn) {
     exportFinalBtn.addEventListener('click', async () => {
+			await awaitResponseSave(project.id);
       const freshProject = await getProject(plugin.dbName, project.id);
       const finalResponse = freshProject.phases?.[3]?.response || '';
       if (finalResponse) {
@@ -298,6 +345,7 @@ export function attachPhaseEventListeners(plugin, project, phase) {
 	    e?.preventDefault?.();
 	    e?.stopPropagation?.();
 
+			await awaitResponseSave(project.id);
       const freshProject = await getProject(plugin.dbName, project.id);
       const finalResponse = freshProject.phases?.[3]?.response || '';
       const validatorUrl = validateBtn.dataset.validatorUrl;
