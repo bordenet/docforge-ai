@@ -56,6 +56,10 @@ export async function handleSaveResponse(plugin, project, phase, responseTextare
     freshProject.phases[phase].response = response;
     freshProject.phases[phase].completed = true;
 
+	    // Keep legacy flat phaseN_output fields in sync.
+	    // Validator attached-mode prefers the flat format via getPhaseOutputInternal().
+	    freshProject[`phase${phase}_output`] = response;
+
     // Track phase save
     trackPhase(phase, 'save', plugin.id);
 

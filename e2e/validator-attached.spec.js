@@ -231,6 +231,47 @@ test.describe('Validator (project-attached mode)', () => {
 	    await expect(page.locator('#editor')).toHaveValue(canonical);
 	  });
 
+	  test('Assistant Save Response keeps phase3_output in sync so Tune & Refine opens the latest Phase 3 content', async ({ page }) => {
+	    await page.goto('/assistant/?type=prd');
+	    await page.waitForLoadState('networkidle');
+
+	    const projectId = 'e2e-attached-project-save-sync-1';
+	    const seed = '# PRD Seed\n\nHello';
+	    const updated = `#abc 123\n\n${seed}`;
+
+	    await page.evaluate(
+	      async ({ projectId: pid, seed: md }) => {
+	        const { saveProject } = await import('/shared/js/storage.js');
+	        await saveProject('prd-docforge-db', {
+	          id: pid,
+	          title: 'PRD Save Sync',
+	          currentPhase: 3,
+	          phases: { 3: { prompt: 'seed prompt', response: md, completed: true } },
+	          phase3_output: md,
+	        });
+	      },
+	      { projectId, seed }
+	    );
+
+	    // Open the seeded project in Assistant
+	    await page.goto(`/assistant/?type=prd#project/${projectId}`);
+	    await expect(page.locator('#response-textarea')).toHaveValue(seed);
+
+	    // Edit Phase 3 and save
+	    await page.fill('#response-textarea', updated);
+	    await page.click('#save-response-btn');
+	    await expect(page.locator('#toast-container')).toContainText('Your document is complete!');
+
+	    // Tune & Refine should open validator with the latest saved content (not stale phase3_output)
+	    const [popup] = await Promise.all([
+	      page.waitForEvent('popup'),
+	      page.click('#validate-btn'),
+	    ]);
+	    await popup.waitForLoadState('networkidle');
+	    await expect(popup.locator('#attached-badge')).toBeVisible();
+	    await expect(popup.locator('#editor')).toHaveValue(updated);
+	  });
+
   test('shows an attached-mode error state when phase output is empty', async ({ page }) => {
     await page.goto('/assistant/?type=one-pager');
     await page.waitForLoadState('networkidle');
