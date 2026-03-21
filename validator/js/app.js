@@ -4,13 +4,20 @@
  * @module validator-app
  */
 
-import { getCurrentDocumentType } from '../../shared/js/router.js';
+import {
+  getCurrentDocumentType,
+  getProjectIdFromQuery,
+  getPhaseFromQuery,
+} from '../../shared/js/router.js';
 import { getPlugin } from '../../shared/js/plugin-registry.js';
-import { showToast, escapeHtml, setupGlobalErrorHandler } from '../../shared/js/ui.js';
+import { showToast, escapeHtml, setupGlobalErrorHandler, confirm } from '../../shared/js/ui.js';
 import { validateDocument } from '../../shared/js/validator.js';
 import { logger } from '../../shared/js/logger.js';
 import { toggleDarkMode, initTheme } from '../../shared/js/theme.js';
 import { createStorage } from '../../shared/js/validator-storage.js';
+import { createProjectValidatorStorage } from '../../shared/js/validator-project-storage.js';
+import { getProject, updateProjectPhaseOutput } from '../../shared/js/storage.js';
+import { getPhaseOutputInternal } from '../../shared/js/workflow-config.js';
 import { initAnalytics, trackValidation } from '../../shared/js/analytics.js';
 // Display functions
 import { updateScoreDisplay, renderSlopDetection, renderIssues, renderExpansionStubs } from './app-display.js';
@@ -36,6 +43,67 @@ let currentPlugin = null;
 let currentResult = null;
 let currentPrompt = null;
 let storage = null; // Initialized per document type
+let attachedContext = null; // { projectId, phaseNumber, canonicalMarkdown, lastAppliedAt } when in attached mode
+
+function createBlockedValidatorStorage() {
+  return {
+    async loadDraft() {
+      return null;
+    },
+    async saveDraft() {
+      // no-op
+    },
+    async getCurrentVersion() {
+      return null;
+    },
+    getTimeSince() {
+      return '';
+    },
+    async saveVersion() {
+      return { success: false, reason: 'blocked' };
+    },
+    async goBack() {
+      return null;
+    },
+    async goForward() {
+      return null;
+    },
+  };
+}
+
+async function resolveModeContext(plugin) {
+  const attachedProjectId = getProjectIdFromQuery();
+  const phaseFromQuery = getPhaseFromQuery();
+  const phaseNumber = attachedProjectId ? phaseFromQuery || 3 : null;
+
+  if (!attachedProjectId) {
+    return { mode: 'standalone', attachedProjectId: null, phaseNumber: null, project: null };
+  }
+
+  const project = await getProject(plugin.dbName, attachedProjectId);
+  if (!project) {
+    return {
+      mode: 'blocked',
+      attachedProjectId,
+      phaseNumber: phaseNumber || 3,
+      project: null,
+      canonicalMarkdown: '',
+      errorMessage: 'Project not found',
+    };
+  }
+
+  const canonicalMarkdown = getPhaseOutputInternal(project, phaseNumber || 3) || '';
+	const warningMessage = !canonicalMarkdown.trim() ? `Phase ${phaseNumber || 3} output is empty` : null;
+
+  return {
+    mode: 'attached',
+    attachedProjectId,
+    phaseNumber: phaseNumber || 3,
+    project,
+    canonicalMarkdown,
+	  warningMessage,
+  };
+}
 
 // State accessor functions for modules
 function getState() {
@@ -49,7 +117,7 @@ function setPrompt(prompt) {
 /**
  * Initialize the validator
  */
-function initValidator() {
+async function initValidator() {
   // Initialize theme before rendering
   initTheme();
 
@@ -57,15 +125,35 @@ function initValidator() {
   const docType = getCurrentDocumentType();
   currentPlugin = getPlugin(docType) || getPlugin('one-pager');
 
-  // Initialize storage with document-type-specific key
-  storage = createStorage(`${currentPlugin.id}-validator-history`);
+	const modeContext = await resolveModeContext(currentPlugin);
+
+	attachedContext = modeContext.attachedProjectId
+	  ? {
+	      projectId: modeContext.attachedProjectId,
+	      phaseNumber: modeContext.phaseNumber || 3,
+	      canonicalMarkdown: '',
+	      lastAppliedAt: null,
+	    }
+	  : null;
+
+  // Initialize storage
+	storage =
+	  modeContext.mode === 'standalone'
+	    ? createStorage(`${currentPlugin.id}-validator-history`)
+	    : modeContext.mode === 'attached'
+	      ? createProjectValidatorStorage({
+	        dbName: currentPlugin.dbName,
+	        projectId: modeContext.attachedProjectId,
+	        phaseNumber: modeContext.phaseNumber,
+	      })
+	      : createBlockedValidatorStorage();
 
   // Initialize sub-modules with state accessors
   initPowerups(getState, setPrompt);
   initLLMMode(getState, setPrompt);
 
   // Update UI for current plugin
-  updateHeader(currentPlugin);
+	updateHeader(currentPlugin, { attachedProjectId: modeContext.attachedProjectId });
   renderDimensionScores(currentPlugin);
   setupEventListeners();
   setupDocTypeSelector();
@@ -73,17 +161,54 @@ function initValidator() {
   // Initialize analytics (tracks tool open)
   initAnalytics();
 
-  // Load saved draft if available
-  const draft = storage.loadDraft();
-  if (draft && draft.markdown) {
-    const editor = document.getElementById('editor');
-    if (editor) {
-      editor.value = draft.markdown;
-      // Run validation on restored content
-      runValidation();
-    }
-  }
-  updateVersionDisplay();
+  const editor = document.getElementById('editor');
+
+	if (modeContext.mode === 'blocked' && editor) {
+	  // Hard error: do not allow editing/saving when the project doesn't exist.
+	  setAttachedBlocked(true);
+	  showAttachedError(modeContext.errorMessage || 'Project not found');
+	  showAttachedStatus('Attached: Project not found');
+	  showAttachedEmpty(null);
+	  setLoadCanonicalVisible(false);
+	  if (attachedContext) attachedContext.lastAppliedAt = null;
+	  setMainControlsEnabled(false);
+	} else if (modeContext.mode === 'attached' && editor) {
+	  setAttachedBlocked(false);
+	  setMainControlsEnabled(true);
+
+	  attachedContext.canonicalMarkdown = modeContext.canonicalMarkdown || '';
+	  showAttachedError(null);
+	  const assistantUrl = `/assistant/?type=${currentPlugin.id}#project/${attachedContext.projectId}`;
+	  if (modeContext.warningMessage) {
+	    showAttachedEmpty({ message: modeContext.warningMessage, assistantUrl });
+	  } else {
+	    showAttachedEmpty(null);
+	  }
+
+	  const draft = await storage.loadDraft();
+	  editor.value = draft?.markdown || '';
+
+	  if (editor.value.trim()) {
+	    runValidation();
+	  }
+
+	  syncAttachedViewState();
+	} else {
+	  showAttachedError(null);
+	  showAttachedStatus(null);
+	  showAttachedEmpty(null);
+	  setLoadCanonicalVisible(false);
+	  setAttachedBlocked(false);
+	  setMainControlsEnabled(true);
+	  // Standalone mode: Load saved draft if available
+	  const draft = storage.loadDraft();
+	  if (draft && draft.markdown && editor) {
+	    editor.value = draft.markdown;
+	    // Run validation on restored content
+	    runValidation();
+	  }
+	}
+  await updateVersionDisplay();
 
   logger.info(`Validator initialized for: ${currentPlugin.id}`, 'validator');
 }
@@ -91,7 +216,7 @@ function initValidator() {
 /**
  * Update header for current document type
  */
-function updateHeader(plugin) {
+function updateHeader(plugin, { attachedProjectId } = {}) {
   document.getElementById('header-icon').textContent = plugin.icon;
   document.getElementById('header-title').textContent = `${plugin.name} Validator`;
   document.getElementById('doc-type-label').textContent = plugin.name;
@@ -104,7 +229,156 @@ function updateHeader(plugin) {
 
   const helpText = document.getElementById('editor-help');
   if (helpText) {
-    helpText.textContent = `Generate a ${plugin.name} with the Assistant, then paste the markdown here.`;
+    helpText.textContent = attachedProjectId
+      ? `Loaded from Assistant project storage (ID: ${attachedProjectId}).`
+      : `Generate a ${plugin.name} with the Assistant, then paste the markdown here.`;
+  }
+
+  const attachedBadge = document.getElementById('attached-badge');
+	  const applyBtn = document.getElementById('btn-apply');
+	  const docTypeBtn = document.getElementById('doc-type-btn');
+	  const docTypeSelector = document.getElementById('doc-type-selector');
+  if (attachedBadge) {
+    if (attachedProjectId) {
+      attachedBadge.classList.remove('hidden');
+    } else {
+      attachedBadge.classList.add('hidden');
+    }
+  }
+
+	  if (applyBtn) {
+	    if (attachedProjectId) {
+	      applyBtn.classList.remove('hidden');
+	    } else {
+	      applyBtn.classList.add('hidden');
+	    }
+	  }
+
+	  // Attached-mode contract: do not allow switching document type.
+	  if (docTypeBtn) {
+	    if (attachedProjectId) {
+	      docTypeBtn.classList.add('hidden');
+	    } else {
+	      docTypeBtn.classList.remove('hidden');
+	    }
+	  }
+	  if (docTypeSelector) {
+	    docTypeSelector.disabled = Boolean(attachedProjectId);
+	  }
+}
+
+function showAttachedError(message) {
+  const el = document.getElementById('attached-error');
+  if (!el) return;
+
+  if (message) {
+    el.textContent = message;
+    el.classList.remove('hidden');
+  } else {
+    el.textContent = '';
+    el.classList.add('hidden');
+  }
+}
+
+function showAttachedStatus(message) {
+  const el = document.getElementById('attached-status');
+  if (!el) return;
+
+  if (message) {
+    el.textContent = message;
+    el.classList.remove('hidden');
+  } else {
+    el.textContent = '';
+    el.classList.add('hidden');
+  }
+}
+
+function showAttachedEmpty(args) {
+  const el = document.getElementById('attached-empty');
+  const textEl = document.getElementById('attached-empty-text');
+  const linkEl = document.getElementById('attached-open-assistant');
+  if (!el || !textEl || !linkEl) return;
+
+  const message = args?.message;
+  const assistantUrl = args?.assistantUrl;
+
+  if (message) {
+    textEl.textContent = message;
+    linkEl.href = assistantUrl || '#';
+    el.classList.remove('hidden');
+  } else {
+    textEl.textContent = '';
+    linkEl.href = '#';
+    el.classList.add('hidden');
+  }
+}
+
+function setMainControlsEnabled(enabled) {
+  const editor = document.getElementById('editor');
+  if (editor) editor.disabled = !enabled;
+
+  const ids = [
+    'btn-apply',
+    'btn-load-canonical',
+    'btn-save',
+    'btn-back',
+    'btn-forward',
+    'btn-validate',
+    'btn-clear',
+  ];
+  ids.forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.disabled = !enabled;
+  });
+}
+
+function setLoadCanonicalVisible(visible) {
+  const btn = document.getElementById('btn-load-canonical');
+  if (!btn) return;
+  if (visible) btn.classList.remove('hidden');
+  else btn.classList.add('hidden');
+}
+
+function setAttachedBlocked(isBlocked) {
+  const el = document.getElementById('attached-blocked');
+  if (!el) return;
+
+  if (isBlocked) {
+    el.classList.remove('hidden');
+  } else {
+    el.classList.add('hidden');
+  }
+}
+
+function syncAttachedViewState() {
+  if (!attachedContext) return;
+
+  const editor = document.getElementById('editor');
+  const value = editor?.value || '';
+  const canonical = attachedContext.canonicalMarkdown || '';
+  const canonicalEmpty = !canonical.trim();
+  const valueEmpty = !value.trim();
+  const isCanonical = value === canonical;
+
+  // Show "Load Project Output" only when there is canonical content to revert to and the editor differs.
+  setLoadCanonicalVisible(!canonicalEmpty && !isCanonical);
+
+  // If the user changes text after an apply, we're back to a draft state.
+  if (!isCanonical && attachedContext.lastAppliedAt) {
+    attachedContext.lastAppliedAt = null;
+  }
+
+  if (isCanonical && attachedContext.lastAppliedAt) {
+    showAttachedStatus(`Applied to project at ${attachedContext.lastAppliedAt}`);
+    return;
+  }
+
+  if (canonicalEmpty && valueEmpty) {
+    showAttachedStatus('Attached: Phase output is empty (start drafting)');
+  } else if (isCanonical) {
+    showAttachedStatus('Attached: Editing project output');
+  } else {
+    showAttachedStatus('Attached: Editing draft (not applied to project)');
   }
 }
 
@@ -141,7 +415,7 @@ function renderDimensionScores(plugin) {
 // Version Control
 // ============================================================
 
-function updateVersionDisplay() {
+async function updateVersionDisplay() {
   const versionInfo = document.getElementById('version-info');
   const lastSaved = document.getElementById('last-saved');
   const btnBack = document.getElementById('btn-back');
@@ -149,7 +423,7 @@ function updateVersionDisplay() {
 
   if (!storage) return;
 
-  const version = storage.getCurrentVersion();
+  const version = await storage.getCurrentVersion();
   if (version) {
     if (versionInfo) versionInfo.textContent = `Version ${version.versionNumber} of ${version.totalVersions}`;
     if (lastSaved) lastSaved.textContent = storage.getTimeSince(version.savedAt);
@@ -163,7 +437,12 @@ function updateVersionDisplay() {
   }
 }
 
-function handleSave() {
+async function handleSave() {
+  if (!storage) {
+    showToast('No document loaded to save', 'warning');
+    return;
+  }
+
   const editor = document.getElementById('editor');
   const content = editor?.value || '';
 
@@ -172,10 +451,10 @@ function handleSave() {
     return;
   }
 
-  const result = storage.saveVersion(content);
+  const result = await storage.saveVersion(content);
   if (result.success) {
     showToast(`Saved as version ${result.versionNumber}`, 'success');
-    updateVersionDisplay();
+    await updateVersionDisplay();
   } else if (result.reason === 'no-change') {
     showToast('No changes to save', 'info');
   } else {
@@ -183,26 +462,131 @@ function handleSave() {
   }
 }
 
-function handleGoBack() {
+async function handleGoBack() {
+  if (!storage) return;
+
   const editor = document.getElementById('editor');
-  const version = storage.goBack();
+  const version = await storage.goBack();
   if (version && editor) {
     editor.value = version.markdown;
     runValidation();
-    updateVersionDisplay();
+	      syncAttachedViewState();
+    await updateVersionDisplay();
     showToast(`Restored version ${version.versionNumber}`, 'info');
   }
 }
 
-function handleGoForward() {
+async function handleGoForward() {
+  if (!storage) return;
+
   const editor = document.getElementById('editor');
-  const version = storage.goForward();
+  const version = await storage.goForward();
   if (version && editor) {
     editor.value = version.markdown;
     runValidation();
-    updateVersionDisplay();
+	      syncAttachedViewState();
+    await updateVersionDisplay();
     showToast(`Restored version ${version.versionNumber}`, 'info');
   }
+}
+
+async function handleApplyToProject() {
+  if (!attachedContext) {
+    showToast('Not in project-attached mode', 'warning');
+    return;
+  }
+
+  const applyBtn = document.getElementById('btn-apply');
+  const priorLabel = applyBtn?.textContent || null;
+  if (applyBtn) {
+    applyBtn.disabled = true;
+    applyBtn.textContent = 'Applying…';
+  }
+
+  const editor = document.getElementById('editor');
+  const content = editor?.value || '';
+  if (content.trim().length < 3) {
+    if (applyBtn) {
+      applyBtn.disabled = false;
+      if (priorLabel) applyBtn.textContent = priorLabel;
+    }
+    showToast('Nothing to apply', 'warning');
+    return;
+  }
+
+  try {
+    const updated = await updateProjectPhaseOutput(
+      currentPlugin.dbName,
+      attachedContext.projectId,
+      attachedContext.phaseNumber,
+      content
+    );
+
+    if (!updated) {
+      showAttachedError('Project not found');
+      showToast('Project not found', 'error');
+      return;
+    }
+
+    // Update local attached-mode context.
+    attachedContext.canonicalMarkdown = content;
+	    attachedContext.lastAppliedAt = new Date().toLocaleTimeString();
+	    // Keep the draft aligned with canonical so reloads don't re-open in "not applied" state.
+	    await storage?.saveDraft?.(content);
+	    showAttachedEmpty(null);
+    showAttachedError(null);
+	    syncAttachedViewState();
+    showToast('Applied to project!', 'success');
+  } finally {
+    if (applyBtn) {
+      // Keep the disabled state observable (and UX-consistent) even if IndexedDB writes are very fast.
+      await new Promise((resolve) => {
+        setTimeout(resolve, 50);
+      });
+      applyBtn.disabled = false;
+      applyBtn.textContent = priorLabel || '⬆️ Apply to Project';
+    }
+  }
+}
+
+async function handleLoadCanonical() {
+  if (!attachedContext) {
+    showToast('Not in project-attached mode', 'warning');
+    return;
+  }
+
+  const canonical = attachedContext.canonicalMarkdown || '';
+  if (!canonical.trim()) {
+    showToast('No project output to load', 'warning');
+    return;
+  }
+
+  const editor = document.getElementById('editor');
+  if (!editor) return;
+
+  const current = editor.value || '';
+  const isDifferent = current !== canonical;
+  const nonTrivial = current.trim().length >= 20;
+  if (isDifferent && nonTrivial) {
+    const ok = await confirm(
+      'This will replace the current draft in the editor with the project output. Your draft will remain in version history unless you overwrite it.',
+      'Load Project Output?',
+      { okText: 'Load Project Output', cancelText: 'Keep Draft', okVariant: 'primary' }
+    );
+    if (!ok) {
+      showToast('Kept current draft', 'info');
+      return;
+    }
+  }
+
+  editor.value = canonical;
+  attachedContext.lastAppliedAt = null;
+  await storage?.saveDraft?.(canonical);
+  showAttachedEmpty(null);
+  showAttachedError(null);
+  runValidation();
+  syncAttachedViewState();
+  showToast('Loaded project output into editor', 'info');
 }
 
 // ============================================================
@@ -217,10 +601,12 @@ function setupEventListeners() {
   const validateBtn = document.getElementById('btn-validate');
   const clearBtn = document.getElementById('btn-clear');
   const darkModeBtn = document.getElementById('btn-dark-mode');
+  const loadCanonicalBtn = document.getElementById('btn-load-canonical');
 
   validateBtn?.addEventListener('click', () => runValidation());
   clearBtn?.addEventListener('click', () => clearEditor());
   darkModeBtn?.addEventListener('click', () => toggleDarkMode());
+  loadCanonicalBtn?.addEventListener('click', () => handleLoadCanonical());
 
   // About button
   document.getElementById('btn-about')?.addEventListener('click', () => showAboutModal(currentPlugin));
@@ -229,6 +615,47 @@ function setupEventListeners() {
   editor?.addEventListener('paste', () => {
     setTimeout(() => runValidation(), 100);
   });
+
+  // Project-attached draft persistence (debounced)
+  if (editor && typeof storage?.saveDraft === 'function') {
+    let debounceTimer = null;
+    const DEBOUNCE_MS = 400;
+
+    editor.addEventListener('input', () => {
+	      if (attachedContext) {
+	        // User started writing; clear the "empty phase output" warning.
+	        if (!attachedContext.canonicalMarkdown?.trim()) {
+	          const assistantUrl = `/assistant/?type=${currentPlugin.id}#project/${attachedContext.projectId}`;
+	          if (editor.value.trim()) {
+	            showAttachedEmpty(null);
+	          } else {
+	            showAttachedEmpty({
+	              message: `Phase ${attachedContext.phaseNumber} output is empty`,
+	              assistantUrl,
+	            });
+	          }
+	        }
+	        syncAttachedViewState();
+	      }
+
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        storage.saveDraft(editor.value).catch((error) => {
+          logger.error('Failed to save validator draft', error, 'validator');
+        });
+      }, DEBOUNCE_MS);
+    });
+
+    editor.addEventListener('blur', () => {
+	      if (attachedContext) {
+	        syncAttachedViewState();
+	      }
+
+      storage.saveDraft(editor.value).catch((error) => {
+        logger.error('Failed to save validator draft', error, 'validator');
+      });
+    });
+  }
 
   // AI Power-ups
   document.getElementById('btn-critique')?.addEventListener('click', handleCritique);
@@ -241,20 +668,48 @@ function setupEventListeners() {
   document.getElementById('btn-view-llm-prompt')?.addEventListener('click', () => handleViewLLMPrompt(currentPrompt));
 
   // Version control
-  document.getElementById('btn-save')?.addEventListener('click', handleSave);
-  document.getElementById('btn-back')?.addEventListener('click', handleGoBack);
-  document.getElementById('btn-forward')?.addEventListener('click', handleGoForward);
+  document.getElementById('btn-save')?.addEventListener('click', () => {
+    handleSave().catch((error) => {
+      logger.error('Save version failed', error, 'validator');
+      showToast('Failed to save', 'error');
+    });
+  });
+	  document.getElementById('btn-apply')?.addEventListener('click', () => {
+	    handleApplyToProject().catch((error) => {
+	      logger.error('Apply to project failed', error, 'validator');
+	      showToast('Failed to apply to project', 'error');
+	    });
+	  });
+  document.getElementById('btn-back')?.addEventListener('click', () => {
+    handleGoBack().catch((error) => {
+      logger.error('Go back failed', error, 'validator');
+      showToast('Failed to restore version', 'error');
+    });
+  });
+  document.getElementById('btn-forward')?.addEventListener('click', () => {
+    handleGoForward().catch((error) => {
+      logger.error('Go forward failed', error, 'validator');
+      showToast('Failed to restore version', 'error');
+    });
+  });
 
   // Keyboard shortcut: Ctrl/Cmd+S to save
   document.addEventListener('keydown', (e) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 's') {
       e.preventDefault();
-      handleSave();
+      handleSave().catch((error) => {
+        logger.error('Save version failed', error, 'validator');
+        showToast('Failed to save', 'error');
+      });
     }
   });
 
   // Update version display periodically (every 60 seconds)
-  setInterval(updateVersionDisplay, 60000);
+  setInterval(() => {
+    updateVersionDisplay().catch((error) => {
+      logger.error('Failed to update version display', error, 'validator');
+    });
+  }, 60000);
 }
 
 /**
@@ -434,7 +889,15 @@ function showAboutModal(plugin) {
 
 // Initialize
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initValidator);
+  document.addEventListener('DOMContentLoaded', () => {
+    initValidator().catch((error) => {
+      logger.error('Validator initialization failed', error, 'validator');
+      showToast('Validator failed to initialize', 'error');
+    });
+  });
 } else {
-  initValidator();
+  initValidator().catch((error) => {
+    logger.error('Validator initialization failed', error, 'validator');
+    showToast('Validator failed to initialize', 'error');
+  });
 }

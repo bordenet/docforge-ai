@@ -31,6 +31,29 @@ export function getCurrentPlugin() {
 }
 
 /**
+ * Get project ID from URL query string (Validator attached-mode contract)
+ * @returns {string|null} Project ID or null
+ */
+export function getProjectIdFromQuery() {
+  const params = new URLSearchParams(window.location.search);
+  const project = params.get('project');
+  return project || null;
+}
+
+/**
+ * Get phase number from URL query string (Validator attached-mode contract)
+ * @returns {number|null} Phase number (1-3) or null
+ */
+export function getPhaseFromQuery() {
+  const params = new URLSearchParams(window.location.search);
+  const raw = params.get('phase');
+  if (!raw) return null;
+  const phase = parseInt(raw, 10);
+  if (phase === 1 || phase === 2 || phase === 3) return phase;
+  return null;
+}
+
+/**
  * Get the current view from URL hash
  * @returns {string} Current view ('list', 'new', 'edit', 'project', 'phase')
  */
