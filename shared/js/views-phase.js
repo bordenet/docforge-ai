@@ -94,9 +94,9 @@ export function renderPhaseContent(plugin, project, phase) {
 
 		    <!-- Automated Validation Score (collapsed by default) -->
 		    <details class="group mt-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-		      <summary class="cursor-pointer list-none [&::-webkit-details-marker]:hidden flex items-center gap-2">
-		        <span aria-hidden="true" class="flex-shrink-0 text-gray-400 dark:text-gray-500 transition-transform group-open:rotate-90">▸</span>
-		        <div class="flex flex-wrap items-center gap-3 flex-1 min-w-0">
+		      <summary class="cursor-pointer list-none [&::-webkit-details-marker]:hidden [&::marker]:content-[''] grid grid-cols-[auto,1fr] items-center gap-2">
+		        <span aria-hidden="true" class="self-center leading-none flex-shrink-0 text-gray-400 dark:text-gray-300 transition-transform group-open:rotate-90">▸</span>
+		        <div class="flex flex-wrap items-center gap-3 min-w-0">
 		          <div class="min-w-0 flex-1">
 		            <div class="font-semibold text-gray-900 dark:text-white flex items-center">
 		              📊 Automated Validation Score
