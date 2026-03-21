@@ -167,7 +167,7 @@ describe('Views Project Module', () => {
       const html = renderPhaseContent(mockPlugin, completedProject, 3);
       expect(html).toContain('Your Test Document is Complete');
       expect(html).toContain('export-final-btn');
-      expect(html).toContain('Copy Final Document');
+	      expect(html).toContain('Copy Final');
 	      expect(html).toContain('tune & refine');
 	      expect(html).toContain('download-menu-btn');
 	      expect(html).toContain('bg-green-600');

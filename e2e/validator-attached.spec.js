@@ -264,6 +264,101 @@ test.describe('Validator (project-attached mode)', () => {
 	    await expect(page.locator('#response-textarea')).toHaveValue(edited);
 	  });
 
+	  const DOC_TYPES = [
+	    { type: 'one-pager', dbName: 'one-pager-docforge-db' },
+	    { type: 'prd', dbName: 'prd-docforge-db' },
+	  ];
+
+	  for (const doc of DOC_TYPES) {
+	    test(`Assistant Save Response then Tune & Refine opens Validator with latest Phase 3 content (${doc.type}, legacy flat field)`, async ({ page }) => {
+	      await page.goto(`/assistant/?type=${doc.type}`);
+	      await page.waitForLoadState('networkidle');
+
+	      const projectId = `e2e-attached-tune-refine-${doc.type}-legacy-1`;
+	      const seed = `# Seed (${doc.type})\n\nHello`;
+	      const updated = `#abc 123\n\n${seed}`;
+
+	      // Seed a project that includes the legacy flat field. Historically the Assistant only updated
+	      // nested phases[3].response, causing Validator (which preferred phase3_output) to open stale content.
+	      await page.evaluate(
+	        async ({ dbName, projectId: pid, seed: md }) => {
+	          const { saveProject } = await import('/shared/js/storage.js');
+	          await saveProject(dbName, {
+	            id: pid,
+	            title: 'Tune & Refine Seed',
+	            currentPhase: 3,
+	            phases: { 3: { prompt: 'seed prompt', response: md, completed: true } },
+	            phase3_output: md,
+	          });
+	        },
+	        { dbName: doc.dbName, projectId, seed }
+	      );
+
+	      await page.goto(`/assistant/?type=${doc.type}#project/${projectId}`);
+	      await expect(page.locator('#response-textarea')).toHaveValue(seed);
+
+	      await page.fill('#response-textarea', updated);
+	      await page.click('#save-response-btn');
+	      await expect(page.locator('#toast-container')).toContainText('Your document is complete!');
+
+	      // Assert canonical + legacy are kept in sync.
+	      const saved = await page.evaluate(
+	        async ({ dbName, projectId: pid }) => {
+	          const { getProject } = await import('/shared/js/storage.js');
+	          return getProject(dbName, pid);
+	        },
+	        { dbName: doc.dbName, projectId }
+	      );
+	      expect(saved.phases['3'].response).toBe(updated);
+	      expect(saved.phase3_output).toBe(updated);
+
+	      const [popup] = await Promise.all([
+	        page.waitForEvent('popup'),
+	        page.click('#validate-btn'),
+	      ]);
+	      await popup.waitForLoadState('networkidle');
+	      await expect(popup.locator('#attached-badge')).toBeVisible();
+	      await expect(popup.locator('#editor')).toHaveValue(updated);
+	    });
+
+	    test(`Assistant Save Response then Tune & Refine opens Validator with latest Phase 3 content (${doc.type}, nested-only project)`, async ({ page }) => {
+	      await page.goto(`/assistant/?type=${doc.type}`);
+	      await page.waitForLoadState('networkidle');
+
+	      const projectId = `e2e-attached-tune-refine-${doc.type}-nested-1`;
+	      const seed = `# Seed (${doc.type})\n\nHello`;
+	      const updated = `#abc 123\n\n${seed}`;
+
+	      await page.evaluate(
+	        async ({ dbName, projectId: pid, seed: md }) => {
+	          const { saveProject } = await import('/shared/js/storage.js');
+	          await saveProject(dbName, {
+	            id: pid,
+	            title: 'Tune & Refine Seed (Nested Only)',
+	            currentPhase: 3,
+	            phases: { 3: { prompt: 'seed prompt', response: md, completed: true } },
+	          });
+	        },
+	        { dbName: doc.dbName, projectId, seed }
+	      );
+
+	      await page.goto(`/assistant/?type=${doc.type}#project/${projectId}`);
+	      await expect(page.locator('#response-textarea')).toHaveValue(seed);
+
+	      await page.fill('#response-textarea', updated);
+	      await page.click('#save-response-btn');
+	      await expect(page.locator('#toast-container')).toContainText('Your document is complete!');
+
+	      const [popup] = await Promise.all([
+	        page.waitForEvent('popup'),
+	        page.click('#validate-btn'),
+	      ]);
+	      await popup.waitForLoadState('networkidle');
+	      await expect(popup.locator('#attached-badge')).toBeVisible();
+	      await expect(popup.locator('#editor')).toHaveValue(updated);
+	    });
+	  }
+
   test('shows an attached-mode error state when phase output is empty', async ({ page }) => {
     await page.goto('/assistant/?type=one-pager');
     await page.waitForLoadState('networkidle');

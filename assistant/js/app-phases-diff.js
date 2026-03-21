@@ -56,6 +56,11 @@ export async function handleSaveResponse(plugin, project, phase, responseTextare
     freshProject.phases[phase].response = response;
     freshProject.phases[phase].completed = true;
 
+	    // Keep legacy flat phaseN_output fields in sync.
+	    // Validator attached-mode seeds/loads canonical markdown via getPhaseOutputInternal().
+	    // Without this, Tune & Refine can open stale content when older projects contain phase3_output.
+	    freshProject[`phase${phase}_output`] = response;
+
     // Track phase save
     trackPhase(phase, 'save', plugin.id);
 

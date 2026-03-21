@@ -56,21 +56,26 @@ export function getPhaseMetadata(phaseNumber) {
  * @returns {string} Phase output or empty string
  */
 export function getPhaseOutputInternal(project, phaseNum) {
-  // Flat format (canonical)
-  const flatKey = `phase${phaseNum}_output`;
-  if (project[flatKey]) {
-    return project[flatKey];
-  }
-  // Legacy nested format
-  if (project.phases) {
-    if (Array.isArray(project.phases) && project.phases[phaseNum - 1]) {
-      return project.phases[phaseNum - 1].response || '';
-    }
-    if (project.phases[phaseNum] && typeof project.phases[phaseNum] === 'object') {
-      return project.phases[phaseNum].response || '';
-    }
-  }
-  return '';
+	if (!project) return '';
+
+	// Nested format is the primary source of truth in the Assistant UI.
+	// If both nested + flat exist, prefer nested to avoid stale reads when legacy fields drift.
+	const phases = project.phases;
+	let nested = '';
+	if (phases) {
+		if (Array.isArray(phases) && phases[phaseNum - 1]) {
+			nested = phases[phaseNum - 1].response || '';
+		} else if (phases[phaseNum] && typeof phases[phaseNum] === 'object') {
+			nested = phases[phaseNum].response || '';
+		} else if (phases[String(phaseNum)] && typeof phases[String(phaseNum)] === 'object') {
+			nested = phases[String(phaseNum)].response || '';
+		}
+	}
+	if (nested) return nested;
+
+	// Flat legacy format (kept in sync for backward compatibility)
+	const flatKey = `phase${phaseNum}_output`;
+	return project[flatKey] || '';
 }
 
 /**
