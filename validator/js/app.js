@@ -20,14 +20,14 @@ import { getProject, updateProjectPhaseOutput } from '../../shared/js/storage.js
 import { getPhaseOutputInternal } from '../../shared/js/workflow-config.js';
 import { initAnalytics, trackValidation } from '../../shared/js/analytics.js';
 // Display functions
-import { updateScoreDisplay, renderSlopDetection, renderIssues, renderExpansionStubs } from './app-display.js';
-// AI Power-ups functions
 import {
-  initPowerups,
-  handleCritique,
-  handleRewrite,
-  handleViewPrompt,
-} from './app-powerups.js';
+  updateScoreDisplay,
+  renderSlopDetection,
+  renderIssues,
+  renderExpansionStubs,
+} from './app-display.js';
+// AI Power-ups functions
+import { initPowerups, handleCritique, handleRewrite, handleViewPrompt } from './app-powerups.js';
 // LLM Scoring Mode functions
 import {
   initLLMMode,
@@ -93,7 +93,9 @@ async function resolveModeContext(plugin) {
   }
 
   const canonicalMarkdown = getPhaseOutputInternal(project, phaseNumber || 3) || '';
-	const warningMessage = !canonicalMarkdown.trim() ? `Phase ${phaseNumber || 3} output is empty` : null;
+  const warningMessage = !canonicalMarkdown.trim()
+    ? `Phase ${phaseNumber || 3} output is empty`
+    : null;
 
   return {
     mode: 'attached',
@@ -101,7 +103,7 @@ async function resolveModeContext(plugin) {
     phaseNumber: phaseNumber || 3,
     project,
     canonicalMarkdown,
-	  warningMessage,
+    warningMessage,
   };
 }
 
@@ -125,35 +127,35 @@ async function initValidator() {
   const docType = getCurrentDocumentType();
   currentPlugin = getPlugin(docType) || getPlugin('one-pager');
 
-	const modeContext = await resolveModeContext(currentPlugin);
+  const modeContext = await resolveModeContext(currentPlugin);
 
-	attachedContext = modeContext.attachedProjectId
-	  ? {
-	      projectId: modeContext.attachedProjectId,
-	      phaseNumber: modeContext.phaseNumber || 3,
-	      canonicalMarkdown: '',
-	      lastAppliedAt: null,
-	    }
-	  : null;
+  attachedContext = modeContext.attachedProjectId
+    ? {
+        projectId: modeContext.attachedProjectId,
+        phaseNumber: modeContext.phaseNumber || 3,
+        canonicalMarkdown: '',
+        lastAppliedAt: null,
+      }
+    : null;
 
   // Initialize storage
-	storage =
-	  modeContext.mode === 'standalone'
-	    ? createStorage(`${currentPlugin.id}-validator-history`)
-	    : modeContext.mode === 'attached'
-	      ? createProjectValidatorStorage({
-	        dbName: currentPlugin.dbName,
-	        projectId: modeContext.attachedProjectId,
-	        phaseNumber: modeContext.phaseNumber,
-	      })
-	      : createBlockedValidatorStorage();
+  storage =
+    modeContext.mode === 'standalone'
+      ? createStorage(`${currentPlugin.id}-validator-history`)
+      : modeContext.mode === 'attached'
+        ? createProjectValidatorStorage({
+            dbName: currentPlugin.dbName,
+            projectId: modeContext.attachedProjectId,
+            phaseNumber: modeContext.phaseNumber,
+          })
+        : createBlockedValidatorStorage();
 
   // Initialize sub-modules with state accessors
   initPowerups(getState, setPrompt);
   initLLMMode(getState, setPrompt);
 
   // Update UI for current plugin
-	updateHeader(currentPlugin, { attachedProjectId: modeContext.attachedProjectId });
+  updateHeader(currentPlugin, { attachedProjectId: modeContext.attachedProjectId });
   renderDimensionScores(currentPlugin);
   setupEventListeners();
   setupDocTypeSelector();
@@ -163,51 +165,51 @@ async function initValidator() {
 
   const editor = document.getElementById('editor');
 
-	if (modeContext.mode === 'blocked' && editor) {
-	  // Hard error: do not allow editing/saving when the project doesn't exist.
-	  setAttachedBlocked(true);
-	  showAttachedError(modeContext.errorMessage || 'Project not found');
-	  showAttachedStatus('Attached: Project not found');
-	  showAttachedEmpty(null);
-	  setLoadCanonicalVisible(false);
-	  if (attachedContext) attachedContext.lastAppliedAt = null;
-	  setMainControlsEnabled(false);
-	} else if (modeContext.mode === 'attached' && editor) {
-	  setAttachedBlocked(false);
-	  setMainControlsEnabled(true);
+  if (modeContext.mode === 'blocked' && editor) {
+    // Hard error: do not allow editing/saving when the project doesn't exist.
+    setAttachedBlocked(true);
+    showAttachedError(modeContext.errorMessage || 'Project not found');
+    showAttachedStatus('Attached: Project not found');
+    showAttachedEmpty(null);
+    setLoadCanonicalVisible(false);
+    if (attachedContext) attachedContext.lastAppliedAt = null;
+    setMainControlsEnabled(false);
+  } else if (modeContext.mode === 'attached' && editor) {
+    setAttachedBlocked(false);
+    setMainControlsEnabled(true);
 
-	  attachedContext.canonicalMarkdown = modeContext.canonicalMarkdown || '';
-	  showAttachedError(null);
-	  const assistantUrl = `/assistant/?type=${currentPlugin.id}#project/${attachedContext.projectId}`;
-	  if (modeContext.warningMessage) {
-	    showAttachedEmpty({ message: modeContext.warningMessage, assistantUrl });
-	  } else {
-	    showAttachedEmpty(null);
-	  }
+    attachedContext.canonicalMarkdown = modeContext.canonicalMarkdown || '';
+    showAttachedError(null);
+    const assistantUrl = `/assistant/?type=${currentPlugin.id}#project/${attachedContext.projectId}`;
+    if (modeContext.warningMessage) {
+      showAttachedEmpty({ message: modeContext.warningMessage, assistantUrl });
+    } else {
+      showAttachedEmpty(null);
+    }
 
-	  const draft = await storage.loadDraft();
-	  editor.value = draft?.markdown || '';
+    const draft = await storage.loadDraft();
+    editor.value = draft?.markdown || '';
 
-	  if (editor.value.trim()) {
-	    runValidation();
-	  }
+    if (editor.value.trim()) {
+      runValidation();
+    }
 
-	  syncAttachedViewState();
-	} else {
-	  showAttachedError(null);
-	  showAttachedStatus(null);
-	  showAttachedEmpty(null);
-	  setLoadCanonicalVisible(false);
-	  setAttachedBlocked(false);
-	  setMainControlsEnabled(true);
-	  // Standalone mode: Load saved draft if available
-	  const draft = storage.loadDraft();
-	  if (draft && draft.markdown && editor) {
-	    editor.value = draft.markdown;
-	    // Run validation on restored content
-	    runValidation();
-	  }
-	}
+    syncAttachedViewState();
+  } else {
+    showAttachedError(null);
+    showAttachedStatus(null);
+    showAttachedEmpty(null);
+    setLoadCanonicalVisible(false);
+    setAttachedBlocked(false);
+    setMainControlsEnabled(true);
+    // Standalone mode: Load saved draft if available
+    const draft = storage.loadDraft();
+    if (draft && draft.markdown && editor) {
+      editor.value = draft.markdown;
+      // Run validation on restored content
+      runValidation();
+    }
+  }
   await updateVersionDisplay();
 
   logger.info(`Validator initialized for: ${currentPlugin.id}`, 'validator');
@@ -234,11 +236,11 @@ function updateHeader(plugin, { attachedProjectId } = {}) {
       : `Generate a ${plugin.name} with the Assistant, then paste the markdown here.`;
   }
 
-		  const attachedBadge = document.getElementById('attached-badge');
-			  const saveBtn = document.getElementById('btn-save');
-			  const footerInfo = document.getElementById('project-sync-info');
-	  const docTypeBtn = document.getElementById('doc-type-btn');
-	  const docTypeSelector = document.getElementById('doc-type-selector');
+  const attachedBadge = document.getElementById('attached-badge');
+  const saveBtn = document.getElementById('btn-save');
+  const footerInfo = document.getElementById('project-sync-info');
+  const docTypeBtn = document.getElementById('doc-type-btn');
+  const docTypeSelector = document.getElementById('doc-type-selector');
   if (attachedBadge) {
     if (attachedProjectId) {
       attachedBadge.classList.remove('hidden');
@@ -247,40 +249,39 @@ function updateHeader(plugin, { attachedProjectId } = {}) {
     }
   }
 
+  // Attached-mode contract: "Save" must mean "save to the Assistant project".
+  // In standalone mode, Save only records a local draft version history.
+  if (saveBtn) {
+    if (attachedProjectId) {
+      saveBtn.textContent = '💾 Save to Project';
+      saveBtn.title = 'Save a draft version and update the Assistant project output (Cmd+S)';
+    } else {
+      saveBtn.textContent = '💾 Save';
+      saveBtn.title = 'Save current draft version (Cmd+S)';
+    }
+  }
 
-		  // Attached-mode contract: "Save" must mean "save to the Assistant project".
-		  // In standalone mode, Save only records a local draft version history.
-		  if (saveBtn) {
-		    if (attachedProjectId) {
-		      saveBtn.textContent = '💾 Save to Project';
-		      saveBtn.title = 'Save a draft version and update the Assistant project output (Cmd+S)';
-		    } else {
-		      saveBtn.textContent = '💾 Save';
-		      saveBtn.title = 'Save current draft version (Cmd+S)';
-		    }
-		  }
+  // Footer hint is only meaningful in attached mode.
+  if (footerInfo) {
+    if (attachedProjectId) {
+      footerInfo.classList.remove('hidden');
+    } else {
+      footerInfo.textContent = '';
+      footerInfo.classList.add('hidden');
+    }
+  }
 
-		  // Footer hint is only meaningful in attached mode.
-		  if (footerInfo) {
-		    if (attachedProjectId) {
-		      footerInfo.classList.remove('hidden');
-		    } else {
-		      footerInfo.textContent = '';
-		      footerInfo.classList.add('hidden');
-		    }
-		  }
-
-	  // Attached-mode contract: do not allow switching document type.
-	  if (docTypeBtn) {
-	    if (attachedProjectId) {
-	      docTypeBtn.classList.add('hidden');
-	    } else {
-	      docTypeBtn.classList.remove('hidden');
-	    }
-	  }
-	  if (docTypeSelector) {
-	    docTypeSelector.disabled = Boolean(attachedProjectId);
-	  }
+  // Attached-mode contract: do not allow switching document type.
+  if (docTypeBtn) {
+    if (attachedProjectId) {
+      docTypeBtn.classList.add('hidden');
+    } else {
+      docTypeBtn.classList.remove('hidden');
+    }
+  }
+  if (docTypeSelector) {
+    docTypeSelector.disabled = Boolean(attachedProjectId);
+  }
 }
 
 function showAttachedError(message) {
@@ -375,18 +376,18 @@ function syncAttachedViewState() {
   const valueEmpty = !value.trim();
   const isCanonical = value === canonical;
 
-	  // Footer helper text: make it explicit what affects the Assistant project output.
-	  const footerInfo = document.getElementById('project-sync-info');
-	  if (footerInfo) {
-	    footerInfo.classList.remove('hidden');
-	    if (canonicalEmpty && valueEmpty) {
-	      footerInfo.textContent = '• Project: empty';
-	    } else if (isCanonical) {
-	      footerInfo.textContent = '• Project: in sync';
-	    } else {
-	      footerInfo.textContent = '• Project: NOT saved (press Save)';
-	    }
-	  }
+  // Footer helper text: make it explicit what affects the Assistant project output.
+  const footerInfo = document.getElementById('project-sync-info');
+  if (footerInfo) {
+    footerInfo.classList.remove('hidden');
+    if (canonicalEmpty && valueEmpty) {
+      footerInfo.textContent = '• Project: empty';
+    } else if (isCanonical) {
+      footerInfo.textContent = '• Project: in sync';
+    } else {
+      footerInfo.textContent = '• Project: NOT saved (press Save)';
+    }
+  }
 
   // Show "Load Project Output" only when there is canonical content to revert to and the editor differs.
   setLoadCanonicalVisible(!canonicalEmpty && !isCanonical);
@@ -405,9 +406,9 @@ function syncAttachedViewState() {
     showAttachedStatus('Attached: Phase output is empty (start drafting)');
   } else if (isCanonical) {
     showAttachedStatus('Attached: Editing project output');
-	} else {
-	  showAttachedStatus('Attached: Editing draft (NOT saved to project)');
-	}
+  } else {
+    showAttachedStatus('Attached: Editing draft (NOT saved to project)');
+  }
 }
 
 /**
@@ -453,7 +454,8 @@ async function updateVersionDisplay() {
 
   const version = await storage.getCurrentVersion();
   if (version) {
-    if (versionInfo) versionInfo.textContent = `Draft ${version.versionNumber} of ${version.totalVersions}`;
+    if (versionInfo)
+      versionInfo.textContent = `Draft ${version.versionNumber} of ${version.totalVersions}`;
     if (lastSaved) lastSaved.textContent = storage.getTimeSince(version.savedAt);
     if (btnBack) btnBack.disabled = !version.canGoBack;
     if (btnForward) btnForward.disabled = !version.canGoForward;
@@ -484,49 +486,61 @@ async function handleSave() {
     return;
   }
 
-  const result = await storage.saveVersion(content);
-	const didSaveVersion = Boolean(result?.success);
+  let result = { success: false, reason: 'error' };
+  try {
+    result = await storage.saveVersion(content);
+  } catch (err) {
+    console.error('saveVersion failed:', err);
+  }
+  const didSaveVersion = Boolean(result?.success);
 
-	// In attached mode, "Save" should also persist to the canonical Assistant project output.
-	// Apply when editor differs from our last-known canonical (even if version history had no change).
-	const shouldApply = Boolean(attachedContext && content !== (attachedContext.canonicalMarkdown || ''));
+  // In attached mode, "Save" should also persist to the canonical Assistant project output.
+  // Apply when editor differs from our last-known canonical (even if version history had no change).
+  const ctx = attachedContext; // pin ref — survives if attachedContext is reassigned during awaits
+  const shouldApply = Boolean(ctx && content !== (ctx.canonicalMarkdown ?? ''));
 
-	if (attachedContext && shouldApply) {
-	  const updated = await updateProjectPhaseOutput(
-	    currentPlugin.dbName,
-	    attachedContext.projectId,
-	    attachedContext.phaseNumber,
-	    content
-	  );
+  if (ctx && shouldApply) {
+    const updated = await updateProjectPhaseOutput(
+      currentPlugin.dbName,
+      ctx.projectId,
+      ctx.phaseNumber,
+      content
+    );
 
-	  if (!updated) {
-	    showAttachedError('Project not found');
-	    if (didSaveVersion) {
-	      showToast('Saved draft version, but project was not found to apply', 'warning');
-	    } else {
-	      showToast('Project not found to apply', 'error');
-	    }
-	  } else {
-	    attachedContext.canonicalMarkdown = content;
-	    attachedContext.lastAppliedAt = new Date().toLocaleTimeString();
-	    await storage?.saveDraft?.(content);
-	    showAttachedEmpty(null);
-	    showAttachedError(null);
-	    syncAttachedViewState();
-	    if (didSaveVersion) {
-		      showToast(`Saved to project (draft v${result.versionNumber})`, 'success');
-	    } else {
-		      showToast('Saved to project', 'success');
-	    }
-	  }
+    if (!updated) {
+      showAttachedError('Project not found');
+      if (didSaveVersion) {
+        showToast('Saved draft version, but project was not found to apply', 'warning');
+      } else {
+        showToast('Project not found to apply', 'error');
+      }
+    } else {
+      ctx.canonicalMarkdown = content;
+      ctx.lastAppliedAt = new Date().toLocaleTimeString();
+      await storage?.saveDraft?.(content);
+      showAttachedEmpty(null);
+      showAttachedError(null);
+      syncAttachedViewState();
+      if (!didSaveVersion && result?.reason && result.reason !== 'no-change') {
+        console.warn('Version save failed in attached mode:', result.reason);
+      }
+      if (didSaveVersion) {
+        showToast(`Saved to project (draft v${result.versionNumber})`, 'success');
+      } else {
+        showToast('Saved to project', 'success');
+      }
+    }
 
-	  await updateVersionDisplay();
-	  return;
-	}
+    await updateVersionDisplay();
+    return;
+  }
 
-	if (didSaveVersion) {
-		  showToast(`Saved draft v${result.versionNumber}`, 'success');
-	  await updateVersionDisplay();
+  if (ctx && !shouldApply && didSaveVersion) {
+    showToast(`Saved draft v${result.versionNumber} (no project change)`, 'success');
+    await updateVersionDisplay();
+  } else if (didSaveVersion) {
+    showToast(`Saved draft v${result.versionNumber}`, 'success');
+    await updateVersionDisplay();
   } else if (result.reason === 'no-change') {
     showToast('No changes to save', 'info');
   } else {
@@ -542,9 +556,9 @@ async function handleGoBack() {
   if (version && editor) {
     editor.value = version.markdown;
     runValidation();
-	      syncAttachedViewState();
+    syncAttachedViewState();
     await updateVersionDisplay();
-	  showToast(`Restored draft v${version.versionNumber}`, 'info');
+    showToast(`Restored draft v${version.versionNumber}`, 'info');
   }
 }
 
@@ -556,14 +570,15 @@ async function handleGoForward() {
   if (version && editor) {
     editor.value = version.markdown;
     runValidation();
-	      syncAttachedViewState();
+    syncAttachedViewState();
     await updateVersionDisplay();
-	  showToast(`Restored draft v${version.versionNumber}`, 'info');
+    showToast(`Restored draft v${version.versionNumber}`, 'info');
   }
 }
 
 async function handleApplyToProject() {
-  if (!attachedContext) {
+  const ctx = attachedContext; // pin ref — survives if attachedContext is reassigned during awaits
+  if (!ctx) {
     showToast('Not in project-attached mode', 'warning');
     return;
   }
@@ -589,8 +604,8 @@ async function handleApplyToProject() {
   try {
     const updated = await updateProjectPhaseOutput(
       currentPlugin.dbName,
-      attachedContext.projectId,
-      attachedContext.phaseNumber,
+      ctx.projectId,
+      ctx.phaseNumber,
       content
     );
 
@@ -601,13 +616,13 @@ async function handleApplyToProject() {
     }
 
     // Update local attached-mode context.
-    attachedContext.canonicalMarkdown = content;
-	    attachedContext.lastAppliedAt = new Date().toLocaleTimeString();
-	    // Keep the draft aligned with canonical so reloads don't re-open in "not applied" state.
-	    await storage?.saveDraft?.(content);
-	    showAttachedEmpty(null);
+    ctx.canonicalMarkdown = content;
+    ctx.lastAppliedAt = new Date().toLocaleTimeString();
+    // Keep the draft aligned with canonical so reloads don't re-open in "not applied" state.
+    await storage?.saveDraft?.(content);
+    showAttachedEmpty(null);
     showAttachedError(null);
-	    syncAttachedViewState();
+    syncAttachedViewState();
     showToast('Applied to project!', 'success');
   } finally {
     if (applyBtn) {
@@ -681,7 +696,9 @@ function setupEventListeners() {
   loadCanonicalBtn?.addEventListener('click', () => handleLoadCanonical());
 
   // About button
-  document.getElementById('btn-about')?.addEventListener('click', () => showAboutModal(currentPlugin));
+  document
+    .getElementById('btn-about')
+    ?.addEventListener('click', () => showAboutModal(currentPlugin));
 
   // Auto-validate on paste
   editor?.addEventListener('paste', () => {
@@ -694,21 +711,21 @@ function setupEventListeners() {
     const DEBOUNCE_MS = 400;
 
     editor.addEventListener('input', () => {
-	      if (attachedContext) {
-	        // User started writing; clear the "empty phase output" warning.
-	        if (!attachedContext.canonicalMarkdown?.trim()) {
-	          const assistantUrl = `/assistant/?type=${currentPlugin.id}#project/${attachedContext.projectId}`;
-	          if (editor.value.trim()) {
-	            showAttachedEmpty(null);
-	          } else {
-	            showAttachedEmpty({
-	              message: `Phase ${attachedContext.phaseNumber} output is empty`,
-	              assistantUrl,
-	            });
-	          }
-	        }
-	        syncAttachedViewState();
-	      }
+      if (attachedContext) {
+        // User started writing; clear the "empty phase output" warning.
+        if (!attachedContext.canonicalMarkdown?.trim()) {
+          const assistantUrl = `/assistant/?type=${currentPlugin.id}#project/${attachedContext.projectId}`;
+          if (editor.value.trim()) {
+            showAttachedEmpty(null);
+          } else {
+            showAttachedEmpty({
+              message: `Phase ${attachedContext.phaseNumber} output is empty`,
+              assistantUrl,
+            });
+          }
+        }
+        syncAttachedViewState();
+      }
 
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => {
@@ -719,9 +736,9 @@ function setupEventListeners() {
     });
 
     editor.addEventListener('blur', () => {
-	      if (attachedContext) {
-	        syncAttachedViewState();
-	      }
+      if (attachedContext) {
+        syncAttachedViewState();
+      }
 
       storage.saveDraft(editor.value).catch((error) => {
         logger.error('Failed to save validator draft', error, 'validator');
@@ -732,12 +749,16 @@ function setupEventListeners() {
   // AI Power-ups
   document.getElementById('btn-critique')?.addEventListener('click', handleCritique);
   document.getElementById('btn-rewrite')?.addEventListener('click', handleRewrite);
-  document.getElementById('btn-view-prompt')?.addEventListener('click', () => handleViewPrompt(currentPrompt));
+  document
+    .getElementById('btn-view-prompt')
+    ?.addEventListener('click', () => handleViewPrompt(currentPrompt));
 
   // LLM Scoring Mode
   document.getElementById('btn-toggle-mode')?.addEventListener('click', toggleScoringMode);
   document.getElementById('btn-copy-llm-prompt')?.addEventListener('click', handleCopyLLMPrompt);
-  document.getElementById('btn-view-llm-prompt')?.addEventListener('click', () => handleViewLLMPrompt(currentPrompt));
+  document
+    .getElementById('btn-view-llm-prompt')
+    ?.addEventListener('click', () => handleViewLLMPrompt(currentPrompt));
 
   // Version control
   document.getElementById('btn-save')?.addEventListener('click', () => {
@@ -746,12 +767,12 @@ function setupEventListeners() {
       showToast('Failed to save', 'error');
     });
   });
-	  document.getElementById('btn-apply')?.addEventListener('click', () => {
-	    handleApplyToProject().catch((error) => {
-	      logger.error('Apply to project failed', error, 'validator');
-	      showToast('Failed to apply to project', 'error');
-	    });
-	  });
+  document.getElementById('btn-apply')?.addEventListener('click', () => {
+    handleApplyToProject().catch((error) => {
+      logger.error('Apply to project failed', error, 'validator');
+      showToast('Failed to apply to project', 'error');
+    });
+  });
   document.getElementById('btn-back')?.addEventListener('click', () => {
     handleGoBack().catch((error) => {
       logger.error('Go back failed', error, 'validator');
@@ -832,9 +853,10 @@ function runValidation() {
     }
   }
 
-  const message = content.length > 200
-    ? 'Document validated!'
-    : 'Document validated! (AI Power-ups require 200+ characters)';
+  const message =
+    content.length > 200
+      ? 'Document validated!'
+      : 'Document validated! (AI Power-ups require 200+ characters)';
   showToast(message, 'success');
 }
 
@@ -868,48 +890,57 @@ function showAboutModal(plugin) {
     'one-pager': {
       pluralName: 'One-Pagers',
       learnMoreText: 'one-pagers',
-      description: 'A concise decision document that fits on one page. Used to get executive buy-in before investing in detailed planning.'
+      description:
+        'A concise decision document that fits on one page. Used to get executive buy-in before investing in detailed planning.',
     },
-    'prd': {
+    prd: {
       pluralName: 'Product Requirements Documents',
       learnMoreText: 'PRDs',
-      description: 'A Product Requirements Document defines WHAT to build and WHY. It bridges business goals and engineering implementation.'
+      description:
+        'A Product Requirements Document defines WHAT to build and WHY. It bridges business goals and engineering implementation.',
     },
-    'adr': {
+    adr: {
       pluralName: 'Architecture Decision Records',
       learnMoreText: 'ADRs',
-      description: 'Architecture Decision Records capture significant technical decisions, their context, and consequences. Essential for team knowledge sharing.'
+      description:
+        'Architecture Decision Records capture significant technical decisions, their context, and consequences. Essential for team knowledge sharing.',
     },
     'pr-faq': {
       pluralName: 'PR-FAQs',
       learnMoreText: 'PR-FAQs',
-      description: 'An Amazon-style internal planning document. NOT an actual press release. It is a thinking tool that forces customer-centric product definition.'
+      description:
+        'An Amazon-style internal planning document. NOT an actual press release. It is a thinking tool that forces customer-centric product definition.',
     },
     'power-statement': {
       pluralName: 'Power Statements',
       learnMoreText: 'power statements',
-      description: 'A sales technique for articulating value. Combines a customer pain point with quantified business impact to create compelling pitches.'
+      description:
+        'A sales technique for articulating value. Combines a customer pain point with quantified business impact to create compelling pitches.',
     },
     'acceptance-criteria': {
       pluralName: 'Acceptance Criteria',
       learnMoreText: 'acceptance criteria',
-      description: 'Testable conditions that define when a user story is complete. Bridges the gap between requirements and QA.'
+      description:
+        'Testable conditions that define when a user story is complete. Bridges the gap between requirements and QA.',
     },
-    'jd': {
+    jd: {
       pluralName: 'Job Descriptions',
       learnMoreText: 'job descriptions',
-      description: 'Complete job descriptions with clear scope, leveling criteria, and realistic qualifications. Avoids common pitfalls that repel good candidates.'
+      description:
+        'Complete job descriptions with clear scope, leveling criteria, and realistic qualifications. Avoids common pitfalls that repel good candidates.',
     },
     'business-justification': {
       pluralName: 'Business Justifications',
       learnMoreText: 'business justifications',
-      description: 'A business case document for headcount, budget, or investment requests. Quantifies ROI and risk.'
+      description:
+        'A business case document for headcount, budget, or investment requests. Quantifies ROI and risk.',
     },
     'strategic-proposal': {
       pluralName: 'Strategic Proposals',
       learnMoreText: 'sales proposals',
-      description: 'A sales-focused proposal for strategic initiatives. Structures the pitch around customer pain points and measurable outcomes.'
-    }
+      description:
+        'A sales-focused proposal for strategic initiatives. Structures the pitch around customer pain points and measurable outcomes.',
+    },
   };
 
   const meta = pluginMeta[plugin?.id] || {};

@@ -51,15 +51,16 @@ export async function handleSaveResponse(plugin, project, phase, responseTextare
   try {
     const freshProject = await getProject(plugin.dbName, project.id);
     if (!freshProject.phases) freshProject.phases = {};
-    if (!freshProject.phases[phase]) freshProject.phases[phase] = { prompt: '', response: '', completed: false };
+    if (!freshProject.phases[phase])
+      freshProject.phases[phase] = { prompt: '', response: '', completed: false };
 
     freshProject.phases[phase].response = response;
     freshProject.phases[phase].completed = true;
 
-	    // Keep legacy flat phaseN_output fields in sync.
-	    // Validator attached-mode seeds/loads canonical markdown via getPhaseOutputInternal().
-	    // Without this, Tune & Refine can open stale content when older projects contain phase3_output.
-	    freshProject[`phase${phase}_output`] = response;
+    // Keep legacy flat phaseN_output fields in sync.
+    // Validator attached-mode seeds/loads canonical markdown via getPhaseOutputInternal().
+    // Without this, Tune & Refine can open stale content when older projects contain phase3_output.
+    freshProject[`phase${phase}_output`] = response;
 
     // Track phase save
     trackPhase(phase, 'save', plugin.id);
@@ -70,13 +71,21 @@ export async function handleSaveResponse(plugin, project, phase, responseTextare
       showToast('Response saved! Moving to next phase...', 'success');
 
       updatePhaseTabStyles(phase + 1);
-      document.getElementById('phase-content').innerHTML = renderPhaseContent(plugin, freshProject, phase + 1);
+      document.getElementById('phase-content').innerHTML = renderPhaseContent(
+        plugin,
+        freshProject,
+        phase + 1
+      );
       attachPhaseEventListeners(plugin, freshProject, phase + 1);
       markPhaseComplete(phase);
     } else {
       await saveProject(plugin.dbName, freshProject);
       showToast('Your document is complete!', 'success');
-      document.getElementById('phase-content').innerHTML = renderPhaseContent(plugin, freshProject, phase);
+      document.getElementById('phase-content').innerHTML = renderPhaseContent(
+        plugin,
+        freshProject,
+        phase
+      );
       attachPhaseEventListeners(plugin, freshProject, phase);
       markPhaseComplete(phase);
     }
@@ -106,7 +115,10 @@ export function showDiffModal(plugin, phases, completedPhases) {
   const phaseNames = {};
   const workflowPhases = plugin.workflowConfig?.phases || [];
   completedPhases.forEach((p) => {
-    const meta = workflowPhases.find((wp) => wp.number === p) || { name: `Phase ${p}`, aiModel: 'Claude' };
+    const meta = workflowPhases.find((wp) => wp.number === p) || {
+      name: `Phase ${p}`,
+      aiModel: 'Claude',
+    };
     phaseNames[p] = `Phase ${p}: ${meta.name} (${meta.aiModel})`;
   });
 
@@ -115,7 +127,8 @@ export function showDiffModal(plugin, phases, completedPhases) {
   let rightPhase = completedPhases[1];
 
   const modal = document.createElement('div');
-  modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+  modal.className =
+    'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
 
   function renderDiff() {
     const leftOutput = phases[leftPhase] || '';
@@ -124,7 +137,9 @@ export function showDiffModal(plugin, phases, completedPhases) {
     const stats = getDiffStats(diff);
     const diffHtml = renderDiffHtml(diff);
 
-    const optionsHtml = completedPhases.map((p) => `<option value="${p}">${phaseNames[p]}</option>`).join('');
+    const optionsHtml = completedPhases
+      .map((p) => `<option value="${p}">${phaseNames[p]}</option>`)
+      .join('');
 
     modal.innerHTML = `
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-5xl w-full max-h-[90vh] flex flex-col">
@@ -209,4 +224,3 @@ export function showDiffModal(plugin, phases, completedPhases) {
   };
   document.addEventListener('keydown', handleEscape);
 }
-
