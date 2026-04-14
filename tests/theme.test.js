@@ -10,12 +10,18 @@ import { toggleDarkMode, initTheme, getCurrentTheme, isDarkMode } from '../share
 describe('Theme Module', () => {
   beforeEach(() => {
     // Set up DOM structure matching validator/index.html
+    // Icon switching is now CSS-based using dark: variants
     document.documentElement.className = 'dark';
     document.body.innerHTML = `
       <header class="bg-slate-600 border-slate-500">
-        <button id="btn-dark-mode">
-          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+        <button id="btn-dark-mode" aria-pressed="true">
+          <!-- Moon icon - shown in dark mode -->
+          <svg aria-hidden="true" class="w-6 h-6 hidden dark:block" id="moon-icon" fill="currentColor" viewBox="0 0 20 20">
             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+          </svg>
+          <!-- Sun icon - shown in light mode -->
+          <svg aria-hidden="true" class="w-6 h-6 dark:hidden" id="sun-icon" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path>
           </svg>
         </button>
       </header>
@@ -23,7 +29,7 @@ describe('Theme Module', () => {
       <div class="bg-slate-800">Panel 2</div>
     `;
     document.body.className = 'bg-slate-950 text-slate-100';
-    
+
     // Clear localStorage
     localStorage.clear();
   });
@@ -83,23 +89,54 @@ describe('Theme Module', () => {
       expect(localStorage.getItem('docforge-theme')).toBe('dark');
     });
 
-    test('should update button icon to sun when switching to light', () => {
-      toggleDarkMode();
-      
+    test('should have both sun and moon icons in DOM before and after toggling', () => {
+      // Icon switching is CSS-based (dark: variants). Both icons must persist through toggles.
+      // Note: JSDOM does not evaluate CSS, so visual visibility is not testable here;
+      // class presence is a structural contract — E2E tests cover actual visibility.
       const btn = document.getElementById('btn-dark-mode');
-      // Sun icon has the evenodd fill-rule
-      expect(btn.innerHTML).toContain('fill-rule="evenodd"');
+      const moonIcon = document.getElementById('moon-icon');
+      const sunIcon = document.getElementById('sun-icon');
+
+      // Verify structure before toggle
+      expect(btn).toBeTruthy();
+      expect(moonIcon).toBeTruthy();
+      expect(sunIcon).toBeTruthy();
+      expect(moonIcon.classList.contains('hidden')).toBe(true);
+      expect(moonIcon.classList.contains('dark:block')).toBe(true);
+      expect(sunIcon.classList.contains('dark:hidden')).toBe(true);
+      expect(sunIcon.innerHTML).toContain('fill-rule="evenodd"');
+      expect(moonIcon.innerHTML).not.toContain('fill-rule="evenodd"');
+      expect(moonIcon.innerHTML).toContain('M17.293 13.293');
+
+      // Both icons must survive a toggle — guards against innerHTML mutation regression
+      toggleDarkMode();
+      expect(document.getElementById('moon-icon')).toBeTruthy();
+      expect(document.getElementById('sun-icon')).toBeTruthy();
     });
 
-    test('should update button icon to moon when switching to dark', () => {
-      document.documentElement.classList.remove('dark');
-      
-      toggleDarkMode();
-      
+    test('should not modify icon innerHTML when toggling (CSS handles visibility)', () => {
       const btn = document.getElementById('btn-dark-mode');
-      // Moon icon does NOT have fill-rule
-      expect(btn.innerHTML).not.toContain('fill-rule="evenodd"');
-      expect(btn.innerHTML).toContain('M17.293 13.293');
+      const originalInnerHTML = btn.innerHTML;
+
+      toggleDarkMode();
+
+      // Icon innerHTML should remain unchanged - CSS handles visibility
+      expect(btn.innerHTML).toBe(originalInnerHTML);
+    });
+
+    test('should update aria-pressed when toggling dark mode', () => {
+      const btn = document.getElementById('btn-dark-mode');
+
+      // Start in dark mode (aria-pressed="true" per initial fixture)
+      expect(btn.getAttribute('aria-pressed')).toBe('true');
+
+      // Toggle to light
+      toggleDarkMode();
+      expect(btn.getAttribute('aria-pressed')).toBe('false');
+
+      // Toggle back to dark
+      toggleDarkMode();
+      expect(btn.getAttribute('aria-pressed')).toBe('true');
     });
   });
 
