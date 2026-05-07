@@ -39,6 +39,9 @@ export function scoreDocumentStructure(text) {
     0
   );
   const foundWeight = sections.found.reduce((sum, s) => sum + s.weight, 0);
+  if (maxSectionWeight === 0) {
+    issues.push('Internal: no section weights found — verify scope detection is working');
+  }
   const sectionScore =
     maxSectionWeight > 0 ? Math.min(10, Math.round((foundWeight * 10) / maxSectionWeight)) : 0;
   score += sectionScore;

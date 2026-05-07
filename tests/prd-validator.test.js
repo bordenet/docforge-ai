@@ -107,8 +107,8 @@ We disagree on approach X.
       expect(inferDocumentScope(text)).toBe('feature');
     });
 
-    test('returns epic for mid-length documents (1501-3000 words)', () => {
-      const text = 'word '.repeat(2000);
+    test('returns epic for mid-length documents (2001-3000 words)', () => {
+      const text = 'word '.repeat(2500);
       expect(inferDocumentScope(text)).toBe('epic');
     });
 
@@ -117,13 +117,13 @@ We disagree on approach X.
       expect(inferDocumentScope(text)).toBe('product');
     });
 
-    test('boundary: 1500 words is feature', () => {
-      const text = 'word '.repeat(1500);
+    test('boundary: 2000 words is feature', () => {
+      const text = 'word '.repeat(2000);
       expect(inferDocumentScope(text)).toBe('feature');
     });
 
-    test('boundary: 1501 words is epic', () => {
-      const text = 'word '.repeat(1501);
+    test('boundary: 2001 words is epic', () => {
+      const text = 'word '.repeat(2001);
       expect(inferDocumentScope(text)).toBe('epic');
     });
 

@@ -3,36 +3,6 @@
  * Section patterns and detection constants aligned with Phase1.md's 14 required sections
  */
 
-/**
- * Sections required by document scope (matches Phase 1 prompt's Section Requirements table).
- * Feature = sections 1,2,4,7,9,13,15 only. Epic = 1-9,13,15. Product = all.
- * null for product means all REQUIRED_SECTIONS apply.
- */
-export const SCOPE_REQUIRED_SECTION_NAMES = {
-  feature: [
-    'Executive Summary',
-    'Problem Statement',
-    'Goals and Objectives',
-    'Proposed Solution',
-    'Requirements',
-    'Risks and Mitigation',
-    'Open Questions',
-  ],
-  epic: [
-    'Executive Summary',
-    'Problem Statement',
-    'Value Proposition',
-    'Goals and Objectives',
-    'Customer FAQ',
-    'Proposed Solution',
-    'Scope',
-    'Requirements',
-    'Risks and Mitigation',
-    'Open Questions',
-  ],
-  product: null,
-};
-
 // Section patterns with numeric prefix support for Word/Google Docs compatibility
 // Pattern format: ^(#+\s*)?(\d+\.?\d*\.?\s*)? matches both "## Problem" and "2. Problem Statement"
 export const REQUIRED_SECTIONS = [
@@ -102,6 +72,49 @@ export const REQUIRED_SECTIONS = [
     weight: 1,
   },
 ];
+
+/**
+ * Section names required by document scope (matches Phase 1 prompt's Section Requirements table).
+ * Feature = 7 sections. Epic = 10 sections. Product = all 14 sections.
+ * Derived after REQUIRED_SECTIONS so names are validated at load time.
+ */
+export const SCOPE_REQUIRED_SECTION_NAMES = {
+  feature: [
+    'Executive Summary',
+    'Problem Statement',
+    'Goals and Objectives',
+    'Proposed Solution',
+    'Requirements',
+    'Risks and Mitigation',
+    'Open Questions',
+  ],
+  epic: [
+    'Executive Summary',
+    'Problem Statement',
+    'Value Proposition',
+    'Goals and Objectives',
+    'Customer FAQ',
+    'Proposed Solution',
+    'Scope',
+    'Requirements',
+    'Risks and Mitigation',
+    'Open Questions',
+  ],
+  product: REQUIRED_SECTIONS.map((s) => s.name),
+};
+
+// Invariant: all names in SCOPE_REQUIRED_SECTION_NAMES must exist in REQUIRED_SECTIONS.
+// Throws at module load if a section is renamed without updating both places.
+const _allSectionNames = new Set(REQUIRED_SECTIONS.map((s) => s.name));
+for (const [scope, names] of Object.entries(SCOPE_REQUIRED_SECTION_NAMES)) {
+  for (const name of names) {
+    if (!_allSectionNames.has(name)) {
+      throw new Error(
+        `Config invariant: SCOPE_REQUIRED_SECTION_NAMES["${scope}"] references unknown section "${name}"`
+      );
+    }
+  }
+}
 
 // Vague language categories for Requirements Clarity scoring
 export const VAGUE_LANGUAGE = {

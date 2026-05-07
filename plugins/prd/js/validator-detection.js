@@ -25,7 +25,9 @@ const VAGUE_QUALIFIERS = VAGUE_LANGUAGE.qualifiers;
 
 /**
  * Infer document scope from word count, matching Phase 1 prompt length targets.
- * Feature: ≤1500 words (~1-3 pages), Epic: ≤3000 words (~4-8 pages), Product: >3000 words.
+ * Feature: ≤2000 words, Epic: ≤3000 words, Product: >3000 words.
+ * Threshold raised to 2000 so verbose single-feature PRDs are not penalized
+ * for omitting epic-only sections (Value Proposition, Customer FAQ, Scope).
  *
  * @param {string} text - Document text
  * @returns {'feature'|'epic'|'product'} Inferred scope
@@ -33,7 +35,7 @@ const VAGUE_QUALIFIERS = VAGUE_LANGUAGE.qualifiers;
 export function inferDocumentScope(text) {
   if (!text) return 'feature';
   const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
-  if (wordCount <= 1500) return 'feature';
+  if (wordCount <= 2000) return 'feature';
   if (wordCount <= 3000) return 'epic';
   return 'product';
 }
