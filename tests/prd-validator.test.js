@@ -126,6 +126,28 @@ We disagree on approach X.
       const text = 'word '.repeat(1501);
       expect(inferDocumentScope(text)).toBe('epic');
     });
+
+    test('boundary: 3000 words is epic', () => {
+      const text = 'word '.repeat(3000);
+      expect(inferDocumentScope(text)).toBe('epic');
+    });
+
+    test('boundary: 3001 words is product', () => {
+      const text = 'word '.repeat(3001);
+      expect(inferDocumentScope(text)).toBe('product');
+    });
+
+    test('null input returns feature (defensive guard)', () => {
+      expect(inferDocumentScope(null)).toBe('feature');
+    });
+
+    test('undefined input returns feature (defensive guard)', () => {
+      expect(inferDocumentScope(undefined)).toBe('feature');
+    });
+
+    test('empty string returns feature', () => {
+      expect(inferDocumentScope('')).toBe('feature');
+    });
   });
 
   describe('detectSections (scope-aware)', () => {
@@ -164,6 +186,16 @@ Risk: Timeline.
     test('epic scope: checks 10 required sections', () => {
       const result = detectSections(featureText, 'epic');
       expect(result.found.length + result.missing.length).toBe(10);
+    });
+
+    test('epic scope: does not penalize missing Traceability Summary', () => {
+      const result = detectSections(featureText, 'epic');
+      expect(result.missing.some((s) => s.name === 'Traceability Summary')).toBe(false);
+    });
+
+    test('epic scope: does not penalize missing Stakeholders', () => {
+      const result = detectSections(featureText, 'epic');
+      expect(result.missing.some((s) => s.name === 'Stakeholders')).toBe(false);
     });
 
     test('product scope: checks all 14 sections', () => {
@@ -228,6 +260,15 @@ TBD.`;
       const result = scoreDocumentStructure(text);
       expect(result.sections.missing.some((s) => s.name === 'Traceability Summary')).toBe(false);
       expect(result.sections.missing.some((s) => s.name === 'Stakeholders')).toBe(false);
+    });
+
+    test('product scope section score uses dynamic denominator (all 14 sections checked)', () => {
+      // A product-scope PRD with zero sections should score 0 section points.
+      // The dynamic denominator ensures we divide by the product weight sum, not a hardcoded 20.
+      const longEmptyText = 'word '.repeat(4000);
+      const result = scoreDocumentStructure(longEmptyText);
+      expect(result.scope).toBe('product');
+      expect(result.sections.found.length + result.sections.missing.length).toBe(14);
     });
   });
 
