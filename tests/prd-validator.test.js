@@ -19,7 +19,9 @@ import {
   detectPrioritization,
   countFunctionalRequirements,
   countAcceptanceCriteria,
-  scoreDocumentStructure, validatePRD 
+  scoreDocumentStructure,
+  validatePRD,
+  inferDocumentScope,
 } from '../plugins/prd/js/validator.js';
 
 describe('PRD Validator', () => {
@@ -99,9 +101,140 @@ We disagree on approach X.
     });
   });
 
+  describe('inferDocumentScope', () => {
+    test('returns feature for short documents (≤1500 words)', () => {
+      const text = 'word '.repeat(500);
+      expect(inferDocumentScope(text)).toBe('feature');
+    });
+
+    test('returns epic for mid-length documents (1501-3000 words)', () => {
+      const text = 'word '.repeat(2000);
+      expect(inferDocumentScope(text)).toBe('epic');
+    });
+
+    test('returns product for long documents (>3000 words)', () => {
+      const text = 'word '.repeat(4000);
+      expect(inferDocumentScope(text)).toBe('product');
+    });
+
+    test('boundary: 1500 words is feature', () => {
+      const text = 'word '.repeat(1500);
+      expect(inferDocumentScope(text)).toBe('feature');
+    });
+
+    test('boundary: 1501 words is epic', () => {
+      const text = 'word '.repeat(1501);
+      expect(inferDocumentScope(text)).toBe('epic');
+    });
+  });
+
+  describe('detectSections (scope-aware)', () => {
+    const featureText = `
+# Executive Summary
+Brief summary.
+## Problem Statement
+The problem.
+## Goals and Objectives
+- Goal 1
+## Proposed Solution
+Our solution.
+## Requirements
+FR1: User can login.
+## Risks and Mitigation
+Risk: Timeline.
+## Open Questions
+- TBD
+    `;
+
+    test('feature scope: only checks 7 required sections', () => {
+      const result = detectSections(featureText, 'feature');
+      expect(result.found.length + result.missing.length).toBe(7);
+    });
+
+    test('feature scope: does not penalize missing Value Proposition', () => {
+      const result = detectSections(featureText, 'feature');
+      expect(result.missing.some((s) => s.name === 'Value Proposition')).toBe(false);
+    });
+
+    test('feature scope: does not penalize missing Customer FAQ', () => {
+      const result = detectSections(featureText, 'feature');
+      expect(result.missing.some((s) => s.name === 'Customer FAQ')).toBe(false);
+    });
+
+    test('epic scope: checks 10 required sections', () => {
+      const result = detectSections(featureText, 'epic');
+      expect(result.found.length + result.missing.length).toBe(10);
+    });
+
+    test('product scope: checks all 14 sections', () => {
+      const result = detectSections(featureText, 'product');
+      expect(result.found.length + result.missing.length).toBe(14);
+    });
+
+    test('no scope: checks all 14 sections (backward compat)', () => {
+      const result = detectSections(featureText);
+      expect(result.found.length + result.missing.length).toBe(14);
+    });
+  });
+
+  describe('scoreDocumentStructure (scope-aware)', () => {
+    test('feature PRD with all 7 required sections scores full section points', () => {
+      // ~500 words to stay in feature scope
+      const text = `${'context '.repeat(200)}
+# Executive Summary
+Brief.
+## Problem Statement
+The problem.
+## Goals and Objectives
+Goal 1.
+## Proposed Solution
+Solution.
+## Requirements
+FR1: Must do X.
+## Risks and Mitigation
+Risk: Y.
+## Open Questions
+- Q1`;
+      const result = scoreDocumentStructure(text);
+      expect(result.scope).toBe('feature');
+      expect(result.sections.missing.length).toBe(0);
+      // Section score should be high (10 pts = full marks)
+      expect(result.score).toBeGreaterThanOrEqual(12);
+    });
+
+    test('exposes scope in result', () => {
+      const shortText = 'word '.repeat(500) + '\n## Problem Statement\nTest.';
+      const result = scoreDocumentStructure(shortText);
+      expect(result.scope).toBeDefined();
+      expect(['feature', 'epic', 'product']).toContain(result.scope);
+    });
+
+    test('feature PRD is not penalized for missing Traceability or Stakeholders', () => {
+      const text = `${'context '.repeat(200)}
+# Executive Summary
+Brief.
+## Problem Statement
+Problem.
+## Goals
+Goal.
+## Proposed Solution
+Solution.
+## Requirements
+FR1.
+## Risks
+Risk.
+## Open Questions
+TBD.`;
+      const result = scoreDocumentStructure(text);
+      expect(result.sections.missing.some((s) => s.name === 'Traceability Summary')).toBe(false);
+      expect(result.sections.missing.some((s) => s.name === 'Stakeholders')).toBe(false);
+    });
+  });
+
   describe('detectVagueLanguage', () => {
     test('detects vague qualifiers', () => {
-      const text = 'The system should be very fast and quite reliable with significant improvements.';
+      const text =
+        'The system should be very fast and quite reliable with significant improvements.';
       const result = detectVagueLanguage(text);
       expect(result.totalCount).toBeGreaterThan(0);
     });
@@ -187,7 +320,7 @@ const fixturesDir = join(__dirname, 'fixtures/prd-samples');
 describe('PRD Fixture Regression Tests', () => {
   // Load all fixtures once
   const fixtureFiles = readdirSync(fixturesDir)
-    .filter(f => f.endsWith('.md'))
+    .filter((f) => f.endsWith('.md'))
     .sort();
 
   const loadFixture = (filename) => {
@@ -195,7 +328,7 @@ describe('PRD Fixture Regression Tests', () => {
   };
 
   describe('Excellent Quality Documents (01-05)', () => {
-    const excellentFiles = fixtureFiles.filter(f => parseInt(f.slice(0, 2)) <= 5);
+    const excellentFiles = fixtureFiles.filter((f) => parseInt(f.slice(0, 2)) <= 5);
 
     it.each(excellentFiles)('%s should score 70+ (excellent quality)', (filename) => {
       const content = loadFixture(filename);
@@ -217,7 +350,7 @@ describe('PRD Fixture Regression Tests', () => {
   });
 
   describe('Good Quality Documents (06-10)', () => {
-    const goodFiles = fixtureFiles.filter(f => {
+    const goodFiles = fixtureFiles.filter((f) => {
       const num = parseInt(f.slice(0, 2));
       return num >= 6 && num <= 10;
     });
@@ -236,7 +369,7 @@ describe('PRD Fixture Regression Tests', () => {
   });
 
   describe('Needs-Work Quality Documents (11-15)', () => {
-    const needsWorkFiles = fixtureFiles.filter(f => parseInt(f.slice(0, 2)) >= 11);
+    const needsWorkFiles = fixtureFiles.filter((f) => parseInt(f.slice(0, 2)) >= 11);
 
     it.each(needsWorkFiles)('%s should score below 60 (needs improvement)', (filename) => {
       const content = loadFixture(filename);
@@ -254,8 +387,10 @@ describe('PRD Fixture Regression Tests', () => {
     it.each(needsWorkFiles)('%s should have missing sections', (filename) => {
       const content = loadFixture(filename);
       const result = validatePRD(content);
-      // Needs-work docs should be missing key sections
-      expect(result.structure.sections.missing.length).toBeGreaterThan(3);
+      // Needs-work docs should be missing at least 2 required sections.
+      // Threshold is scope-relative: these fixtures are feature-scope (≤1500 words),
+      // so only 7 sections are checked — ">= 2 missing" means 29%+ absent.
+      expect(result.structure.sections.missing.length).toBeGreaterThanOrEqual(2);
     });
   });
 
@@ -297,16 +432,16 @@ describe('PRD Fixture Regression Tests', () => {
   describe('Score Distribution', () => {
     it('should maintain proper tier separation', () => {
       const excellentScores = fixtureFiles
-        .filter(f => parseInt(f.slice(0, 2)) <= 5)
-        .map(f => validatePRD(loadFixture(f)).totalScore);
+        .filter((f) => parseInt(f.slice(0, 2)) <= 5)
+        .map((f) => validatePRD(loadFixture(f)).totalScore);
 
       const _goodScores = fixtureFiles
-        .filter(f => parseInt(f.slice(0, 2)) >= 6 && parseInt(f.slice(0, 2)) <= 10)
-        .map(f => validatePRD(loadFixture(f)).totalScore);
+        .filter((f) => parseInt(f.slice(0, 2)) >= 6 && parseInt(f.slice(0, 2)) <= 10)
+        .map((f) => validatePRD(loadFixture(f)).totalScore);
 
       const needsWorkScores = fixtureFiles
-        .filter(f => parseInt(f.slice(0, 2)) >= 11)
-        .map(f => validatePRD(loadFixture(f)).totalScore);
+        .filter((f) => parseInt(f.slice(0, 2)) >= 11)
+        .map((f) => validatePRD(loadFixture(f)).totalScore);
 
       const minExcellent = Math.min(...excellentScores);
       const maxNeedsWork = Math.max(...needsWorkScores);
@@ -317,12 +452,12 @@ describe('PRD Fixture Regression Tests', () => {
 
     it('should have clear tier boundaries', () => {
       const excellentScores = fixtureFiles
-        .filter(f => parseInt(f.slice(0, 2)) <= 5)
-        .map(f => validatePRD(loadFixture(f)).totalScore);
+        .filter((f) => parseInt(f.slice(0, 2)) <= 5)
+        .map((f) => validatePRD(loadFixture(f)).totalScore);
 
       const goodScores = fixtureFiles
-        .filter(f => parseInt(f.slice(0, 2)) >= 6 && parseInt(f.slice(0, 2)) <= 10)
-        .map(f => validatePRD(loadFixture(f)).totalScore);
+        .filter((f) => parseInt(f.slice(0, 2)) >= 6 && parseInt(f.slice(0, 2)) <= 10)
+        .map((f) => validatePRD(loadFixture(f)).totalScore);
 
       // Average excellent should be higher than average good
       const avgExcellent = excellentScores.reduce((a, b) => a + b, 0) / excellentScores.length;

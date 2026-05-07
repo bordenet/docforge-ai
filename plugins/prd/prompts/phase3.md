@@ -66,19 +66,12 @@ Before finalizing, verify:
 
 | Scope | Maximum Length | Action if Exceeded |
 |-------|---------------|-------------------|
-| **Feature** | 3 pages (~1,050 words) | Consolidate aggressively |
-| **Epic** | 8 pages (~2,800 words) | Pause and ask user |
-| **Product** | 15 pages (~5,250 words) | Pause and ask user |
+| **Feature** | 3 pages (~1,050 words) | HARD STOP — consolidate aggressively |
+| **Epic** | 8 pages (~2,800 words) | HARD STOP — stub excess sections as `[TO BE EXPANDED]` |
+| **Product** | 15 pages (~5,250 words) | HARD STOP — stub excess sections as `[TO BE EXPANDED]` |
+| **Any scope** | **17 pages (~6,000 words)** | **NON-NEGOTIABLE HARD STOP** |
 
-**If the synthesized document exceeds the scope's maximum:**
-
-> **⚠️ Length Check:** The synthesized PRD is ~X pages, exceeding the {{DOCUMENT_SCOPE}}-scope target.
->
-> **Options:**
-> - **(a) Keep full detail** - Accept the longer document
-> - **(b) Consolidate now** - I'll move detailed content to appendix stubs marked `[TO BE EXPANDED]`
->
-> Please reply with **(a)** or **(b)**.
+**If the synthesized document exceeds the scope's maximum:** consolidate immediately — do NOT ask the user for permission, do NOT offer options (a) or (b). Move detailed content to stub format and ship the shorter document. The 17-page absolute limit is inviolable.
 
 ### ⚠️ CRITICAL: Stub Preservation Rule
 
@@ -266,7 +259,20 @@ CRITICAL - Your final PRD must be COPY-PASTE READY:
 - The user will paste your ENTIRE response directly into the tool
 </output_rules>
 
-### Required 16 Sections (in order)
+### Scope-Gated Required Sections
+
+**⚠️ Section requirements depend on scope — do NOT include all 16 sections for Feature/Epic PRDs:**
+
+| Scope | Required Sections | Max Pages |
+|-------|-------------------|-----------|
+| **Feature** | 1, 2, 4, 7, 9, 13, 15 only (8–10 sections max) | 3 pages |
+| **Epic** | 1–9, 13, 15 (10–12, 14, 16 optional) | 8 pages |
+| **Product** | All 16 sections permitted | 15 pages |
+| **Any scope** | **Hard maximum: 17 pages** | **17 pages** |
+
+When synthesizing, **choose the shorter of the two versions** for each section unless the longer version is meaningfully more accurate. Do not pad.
+
+**Full section reference (for Product scope only):**
 
 | Section | Content | Format |
 |---------|---------|--------|

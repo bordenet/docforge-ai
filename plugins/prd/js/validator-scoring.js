@@ -5,10 +5,18 @@
 
 import { STRATEGIC_VIABILITY_PATTERNS } from './validator-config.js';
 import {
-  detectSections, detectScopeBoundaries, detectVagueQualifiers, detectVagueLanguage,
+  detectSections,
+  detectScopeBoundaries,
+  detectVagueQualifiers,
+  detectVagueLanguage,
   detectPrioritization,
+  inferDocumentScope,
 } from './validator-detection.js';
-import { countUserStories, countFunctionalRequirements, countMeasurableRequirements } from './validator-requirements.js';
+import {
+  countUserStories,
+  countFunctionalRequirements,
+  countMeasurableRequirements,
+} from './validator-requirements.js';
 import { getSlopPenalty } from '../../../shared/js/slop-scoring.js';
 
 /**
@@ -20,18 +28,30 @@ export function scoreDocumentStructure(text) {
   let score = 0;
   const maxScore = 20;
 
-  // Core structural elements (0-10 pts, scaled from total weight ~20)
-  const sections = detectSections(text);
-  const totalWeight = sections.found.reduce((sum, s) => sum + s.weight, 0);
-  const sectionScore = Math.min(10, Math.round(totalWeight * 10 / 20));
+  // Core structural elements (0-10 pts).
+  // Infer scope from word count so Feature PRDs aren't penalized for correctly
+  // omitting Epic/Product-only sections (Customer FAQ, Competitive Landscape, etc.).
+  const scope = inferDocumentScope(text);
+  const sections = detectSections(text, scope);
+  const totalRequired = sections.found.length + sections.missing.length;
+  const maxSectionWeight = [...sections.found, ...sections.missing].reduce(
+    (sum, s) => sum + s.weight,
+    0
+  );
+  const foundWeight = sections.found.reduce((sum, s) => sum + s.weight, 0);
+  const sectionScore =
+    maxSectionWeight > 0 ? Math.min(10, Math.round((foundWeight * 10) / maxSectionWeight)) : 0;
   score += sectionScore;
 
-  if (sections.found.length >= 10) {
-    strengths.push(`${sections.found.length}/14 required sections present`);
-  } else if (sections.found.length >= 6) {
-    strengths.push(`${sections.found.length}/14 sections present`);
+  const majorityThreshold = Math.floor(totalRequired * 0.7);
+  if (sections.found.length >= totalRequired) {
+    strengths.push(`All ${totalRequired} required sections present (${scope} scope)`);
+  } else if (sections.found.length >= majorityThreshold) {
+    strengths.push(
+      `${sections.found.length}/${totalRequired} required sections present (${scope} scope)`
+    );
   }
-  sections.missing.slice(0, 3).forEach(s => issues.push(`Missing section: ${s.name}`));
+  sections.missing.slice(0, 3).forEach((s) => issues.push(`Missing section: ${s.name}`));
   if (sections.missing.length > 3) {
     issues.push(`...and ${sections.missing.length - 3} more missing sections`);
   }
@@ -43,8 +63,12 @@ export function scoreDocumentStructure(text) {
   const boldHeadings = text.match(/^\*\*[A-Z][^*\n]+\*\*\s*$/gm) || [];
   const headings = [...markdownHeadings, ...numberedHeadings, ...boldHeadings];
 
-  const hasH1 = markdownHeadings.some(h => h.startsWith('# ')) || numberedHeadings.some(h => /^\d+\.\s/.test(h));
-  const hasH2 = markdownHeadings.some(h => h.startsWith('## ')) || numberedHeadings.some(h => /^\d+\.\d+\.?\s/.test(h));
+  const hasH1 =
+    markdownHeadings.some((h) => h.startsWith('# ')) ||
+    numberedHeadings.some((h) => /^\d+\.\s/.test(h));
+  const hasH2 =
+    markdownHeadings.some((h) => h.startsWith('## ')) ||
+    numberedHeadings.some((h) => /^\d+\.\d+\.?\s/.test(h));
 
   if (hasH1 && hasH2) {
     score += 3;
@@ -57,7 +81,9 @@ export function scoreDocumentStructure(text) {
   }
 
   // Logical flow check - support both markdown # and numbered sections
-  const purposeIndex = text.search(/^(?:#+\s*|\d+\.?\d*\.?\s*)(purpose|introduction|overview|executive\s+summary)/im);
+  const purposeIndex = text.search(
+    /^(?:#+\s*|\d+\.?\d*\.?\s*)(purpose|introduction|overview|executive\s+summary)/im
+  );
   const featuresIndex = text.search(/^(?:#+\s*|\d+\.?\d*\.?\s*)(feature|requirement)/im);
   const customerFAQIndex = text.search(STRATEGIC_VIABILITY_PATTERNS.customerFAQ);
   const solutionIndex = text.search(/^(?:#+\s*|\d+\.?\d*\.?\s*)(proposed\s+solution|solution)/im);
@@ -103,7 +129,15 @@ export function scoreDocumentStructure(text) {
     issues.push('Scope section found but missing explicit "Out of Scope" items');
   }
 
-  return { score: Math.min(score, maxScore), maxScore, issues, strengths, sections, scopeBoundaries };
+  return {
+    score: Math.min(score, maxScore),
+    maxScore,
+    issues,
+    strengths,
+    sections,
+    scopeBoundaries,
+    scope,
+  };
 }
 
 /**
@@ -127,7 +161,7 @@ export function scoreRequirementsClarity(text) {
   } else if (slopPenalty.severity === 'clean') {
     strengths.push('Minimal AI patterns detected');
   } else {
-    slopPenalty.issues.forEach(issue => issues.push(issue));
+    slopPenalty.issues.forEach((issue) => issues.push(issue));
   }
 
   // Completeness of details (0-7 pts) - FR structure
@@ -137,11 +171,14 @@ export function scoreRequirementsClarity(text) {
   if (frResults.count >= 3) {
     if (frResults.hasDoorTypes && frResults.hasProblemLinks) {
       score += 7;
-      strengths.push(`${frResults.count} functional requirements with Door Types and Problem Links`);
+      strengths.push(
+        `${frResults.count} functional requirements with Door Types and Problem Links`
+      );
     } else if (frResults.hasDoorTypes || frResults.hasProblemLinks) {
       score += 5;
       strengths.push(`${frResults.count} functional requirements found`);
-      if (!frResults.hasDoorTypes) issues.push('Add Door Type (🚪 One-Way / 🔄 Two-Way) to requirements');
+      if (!frResults.hasDoorTypes)
+        issues.push('Add Door Type (🚪 One-Way / 🔄 Two-Way) to requirements');
       if (!frResults.hasProblemLinks) issues.push('Link requirements to Problem IDs (P1, P2)');
     } else {
       score += 4;
@@ -202,9 +239,17 @@ export function scoreRequirementsClarity(text) {
   }
 
   return {
-    score: Math.min(score, maxScore), maxScore, issues, strengths,
-    vagueQualifiers, vagueLanguage, slopDetection: slopPenalty,
-    functionalRequirements: frResults, userStoryCount, measurableCount, prioritization,
+    score: Math.min(score, maxScore),
+    maxScore,
+    issues,
+    strengths,
+    vagueQualifiers,
+    vagueLanguage,
+    slopDetection: slopPenalty,
+    functionalRequirements: frResults,
+    userStoryCount,
+    measurableCount,
+    prioritization,
   };
 }
 

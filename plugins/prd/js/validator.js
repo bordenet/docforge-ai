@@ -11,23 +11,46 @@
 
 import { getSlopPenalty, calculateSlopScore } from '../../../shared/js/slop-scoring.js';
 import { normalizeText } from '../../../shared/js/validator.js';
-import { scoreDocumentStructure, scoreRequirementsClarity, scoreUserFocus, scoreTechnicalQuality } from './validator-scoring.js';
+import {
+  scoreDocumentStructure,
+  scoreRequirementsClarity,
+  scoreUserFocus,
+  scoreTechnicalQuality,
+} from './validator-scoring.js';
 import { scoreStrategicViability } from './validator-strategic.js';
 import { detectExpansionStubs } from './validator-detection.js';
 
 // Re-export detection functions for external use
 export {
-  detectSections, detectVagueQualifiers, detectVagueLanguage, detectPrioritization,
-  detectCustomerEvidence, detectScopeBoundaries, detectValueProposition,
-  detectUserPersonas, detectProblemStatement, detectNonFunctionalRequirements,
+  detectSections,
+  detectVagueQualifiers,
+  detectVagueLanguage,
+  detectPrioritization,
+  detectCustomerEvidence,
+  detectScopeBoundaries,
+  detectValueProposition,
+  detectUserPersonas,
+  detectProblemStatement,
+  detectNonFunctionalRequirements,
   detectExpansionStubs,
+  inferDocumentScope,
 } from './validator-detection.js';
 
 // Re-export requirements functions
-export { countUserStories, countFunctionalRequirements, countAcceptanceCriteria, countMeasurableRequirements } from './validator-requirements.js';
+export {
+  countUserStories,
+  countFunctionalRequirements,
+  countAcceptanceCriteria,
+  countMeasurableRequirements,
+} from './validator-requirements.js';
 
 // Re-export scoring functions
-export { scoreDocumentStructure, scoreRequirementsClarity, scoreUserFocus, scoreTechnicalQuality } from './validator-scoring.js';
+export {
+  scoreDocumentStructure,
+  scoreRequirementsClarity,
+  scoreUserFocus,
+  scoreTechnicalQuality,
+} from './validator-scoring.js';
 export { scoreStrategicViability } from './validator-strategic.js';
 
 // Re-export slop detection for direct access
@@ -46,7 +69,12 @@ export function validatePRD(text) {
       clarity: { score: 0, maxScore: 25, issues: ['No content to validate'], strengths: [] },
       userFocus: { score: 0, maxScore: 20, issues: ['No content to validate'], strengths: [] },
       technical: { score: 0, maxScore: 15, issues: ['No content to validate'], strengths: [] },
-      strategicViability: { score: 0, maxScore: 20, issues: ['No content to validate'], strengths: [] },
+      strategicViability: {
+        score: 0,
+        maxScore: 20,
+        issues: ['No content to validate'],
+        strengths: [],
+      },
     };
   }
 
@@ -77,8 +105,14 @@ export function validatePRD(text) {
     }
   }
 
-  const totalScore = Math.max(0,
-    structure.score + clarity.score + userFocus.score + technical.score + strategicViability.score - slopDeduction
+  const totalScore = Math.max(
+    0,
+    structure.score +
+      clarity.score +
+      userFocus.score +
+      technical.score +
+      strategicViability.score -
+      slopDeduction
   );
 
   // Aggregate all issues from all dimensions for the assistant completion banner
@@ -127,4 +161,3 @@ export function validateDocument(text) {
 
 // Re-export scoring helper functions from shared module for consistency
 export { getGrade, getScoreColor, getScoreLabel } from '../../../shared/js/validator.js';
-

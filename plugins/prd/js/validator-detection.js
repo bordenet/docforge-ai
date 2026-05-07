@@ -5,6 +5,7 @@
 
 import {
   REQUIRED_SECTIONS,
+  SCOPE_REQUIRED_SECTION_NAMES,
   VAGUE_LANGUAGE,
   PRIORITIZATION_PATTERNS,
   CUSTOMER_EVIDENCE_PATTERNS,
@@ -16,20 +17,41 @@ export {
   detectValueProposition,
   detectUserPersonas,
   detectProblemStatement,
-  detectNonFunctionalRequirements
+  detectNonFunctionalRequirements,
 } from './validator-detection-secondary.js';
 
 // Vague qualifiers list for backward compatibility
 const VAGUE_QUALIFIERS = VAGUE_LANGUAGE.qualifiers;
 
 /**
- * Detect which required sections are present in the document
+ * Infer document scope from word count, matching Phase 1 prompt length targets.
+ * Feature: ≤1500 words (~1-3 pages), Epic: ≤3000 words (~4-8 pages), Product: >3000 words.
  */
-export function detectSections(text) {
+export function inferDocumentScope(text) {
+  const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
+  if (wordCount <= 1500) return 'feature';
+  if (wordCount <= 3000) return 'epic';
+  return 'product';
+}
+
+/**
+ * Detect which required sections are present in the document.
+ * When scope is provided, only checks sections required for that scope,
+ * preventing false "missing section" penalties for correctly-short PRDs.
+ *
+ * @param {string} text - Document text
+ * @param {string|null} [scope] - 'feature', 'epic', 'product', or null (checks all)
+ */
+export function detectSections(text, scope = null) {
+  const requiredNames = scope ? SCOPE_REQUIRED_SECTION_NAMES[scope] : null;
+  const sectionsToCheck = requiredNames
+    ? REQUIRED_SECTIONS.filter((s) => requiredNames.includes(s.name))
+    : REQUIRED_SECTIONS;
+
   const found = [];
   const missing = [];
 
-  for (const section of REQUIRED_SECTIONS) {
+  for (const section of sectionsToCheck) {
     if (section.pattern.test(text)) {
       found.push({ name: section.name, weight: section.weight });
     } else {
@@ -103,8 +125,12 @@ export function detectVagueLanguage(text) {
   }
 
   result.totalCount =
-    result.qualifiers.length + result.quantifiers.length + result.temporal.length +
-    result.weaselWords.length + result.marketingFluff.length + result.unquantifiedComparatives.length;
+    result.qualifiers.length +
+    result.quantifiers.length +
+    result.temporal.length +
+    result.weaselWords.length +
+    result.marketingFluff.length +
+    result.unquantifiedComparatives.length;
   result.found = result.totalCount > 0;
   result.count = result.totalCount;
 
@@ -129,7 +155,8 @@ export function detectPrioritization(text) {
     hasNumbered: numberedMatches.length > 0,
     hasTiered: tieredMatches.length > 0,
     hasPrioritySection,
-    totalSignals: moscowMatches.length + pLevelMatches.length + numberedMatches.length + tieredMatches.length,
+    totalSignals:
+      moscowMatches.length + pLevelMatches.length + numberedMatches.length + tieredMatches.length,
   };
 }
 
@@ -158,10 +185,13 @@ export function detectCustomerEvidence(text) {
 
   return {
     hasResearch,
-    researchTerms: researchMatches.map(m => m.toLowerCase()),
-    hasData, hasQuotes,
+    researchTerms: researchMatches.map((m) => m.toLowerCase()),
+    hasData,
+    hasQuotes,
     quoteCount: quoteMatches.length,
-    hasFeedback, hasValidation, evidenceTypes,
+    hasFeedback,
+    hasValidation,
+    evidenceTypes,
   };
 }
 
@@ -193,7 +223,7 @@ export function detectExpansionStubs(text) {
   // Find which sections contain stubs by looking for headers followed by stub markers
   const sectionStubPattern = /^(#+\s*)?(\d+\.?\d*\.?\s*)?([^\n]+)\n\[TO BE EXPANDED\]/gim;
   const sectionMatches = [...text.matchAll(sectionStubPattern)];
-  const stubbedSections = sectionMatches.map(m => m[3]?.trim()).filter(Boolean);
+  const stubbedSections = sectionMatches.map((m) => m[3]?.trim()).filter(Boolean);
 
   return {
     hasStubs: matches.length > 0,

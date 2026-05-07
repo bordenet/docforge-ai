@@ -119,6 +119,8 @@ Hedging language undermines credibility and precision.
 
 **A PRD nobody reads is a PRD that failed.** Every section must earn its place.
 
+**⛔ ABSOLUTE HARD LIMIT: 17 pages maximum for any scope. This is non-negotiable and overrides all other guidance. If you are approaching this limit, stop adding sections immediately and wrap up.**
+
 #### Length Targets by Document Scope
 
 | Scope | Target Length | Word Count | Page 1 | Core Sections | Appendix |
@@ -180,27 +182,18 @@ Every PRD MUST be readable at three levels:
 | Scope | Checkpoint Threshold | Approximate Words | Action at Threshold |
 |-------|---------------------|-------------------|---------------------|
 | **Feature** | ~2 pages | ~700 words | STOP - wrap up immediately |
-| **Epic** | ~4 pages | ~1,500 words | Pause and ask user |
-| **Product** | ~8 pages | ~3,000 words | Pause and ask user |
+| **Epic** | ~4 pages | ~1,500 words | STOP - stub remaining sections as `[TO BE EXPANDED]` |
+| **Product** | ~8 pages | ~3,000 words | STOP - stub remaining sections as `[TO BE EXPANDED]` |
 | **Unspecified** | Use Feature thresholds | ~700 words | STOP - wrap up immediately |
 | **Brevity requested** | ~2 pages | ~700 words | STOP - do not exceed |
+| **Any scope** | **17 pages** | **~6,000 words** | **HARD STOP — consolidate immediately, no exceptions** |
 
 #### Checkpoint Protocol
 
 1. **Estimate current document length** (word count or page equivalent)
 2. **If approaching or exceeding the threshold for {{DOCUMENT_SCOPE}}:**
 
-   PAUSE and present this choice to the user:
-
-   > **⚠️ Length Check:** This document is approaching ~X pages, which is near the upper limit for a {{DOCUMENT_SCOPE}}-scope PRD.
-   >
-   > **How would you like to proceed?**
-   > - **(a) Continue with full detail** - Complete all remaining sections with full depth
-   > - **(b) Stub remaining sections** - Summarize Sections 10-16 as bullet-point outlines marked `[TO BE EXPANDED]`
-   >
-   > Please reply with **(a)** or **(b)**.
-
-3. **If user chooses (b)**, format remaining sections as:
+   STOP adding full sections. Format all remaining sections as stubs:
 
    ```
    ## [Section Number]. [Section Title]
@@ -210,11 +203,20 @@ Every PRD MUST be readable at three levels:
    - Key point 3 that would be covered
    ```
 
-4. **If user chooses (a)** or **if under threshold**, continue with full detail.
+   Do NOT ask the user whether to continue — stub remaining sections automatically.
+
+3. **If under threshold**, continue with full detail.
 
 > ⚠️ **DO NOT SKIP THIS CHECKPOINT.** Product managers have reported excessive document length as a pain point.
 
 ### Document Structure
+
+**⚠️ READ BEFORE GENERATING:** Only include sections that match your scope:
+- **Feature or unspecified scope:** Generate ONLY sections 1, 2, 4, 7, 9, 13, 15. Skip ALL others.
+- **Epic scope:** Generate sections 1–9, 13, 15. Sections 10–12, 14, 16 are optional.
+- **Product scope:** All 16 sections permitted, but absolute maximum is 17 pages.
+
+The template below shows all sections for reference only. You are NOT required to generate all of them.
 
 Create a well-structured PRD with the following sections (detailed guidance for each below):
 

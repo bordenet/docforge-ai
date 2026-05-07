@@ -22,7 +22,7 @@ const projectRoot = join(__dirname, '..');
  */
 function parseRubricFromPrompt(promptContent) {
   const dimensions = [];
-  
+
   // Match patterns like "### 1. Document Structure (20 pts max)"
   const dimensionPattern = /###\s*\d+\.\s*(.+?)\s*\((\d+)\s*pts?\s*max\)/gi;
   let match = dimensionPattern.exec(promptContent);
@@ -34,7 +34,7 @@ function parseRubricFromPrompt(promptContent) {
     });
     match = dimensionPattern.exec(promptContent);
   }
-  
+
   return dimensions;
 }
 
@@ -52,7 +52,7 @@ describe('Prompt-Rubric Alignment', () => {
   describe('PRD Plugin', () => {
     const prdPlugin = getPlugin('prd');
     let phase2Content;
-    
+
     beforeAll(() => {
       const phase2Path = join(projectRoot, 'plugins/prd/prompts/phase2.md');
       phase2Content = readFileSync(phase2Path, 'utf-8');
@@ -61,7 +61,7 @@ describe('Prompt-Rubric Alignment', () => {
     test('total points in prompt matches JS validator (100 pts)', () => {
       const promptTotal = parseTotalPointsFromPrompt(phase2Content);
       const validatorTotal = prdPlugin.scoringDimensions.reduce((sum, d) => sum + d.maxPoints, 0);
-      
+
       expect(promptTotal).toBe(100);
       expect(validatorTotal).toBe(100);
       expect(promptTotal).toBe(validatorTotal);
@@ -69,18 +69,18 @@ describe('Prompt-Rubric Alignment', () => {
 
     test('dimension count in prompt matches JS validator', () => {
       const promptDimensions = parseRubricFromPrompt(phase2Content);
-      
+
       expect(promptDimensions.length).toBe(prdPlugin.scoringDimensions.length);
     });
 
     test('dimension names in prompt match JS validator', () => {
       const promptDimensions = parseRubricFromPrompt(phase2Content);
-      const validatorDimNames = prdPlugin.scoringDimensions.map(d => d.name.toLowerCase());
-      
-      promptDimensions.forEach(promptDim => {
+      const validatorDimNames = prdPlugin.scoringDimensions.map((d) => d.name.toLowerCase());
+
+      promptDimensions.forEach((promptDim) => {
         const normalizedName = promptDim.name.toLowerCase();
-        const hasMatch = validatorDimNames.some(vName => 
-          vName.includes(normalizedName) || normalizedName.includes(vName)
+        const hasMatch = validatorDimNames.some(
+          (vName) => vName.includes(normalizedName) || normalizedName.includes(vName)
         );
         expect(hasMatch).toBe(true);
       });
@@ -88,14 +88,15 @@ describe('Prompt-Rubric Alignment', () => {
 
     test('dimension maxPoints in prompt match JS validator', () => {
       const promptDimensions = parseRubricFromPrompt(phase2Content);
-      
+
       // Map prompt dimensions to validator dimensions by name
-      promptDimensions.forEach(promptDim => {
-        const matchingValidator = prdPlugin.scoringDimensions.find(vd => 
-          vd.name.toLowerCase().includes(promptDim.name.toLowerCase()) ||
-          promptDim.name.toLowerCase().includes(vd.name.toLowerCase().replace(' ', ''))
+      promptDimensions.forEach((promptDim) => {
+        const matchingValidator = prdPlugin.scoringDimensions.find(
+          (vd) =>
+            vd.name.toLowerCase().includes(promptDim.name.toLowerCase()) ||
+            promptDim.name.toLowerCase().includes(vd.name.toLowerCase().replace(' ', ''))
         );
-        
+
         if (matchingValidator) {
           expect(promptDim.maxPoints).toBe(matchingValidator.maxPoints);
         }
@@ -179,7 +180,16 @@ describe('Prompt-Rubric Alignment', () => {
   });
 
   describe('All Plugins', () => {
-    const pluginIds = ['prd', 'one-pager', 'adr', 'acceptance-criteria', 'power-statement', 'business-justification', 'jd', 'strategic-proposal'];
+    const pluginIds = [
+      'prd',
+      'one-pager',
+      'adr',
+      'acceptance-criteria',
+      'power-statement',
+      'business-justification',
+      'jd',
+      'strategic-proposal',
+    ];
 
     test.each(pluginIds)('%s plugin dimensions sum to 100 points', (pluginId) => {
       const plugin = getPlugin(pluginId);
@@ -269,7 +279,9 @@ describe('Prompt-Rubric Alignment', () => {
 
       test('subsequent interactions output only revised PRD in code fence', () => {
         expect(phase2Content).toMatch(/subsequent interactions/i);
-        expect(phase2Content).toMatch(/ONLY the revised improved PRD inside a markdown code fence/i);
+        expect(phase2Content).toMatch(
+          /ONLY the revised improved PRD inside a markdown code fence/i
+        );
       });
 
       test('output structure table is labeled first interaction only', () => {
@@ -277,29 +289,31 @@ describe('Prompt-Rubric Alignment', () => {
       });
     });
 
-    describe('Issue 2: Length constraint (±25% word count)', () => {
-      test('prompt includes ±25% word count constraint', () => {
-        expect(phase2Content).toMatch(/±25%/);
+    describe('Issue 2: Length constraint (shrink-or-match)', () => {
+      test('prompt enforces shrink-or-match (not ±25% growth)', () => {
+        expect(phase2Content).toMatch(/equal to or shorter/i);
       });
 
       test('prompt requires counting Phase 1 word count', () => {
         expect(phase2Content).toMatch(/count.*word count.*Phase 1/i);
       });
 
-      test('prompt instructs to STOP and ASK user if exceeding threshold', () => {
-        expect(phase2Content).toMatch(/stop and ask the user/i);
+      test('prompt consolidates without asking user', () => {
+        expect(phase2Content).toMatch(/do NOT ask the user/i);
       });
 
       test('prompt references scope length targets', () => {
-        expect(phase2Content).toMatch(/Feature.*1-3 pages.*Epic.*4-8 pages.*Product.*8-15 pages/i);
+        expect(phase2Content).toMatch(/Feature.*1-3 pages/i);
+        expect(phase2Content).toMatch(/Epic.*4-8 pages/i);
+        expect(phase2Content).toMatch(/Product.*8-15 pages/i);
       });
 
       test('length check is step 2 in the process', () => {
         expect(phase2Content).toMatch(/2\.\s*\*\*Length Check\*\*/);
       });
 
-      test('prompt warns against epic tomes', () => {
-        expect(phase2Content).toMatch(/epic tomes/i);
+      test('prompt enforces 17-page absolute maximum', () => {
+        expect(phase2Content).toMatch(/17 pages/i);
       });
     });
 
@@ -327,4 +341,3 @@ describe('Prompt-Rubric Alignment', () => {
     });
   });
 });
-

@@ -211,7 +211,7 @@ Evaluate the **16 required sections** (per Phase1.md):
 ## Your Process
 
 1. **Initial Assessment**: Score EACH of the 5 dimensions (not 10 criteria)
-2. **Length Check**: Count the word count of the Phase 1 document. Your improved PRD MUST stay within **±25% of that word count**. If you believe the PRD genuinely requires content beyond this threshold, **STOP and ASK the user** before adding it. Respect the Document Scope length targets (Feature: 1-3 pages, Epic: 4-8 pages, Product: 8-15 pages). Do NOT inflate the document — users report "epic tomes" as a top complaint.
+2. **Length Check**: Count the word count of the Phase 1 document. Your improved PRD MUST be **equal to or shorter** than Phase 1's word count — never longer. Improve quality by replacing weak content, not by adding new content. Absolute maximum: **17 pages (~6,000 words)** regardless of scope. Do NOT ask the user for permission to exceed this — just consolidate.
 3. **Identify Issues**: Point out vague statements, missing sections, weak areas
    - Flag undefined formulas or scoring mechanisms
    - Identify missing API/integration specifics
