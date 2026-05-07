@@ -9,13 +9,7 @@ import { describe, it, expect, beforeEach } from '@jest/globals';
 import { generatePrompt } from '../shared/js/prompt-generator.js';
 
 function loadRealTemplate(pluginId) {
-  const templatePath = path.join(
-    process.cwd(),
-    'plugins',
-    pluginId,
-    'prompts',
-    'phase1.md'
-  );
+  const templatePath = path.join(process.cwd(), 'plugins', pluginId, 'prompts', 'phase1.md');
   return fs.readFileSync(templatePath, 'utf-8');
 }
 
@@ -84,10 +78,15 @@ My context here.
 This describes what needs to be done - user content, not template!`,
     };
 
-    const prompt = await generatePrompt({ id: 'business-justification' }, 1, formData, {}, { isImported: true });
+    const prompt = await generatePrompt(
+      { id: 'business-justification' },
+      1,
+      formData,
+      {},
+      { isImported: true }
+    );
 
     // User's "Your Task" section should survive if it's in their content
     expect(prompt).toContain('This describes what needs to be done');
   });
 });
-

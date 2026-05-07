@@ -1,6 +1,6 @@
 /**
  * ADR Validator - Main Entry Point
- * 
+ *
  * Scoring Dimensions:
  * 1. Context (25 pts) - Clear problem context and constraints
  * 2. Decision (25 pts) - Clear statement of the decision
@@ -10,7 +10,12 @@
 
 import { getSlopPenalty } from '../../../shared/js/slop-scoring.js';
 import { normalizeText } from '../../../shared/js/validator.js';
-import { scoreContext, scoreDecision, scoreConsequences, scoreStatus } from './validator-scoring.js';
+import {
+  scoreContext,
+  scoreDecision,
+  scoreConsequences,
+  scoreStatus,
+} from './validator-scoring.js';
 
 // Re-export detection functions for testing
 export {
@@ -20,11 +25,16 @@ export {
   detectConsequences,
   detectStatus,
   detectRationale,
-  detectSections
+  detectSections,
 } from './validator-detection.js';
 
 // Re-export scoring functions for testing
-export { scoreContext, scoreDecision, scoreConsequences, scoreStatus } from './validator-scoring.js';
+export {
+  scoreContext,
+  scoreDecision,
+  scoreConsequences,
+  scoreStatus,
+} from './validator-scoring.js';
 
 /**
  * Validate an ADR and return comprehensive scoring results
@@ -43,7 +53,7 @@ export function validateADR(text) {
       dimension2: { score: 0, maxScore: 25, issues: ['No content to validate'], strengths: [] },
       dimension3: { score: 0, maxScore: 25, issues: ['No content to validate'], strengths: [] },
       dimension4: { score: 0, maxScore: 25, issues: ['No content to validate'], strengths: [] },
-      issues: ['No content to validate']
+      issues: ['No content to validate'],
     };
   }
 
@@ -68,7 +78,8 @@ export function validateADR(text) {
     }
   }
 
-  const totalScore = Math.max(0,
+  const totalScore = Math.max(
+    0,
     context.score + decision.score + consequences.score + status.score - slopDeduction
   );
 
@@ -95,7 +106,7 @@ export function validateADR(text) {
     slopDetection: {
       ...slopPenalty,
       deduction: slopDeduction,
-      issues: slopIssues
+      issues: slopIssues,
     },
     // Top-level issues array for assistant completion banner display
     issues: allIssues,
@@ -113,4 +124,3 @@ export function validateDocument(text) {
 
 // Re-export scoring helper functions from shared module for consistency
 export { getGrade, getScoreColor, getScoreLabel } from '../../../shared/js/validator.js';
-

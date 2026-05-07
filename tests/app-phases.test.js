@@ -37,7 +37,13 @@ const mockPlugin = {
   workflowConfig: {
     phaseCount: 3,
     phases: [
-      { number: 1, name: 'Initial Draft', icon: '📝', aiModel: 'Claude', description: 'Generate draft' },
+      {
+        number: 1,
+        name: 'Initial Draft',
+        icon: '📝',
+        aiModel: 'Claude',
+        description: 'Generate draft',
+      },
       { number: 2, name: 'Review', icon: '🔍', aiModel: 'Gemini', description: 'Review' },
       { number: 3, name: 'Final', icon: '✨', aiModel: 'Claude', description: 'Finalize' },
     ],
@@ -81,7 +87,10 @@ describe('App Phases - Preview Prompt', () => {
         label: 'Preview Prompt',
         icon: '👁️',
         onClick: async () => {
-          const previousResponses = { 1: project.phases?.[1]?.response || '', 2: project.phases?.[2]?.response || '' };
+          const previousResponses = {
+            1: project.phases?.[1]?.response || '',
+            2: project.phases?.[2]?.response || '',
+          };
           await mockGeneratePrompt(mockPlugin, phase, project.formData, previousResponses);
         },
       });
@@ -128,7 +137,10 @@ describe('App Phases - Preview Prompt', () => {
       let capturedResponses = null;
 
       const onClick = async () => {
-        const previousResponses = { 1: project.phases?.[1]?.response || '', 2: project.phases?.[2]?.response || '' };
+        const previousResponses = {
+          1: project.phases?.[1]?.response || '',
+          2: project.phases?.[2]?.response || '',
+        };
         capturedResponses = previousResponses;
         await mockGeneratePrompt(mockPlugin, phase, project.formData, previousResponses);
       };
@@ -136,7 +148,10 @@ describe('App Phases - Preview Prompt', () => {
       await onClick();
 
       expect(capturedResponses).toEqual({ 1: '', 2: '' });
-      expect(mockGeneratePrompt).toHaveBeenCalledWith(mockPlugin, 1, project.formData, { 1: '', 2: '' });
+      expect(mockGeneratePrompt).toHaveBeenCalledWith(mockPlugin, 1, project.formData, {
+        1: '',
+        2: '',
+      });
     });
 
     test('Preview Prompt onClick should include previous responses for later phases', async () => {
@@ -145,7 +160,10 @@ describe('App Phases - Preview Prompt', () => {
       let capturedResponses = null;
 
       const onClick = async () => {
-        const previousResponses = { 1: project.phases?.[1]?.response || '', 2: project.phases?.[2]?.response || '' };
+        const previousResponses = {
+          1: project.phases?.[1]?.response || '',
+          2: project.phases?.[2]?.response || '',
+        };
         capturedResponses = previousResponses;
         await mockGeneratePrompt(mockPlugin, phase, project.formData, previousResponses);
       };
@@ -156,4 +174,3 @@ describe('App Phases - Preview Prompt', () => {
     });
   });
 });
-

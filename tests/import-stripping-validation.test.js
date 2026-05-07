@@ -51,8 +51,8 @@ Do something.
     await generatePrompt({ id: 'test' }, 1, formData, {}, { isImported: true });
 
     // Should NOT warn about failed stripping
-    const strippingWarnings = capturedWarnings.filter(msg =>
-      msg.includes('Failed to strip') || msg.includes('stripping failed')
+    const strippingWarnings = capturedWarnings.filter(
+      (msg) => msg.includes('Failed to strip') || msg.includes('stripping failed')
     );
     expect(strippingWarnings.length).toBe(0);
   });
@@ -80,8 +80,8 @@ Do something.
     await generatePrompt({ id: 'test' }, 1, formData, {}, { isImported: true });
 
     // Should warn about failed stripping
-    const strippingWarnings = capturedWarnings.filter(msg =>
-      msg.includes('Context') && msg.includes('strip')
+    const strippingWarnings = capturedWarnings.filter(
+      (msg) => msg.includes('Context') && msg.includes('strip')
     );
     expect(strippingWarnings.length).toBeGreaterThan(0);
   });
@@ -108,9 +108,7 @@ Do something.
     await generatePrompt({ id: 'test' }, 1, formData, {}, { isImported: true });
 
     // Should NOT warn about INPUT DATA since it didn't exist
-    const inputDataWarnings = capturedWarnings.filter(msg =>
-      msg.includes('INPUT DATA')
-    );
+    const inputDataWarnings = capturedWarnings.filter((msg) => msg.includes('INPUT DATA'));
     expect(inputDataWarnings.length).toBe(0);
   });
 
@@ -147,8 +145,8 @@ Do something.
       await generatePrompt({ id: 'test' }, 1, formData, {}, { isImported: true });
 
       // Should NOT warn - markers stripped correctly
-      const markerWarnings = capturedWarnings.filter(msg =>
-        msg.includes('marker') || msg.includes('DOCFORGE')
+      const markerWarnings = capturedWarnings.filter(
+        (msg) => msg.includes('marker') || msg.includes('DOCFORGE')
       );
       expect(markerWarnings.length).toBe(0);
     });
@@ -178,8 +176,11 @@ Do something.
       await generatePrompt({ id: 'test' }, 1, formData, {}, { isImported: true });
 
       // Should warn about unclosed/unmatched markers
-      const markerWarnings = capturedWarnings.filter(msg =>
-        msg.toLowerCase().includes('marker') || msg.includes('unclosed') || msg.includes('unmatched')
+      const markerWarnings = capturedWarnings.filter(
+        (msg) =>
+          msg.toLowerCase().includes('marker') ||
+          msg.includes('unclosed') ||
+          msg.includes('unmatched')
       );
       expect(markerWarnings.length).toBeGreaterThan(0);
     });
@@ -209,11 +210,13 @@ Do something.
       await generatePrompt({ id: 'test' }, 1, formData, {}, { isImported: true });
 
       // Should warn about orphan END marker
-      const markerWarnings = capturedWarnings.filter(msg =>
-        msg.toLowerCase().includes('marker') || msg.includes('orphan') || msg.includes('unmatched')
+      const markerWarnings = capturedWarnings.filter(
+        (msg) =>
+          msg.toLowerCase().includes('marker') ||
+          msg.includes('orphan') ||
+          msg.includes('unmatched')
       );
       expect(markerWarnings.length).toBeGreaterThan(0);
     });
   });
 });
-

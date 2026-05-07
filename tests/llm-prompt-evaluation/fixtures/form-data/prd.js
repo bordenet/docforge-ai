@@ -44,4 +44,3 @@ export default {
     'Full PRD covering problem analysis, user research, requirements specification, ' +
     'success metrics, timeline, and risk assessment.',
 };
-

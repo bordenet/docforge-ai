@@ -18,7 +18,7 @@ import {
   validateJDContent,
   getGrade,
   getScoreColor,
-  getScoreLabel
+  getScoreLabel,
 } from '../plugins/jd/js/validator.js';
 
 describe('JD Validator', () => {
@@ -39,7 +39,9 @@ describe('JD Validator', () => {
     });
 
     it('ignores mandated sections', () => {
-      const result = detectMasculineCoded('[COMPANY_PREAMBLE]We are aggressive leaders.[/COMPANY_PREAMBLE] Join our team.');
+      const result = detectMasculineCoded(
+        '[COMPANY_PREAMBLE]We are aggressive leaders.[/COMPANY_PREAMBLE] Join our team.'
+      );
       expect(result.found).toBe(false);
     });
   });
@@ -98,7 +100,9 @@ describe('JD Validator', () => {
     });
 
     it('detects meet most requirements', () => {
-      const result = detectEncouragement('If you meet most of the requirements, we encourage you to apply.');
+      const result = detectEncouragement(
+        'If you meet most of the requirements, we encourage you to apply.'
+      );
       expect(result.found).toBe(true);
     });
 
@@ -139,7 +143,7 @@ describe('JD Validator', () => {
     it('penalizes masculine-coded words', () => {
       const warnings = [
         { type: 'masculine-coded', word: 'ninja' },
-        { type: 'masculine-coded', word: 'rockstar' }
+        { type: 'masculine-coded', word: 'rockstar' },
       ];
       const result = scoreMasculineCoded(warnings);
       expect(result.penalty).toBe(10);
@@ -190,7 +194,9 @@ describe('JD Validator', () => {
     });
 
     it('returns valid for clean content', () => {
-      const result = validateJDContent('We seek a skilled engineer to join our collaborative team.');
+      const result = validateJDContent(
+        'We seek a skilled engineer to join our collaborative team.'
+      );
       expect(result.valid).toBe(true);
     });
   });
@@ -221,7 +227,8 @@ describe('JD Validator', () => {
     });
 
     it('penalizes problematic language', () => {
-      const cleanText = 'word '.repeat(450) + 'Salary: $100,000 - $150,000. If you meet 60-70%, apply!';
+      const cleanText =
+        'word '.repeat(450) + 'Salary: $100,000 - $150,000. If you meet 60-70%, apply!';
       const badText = cleanText + ' We need a rockstar ninja in a fast-paced environment.';
 
       const cleanResult = validateDocument(cleanText);
@@ -287,7 +294,7 @@ describe('JD Validator', () => {
       for (let i = 0; i < 5; i++) {
         results.push(detectMasculineCoded(text));
       }
-      const counts = results.map(r => r.count);
+      const counts = results.map((r) => r.count);
       expect(new Set(counts).size).toBe(1);
     });
 
@@ -297,7 +304,7 @@ describe('JD Validator', () => {
       for (let i = 0; i < 5; i++) {
         results.push(detectExtrovertBias(text));
       }
-      const counts = results.map(r => r.count);
+      const counts = results.map((r) => r.count);
       expect(new Set(counts).size).toBe(1);
     });
 
@@ -307,7 +314,7 @@ describe('JD Validator', () => {
       for (let i = 0; i < 5; i++) {
         results.push(detectRedFlags(text));
       }
-      const counts = results.map(r => r.count);
+      const counts = results.map((r) => r.count);
       expect(new Set(counts).size).toBe(1);
     });
   });
@@ -328,4 +335,3 @@ describe('JD Validator', () => {
     });
   });
 });
-

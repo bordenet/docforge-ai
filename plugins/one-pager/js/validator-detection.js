@@ -13,7 +13,7 @@ import {
   DECISION_NEEDED_PATTERNS,
   VAGUE_QUANTIFIER_PATTERNS,
   STAKEHOLDER_TABLE_PATTERNS,
-  ALTERNATIVES_QUALITY_PATTERNS
+  ALTERNATIVES_QUALITY_PATTERNS,
 } from './validator-config.js';
 
 // Re-export section-related detections from split file
@@ -22,7 +22,7 @@ export {
   detectSuccessMetrics,
   detectSections,
   detectStakeholders,
-  detectTimeline
+  detectTimeline,
 } from './validator-detection-sections.js';
 
 // ============================================================================
@@ -37,8 +37,13 @@ export {
  * @returns {Object} Circular logic detection results
  */
 export function detectCircularLogic(text) {
-  const problemSection = text.match(/^(#+\s*)?(\d+\.?\d*\.?\s*)?(problem|challenge|pain.?point|context)[^#]*/im)?.[0] || '';
-  const solutionSection = text.match(/^(#+\s*)?(\d+\.?\d*\.?\s*)?(solution|proposal|approach|recommendation)[^#]*/im)?.[0] || '';
+  const problemSection =
+    text.match(/^(#+\s*)?(\d+\.?\d*\.?\s*)?(problem|challenge|pain.?point|context)[^#]*/im)?.[0] ||
+    '';
+  const solutionSection =
+    text.match(
+      /^(#+\s*)?(\d+\.?\d*\.?\s*)?(solution|proposal|approach|recommendation)[^#]*/im
+    )?.[0] || '';
 
   if (!problemSection || !solutionSection) {
     return { isCircular: false, confidence: 0, reason: 'Sections not found' };
@@ -47,10 +52,120 @@ export function detectCircularLogic(text) {
   const problemLower = problemSection.toLowerCase();
   const solutionLower = solutionSection.toLowerCase();
 
-  const commonWords = new Set(['the', 'a', 'an', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must', 'shall', 'can', 'need', 'dare', 'ought', 'used', 'to', 'of', 'in', 'for', 'on', 'with', 'at', 'by', 'from', 'up', 'about', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'between', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'just', 'don', 'now', 'we', 'our', 'and', 'or', 'but', 'if', 'because', 'as', 'until', 'while', 'that', 'this', 'these', 'those', 'it', 'its']);
+  const commonWords = new Set([
+    'the',
+    'a',
+    'an',
+    'is',
+    'are',
+    'was',
+    'were',
+    'be',
+    'been',
+    'being',
+    'have',
+    'has',
+    'had',
+    'do',
+    'does',
+    'did',
+    'will',
+    'would',
+    'could',
+    'should',
+    'may',
+    'might',
+    'must',
+    'shall',
+    'can',
+    'need',
+    'dare',
+    'ought',
+    'used',
+    'to',
+    'of',
+    'in',
+    'for',
+    'on',
+    'with',
+    'at',
+    'by',
+    'from',
+    'up',
+    'about',
+    'into',
+    'through',
+    'during',
+    'before',
+    'after',
+    'above',
+    'below',
+    'between',
+    'under',
+    'again',
+    'further',
+    'then',
+    'once',
+    'here',
+    'there',
+    'when',
+    'where',
+    'why',
+    'how',
+    'all',
+    'each',
+    'few',
+    'more',
+    'most',
+    'other',
+    'some',
+    'such',
+    'no',
+    'nor',
+    'not',
+    'only',
+    'own',
+    'same',
+    'so',
+    'than',
+    'too',
+    'very',
+    's',
+    't',
+    'just',
+    'don',
+    'now',
+    'we',
+    'our',
+    'and',
+    'or',
+    'but',
+    'if',
+    'because',
+    'as',
+    'until',
+    'while',
+    'that',
+    'this',
+    'these',
+    'those',
+    'it',
+    'its',
+  ]);
 
-  const problemNouns = problemLower.match(/\b[a-z]{4,}\b/g)?.filter(w => !commonWords.has(w)) || [];
-  const actionVerbs = ['build', 'create', 'add', 'implement', 'develop', 'make', 'establish', 'introduce', 'launch'];
+  const problemNouns =
+    problemLower.match(/\b[a-z]{4,}\b/g)?.filter((w) => !commonWords.has(w)) || [];
+  const actionVerbs = [
+    'build',
+    'create',
+    'add',
+    'implement',
+    'develop',
+    'make',
+    'establish',
+    'introduce',
+    'launch',
+  ];
 
   let circularMatches = 0;
   for (const noun of new Set(problemNouns)) {
@@ -71,7 +186,7 @@ export function detectCircularLogic(text) {
     matchCount: circularMatches,
     reason: isCircular
       ? `Solution appears to restate the problem (${circularMatches} circular patterns)`
-      : 'Solution addresses root cause'
+      : 'Solution addresses root cause',
   };
 }
 
@@ -90,13 +205,22 @@ export function detectBaselineTarget(text) {
   const arrowPatterns = text.match(/\d+[%$]?\s*[→\->]\s*\d+[%$]?/g) || [];
   const fromToPatterns = text.match(/from\s+\d+[%$]?\s+to\s+\d+[%$]?/gi) || [];
   const currentTargetPatterns = text.match(/currently?\s+\d+[%$]?.*target\s+\d+[%$]?/gi) || [];
-  const bracketPatterns = text.match(/\[(?:current|baseline)[^\]]*\]\s*[→\->]\s*\[(?:target|goal)[^\]]*\]/gi) || [];
-  const bracketNumberPatterns = text.match(/\[\s*\d+[%$]?[^\]]*\]\s*[→\->]\s*\[\s*\d+[%$]?[^\]]*\]/g) || [];
+  const bracketPatterns =
+    text.match(/\[(?:current|baseline)[^\]]*\]\s*[→\->]\s*\[(?:target|goal)[^\]]*\]/gi) || [];
+  const bracketNumberPatterns =
+    text.match(/\[\s*\d+[%$]?[^\]]*\]\s*[→\->]\s*\[\s*\d+[%$]?[^\]]*\]/g) || [];
 
-  const totalMatches = arrowPatterns.length + fromToPatterns.length +
-                       currentTargetPatterns.length + bracketPatterns.length + bracketNumberPatterns.length;
+  const totalMatches =
+    arrowPatterns.length +
+    fromToPatterns.length +
+    currentTargetPatterns.length +
+    bracketPatterns.length +
+    bracketNumberPatterns.length;
 
-  const vaguePatterns = text.match(/\b(improve|increase|decrease|reduce|enhance|better|more|less|faster|slower)\b(?![^.]*\d)/gi) || [];
+  const vaguePatterns =
+    text.match(
+      /\b(improve|increase|decrease|reduce|enhance|better|more|less|faster|slower)\b(?![^.]*\d)/gi
+    ) || [];
 
   return {
     hasBaselineTarget: totalMatches > 0,
@@ -105,7 +229,7 @@ export function detectBaselineTarget(text) {
     fromToPatterns: fromToPatterns.length,
     vagueMetricsCount: vaguePatterns.length,
     hasVagueMetrics: vaguePatterns.length > totalMatches,
-    examples: [...arrowPatterns.slice(0, 2), ...fromToPatterns.slice(0, 2)]
+    examples: [...arrowPatterns.slice(0, 2), ...fromToPatterns.slice(0, 2)],
   };
 }
 
@@ -137,8 +261,8 @@ export function detectProblemStatement(text) {
       problemMatches.length > 0 && 'Problem framing language',
       costMatches.length > 0 && 'Cost of inaction mentioned',
       quantifiedMatches.length > 0 && `${quantifiedMatches.length} quantified metrics`,
-      businessMatches.length > 0 && 'Business/customer focus'
-    ].filter(Boolean)
+      businessMatches.length > 0 && 'Business/customer focus',
+    ].filter(Boolean),
   };
 }
 
@@ -150,7 +274,8 @@ export function detectProblemStatement(text) {
 export function detectCostOfInaction(text) {
   const costMatches = text.match(PROBLEM_PATTERNS.costOfInaction) || [];
   const quantifiedMatches = text.match(PROBLEM_PATTERNS.quantified) || [];
-  const hasCostSection = /^(#+\s*)?(\d+\.?\d*\.?\s*)?(cost|impact|consequence|risk|why.now|urgency)/im.test(text);
+  const hasCostSection =
+    /^(#+\s*)?(\d+\.?\d*\.?\s*)?(cost|impact|consequence|risk|why.now|urgency)/im.test(text);
 
   return {
     hasCostLanguage: costMatches.length > 0,
@@ -161,8 +286,8 @@ export function detectCostOfInaction(text) {
     indicators: [
       costMatches.length > 0 && `${costMatches.length} cost/impact references`,
       quantifiedMatches.length > 0 && `${quantifiedMatches.length} quantified values`,
-      hasCostSection && 'Dedicated cost/impact section'
-    ].filter(Boolean)
+      hasCostSection && 'Dedicated cost/impact section',
+    ].filter(Boolean),
   };
 }
 
@@ -193,8 +318,8 @@ export function detectSolution(text) {
       solutionMatches.length > 0 && 'Solution language present',
       measurableMatches.length > 0 && 'Measurable outcomes mentioned',
       highlevelMatches.length > 0 && 'High-level approach described',
-      implementationMatches.length === 0 && 'No implementation details (good)'
-    ].filter(Boolean)
+      implementationMatches.length === 0 && 'No implementation details (good)',
+    ].filter(Boolean),
   };
 }
 
@@ -217,8 +342,8 @@ export function detectMeasurableGoals(text) {
     indicators: [
       measurableMatches.length > 0 && `${measurableMatches.length} measurable terms`,
       goalMatches.length > 0 && `${goalMatches.length} goal/objective mentions`,
-      quantifiedMatches.length > 0 && 'Quantified metrics present'
-    ].filter(Boolean)
+      quantifiedMatches.length > 0 && 'Quantified metrics present',
+    ].filter(Boolean),
   };
 }
 
@@ -244,9 +369,10 @@ export function detectAlternatives(text) {
     hasDoNothingOption: doNothingMatches.length > 0,
     indicators: [
       hasAlternativesSection && 'Dedicated alternatives section',
-      alternativesMatches.length > 0 && `${alternativesMatches.length} alternative/comparison mentions`,
-      doNothingMatches.length > 0 && '"Do nothing" option addressed'
-    ].filter(Boolean)
+      alternativesMatches.length > 0 &&
+        `${alternativesMatches.length} alternative/comparison mentions`,
+      doNothingMatches.length > 0 && '"Do nothing" option addressed',
+    ].filter(Boolean),
   };
 }
 
@@ -273,8 +399,8 @@ export function detectUrgency(text) {
     indicators: [
       hasUrgencySection && 'Dedicated "Why Now" section',
       urgencyMatches.length > 0 && `${urgencyMatches.length} urgency indicators`,
-      timePressureMatches.length > 0 && 'Time pressure/deadline mentioned'
-    ].filter(Boolean)
+      timePressureMatches.length > 0 && 'Time pressure/deadline mentioned',
+    ].filter(Boolean),
   };
 }
 
@@ -301,8 +427,8 @@ export function detectDecisionNeeded(text) {
     indicators: [
       hasDecisionSection && 'Dedicated decision/ask section',
       decisionMatches.length > 0 && `${decisionMatches.length} decision-related terms`,
-      explicitAskMatches.length > 0 && 'Explicit ask/request present'
-    ].filter(Boolean)
+      explicitAskMatches.length > 0 && 'Explicit ask/request present',
+    ].filter(Boolean),
   };
 }
 
@@ -321,7 +447,7 @@ export function detectVagueQuantifiers(text) {
   const wideRangeMatches = text.match(VAGUE_QUANTIFIER_PATTERNS.wideRangeIndicator) || [];
 
   // Count unique vague terms (case-insensitive)
-  const uniqueVagueTerms = [...new Set(vagueTermMatches.map(t => t.toLowerCase()))];
+  const uniqueVagueTerms = [...new Set(vagueTermMatches.map((t) => t.toLowerCase()))];
 
   return {
     hasVagueTerms: vagueTermMatches.length > 0,
@@ -334,8 +460,8 @@ export function detectVagueQuantifiers(text) {
     indicators: [
       vagueTermMatches.length > 0 && `${vagueTermMatches.length} vague terms found`,
       wideRangeMatches.length > 0 && `${wideRangeMatches.length} overly wide ranges`,
-      uniqueVagueTerms.length > 0 && `Vague terms: ${uniqueVagueTerms.slice(0, 3).join(', ')}`
-    ].filter(Boolean)
+      uniqueVagueTerms.length > 0 && `Vague terms: ${uniqueVagueTerms.slice(0, 3).join(', ')}`,
+    ].filter(Boolean),
   };
 }
 
@@ -350,8 +476,10 @@ export function detectVagueQuantifiers(text) {
  */
 export function detectStakeholderTableQuality(text) {
   // Reset lastIndex on global patterns before .test() to prevent stale state
-  if (STAKEHOLDER_TABLE_PATTERNS.raciTable.global) STAKEHOLDER_TABLE_PATTERNS.raciTable.lastIndex = 0;
-  if (STAKEHOLDER_TABLE_PATTERNS.roleTable.global) STAKEHOLDER_TABLE_PATTERNS.roleTable.lastIndex = 0;
+  if (STAKEHOLDER_TABLE_PATTERNS.raciTable.global)
+    STAKEHOLDER_TABLE_PATTERNS.raciTable.lastIndex = 0;
+  if (STAKEHOLDER_TABLE_PATTERNS.roleTable.global)
+    STAKEHOLDER_TABLE_PATTERNS.roleTable.lastIndex = 0;
   const hasRaciTable = STAKEHOLDER_TABLE_PATTERNS.raciTable.test(text);
   const hasRoleTable = STAKEHOLDER_TABLE_PATTERNS.roleTable.test(text);
   const simpleListMatches = text.match(STAKEHOLDER_TABLE_PATTERNS.simpleList) || [];
@@ -380,8 +508,8 @@ export function detectStakeholderTableQuality(text) {
     indicators: [
       hasRaciTable && 'RACI/DACI accountability matrix present',
       hasRoleTable && 'Role-based stakeholder table',
-      simpleListMatches.length > 0 && 'Simple stakeholder list (consider adding roles)'
-    ].filter(Boolean)
+      simpleListMatches.length > 0 && 'Simple stakeholder list (consider adding roles)',
+    ].filter(Boolean),
   };
 }
 
@@ -398,13 +526,14 @@ export function detectAlternativesQuality(text) {
   const rejectionMatches = text.match(ALTERNATIVES_QUALITY_PATTERNS.rejectionRationale) || [];
   const chosenMatches = text.match(ALTERNATIVES_QUALITY_PATTERNS.chosenRationale) || [];
   const numberedMatches = text.match(ALTERNATIVES_QUALITY_PATTERNS.numberedAlternatives) || [];
-  const doNothingConsequenceMatches = text.match(ALTERNATIVES_QUALITY_PATTERNS.doNothingWithConsequence) || [];
+  const doNothingConsequenceMatches =
+    text.match(ALTERNATIVES_QUALITY_PATTERNS.doNothingWithConsequence) || [];
 
   // Quality score based on thoroughness
   let qualityScore = 0;
-  if (numberedMatches.length >= 2) qualityScore += 1;  // Multiple options listed
-  if (rejectionMatches.length > 0) qualityScore += 2;  // Explains why rejected
-  if (chosenMatches.length > 0) qualityScore += 1;     // Explains why chosen
+  if (numberedMatches.length >= 2) qualityScore += 1; // Multiple options listed
+  if (rejectionMatches.length > 0) qualityScore += 2; // Explains why rejected
+  if (chosenMatches.length > 0) qualityScore += 1; // Explains why chosen
   if (doNothingConsequenceMatches.length > 0) qualityScore += 1; // Do nothing has consequence
 
   return {
@@ -419,7 +548,7 @@ export function detectAlternativesQuality(text) {
       numberedMatches.length > 0 && `${numberedMatches.length} alternatives listed`,
       rejectionMatches.length > 0 && 'Rejection rationale provided',
       chosenMatches.length > 0 && 'Explains why solution was chosen',
-      doNothingConsequenceMatches.length > 0 && '"Do nothing" consequence explained'
-    ].filter(Boolean)
+      doNothingConsequenceMatches.length > 0 && '"Do nothing" consequence explained',
+    ].filter(Boolean),
   };
 }

@@ -31,7 +31,8 @@ export const TEMPLATES = [
         '- Contract renewal coming up in [timeframe]\n- Current system lacks [capability]\n- Support response times are [issue]\n- Integration challenges with [system]',
       meetingNotes:
         'Discovery call [date]:\n- Discussed [topic 1]\n- Learned about [pain point]\n- Next steps: [action items]',
-      additionalContext: 'Budget cycle: [timing]\nDecision timeline: [date]\nOther stakeholders: [names/roles]',
+      additionalContext:
+        'Budget cycle: [timing]\nDecision timeline: [date]\nOther stakeholders: [names/roles]',
     },
   },
   {

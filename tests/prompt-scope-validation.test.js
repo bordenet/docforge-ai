@@ -15,7 +15,7 @@ const projectRoot = join(__dirname, '..');
 
 describe('Prompt Scope Validation', () => {
   let phase1Content;
-  
+
   beforeAll(() => {
     const phase1Path = join(projectRoot, 'plugins/prd/prompts/phase1.md');
     phase1Content = readFileSync(phase1Path, 'utf-8');
@@ -48,10 +48,16 @@ describe('Prompt Scope Validation', () => {
     });
 
     test('prompt lists multiple brevity signal words', () => {
-      const brevityWords = ['short', 'quick', 'brief', 'concise', 'simple', 'lightweight', 'minimal'];
-      const foundWords = brevityWords.filter(word => 
-        phase1Content.toLowerCase().includes(word)
-      );
+      const brevityWords = [
+        'short',
+        'quick',
+        'brief',
+        'concise',
+        'simple',
+        'lightweight',
+        'minimal',
+      ];
+      const foundWords = brevityWords.filter((word) => phase1Content.toLowerCase().includes(word));
       expect(foundWords.length).toBeGreaterThanOrEqual(5);
     });
   });
@@ -132,7 +138,7 @@ describe('Prompt Scope Validation', () => {
 
 describe('Cross-Plugin Prompt Validation (Fix 12)', () => {
   const pluginsWithScopes = ['prd']; // Only PRD has scope handling currently
-  
+
   test.each(pluginsWithScopes)('%s plugin has phase1.md', (pluginId) => {
     const phase1Path = join(projectRoot, `plugins/${pluginId}/prompts/phase1.md`);
     expect(() => readFileSync(phase1Path)).not.toThrow();
@@ -144,4 +150,3 @@ describe('Cross-Plugin Prompt Validation (Fix 12)', () => {
     expect(content).toContain('DOCUMENT_SCOPE');
   });
 });
-

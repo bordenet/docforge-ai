@@ -142,4 +142,3 @@ export function runWorkflowChecks(prompt, workflow, fixtures, phase) {
 
   return results;
 }
-

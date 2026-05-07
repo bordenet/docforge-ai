@@ -124,7 +124,7 @@ describe('Storage Sanitization Module', () => {
     });
 
     test('sanitizes string values directly', () => {
-      const input = { '1': 'Phase\x001 output', '2': 'Phase 2' };
+      const input = { 1: 'Phase\x001 output', 2: 'Phase 2' };
       const result = sanitizePhases(input);
       expect(result['1']).toBe('Phase1 output');
       expect(result['2']).toBe('Phase 2');
@@ -132,8 +132,8 @@ describe('Storage Sanitization Module', () => {
 
     test('sanitizes phase objects with response/output fields', () => {
       const input = {
-        '1': { output: 'Phase\x001', completed: true },
-        '2': { output: 'Phase\x002', critique: 'Review\x00text' },
+        1: { output: 'Phase\x001', completed: true },
+        2: { output: 'Phase\x002', critique: 'Review\x00text' },
       };
       const result = sanitizePhases(input);
       expect(result['1'].output).toBe('Phase1');
@@ -143,7 +143,7 @@ describe('Storage Sanitization Module', () => {
     });
 
     test('handles null phase values', () => {
-      const input = { '1': null, '2': 'valid' };
+      const input = { 1: null, 2: 'valid' };
       const result = sanitizePhases(input);
       expect(result['1']).toBeUndefined();
       expect(result['2']).toBe('valid');
@@ -225,7 +225,7 @@ describe('Storage Sanitization Module', () => {
         id: '123',
         title: 'Test\x00Title',
         formData: { problem: 'Issue\x00Here' },
-        phases: { '1': { output: 'Phase\x001' } },
+        phases: { 1: { output: 'Phase\x001' } },
       };
       const result = sanitizeProject(project);
       expect(result.title).toBe('TestTitle');
@@ -274,4 +274,3 @@ describe('Storage Sanitization Module', () => {
     });
   });
 });
-

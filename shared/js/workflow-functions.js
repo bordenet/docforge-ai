@@ -146,4 +146,3 @@ export function getExportFilename(project) {
   const title = project.title || project.name || 'document';
   return `${title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.md`;
 }
-

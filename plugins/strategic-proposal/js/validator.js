@@ -14,7 +14,7 @@ import {
   scoreProblemStatement,
   scoreProposedSolution,
   scoreBusinessImpact,
-  scoreImplementationPlan
+  scoreImplementationPlan,
 } from './validator-scoring.js';
 
 /**
@@ -26,11 +26,26 @@ export function validateStrategicProposal(text) {
   if (!text || typeof text !== 'string') {
     return {
       totalScore: 0,
-      problemStatement: { score: 0, maxScore: 25, issues: ['No content to validate'], strengths: [] },
-      proposedSolution: { score: 0, maxScore: 25, issues: ['No content to validate'], strengths: [] },
+      problemStatement: {
+        score: 0,
+        maxScore: 25,
+        issues: ['No content to validate'],
+        strengths: [],
+      },
+      proposedSolution: {
+        score: 0,
+        maxScore: 25,
+        issues: ['No content to validate'],
+        strengths: [],
+      },
       businessImpact: { score: 0, maxScore: 25, issues: ['No content to validate'], strengths: [] },
-      implementationPlan: { score: 0, maxScore: 25, issues: ['No content to validate'], strengths: [] },
-      issues: ['No content to validate']
+      implementationPlan: {
+        score: 0,
+        maxScore: 25,
+        issues: ['No content to validate'],
+        strengths: [],
+      },
+      issues: ['No content to validate'],
     };
   }
 
@@ -54,8 +69,13 @@ export function validateStrategicProposal(text) {
     }
   }
 
-  const totalScore = Math.max(0,
-    problemStatement.score + proposedSolution.score + businessImpact.score + implementationPlan.score - slopDeduction
+  const totalScore = Math.max(
+    0,
+    problemStatement.score +
+      proposedSolution.score +
+      businessImpact.score +
+      implementationPlan.score -
+      slopDeduction
   );
 
   // Aggregate all issues from all dimensions for the assistant completion banner
@@ -81,7 +101,7 @@ export function validateStrategicProposal(text) {
     slopDetection: {
       ...slopPenalty,
       deduction: slopDeduction,
-      issues: slopIssues
+      issues: slopIssues,
     },
     // Top-level issues array for assistant completion banner display
     issues: allIssues,
@@ -97,4 +117,3 @@ export function validateDocument(text) {
 
 // Re-export scoring helper functions from shared module for consistency
 export { getGrade, getScoreColor, getScoreLabel } from '../../../shared/js/validator.js';
-

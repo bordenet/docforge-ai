@@ -1,13 +1,10 @@
 /**
  * Power Statement Validator - Action & Specificity Scoring
- * 
+ *
  * Scoring for Action (25 pts) and Specificity (25 pts) dimensions
  */
 
-import {
-  detectActionVerbs,
-  detectSpecificity
-} from './validator-detection.js';
+import { detectActionVerbs, detectSpecificity } from './validator-detection.js';
 
 /**
  * Score action (25 pts max)
@@ -56,7 +53,7 @@ export function scoreAction(text) {
     score: Math.min(score, maxScore),
     maxScore,
     issues,
-    strengths
+    strengths,
   };
 }
 
@@ -75,9 +72,8 @@ export function scoreSpecificity(text) {
 
   // Has quantified IMPACT metrics (0-10 pts)
   const impactMetricCount = specificityDetection.percentageCount + specificityDetection.dollarCount;
-  const totalMetricCount = impactMetricCount +
-                           specificityDetection.timeCount +
-                           specificityDetection.quantityCount;
+  const totalMetricCount =
+    impactMetricCount + specificityDetection.timeCount + specificityDetection.quantityCount;
 
   if (impactMetricCount >= 1 && totalMetricCount >= 2) {
     score += 10;
@@ -118,7 +114,6 @@ export function scoreSpecificity(text) {
     score: Math.min(score, maxScore),
     maxScore,
     issues,
-    strengths
+    strengths,
   };
 }
-

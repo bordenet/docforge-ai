@@ -467,4 +467,3 @@ CRITICAL - Start IMMEDIATELY with the headline
     expect(prompt).not.toContain('### Required Sections');
   });
 });
-

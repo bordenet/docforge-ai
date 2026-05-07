@@ -350,9 +350,21 @@ describe('LLM Orchestration', () => {
       await workflow.runFullWorkflow({ onPhaseStart });
 
       expect(onPhaseStart).toHaveBeenCalledTimes(3);
-      expect(onPhaseStart).toHaveBeenNthCalledWith(1, 1, expect.objectContaining({ name: 'Generate' }));
-      expect(onPhaseStart).toHaveBeenNthCalledWith(2, 2, expect.objectContaining({ name: 'Critique' }));
-      expect(onPhaseStart).toHaveBeenNthCalledWith(3, 3, expect.objectContaining({ name: 'Synthesize' }));
+      expect(onPhaseStart).toHaveBeenNthCalledWith(
+        1,
+        1,
+        expect.objectContaining({ name: 'Generate' })
+      );
+      expect(onPhaseStart).toHaveBeenNthCalledWith(
+        2,
+        2,
+        expect.objectContaining({ name: 'Critique' })
+      );
+      expect(onPhaseStart).toHaveBeenNthCalledWith(
+        3,
+        3,
+        expect.objectContaining({ name: 'Synthesize' })
+      );
     });
 
     it('should save outputs for all phases', async () => {

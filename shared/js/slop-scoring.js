@@ -58,22 +58,37 @@ export function calculateSlopScore(text) {
 
   // Build top offenders list
   const topOffenders = [];
-  slop.fillerPhrases.slice(0, 3).forEach((p) => topOffenders.push({ pattern: p, category: 'filler-phrase' }));
-  slop.genericBoosters.slice(0, 3).forEach((p) => topOffenders.push({ pattern: p, category: 'generic-booster' }));
-  slop.buzzwords.slice(0, 3).forEach((p) => topOffenders.push({ pattern: p, category: 'buzzword' }));
-  slop.sycophantic.slice(0, 2).forEach((p) => topOffenders.push({ pattern: p, category: 'sycophantic' }));
+  slop.fillerPhrases
+    .slice(0, 3)
+    .forEach((p) => topOffenders.push({ pattern: p, category: 'filler-phrase' }));
+  slop.genericBoosters
+    .slice(0, 3)
+    .forEach((p) => topOffenders.push({ pattern: p, category: 'generic-booster' }));
+  slop.buzzwords
+    .slice(0, 3)
+    .forEach((p) => topOffenders.push({ pattern: p, category: 'buzzword' }));
+  slop.sycophantic
+    .slice(0, 2)
+    .forEach((p) => topOffenders.push({ pattern: p, category: 'sycophantic' }));
 
   if (slop.emDashes > 0) {
     topOffenders.push({ pattern: `${slop.emDashes} em-dash(es)`, category: 'em-dash' });
   }
-  slop.structural.patterns.slice(0, 2).forEach((p) => topOffenders.push({ pattern: p, category: 'structural' }));
+  slop.structural.patterns
+    .slice(0, 2)
+    .forEach((p) => topOffenders.push({ pattern: p, category: 'structural' }));
 
   return {
     score: totalScore,
     maxScore: 80, // Practical max (40 + 25 + 15)
     severity,
     breakdown: {
-      lexical: { score: lexicalScore, maxScore: 40, patterns: lexicalPatternCount, emDashes: slop.emDashes },
+      lexical: {
+        score: lexicalScore,
+        maxScore: 40,
+        patterns: lexicalPatternCount,
+        emDashes: slop.emDashes,
+      },
       structural: { score: structuralScore, maxScore: 25, patterns: slop.structural.patterns },
       stylometric: {
         score: stylometricScore,
@@ -115,10 +130,18 @@ export function getSlopPenalty(text) {
   }
 
   if (slopResult.topOffenders.length > 0) {
-    const examples = slopResult.topOffenders.slice(0, 3).map((o) => `"${o.pattern}"`).join(', ');
+    const examples = slopResult.topOffenders
+      .slice(0, 3)
+      .map((o) => `"${o.pattern}"`)
+      .join(', ');
     issues.push(`Examples: ${examples}`);
   }
 
-  return { penalty, issues, slopScore: slopResult.score, severity: slopResult.severity, details: slopResult };
+  return {
+    penalty,
+    issues,
+    slopScore: slopResult.score,
+    severity: slopResult.severity,
+    details: slopResult,
+  };
 }
-

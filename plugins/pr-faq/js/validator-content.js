@@ -4,8 +4,12 @@
  */
 
 import {
-  ACTION_WORDS, WHY_INDICATORS, SUPPORTING_ELEMENTS,
-  BOILERPLATE_INDICATORS, TRANSITION_WORDS, THIRD_PARTY_INDICATORS
+  ACTION_WORDS,
+  WHY_INDICATORS,
+  SUPPORTING_ELEMENTS,
+  BOILERPLATE_INDICATORS,
+  TRANSITION_WORDS,
+  THIRD_PARTY_INDICATORS,
 } from './validator-config.js';
 
 /**
@@ -35,9 +39,9 @@ export function analyzeFiveWs(content) {
     /[A-Z][a-zA-Z]+\s+announced/,
     /[A-Z][a-zA-Z]+\s+today/,
     /[A-Z][a-zA-Z]+\s+launches/i,
-    /\*\*[A-Z][a-zA-Z]+\*\*/,  // Bold company names like **FakeCo**
+    /\*\*[A-Z][a-zA-Z]+\*\*/, // Bold company names like **FakeCo**
   ];
-  const hasWho = companyPatterns.some(p => p.test(leadContent));
+  const hasWho = companyPatterns.some((p) => p.test(leadContent));
 
   if (hasWho) {
     result.score += 3;
@@ -47,7 +51,7 @@ export function analyzeFiveWs(content) {
   }
 
   // WHAT: Action clearly described
-  const hasWhat = ACTION_WORDS.some(action => leadContentLower.includes(action));
+  const hasWhat = ACTION_WORDS.some((action) => leadContentLower.includes(action));
   if (hasWhat) {
     result.score += 3;
     result.strengths.push('Clearly describes WHAT (action/product/service)');
@@ -65,7 +69,7 @@ export function analyzeFiveWs(content) {
     /yesterday/i,
     /recently/i,
   ];
-  const hasWhen = timePatterns.some(p => p.test(leadContent));
+  const hasWhen = timePatterns.some((p) => p.test(leadContent));
 
   if (hasWhen) {
     result.score += 3;
@@ -76,8 +80,8 @@ export function analyzeFiveWs(content) {
 
   // WHERE: Location/market mentioned
   const wherePatterns = [
-    /[A-Z][a-z]+,\s+[A-Z]{2}/,           // "Seattle, WA"
-    /[A-Z]{2,},\s*[A-Z]{2}\s*[—–-]/,     // "SEATTLE, WA —" (dateline)
+    /[A-Z][a-z]+,\s+[A-Z]{2}/, // "Seattle, WA"
+    /[A-Z]{2,},\s*[A-Z]{2}\s*[—–-]/, // "SEATTLE, WA —" (dateline)
     /[A-Z][a-z]+\s+\([A-Z][a-z]+\s+Wire\)/,
     /headquarters/i,
     /market/i,
@@ -85,7 +89,7 @@ export function analyzeFiveWs(content) {
     /worldwide/i,
     /nation/i,
   ];
-  const hasWhere = wherePatterns.some(p => p.test(leadContent));
+  const hasWhere = wherePatterns.some((p) => p.test(leadContent));
 
   if (hasWhere) {
     result.score += 2;
@@ -95,7 +99,7 @@ export function analyzeFiveWs(content) {
   }
 
   // WHY: Reason/benefit explained
-  const hasWhy = WHY_INDICATORS.some(indicator => leadContentLower.includes(indicator));
+  const hasWhy = WHY_INDICATORS.some((indicator) => leadContentLower.includes(indicator));
   if (hasWhy) {
     result.score += 4;
     result.strengths.push('Explains WHY (reason/benefit/problem solved)');
@@ -119,7 +123,7 @@ export function analyzeStructure(content) {
     strengths: [],
   };
 
-  const paragraphs = content.split(/\n\n+/).filter(p => p.trim());
+  const paragraphs = content.split(/\n\n+/).filter((p) => p.trim());
 
   if (paragraphs.length < 3) {
     result.issues.push('Press release too short for proper structure analysis');
@@ -150,7 +154,9 @@ export function analyzeStructure(content) {
   }
 
   if (middleContent.length > 0) {
-    const hasSupporting = SUPPORTING_ELEMENTS.some(el => middleContent.toLowerCase().includes(el));
+    const hasSupporting = SUPPORTING_ELEMENTS.some((el) =>
+      middleContent.toLowerCase().includes(el)
+    );
     if (hasSupporting) {
       result.score += 3;
       result.strengths.push('Includes supporting details and context');
@@ -162,7 +168,7 @@ export function analyzeStructure(content) {
   // Boilerplate at end
   if (paragraphs.length >= 3) {
     const lastPara = paragraphs[paragraphs.length - 1].toLowerCase();
-    const hasBoilerplate = BOILERPLATE_INDICATORS.some(ind => lastPara.includes(ind));
+    const hasBoilerplate = BOILERPLATE_INDICATORS.some((ind) => lastPara.includes(ind));
     if (hasBoilerplate) {
       result.score += 2;
       result.strengths.push('Includes proper company boilerplate');
@@ -172,7 +178,7 @@ export function analyzeStructure(content) {
   }
 
   // Transitions
-  const hasTransitions = TRANSITION_WORDS.some(t => content.toLowerCase().includes(t));
+  const hasTransitions = TRANSITION_WORDS.some((t) => content.toLowerCase().includes(t));
   if (hasTransitions) {
     result.score += 2;
     result.strengths.push('Uses transitions for logical flow');
@@ -199,8 +205,17 @@ export function analyzeCredibility(content) {
   const contentLower = content.toLowerCase();
 
   // Check for proof/evidence
-  const proofIndicators = [/\d+%/, /\d+x/, /study shows/i, /research indicates/i, /data reveals/i, /according to/i, /measured/i, /demonstrated/i];
-  const hasProof = proofIndicators.some(p => p.test(content));
+  const proofIndicators = [
+    /\d+%/,
+    /\d+x/,
+    /study shows/i,
+    /research indicates/i,
+    /data reveals/i,
+    /according to/i,
+    /measured/i,
+    /demonstrated/i,
+  ];
+  const hasProof = proofIndicators.some((p) => p.test(content));
 
   if (hasProof) {
     result.score += 3;
@@ -211,7 +226,7 @@ export function analyzeCredibility(content) {
   }
 
   // Check for third-party validation
-  const hasThirdParty = THIRD_PARTY_INDICATORS.some(ind => contentLower.includes(ind));
+  const hasThirdParty = THIRD_PARTY_INDICATORS.some((ind) => contentLower.includes(ind));
   if (hasThirdParty) {
     result.score += 2;
     result.strengths.push('References third-party validation');
@@ -246,4 +261,3 @@ export function scoreContentQuality(content) {
     },
   };
 }
-

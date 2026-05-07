@@ -13,10 +13,10 @@ export function extractQuotes(content) {
 
   // Quote patterns - standard and curly quotes
   const patterns = [
-    /"([^"]+)"/g,           // Standard double quotes
-    /\u201C([^\u201D]+)\u201D/g,  // Curly double quotes
-    /'([^']+)'/g,           // Single quotes
-    /\u2018([^\u2019]+)\u2019/g,  // Curly single quotes
+    /"([^"]+)"/g, // Standard double quotes
+    /\u201C([^\u201D]+)\u201D/g, // Curly double quotes
+    /'([^']+)'/g, // Single quotes
+    /\u2018([^\u2019]+)\u2019/g, // Curly single quotes
   ];
 
   for (const pattern of patterns) {
@@ -63,31 +63,33 @@ export function stripMarkdown(markdown) {
   // First extract just the press release if there's a preamble
   const prContent = extractPressRelease(markdown);
 
-  return prContent
-    // Remove headers
-    .replace(/^#{1,6}\s+/gm, '')
-    // Remove bold/italic
-    .replace(/\*\*([^*]+)\*\*/g, '$1')
-    .replace(/\*([^*]+)\*/g, '$1')
-    .replace(/__([^_]+)__/g, '$1')
-    .replace(/_([^_]+)_/g, '$1')
-    // Remove links but keep text
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-    // Remove images
-    .replace(/!\[([^\]]*)\]\([^)]+\)/g, '')
-    // Remove code blocks
-    .replace(/```[\s\S]*?```/g, '')
-    .replace(/`([^`]+)`/g, '$1')
-    // Remove blockquotes
-    .replace(/^>\s+/gm, '')
-    // Remove horizontal rules
-    .replace(/^[-*_]{3,}$/gm, '')
-    // Remove list markers
-    .replace(/^[\s]*[-*+]\s+/gm, '')
-    .replace(/^[\s]*\d+\.\s+/gm, '')
-    // Normalize whitespace
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
+  return (
+    prContent
+      // Remove headers
+      .replace(/^#{1,6}\s+/gm, '')
+      // Remove bold/italic
+      .replace(/\*\*([^*]+)\*\*/g, '$1')
+      .replace(/\*([^*]+)\*/g, '$1')
+      .replace(/__([^_]+)__/g, '$1')
+      .replace(/_([^_]+)_/g, '$1')
+      // Remove links but keep text
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+      // Remove images
+      .replace(/!\[([^\]]*)\]\([^)]+\)/g, '')
+      // Remove code blocks
+      .replace(/```[\s\S]*?```/g, '')
+      .replace(/`([^`]+)`/g, '$1')
+      // Remove blockquotes
+      .replace(/^>\s+/gm, '')
+      // Remove horizontal rules
+      .replace(/^[-*_]{3,}$/gm, '')
+      // Remove list markers
+      .replace(/^[\s]*[-*+]\s+/gm, '')
+      .replace(/^[\s]*\d+\.\s+/gm, '')
+      // Normalize whitespace
+      .replace(/\n{3,}/g, '\n\n')
+      .trim()
+  );
 }
 
 /**
@@ -108,7 +110,7 @@ export function extractTitle(markdown) {
   if (prMatch) {
     const startIdx = markdown.indexOf(prMatch[0]) + prMatch[0].length;
     const afterPR = markdown.slice(startIdx).trim();
-    const lines = afterPR.split('\n').filter(l => l.trim().length > 0);
+    const lines = afterPR.split('\n').filter((l) => l.trim().length > 0);
     if (lines.length > 0) {
       // First line is likely the title
       return lines[0].trim();
@@ -117,4 +119,3 @@ export function extractTitle(markdown) {
 
   return '';
 }
-

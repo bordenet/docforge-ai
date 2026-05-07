@@ -4,10 +4,7 @@
  */
 
 import { describe, test, expect } from '@jest/globals';
-import {
-  validatePRD,
-  validateDocument,
-} from '../plugins/prd/js/validator.js';
+import { validatePRD, validateDocument } from '../plugins/prd/js/validator.js';
 
 describe('PRD Validator - Main Functions', () => {
   describe('validatePRD', () => {
@@ -106,4 +103,3 @@ the enterprise landscape.
     });
   });
 });
-

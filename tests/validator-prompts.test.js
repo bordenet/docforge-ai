@@ -159,4 +159,3 @@ describe('generateRewritePrompt', () => {
     expect(prompt).toContain('CURRENT SCORE: 0/100');
   });
 });
-

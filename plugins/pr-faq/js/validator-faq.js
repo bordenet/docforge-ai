@@ -4,8 +4,10 @@
  */
 
 import {
-  RISK_PATTERNS, REVERSIBILITY_PATTERNS, OPPORTUNITY_COST_PATTERNS,
-  SOFTBALL_PATTERNS
+  RISK_PATTERNS,
+  REVERSIBILITY_PATTERNS,
+  OPPORTUNITY_COST_PATTERNS,
+  SOFTBALL_PATTERNS,
 } from './validator-config.js';
 
 /**
@@ -26,7 +28,9 @@ export function extractFAQs(markdown) {
     const internalMatch = content.match(/^##\s*Internal\s+FAQ\s*$/im);
     if (internalMatch) {
       result.externalFAQ = content.slice(0, content.indexOf(internalMatch[0])).trim();
-      result.internalFAQ = content.slice(content.indexOf(internalMatch[0]) + internalMatch[0].length).trim();
+      result.internalFAQ = content
+        .slice(content.indexOf(internalMatch[0]) + internalMatch[0].length)
+        .trim();
     } else {
       result.externalFAQ = content.trim();
     }
@@ -36,7 +40,9 @@ export function extractFAQs(markdown) {
   if (!result.internalFAQ) {
     const internalMatch = markdown.match(/^##\s*Internal\s+FAQ\s*$/im);
     if (internalMatch) {
-      result.internalFAQ = markdown.slice(markdown.indexOf(internalMatch[0]) + internalMatch[0].length).trim();
+      result.internalFAQ = markdown
+        .slice(markdown.indexOf(internalMatch[0]) + internalMatch[0].length)
+        .trim();
     }
   }
 
@@ -92,7 +98,7 @@ export function parseFAQQuestions(faqContent) {
  * @returns {boolean} True if this appears to be a softball question
  */
 export function isSoftballQuestion(text) {
-  return SOFTBALL_PATTERNS.some(p => p.test(text.toLowerCase()));
+  return SOFTBALL_PATTERNS.some((p) => p.test(text.toLowerCase()));
 }
 
 /**
@@ -116,23 +122,24 @@ export function checkHardQuestions(questions) {
     // Check for softball first - if it's a softball, don't count it as a hard question
     if (isSoftballQuestion(text)) {
       result.softballCount++;
-      continue;  // Skip counting this as a legitimate hard question
+      continue; // Skip counting this as a legitimate hard question
     }
 
-    if (RISK_PATTERNS.some(p => p.test(text))) {
+    if (RISK_PATTERNS.some((p) => p.test(text))) {
       result.hasRisk = true;
     }
-    if (REVERSIBILITY_PATTERNS.some(p => p.test(text))) {
+    if (REVERSIBILITY_PATTERNS.some((p) => p.test(text))) {
       result.hasReversibility = true;
     }
-    if (OPPORTUNITY_COST_PATTERNS.some(p => p.test(text))) {
+    if (OPPORTUNITY_COST_PATTERNS.some((p) => p.test(text))) {
       result.hasOpportunityCost = true;
     }
   }
 
-  result.hardQuestionCount = (result.hasRisk ? 1 : 0) +
-                              (result.hasReversibility ? 1 : 0) +
-                              (result.hasOpportunityCost ? 1 : 0);
+  result.hardQuestionCount =
+    (result.hasRisk ? 1 : 0) +
+    (result.hasReversibility ? 1 : 0) +
+    (result.hasOpportunityCost ? 1 : 0);
   return result;
 }
 
@@ -168,7 +175,9 @@ export function scoreFAQQuality(markdown) {
     result.strengths.push(`External FAQ has ${externalQuestions.length} customer questions`);
   } else if (externalQuestions.length >= 3) {
     result.score += 6;
-    result.issues.push(`External FAQ has only ${externalQuestions.length} questions (5-7 recommended)`);
+    result.issues.push(
+      `External FAQ has only ${externalQuestions.length} questions (5-7 recommended)`
+    );
   } else if (externalQuestions.length > 0) {
     result.score += 3;
     result.issues.push(`External FAQ is sparse (${externalQuestions.length} questions, need 5-7)`);
@@ -182,7 +191,9 @@ export function scoreFAQQuality(markdown) {
     result.strengths.push(`Internal FAQ has ${internalQuestions.length} questions`);
   } else if (internalQuestions.length >= 3) {
     result.score += 6;
-    result.issues.push(`Internal FAQ has only ${internalQuestions.length} questions (5-7 recommended)`);
+    result.issues.push(
+      `Internal FAQ has only ${internalQuestions.length} questions (5-7 recommended)`
+    );
   } else if (internalQuestions.length > 0) {
     result.score += 3;
     result.issues.push(`Internal FAQ is sparse (${internalQuestions.length} questions, need 5-7)`);
@@ -195,7 +206,9 @@ export function scoreFAQQuality(markdown) {
 
   // Report softball detection
   if (result.hardQuestions.softballCount > 0) {
-    result.issues.push(`Detected ${result.hardQuestions.softballCount} "softball" question(s) - these don't count as hard questions`);
+    result.issues.push(
+      `Detected ${result.hardQuestions.softballCount} "softball" question(s) - these don't count as hard questions`
+    );
   }
 
   if (result.hardQuestions.hardQuestionCount === 3) {
@@ -210,13 +223,16 @@ export function scoreFAQQuality(markdown) {
     result.issues.push(`Internal FAQ missing hard question: ${missing.join(', ')}`);
   } else if (result.hardQuestions.hardQuestionCount === 1) {
     result.score += 5;
-    result.issues.push('Internal FAQ needs more hard questions (Risk, Reversibility, Opportunity Cost)');
+    result.issues.push(
+      'Internal FAQ needs more hard questions (Risk, Reversibility, Opportunity Cost)'
+    );
     result.softballPenalty = true;
   } else {
-    result.issues.push('Internal FAQ contains only "softball" questions - must address Risk, Reversibility, Opportunity Cost');
+    result.issues.push(
+      'Internal FAQ contains only "softball" questions - must address Risk, Reversibility, Opportunity Cost'
+    );
     result.softballPenalty = true;
   }
 
   return result;
 }
-

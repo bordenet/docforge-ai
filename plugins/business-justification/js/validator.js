@@ -14,7 +14,7 @@ import {
   scoreStrategicEvidence,
   scoreFinancialJustification,
   scoreOptionsAnalysis,
-  scoreExecutionCompleteness
+  scoreExecutionCompleteness,
 } from './validator-scoring.js';
 
 // Re-export detection functions for testing
@@ -30,7 +30,7 @@ export {
   detectStakeholders,
   detectTimeline,
   detectScope,
-  detectSuccessMetrics
+  detectSuccessMetrics,
 } from './validator-detection.js';
 
 // Re-export scoring functions for testing
@@ -42,7 +42,7 @@ export {
   scoreProblemClarity,
   scoreSolutionQuality,
   scoreScopeDiscipline,
-  scoreCompleteness
+  scoreCompleteness,
 } from './validator-scoring.js';
 
 /**
@@ -52,10 +52,30 @@ export {
  */
 export function validateBusinessJustification(text) {
   if (!text || typeof text !== 'string' || text.trim() === '') {
-    const emptyStrategic = { score: 0, maxScore: 30, issues: ['No content to validate'], strengths: [] };
-    const emptyFinancial = { score: 0, maxScore: 25, issues: ['No content to validate'], strengths: [] };
-    const emptyOptions = { score: 0, maxScore: 25, issues: ['No content to validate'], strengths: [] };
-    const emptyExecution = { score: 0, maxScore: 20, issues: ['No content to validate'], strengths: [] };
+    const emptyStrategic = {
+      score: 0,
+      maxScore: 30,
+      issues: ['No content to validate'],
+      strengths: [],
+    };
+    const emptyFinancial = {
+      score: 0,
+      maxScore: 25,
+      issues: ['No content to validate'],
+      strengths: [],
+    };
+    const emptyOptions = {
+      score: 0,
+      maxScore: 25,
+      issues: ['No content to validate'],
+      strengths: [],
+    };
+    const emptyExecution = {
+      score: 0,
+      maxScore: 20,
+      issues: ['No content to validate'],
+      strengths: [],
+    };
     return {
       totalScore: 0,
       strategicEvidence: emptyStrategic,
@@ -73,7 +93,7 @@ export function validateBusinessJustification(text) {
       dimension2: emptyFinancial,
       dimension3: emptyOptions,
       dimension4: emptyExecution,
-      issues: ['No content to validate']
+      issues: ['No content to validate'],
     };
   }
 
@@ -98,9 +118,13 @@ export function validateBusinessJustification(text) {
     }
   }
 
-  const totalScore = Math.max(0,
-    strategicEvidence.score + financialJustification.score +
-    optionsAnalysis.score + executionCompleteness.score - slopDeduction
+  const totalScore = Math.max(
+    0,
+    strategicEvidence.score +
+      financialJustification.score +
+      optionsAnalysis.score +
+      executionCompleteness.score -
+      slopDeduction
   );
 
   // Aggregate all issues from all dimensions for the assistant completion banner
@@ -135,7 +159,7 @@ export function validateBusinessJustification(text) {
     slopDetection: {
       ...slopPenalty,
       deduction: slopDeduction,
-      issues: slopIssues
+      issues: slopIssues,
     },
     // Top-level issues array for assistant completion banner display
     issues: allIssues,
@@ -153,4 +177,3 @@ export function validateDocument(text) {
 
 // Re-export scoring helper functions from shared module for consistency
 export { getGrade, getScoreColor, getScoreLabel } from '../../../shared/js/validator.js';
-

@@ -56,26 +56,26 @@ export function getPhaseMetadata(phaseNumber) {
  * @returns {string} Phase output or empty string
  */
 export function getPhaseOutputInternal(project, phaseNum) {
-	if (!project) return '';
+  if (!project) return '';
 
-	// Nested format is the primary source of truth in the Assistant UI.
-	// If both nested + flat exist, prefer nested to avoid stale reads when legacy fields drift.
-	const phases = project.phases;
-	let nested = '';
-	if (phases) {
-		if (Array.isArray(phases) && phases[phaseNum - 1]) {
-			nested = phases[phaseNum - 1].response || '';
-		} else if (phases[phaseNum] && typeof phases[phaseNum] === 'object') {
-			nested = phases[phaseNum].response || '';
-		} else if (phases[String(phaseNum)] && typeof phases[String(phaseNum)] === 'object') {
-			nested = phases[String(phaseNum)].response || '';
-		}
-	}
-	if (nested) return nested;
+  // Nested format is the primary source of truth in the Assistant UI.
+  // If both nested + flat exist, prefer nested to avoid stale reads when legacy fields drift.
+  const phases = project.phases;
+  let nested = '';
+  if (phases) {
+    if (Array.isArray(phases) && phases[phaseNum - 1]) {
+      nested = phases[phaseNum - 1].response || '';
+    } else if (phases[phaseNum] && typeof phases[phaseNum] === 'object') {
+      nested = phases[phaseNum].response || '';
+    } else if (phases[String(phaseNum)] && typeof phases[String(phaseNum)] === 'object') {
+      nested = phases[String(phaseNum)].response || '';
+    }
+  }
+  if (nested) return nested;
 
-	// Flat legacy format (kept in sync for backward compatibility)
-	const flatKey = `phase${phaseNum}_output`;
-	return project[flatKey] || '';
+  // Flat legacy format (kept in sync for backward compatibility)
+  const flatKey = `phase${phaseNum}_output`;
+  return project[flatKey] || '';
 }
 
 /**
@@ -96,4 +96,3 @@ export function getPhaseData(project, phaseNum) {
   }
   return defaultPhase;
 }
-

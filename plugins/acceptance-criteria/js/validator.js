@@ -11,7 +11,7 @@ import {
   scoreStructure,
   scoreClarity,
   scoreTestability,
-  scoreCompleteness
+  scoreCompleteness,
 } from './validator-scoring.js';
 
 // Re-export for direct access
@@ -23,7 +23,7 @@ export {
   detectClarity,
   detectTestability,
   detectCompleteness,
-  detectSections
+  detectSections,
 } from './validator-detection.js';
 
 // Re-export scoring functions for testing
@@ -31,7 +31,7 @@ export {
   scoreStructure,
   scoreClarity,
   scoreTestability,
-  scoreCompleteness
+  scoreCompleteness,
 } from './validator-scoring.js';
 
 /**
@@ -60,7 +60,7 @@ export function validateDocument(text) {
       dimension1: structure,
       dimension2: clarity,
       dimension3: testability,
-      dimension4: completeness
+      dimension4: completeness,
     };
   }
 
@@ -85,7 +85,8 @@ export function validateDocument(text) {
     }
   }
 
-  const totalScore = Math.max(0,
+  const totalScore = Math.max(
+    0,
     structure.score + clarity.score + testability.score + completeness.score - slopDeduction
   );
 
@@ -114,7 +115,7 @@ export function validateDocument(text) {
     slopDetection: {
       ...slopPenalty,
       deduction: slopDeduction,
-      issues: slopIssues
+      issues: slopIssues,
     },
     // Top-level issues array for assistant completion banner display
     issues: allIssues,
@@ -123,4 +124,3 @@ export function validateDocument(text) {
 
 // Re-export scoring helper functions from shared module for consistency
 export { getGrade, getScoreColor, getScoreLabel } from '../../../shared/js/validator.js';
-

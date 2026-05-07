@@ -48,22 +48,24 @@ export const analyzeContentQuality = _analyzeContentQuality;
  */
 export function normalizeText(text) {
   if (!text) return text;
-  return text
-    // Remove BOM (U+FEFF) — added by some editors/clipboard operations
-    .replace(/\uFEFF/g, '')
-    // Remove zero-width spaces (U+200B) — inserted by browsers during copy-paste
-    .replace(/\u200B/g, '')
-    // Remove zero-width non-joiner (U+200C) and zero-width joiner (U+200D)
-    .replace(/[\u200C\u200D]/g, '')
-    // Remove word joiner (U+2060) and zero-width no-break space (U+FEFF already handled)
-    .replace(/\u2060/g, '')
-    // Remove left-to-right and right-to-left marks
-    .replace(/[\u200E\u200F\u202A-\u202E\u2066-\u2069]/g, '')
-    // Replace non-breaking spaces (U+00A0) with regular spaces
-    .replace(/\u00A0/g, ' ')
-    // Normalize line endings to Unix-style
-    .replace(/\r\n/g, '\n')
-    .replace(/\r/g, '\n');
+  return (
+    text
+      // Remove BOM (U+FEFF) — added by some editors/clipboard operations
+      .replace(/\uFEFF/g, '')
+      // Remove zero-width spaces (U+200B) — inserted by browsers during copy-paste
+      .replace(/\u200B/g, '')
+      // Remove zero-width non-joiner (U+200C) and zero-width joiner (U+200D)
+      .replace(/[\u200C\u200D]/g, '')
+      // Remove word joiner (U+2060) and zero-width no-break space (U+FEFF already handled)
+      .replace(/\u2060/g, '')
+      // Remove left-to-right and right-to-left marks
+      .replace(/[\u200E\u200F\u202A-\u202E\u2066-\u2069]/g, '')
+      // Replace non-breaking spaces (U+00A0) with regular spaces
+      .replace(/\u00A0/g, ' ')
+      // Normalize line endings to Unix-style
+      .replace(/\r\n/g, '\n')
+      .replace(/\r/g, '\n')
+  );
 }
 
 // ============================================================================

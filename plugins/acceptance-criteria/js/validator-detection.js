@@ -7,7 +7,7 @@ import {
   STRUCTURE_PATTERNS,
   CLARITY_PATTERNS,
   TESTABILITY_PATTERNS,
-  COMPLETENESS_PATTERNS
+  COMPLETENESS_PATTERNS,
 } from './validator-config.js';
 
 /**
@@ -28,8 +28,8 @@ export function detectStructure(text) {
     indicators: [
       hasSummary && 'Summary section found',
       checkboxMatches.length > 0 && `${checkboxMatches.length} checkbox criteria`,
-      hasOutOfScope && 'Out of Scope section found'
-    ].filter(Boolean)
+      hasOutOfScope && 'Out of Scope section found',
+    ].filter(Boolean),
   };
 }
 
@@ -52,8 +52,8 @@ export function detectClarity(text) {
     indicators: [
       actionVerbMatches.length > 0 && `${actionVerbMatches.length} action verbs`,
       metricsMatches.length > 0 && `${metricsMatches.length} measurable metrics`,
-      thresholdMatches.length > 0 && 'Specific thresholds defined'
-    ].filter(Boolean)
+      thresholdMatches.length > 0 && 'Specific thresholds defined',
+    ].filter(Boolean),
   };
 }
 
@@ -71,20 +71,22 @@ export function detectTestability(text) {
 
   return {
     vagueTermCount: vagueMatches.length,
-    vagueTerms: [...new Set(vagueMatches.map(m => m.toLowerCase()))],
+    vagueTerms: [...new Set(vagueMatches.map((m) => m.toLowerCase()))],
     hasUserStoryAntiPattern: hasUserStory,
     hasGherkinAntiPattern: hasGherkin,
     hasCompoundCriteria: hasCompound,
     hasImplementationDetails: implementationMatches.length > 0,
-    implementationTerms: [...new Set(implementationMatches.map(m => m.toLowerCase()))],
-    hasIssues: vagueMatches.length > 0 || hasUserStory || hasGherkin || implementationMatches.length > 0,
+    implementationTerms: [...new Set(implementationMatches.map((m) => m.toLowerCase()))],
+    hasIssues:
+      vagueMatches.length > 0 || hasUserStory || hasGherkin || implementationMatches.length > 0,
     indicators: [
       vagueMatches.length > 0 && `${vagueMatches.length} vague terms found`,
       hasUserStory && 'User story syntax detected (use checkboxes instead)',
       hasGherkin && 'Gherkin syntax detected (use simple checkboxes)',
       hasCompound && 'Compound criteria found (split into separate items)',
-      implementationMatches.length > 0 && `Implementation details found: ${implementationMatches.slice(0, 3).join(', ')}`
-    ].filter(Boolean)
+      implementationMatches.length > 0 &&
+        `Implementation details found: ${implementationMatches.slice(0, 3).join(', ')}`,
+    ].filter(Boolean),
   };
 }
 
@@ -111,8 +113,8 @@ export function detectCompleteness(text) {
       checkboxMatches.length < 3 && 'Too few criteria (add more)',
       checkboxMatches.length > 7 && 'Too many criteria (consider splitting)',
       errorCaseMatches.length > 0 && 'Error cases covered',
-      edgeCaseMatches.length > 0 && 'Edge cases addressed'
-    ].filter(Boolean)
+      edgeCaseMatches.length > 0 && 'Edge cases addressed',
+    ].filter(Boolean),
   };
 }
 
@@ -135,4 +137,3 @@ export function detectSections(text) {
 
   return { found, missing };
 }
-

@@ -17,10 +17,7 @@
 function generateScoringRubric(plugin) {
   const dimensions = plugin.scoringDimensions || [];
   return dimensions
-    .map(
-      (dim, i) =>
-        `### ${i + 1}. ${dim.name} (${dim.maxPoints} points)\n- ${dim.description}`
-    )
+    .map((dim, i) => `### ${i + 1}. ${dim.name} (${dim.maxPoints} points)\n- ${dim.description}`)
     .join('\n\n');
 }
 
@@ -88,7 +85,11 @@ ${plugin.scoringDimensions?.map((dim) => `### ${dim.name}: [X]/${dim.maxPoints}\
  * @returns {string} Complete prompt for critique
  */
 export function generateCritiquePrompt(content, plugin, currentResult) {
-  const issues = currentResult?.issues?.slice(0, 5).map((i) => `- ${i}`).join('\n') || '- None detected';
+  const issues =
+    currentResult?.issues
+      ?.slice(0, 5)
+      .map((i) => `- ${i}`)
+      .join('\n') || '- None detected';
   const totalPoints = plugin.scoringDimensions?.reduce((sum, d) => sum + d.maxPoints, 0) || 100;
 
   return `You are a senior expert helping improve a ${plugin.name}.
@@ -182,4 +183,3 @@ ${rubric}
 - Ready to paste directly
 </output_rules>`;
 }
-

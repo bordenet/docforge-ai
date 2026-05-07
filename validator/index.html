@@ -71,24 +71,25 @@
         <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div class="flex items-center space-x-3">
             <span class="text-3xl" id="header-icon">✓</span>
-	            <div class="flex items-center gap-3">
-	              <h1 class="text-2xl font-bold text-white" id="header-title">DocForgeAI Validator</h1>
-	              <span
-	                id="attached-badge"
-	                class="hidden px-2 py-1 text-xs font-semibold rounded-full bg-emerald-500/20 text-emerald-200 border border-emerald-400/30"
-	                title="This Validator is attached to an Assistant project"
-	              >
-	                Attached
-	              </span>
-	            </div>
+            <div class="flex items-center gap-3">
+              <h1 class="text-2xl font-bold text-white" id="header-title">DocForgeAI Validator</h1>
+              <span
+                id="attached-badge"
+                class="hidden px-2 py-1 text-xs font-semibold rounded-full bg-emerald-500/20 text-emerald-200 border border-emerald-400/30"
+                title="This Validator is attached to an Assistant project"
+              >
+                Attached
+              </span>
+            </div>
           </div>
-	          <div
-	            id="attached-blocked"
-	            class="hidden px-3 py-2 rounded-lg border border-amber-500/40 bg-amber-500/10 text-amber-200 text-xs"
-	            role="status"
-	          >
-	            Attached mode is blocked because the project could not be loaded. Open the Assistant to create or select a project.
-	          </div>
+          <div
+            id="attached-blocked"
+            class="hidden px-3 py-2 rounded-lg border border-amber-500/40 bg-amber-500/10 text-amber-200 text-xs"
+            role="status"
+          >
+            Attached mode is blocked because the project could not be loaded. Open the Assistant to
+            create or select a project.
+          </div>
           <div class="flex items-center gap-3">
             <!-- Document Type Selector (hidden, used by JS) -->
             <select id="doc-type-selector" class="hidden">
@@ -104,49 +105,110 @@
             </select>
             <!-- Document Type Dropdown -->
             <div class="relative">
-              <button type="button" id="doc-type-btn" class="p-2 rounded-lg hover:bg-slate-500 transition-colors text-white" title="Switch Document Type">
+              <button
+                type="button"
+                id="doc-type-btn"
+                class="p-2 rounded-lg hover:bg-slate-500 transition-colors text-white"
+                title="Switch Document Type"
+              >
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                  ></path>
                 </svg>
               </button>
-              <div id="doc-type-menu" class="hidden absolute right-0 mt-2 w-72 bg-slate-800 rounded-lg shadow-lg border border-slate-600 z-50">
+              <div
+                id="doc-type-menu"
+                class="hidden absolute right-0 mt-2 w-72 bg-slate-800 rounded-lg shadow-lg border border-slate-600 z-50"
+              >
                 <div class="p-2">
-                  <div class="px-3 py-2 text-xs font-semibold text-slate-400 uppercase">Document Types</div>
-                  <a href="../assistant/?type=one-pager" class="block px-3 py-2 rounded-md hover:bg-slate-700 transition-colors" data-type="one-pager">
+                  <div class="px-3 py-2 text-xs font-semibold text-slate-400 uppercase">
+                    Document Types
+                  </div>
+                  <a
+                    href="../assistant/?type=one-pager"
+                    class="block px-3 py-2 rounded-md hover:bg-slate-700 transition-colors"
+                    data-type="one-pager"
+                  >
                     <div class="font-medium text-white">📄 One-Pager</div>
-                    <div class="text-xs text-slate-400">Executive summary for go/no-go decisions</div>
+                    <div class="text-xs text-slate-400">
+                      Executive summary for go/no-go decisions
+                    </div>
                   </a>
-                  <a href="../assistant/?type=prd" class="block px-3 py-2 rounded-md hover:bg-slate-700 transition-colors" data-type="prd">
+                  <a
+                    href="../assistant/?type=prd"
+                    class="block px-3 py-2 rounded-md hover:bg-slate-700 transition-colors"
+                    data-type="prd"
+                  >
                     <div class="font-medium text-white">📋 Product Requirements Document</div>
                     <div class="text-xs text-slate-400">Full PRD with acceptance criteria</div>
                   </a>
-                  <a href="../assistant/?type=adr" class="block px-3 py-2 rounded-md hover:bg-slate-700 transition-colors" data-type="adr">
+                  <a
+                    href="../assistant/?type=adr"
+                    class="block px-3 py-2 rounded-md hover:bg-slate-700 transition-colors"
+                    data-type="adr"
+                  >
                     <div class="font-medium text-white">🏗️ Architecture Decision Record</div>
-                    <div class="text-xs text-slate-400">Document architecture decisions with tradeoffs</div>
+                    <div class="text-xs text-slate-400">
+                      Document architecture decisions with tradeoffs
+                    </div>
                   </a>
-                  <a href="../assistant/?type=pr-faq" class="block px-3 py-2 rounded-md hover:bg-slate-700 transition-colors" data-type="pr-faq">
+                  <a
+                    href="../assistant/?type=pr-faq"
+                    class="block px-3 py-2 rounded-md hover:bg-slate-700 transition-colors"
+                    data-type="pr-faq"
+                  >
                     <div class="font-medium text-white">📰 PR-FAQ</div>
                     <div class="text-xs text-slate-400">Amazon-style press release + FAQ</div>
                   </a>
-                  <a href="../assistant/?type=power-statement" class="block px-3 py-2 rounded-md hover:bg-slate-700 transition-colors" data-type="power-statement">
+                  <a
+                    href="../assistant/?type=power-statement"
+                    class="block px-3 py-2 rounded-md hover:bg-slate-700 transition-colors"
+                    data-type="power-statement"
+                  >
                     <div class="font-medium text-white">💪 Power Statement</div>
-                    <div class="text-xs text-slate-400">Craft compelling achievement statements</div>
+                    <div class="text-xs text-slate-400">
+                      Craft compelling achievement statements
+                    </div>
                   </a>
-                  <a href="../assistant/?type=acceptance-criteria" class="block px-3 py-2 rounded-md hover:bg-slate-700 transition-colors" data-type="acceptance-criteria">
+                  <a
+                    href="../assistant/?type=acceptance-criteria"
+                    class="block px-3 py-2 rounded-md hover:bg-slate-700 transition-colors"
+                    data-type="acceptance-criteria"
+                  >
                     <div class="font-medium text-white">✅ Acceptance Criteria</div>
-                    <div class="text-xs text-slate-400">Generate test conditions for user stories</div>
+                    <div class="text-xs text-slate-400">
+                      Generate test conditions for user stories
+                    </div>
                   </a>
-                  <a href="../assistant/?type=jd" class="block px-3 py-2 rounded-md hover:bg-slate-700 transition-colors" data-type="jd">
+                  <a
+                    href="../assistant/?type=jd"
+                    class="block px-3 py-2 rounded-md hover:bg-slate-700 transition-colors"
+                    data-type="jd"
+                  >
                     <div class="font-medium text-white">💼 Job Description</div>
                     <div class="text-xs text-slate-400">Create inclusive job descriptions</div>
                   </a>
-                  <a href="../assistant/?type=business-justification" class="block px-3 py-2 rounded-md hover:bg-slate-700 transition-colors" data-type="business-justification">
+                  <a
+                    href="../assistant/?type=business-justification"
+                    class="block px-3 py-2 rounded-md hover:bg-slate-700 transition-colors"
+                    data-type="business-justification"
+                  >
                     <div class="font-medium text-white">📊 Business Justification</div>
                     <div class="text-xs text-slate-400">Justify headcount, promotions, budget</div>
                   </a>
-                  <a href="../assistant/?type=strategic-proposal" class="block px-3 py-2 rounded-md hover:bg-slate-700 transition-colors" data-type="strategic-proposal">
+                  <a
+                    href="../assistant/?type=strategic-proposal"
+                    class="block px-3 py-2 rounded-md hover:bg-slate-700 transition-colors"
+                    data-type="strategic-proposal"
+                  >
                     <div class="font-medium text-white">🎯 Strategic Proposal</div>
-                    <div class="text-xs text-slate-400">Build proposals with pain points and metrics</div>
+                    <div class="text-xs text-slate-400">
+                      Build proposals with pain points and metrics
+                    </div>
                   </a>
                 </div>
               </div>
@@ -159,12 +221,26 @@
               title="Toggle dark mode"
             >
               <!-- Moon icon - shown in dark mode -->
-              <svg aria-hidden="true" class="w-6 h-6 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
+              <svg
+                aria-hidden="true"
+                class="w-6 h-6 hidden dark:block"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
                 <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
               </svg>
               <!-- Sun icon - shown in light mode -->
-              <svg aria-hidden="true" class="w-6 h-6 dark:hidden" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
+              <svg
+                aria-hidden="true"
+                class="w-6 h-6 dark:hidden"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                  clip-rule="evenodd"
+                ></path>
               </svg>
             </button>
             <button
@@ -189,20 +265,20 @@
               <p class="text-xs text-slate-300 mb-2" id="editor-help">
                 Generate a document with the Assistant, then paste the markdown here.
               </p>
-	              <div
-	                id="attached-error"
-	                class="hidden mb-3 px-3 py-2 rounded-lg border border-amber-500/40 bg-amber-500/10 text-amber-200 text-xs"
-	                role="status"
-	              ></div>
-	              <div
-	                id="attached-empty"
-	                class="hidden mb-3 px-3 py-2 rounded-lg border border-slate-500/40 bg-slate-500/10 text-slate-200 text-xs"
-	                role="status"
-	              >
-	                <span id="attached-empty-text"></span>
-	                <a id="attached-open-assistant" class="ml-2 underline" href="#">Open Assistant</a>
-	              </div>
-	              <div id="attached-status" class="hidden mb-2 text-[11px] text-slate-400"></div>
+              <div
+                id="attached-error"
+                class="hidden mb-3 px-3 py-2 rounded-lg border border-amber-500/40 bg-amber-500/10 text-amber-200 text-xs"
+                role="status"
+              ></div>
+              <div
+                id="attached-empty"
+                class="hidden mb-3 px-3 py-2 rounded-lg border border-slate-500/40 bg-slate-500/10 text-slate-200 text-xs"
+                role="status"
+              >
+                <span id="attached-empty-text"></span>
+                <a id="attached-open-assistant" class="ml-2 underline" href="#">Open Assistant</a>
+              </div>
+              <div id="attached-status" class="hidden mb-2 text-[11px] text-slate-400"></div>
               <textarea
                 id="editor"
                 class="flex-1 w-full p-4 border border-slate-400 rounded-lg bg-slate-900 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none font-mono text-sm"
@@ -224,7 +300,9 @@
                     aria-checked="false"
                     aria-label="Toggle between Quick and LLM scoring"
                   >
-                    <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform"></span>
+                    <span
+                      class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform"
+                    ></span>
                   </button>
                   <span id="mode-label-llm" class="text-xs text-slate-400">LLM</span>
                 </div>
@@ -285,10 +363,14 @@
               </div>
 
               <!-- LLM Score Panel (hidden by default) -->
-              <div id="llm-score-panel" class="hidden bg-slate-900 border border-slate-800 rounded-lg p-6 shadow-sm">
+              <div
+                id="llm-score-panel"
+                class="hidden bg-slate-900 border border-slate-800 rounded-lg p-6 shadow-sm"
+              >
                 <h3 class="text-lg font-semibold text-white mb-3">LLM Scoring</h3>
                 <p class="text-sm text-slate-400 mb-4">
-                  Get detailed, context-aware scoring from an LLM. More accurate than pattern matching.
+                  Get detailed, context-aware scoring from an LLM. More accurate than pattern
+                  matching.
                 </p>
                 <div class="space-y-3 text-sm text-slate-300 mb-4">
                   <div class="flex items-start gap-2">
@@ -397,28 +479,30 @@
       </main>
 
       <!-- Footer with Save/Version Controls -->
-      <footer class="bg-slate-200 dark:bg-slate-600 border-t border-slate-300 dark:border-slate-500">
+      <footer
+        class="bg-slate-200 dark:bg-slate-600 border-t border-slate-300 dark:border-slate-500"
+      >
         <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
           <div class="flex items-center gap-3">
             <button
               id="btn-save"
               class="px-4 py-2 bg-green-600 hover:bg-green-700 !text-white font-medium rounded-lg transition-colors"
-	              title="Save current draft version (Cmd+S)"
+              title="Save current draft version (Cmd+S)"
             >
               💾 Save
             </button>
-	            <button
-	              id="btn-load-canonical"
-	              class="hidden px-4 py-2 bg-slate-600 hover:bg-slate-700 !text-white font-medium rounded-lg transition-colors"
-	              title="Load the Assistant project phase output into the editor (discarding current draft)"
-	            >
-	              ↩️ Load Project Output
-	            </button>
+            <button
+              id="btn-load-canonical"
+              class="hidden px-4 py-2 bg-slate-600 hover:bg-slate-700 !text-white font-medium rounded-lg transition-colors"
+              title="Load the Assistant project phase output into the editor (discarding current draft)"
+            >
+              ↩️ Load Project Output
+            </button>
             <div class="flex items-center gap-1">
               <button
                 id="btn-back"
                 class="px-3 py-2 bg-slate-600 dark:bg-slate-700 hover:bg-slate-700 dark:hover:bg-slate-600 disabled:bg-slate-400 dark:disabled:bg-slate-800 disabled:text-slate-300 dark:disabled:text-slate-500 !text-white rounded-lg transition-colors disabled:cursor-not-allowed"
-	                title="Previous draft (does not change Assistant until you Save)"
+                title="Previous draft (does not change Assistant until you Save)"
                 disabled
               >
                 ◀
@@ -426,14 +510,19 @@
               <button
                 id="btn-forward"
                 class="px-3 py-2 bg-slate-600 dark:bg-slate-700 hover:bg-slate-700 dark:hover:bg-slate-600 disabled:bg-slate-400 dark:disabled:bg-slate-800 disabled:text-slate-300 dark:disabled:text-slate-500 !text-white rounded-lg transition-colors disabled:cursor-not-allowed"
-	                title="Next draft (does not change Assistant until you Save)"
+                title="Next draft (does not change Assistant until you Save)"
                 disabled
               >
                 ▶
               </button>
             </div>
-	            <span id="version-info" class="text-sm text-slate-600 dark:text-slate-300">No draft versions</span>
-	            <span id="project-sync-info" class="hidden text-xs text-slate-500 dark:text-slate-200"></span>
+            <span id="version-info" class="text-sm text-slate-600 dark:text-slate-300"
+              >No draft versions</span
+            >
+            <span
+              id="project-sync-info"
+              class="hidden text-xs text-slate-500 dark:text-slate-200"
+            ></span>
           </div>
           <div class="text-sm text-slate-600 dark:text-slate-300 text-right">
             <div id="last-saved"></div>
@@ -443,23 +532,26 @@
     </div>
 
     <!-- Toast Container -->
-    <div id="toast-container" class="fixed bottom-6 right-6 space-y-3 pointer-events-none z-50"></div>
+    <div
+      id="toast-container"
+      class="fixed bottom-6 right-6 space-y-3 pointer-events-none z-50"
+    ></div>
 
     <script type="module" src="js/app.js"></script>
 
     <!-- Document Type Dropdown Handler -->
     <script>
-      (function() {
+      (function () {
         const btn = document.getElementById('doc-type-btn');
         const menu = document.getElementById('doc-type-menu');
         if (!btn || !menu) return;
 
-        btn.addEventListener('click', function(e) {
+        btn.addEventListener('click', function (e) {
           e.stopPropagation();
           menu.classList.toggle('hidden');
         });
 
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
           if (!menu.contains(e.target) && e.target !== btn) {
             menu.classList.add('hidden');
           }

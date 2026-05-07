@@ -241,8 +241,17 @@ describe('Router', () => {
     });
 
     it('should resolve all registered plugin types from URL', () => {
-      const pluginIds = ['one-pager', 'prd', 'adr', 'pr-faq', 'power-statement',
-        'acceptance-criteria', 'jd', 'business-justification', 'strategic-proposal'];
+      const pluginIds = [
+        'one-pager',
+        'prd',
+        'adr',
+        'pr-faq',
+        'power-statement',
+        'acceptance-criteria',
+        'jd',
+        'business-justification',
+        'strategic-proposal',
+      ];
 
       for (const id of pluginIds) {
         mockLocation.search = `?type=${id}`;
@@ -278,35 +287,34 @@ describe('Router', () => {
       }
     });
 
-	    it('should resolve project id from query string when present', () => {
-	      mockLocation.search = '?type=one-pager&project=proj-123';
-	      expect(getProjectIdFromQuery()).toBe('proj-123');
-	    });
+    it('should resolve project id from query string when present', () => {
+      mockLocation.search = '?type=one-pager&project=proj-123';
+      expect(getProjectIdFromQuery()).toBe('proj-123');
+    });
 
-	    it('should return null when project query param is missing', () => {
-	      mockLocation.search = '?type=one-pager';
-	      expect(getProjectIdFromQuery()).toBeNull();
-	    });
+    it('should return null when project query param is missing', () => {
+      mockLocation.search = '?type=one-pager';
+      expect(getProjectIdFromQuery()).toBeNull();
+    });
 
-	    it('should return null when project query param is empty', () => {
-	      mockLocation.search = '?type=one-pager&project=';
-	      expect(getProjectIdFromQuery()).toBeNull();
-	    });
+    it('should return null when project query param is empty', () => {
+      mockLocation.search = '?type=one-pager&project=';
+      expect(getProjectIdFromQuery()).toBeNull();
+    });
 
-	    it('should resolve phase number from query string when valid', () => {
-	      mockLocation.search = '?type=one-pager&phase=3';
-	      expect(getPhaseFromQuery()).toBe(3);
-	    });
+    it('should resolve phase number from query string when valid', () => {
+      mockLocation.search = '?type=one-pager&phase=3';
+      expect(getPhaseFromQuery()).toBe(3);
+    });
 
-	    it('should return null when phase query param is missing', () => {
-	      mockLocation.search = '?type=one-pager';
-	      expect(getPhaseFromQuery()).toBeNull();
-	    });
+    it('should return null when phase query param is missing', () => {
+      mockLocation.search = '?type=one-pager';
+      expect(getPhaseFromQuery()).toBeNull();
+    });
 
-	    it('should return null when phase query param is invalid', () => {
-	      mockLocation.search = '?type=one-pager&phase=99';
-	      expect(getPhaseFromQuery()).toBeNull();
-	    });
+    it('should return null when phase query param is invalid', () => {
+      mockLocation.search = '?type=one-pager&phase=99';
+      expect(getPhaseFromQuery()).toBeNull();
+    });
   });
 });
-

@@ -321,7 +321,11 @@ describe('UI Module', () => {
     test('should render separator items', () => {
       createActionMenu({
         triggerElement,
-        items: [{ label: 'Edit', onClick: () => {} }, { separator: true }, { label: 'Delete', onClick: () => {} }],
+        items: [
+          { label: 'Edit', onClick: () => {} },
+          { separator: true },
+          { label: 'Delete', onClick: () => {} },
+        ],
       });
 
       triggerElement.click();
@@ -508,7 +512,10 @@ describe('UI Module', () => {
       setupGlobalErrorHandler();
 
       expect(window.addEventListener).toHaveBeenCalledWith('error', expect.any(Function));
-      expect(window.addEventListener).toHaveBeenCalledWith('unhandledrejection', expect.any(Function));
+      expect(window.addEventListener).toHaveBeenCalledWith(
+        'unhandledrejection',
+        expect.any(Function)
+      );
     });
 
     test('error handler should show toast and log error', () => {

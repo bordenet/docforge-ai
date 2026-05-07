@@ -203,4 +203,3 @@ We will use React Query for all API state management.`;
     });
   });
 });
-

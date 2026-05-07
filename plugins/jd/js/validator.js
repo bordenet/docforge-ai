@@ -14,7 +14,7 @@ export {
   detectRedFlags,
   detectCompensation,
   detectEncouragement,
-  detectWordCount
+  detectWordCount,
 } from './validator-detection.js';
 
 // Re-export scoring functions for testing
@@ -25,19 +25,11 @@ export {
   scoreRedFlags,
   scoreCompensation,
   scoreEncouragement,
-  scoreSlopPenalty
+  scoreSlopPenalty,
 } from './validator-scoring.js';
 
 // Re-export main validation functions
-export {
-  validateJDContent,
-  validateDocument
-} from './validator-main.js';
+export { validateJDContent, validateDocument } from './validator-main.js';
 
 // Re-export UI helper functions
-export {
-  getGrade,
-  getScoreColor,
-  getScoreLabel
-} from './validator-results.js';
-
+export { getGrade, getScoreColor, getScoreLabel } from './validator-results.js';

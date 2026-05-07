@@ -170,7 +170,13 @@ export class Workflow {
     };
     const options = { isImported: this.project.isImported || false };
 
-    return generatePromptFromTemplate(this.plugin, this.currentPhase, formData, previousResponses, options);
+    return generatePromptFromTemplate(
+      this.plugin,
+      this.currentPhase,
+      formData,
+      previousResponses,
+      options
+    );
   }
 
   /**

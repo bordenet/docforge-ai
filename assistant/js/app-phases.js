@@ -32,16 +32,16 @@ const SCRIPT_LOADS = new Map();
 const RESPONSE_SAVE_IN_FLIGHT = new Map();
 
 async function awaitResponseSave(projectId) {
-	const p = RESPONSE_SAVE_IN_FLIGHT.get(projectId);
-	if (!p) return;
-	try {
-		await p;
-	} finally {
-		// Only clear if the same promise is still registered.
-		if (RESPONSE_SAVE_IN_FLIGHT.get(projectId) === p) {
-			RESPONSE_SAVE_IN_FLIGHT.delete(projectId);
-		}
-	}
+  const p = RESPONSE_SAVE_IN_FLIGHT.get(projectId);
+  if (!p) return;
+  try {
+    await p;
+  } finally {
+    // Only clear if the same promise is still registered.
+    if (RESPONSE_SAVE_IN_FLIGHT.get(projectId) === p) {
+      RESPONSE_SAVE_IN_FLIGHT.delete(projectId);
+    }
+  }
 }
 
 function loadScriptOnce(url, globalVar) {
@@ -99,7 +99,9 @@ const EXPORT_CSS = `
 function buildExportHtmlDocument({ title, bodyHtml }) {
   // TODO(superpower-fast-follow): Export from Markdown AST -> a document model (DOCX/PDF)
   // for higher fidelity tables, page breaks, and predictable typography.
-  const safeTitle = String(title || 'Document').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const safeTitle = String(title || 'Document')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
   return `<!doctype html>
 <html>
   <head>
@@ -116,7 +118,7 @@ function buildExportHtmlDocument({ title, bodyHtml }) {
 }
 
 async function exportFinalAsMarkdown(plugin, project) {
-	await awaitResponseSave(project.id);
+  await awaitResponseSave(project.id);
   const freshProject = await getProject(plugin.dbName, project.id);
   const finalResponse = freshProject.phases?.[3]?.response || '';
   if (!finalResponse) {
@@ -130,7 +132,7 @@ async function exportFinalAsMarkdown(plugin, project) {
 }
 
 async function exportFinalAsDocx(plugin, project) {
-	await awaitResponseSave(project.id);
+  await awaitResponseSave(project.id);
   const freshProject = await getProject(plugin.dbName, project.id);
   const finalResponse = freshProject.phases?.[3]?.response || '';
   if (!finalResponse) {
@@ -140,10 +142,16 @@ async function exportFinalAsDocx(plugin, project) {
 
   showToast('Preparing Word export...', 'info');
   // html-docx-js exposes window.htmlDocx
-  await loadScriptOnce('https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.min.js', 'htmlDocx');
+  await loadScriptOnce(
+    'https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.min.js',
+    'htmlDocx'
+  );
 
   const bodyHtml = renderMarkdown(finalResponse);
-  const html = buildExportHtmlDocument({ title: freshProject.title || freshProject.name, bodyHtml });
+  const html = buildExportHtmlDocument({
+    title: freshProject.title || freshProject.name,
+    bodyHtml,
+  });
   const blob = window.htmlDocx.asBlob(html);
   const filename = `${getExportBaseFilename(freshProject)}.docx`;
   downloadBlob(blob, filename);
@@ -152,7 +160,7 @@ async function exportFinalAsDocx(plugin, project) {
 }
 
 async function exportFinalAsPdf(plugin, project) {
-	await awaitResponseSave(project.id);
+  await awaitResponseSave(project.id);
   const freshProject = await getProject(plugin.dbName, project.id);
   const finalResponse = freshProject.phases?.[3]?.response || '';
   if (!finalResponse) {
@@ -162,28 +170,31 @@ async function exportFinalAsPdf(plugin, project) {
 
   showToast('Preparing PDF export...', 'info');
   // html2pdf bundle exposes window.html2pdf
-  await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js', 'html2pdf');
+  await loadScriptOnce(
+    'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js',
+    'html2pdf'
+  );
 
-	// NOTE: html2canvas/html2pdf can produce a blank PDF if the source element is placed
-	// far off-screen (e.g. large negative `left`). Keep the render target in-viewport and
-	// cover it with an overlay so it never flashes in the UI.
-	const overlay = document.createElement('div');
-	overlay.style.position = 'fixed';
-	overlay.style.inset = '0';
-	overlay.style.background = 'rgba(0, 0, 0, 0.10)';
-	overlay.style.zIndex = '2147483647';
-	overlay.style.pointerEvents = 'all';
-	document.body.appendChild(overlay);
+  // NOTE: html2canvas/html2pdf can produce a blank PDF if the source element is placed
+  // far off-screen (e.g. large negative `left`). Keep the render target in-viewport and
+  // cover it with an overlay so it never flashes in the UI.
+  const overlay = document.createElement('div');
+  overlay.style.position = 'fixed';
+  overlay.style.inset = '0';
+  overlay.style.background = 'rgba(0, 0, 0, 0.10)';
+  overlay.style.zIndex = '2147483647';
+  overlay.style.pointerEvents = 'all';
+  document.body.appendChild(overlay);
 
   const container = document.createElement('div');
   container.style.position = 'fixed';
-	container.style.left = '0';
+  container.style.left = '0';
   container.style.top = '0';
   container.style.width = '800px';
-	container.style.boxSizing = 'border-box';
+  container.style.boxSizing = 'border-box';
   container.style.background = 'white';
   container.style.padding = '24px';
-	container.style.zIndex = '2147483646';
+  container.style.zIndex = '2147483646';
   container.innerHTML = `<style>${EXPORT_CSS}</style><div>${renderMarkdown(finalResponse)}</div>`;
   document.body.appendChild(container);
 
@@ -194,7 +205,7 @@ async function exportFinalAsPdf(plugin, project) {
       .set({
         margin: 10,
         filename,
-				html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0, windowWidth: 800 },
+        html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0, windowWidth: 800 },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
       })
       .from(container)
@@ -203,7 +214,7 @@ async function exportFinalAsPdf(plugin, project) {
     trackPhase(3, 'download-pdf', plugin.id);
     showToast('Downloaded PDF', 'success');
   } finally {
-		overlay.remove();
+    overlay.remove();
     container.remove();
   }
 }
@@ -215,11 +226,21 @@ export function updatePhaseTabStyles(activePhase) {
   document.querySelectorAll('.phase-tab').forEach((tab) => {
     const tabPhase = parseInt(tab.dataset.phase);
     if (tabPhase === activePhase) {
-      tab.classList.remove('text-gray-600', 'dark:text-gray-400', 'hover:text-gray-900', 'dark:hover:text-gray-200');
+      tab.classList.remove(
+        'text-gray-600',
+        'dark:text-gray-400',
+        'hover:text-gray-900',
+        'dark:hover:text-gray-200'
+      );
       tab.classList.add('border-b-2', 'border-blue-600', 'text-blue-600', 'dark:text-blue-400');
     } else {
       tab.classList.remove('border-b-2', 'border-blue-600', 'text-blue-600', 'dark:text-blue-400');
-      tab.classList.add('text-gray-600', 'dark:text-gray-400', 'hover:text-gray-900', 'dark:hover:text-gray-200');
+      tab.classList.add(
+        'text-gray-600',
+        'dark:text-gray-400',
+        'hover:text-gray-900',
+        'dark:hover:text-gray-200'
+      );
     }
   });
 }
@@ -246,9 +267,18 @@ export function attachPhaseEventListeners(plugin, project, phase) {
           console.warn('[DocForge Debug] Full project object:', project);
         }
 
-        const previousResponses = { 1: project.phases?.[1]?.response || '', 2: project.phases?.[2]?.response || '' };
+        const previousResponses = {
+          1: project.phases?.[1]?.response || '',
+          2: project.phases?.[2]?.response || '',
+        };
         const options = { isImported: project.isImported || false };
-        const prompt = await generatePrompt(plugin, phase, project.formData, previousResponses, options);
+        const prompt = await generatePrompt(
+          plugin,
+          phase,
+          project.formData,
+          previousResponses,
+          options
+        );
         await copyToClipboard(prompt);
         showToast('Prompt copied to clipboard!', 'success');
 
@@ -256,7 +286,8 @@ export function attachPhaseEventListeners(plugin, project, phase) {
         trackPhase(phase, 'copy', plugin.id);
 
         if (!project.phases) project.phases = {};
-        if (!project.phases[phase]) project.phases[phase] = { prompt: '', response: '', completed: false };
+        if (!project.phases[phase])
+          project.phases[phase] = { prompt: '', response: '', completed: false };
         project.phases[phase].prompt = prompt;
         await saveProject(plugin.dbName, project);
 
@@ -295,32 +326,32 @@ export function attachPhaseEventListeners(plugin, project, phase) {
   if (saveResponseBtn) {
     // Initialize diff module with callbacks on first use
     initDiffModule(updatePhaseTabStyles, attachPhaseEventListeners);
-	  saveResponseBtn.addEventListener('click', async () => {
-			if (!project?.id) return;
-			if (RESPONSE_SAVE_IN_FLIGHT.has(project.id)) return;
+    saveResponseBtn.addEventListener('click', async () => {
+      if (!project?.id) return;
+      if (RESPONSE_SAVE_IN_FLIGHT.has(project.id)) return;
 
-			// Prevent duplicate save clicks; other actions will await this save via awaitResponseSave().
-			saveResponseBtn.disabled = true;
+      // Prevent duplicate save clicks; other actions will await this save via awaitResponseSave().
+      saveResponseBtn.disabled = true;
 
-			const p = handleSaveResponse(plugin, project, phase, responseTextarea);
-			RESPONSE_SAVE_IN_FLIGHT.set(project.id, p);
-			try {
-				await p;
-			} finally {
-				// Best-effort re-enable; content may have re-rendered.
-				if (RESPONSE_SAVE_IN_FLIGHT.get(project.id) === p) {
-					RESPONSE_SAVE_IN_FLIGHT.delete(project.id);
-				}
-				// Phase content may have re-rendered.
-				// Let the input listener decide disabled state based on content.
-				if (responseTextarea) {
-					const hasContent = responseTextarea.value.trim().length >= 3;
-					saveResponseBtn.disabled = !hasContent;
-				} else {
-					saveResponseBtn.disabled = false;
-				}
-			}
-		});
+      const p = handleSaveResponse(plugin, project, phase, responseTextarea);
+      RESPONSE_SAVE_IN_FLIGHT.set(project.id, p);
+      try {
+        await p;
+      } finally {
+        // Best-effort re-enable; content may have re-rendered.
+        if (RESPONSE_SAVE_IN_FLIGHT.get(project.id) === p) {
+          RESPONSE_SAVE_IN_FLIGHT.delete(project.id);
+        }
+        // Phase content may have re-rendered.
+        // Let the input listener decide disabled state based on content.
+        if (responseTextarea) {
+          const hasContent = responseTextarea.value.trim().length >= 3;
+          saveResponseBtn.disabled = !hasContent;
+        } else {
+          saveResponseBtn.disabled = false;
+        }
+      }
+    });
   }
 
   // Next phase button
@@ -331,7 +362,11 @@ export function attachPhaseEventListeners(plugin, project, phase) {
       freshProject.currentPhase = nextPhase;
 
       updatePhaseTabStyles(nextPhase);
-      document.getElementById('phase-content').innerHTML = renderPhaseContent(plugin, freshProject, nextPhase);
+      document.getElementById('phase-content').innerHTML = renderPhaseContent(
+        plugin,
+        freshProject,
+        nextPhase
+      );
       attachPhaseEventListeners(plugin, freshProject, nextPhase);
     });
   }
@@ -339,7 +374,7 @@ export function attachPhaseEventListeners(plugin, project, phase) {
   // Export final document button (Phase 3 complete)
   if (exportFinalBtn) {
     exportFinalBtn.addEventListener('click', async () => {
-			await awaitResponseSave(project.id);
+      await awaitResponseSave(project.id);
       const freshProject = await getProject(plugin.dbName, project.id);
       const finalResponse = freshProject.phases?.[3]?.response || '';
       if (finalResponse) {
@@ -354,12 +389,12 @@ export function attachPhaseEventListeners(plugin, project, phase) {
   // Tune & Refine button - copies document to clipboard AND opens validator
   const validateBtn = document.getElementById('validate-btn');
   if (validateBtn) {
-	  validateBtn.addEventListener('click', async (e) => {
-	    // When the button is placed inside a <summary> expando row, prevent toggling the <details>.
-	    e?.preventDefault?.();
-	    e?.stopPropagation?.();
+    validateBtn.addEventListener('click', async (e) => {
+      // When the button is placed inside a <summary> expando row, prevent toggling the <details>.
+      e?.preventDefault?.();
+      e?.stopPropagation?.();
 
-			await awaitResponseSave(project.id);
+      await awaitResponseSave(project.id);
       const freshProject = await getProject(plugin.dbName, project.id);
       const finalResponse = freshProject.phases?.[3]?.response || '';
       const validatorUrl = validateBtn.dataset.validatorUrl;
@@ -438,9 +473,18 @@ export function attachPhaseEventListeners(plugin, project, phase) {
       label: 'Preview Prompt',
       icon: '👁️',
       onClick: async () => {
-        const previousResponses = { 1: project.phases?.[1]?.response || '', 2: project.phases?.[2]?.response || '' };
+        const previousResponses = {
+          1: project.phases?.[1]?.response || '',
+          2: project.phases?.[2]?.response || '',
+        };
         const options = { isImported: project.isImported || false };
-        const prompt = await generatePrompt(plugin, phase, project.formData, previousResponses, options);
+        const prompt = await generatePrompt(
+          plugin,
+          phase,
+          project.formData,
+          previousResponses,
+          options
+        );
         showPromptModal(prompt, `Phase ${phase} Prompt`);
       },
     });
@@ -498,5 +542,3 @@ export function attachPhaseEventListeners(plugin, project, phase) {
     });
   }
 }
-
-

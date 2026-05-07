@@ -53,11 +53,11 @@ Do something.
     expect(prompt).not.toContain('## Context');
     expect(prompt).not.toContain('**Title:**');
     expect(prompt).not.toContain('## INPUT DATA');
-    
+
     // Unmarked sections should remain
     expect(prompt).toContain('## Mode Selection');
     expect(prompt).toContain('## Your Task');
-    
+
     // Markers themselves should be removed
     expect(prompt).not.toContain('DOCFORGE:STRIP_FOR_IMPORT');
   });
@@ -99,7 +99,7 @@ More important content.
     // Both marked sections should be stripped
     expect(prompt).not.toContain('First Strippable');
     expect(prompt).not.toContain('Second Strippable');
-    
+
     // Unmarked sections should remain
     expect(prompt).toContain('## Keep This Section');
     expect(prompt).toContain('## Also Keep This');
@@ -216,4 +216,3 @@ Do something.
     expect(prompt).not.toContain('DOCFORGE:STRIP_FOR_IMPORT');
   });
 });
-

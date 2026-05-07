@@ -22,4 +22,3 @@ export default {
     'integration with external profile services (Gravatar), ' +
     'and batch upload functionality.',
 };
-

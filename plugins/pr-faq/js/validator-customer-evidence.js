@@ -30,11 +30,7 @@ export function detectMetricsInText(text) {
   }
 
   // Ratio and multiplier patterns
-  const ratioPatterns = [
-    /\d+x\b/gi,
-    /\d+(?:\.\d+)?:\d+(?:\.\d+)?/g,
-    /\d+(?:\.\d+)?\s*times/gi,
-  ];
+  const ratioPatterns = [/\d+x\b/gi, /\d+(?:\.\d+)?:\d+(?:\.\d+)?/g, /\d+(?:\.\d+)?\s*times/gi];
 
   for (const pattern of ratioPatterns) {
     const matches = text.match(pattern) || [];
@@ -63,7 +59,7 @@ export function detectMetricsInText(text) {
     found: metrics.length > 0,
     count: metrics.length,
     metrics,
-    types
+    types,
   };
 }
 
@@ -86,21 +82,21 @@ export function scoreQuote(metrics, metricTypes) {
     if (!typeBonus.has(metricType)) {
       typeBonus.add(metricType);
       switch (metricType) {
-      case 'percentage':
-        score += 3;
-        break;
-      case 'ratio':
-        score += 2;
-        break;
-      case 'absolute':
-        score += 2;
-        break;
-      case 'score':
-        score += 1;
-        break;
-      default:
-        // Other metric types don't add bonus points
-        break;
+        case 'percentage':
+          score += 3;
+          break;
+        case 'ratio':
+          score += 2;
+          break;
+        case 'absolute':
+          score += 2;
+          break;
+        case 'score':
+          score += 1;
+          break;
+        default:
+          // Other metric types don't add bonus points
+          break;
       }
     }
   }
@@ -177,14 +173,17 @@ export function scoreCustomerEvidence(content) {
   // Quote count bonus/penalty: exactly 2 quotes is ideal (per phase1.md)
   let quoteCountAdjustment = 0;
   if (quotes.length === 2) {
-    quoteCountAdjustment = 1;  // Bonus for following the standard
+    quoteCountAdjustment = 1; // Bonus for following the standard
   } else if (quotes.length > 2) {
-    quoteCountAdjustment = -2;  // Penalty for "blog post territory" (3+ quotes)
+    quoteCountAdjustment = -2; // Penalty for "blog post territory" (3+ quotes)
   } else if (quotes.length === 1) {
-    quoteCountAdjustment = 0;  // No penalty for 1 quote, but no bonus either
+    quoteCountAdjustment = 0; // No penalty for 1 quote, but no bonus either
   }
 
-  result.score = Math.min(Math.max(baseScore + metricBonus + coverageBonus + quoteCountAdjustment, 0), 10);
+  result.score = Math.min(
+    Math.max(baseScore + metricBonus + coverageBonus + quoteCountAdjustment, 0),
+    10
+  );
 
   // Add feedback
   if (quotesWithMetrics === 0) {
@@ -194,7 +193,9 @@ export function scoreCustomerEvidence(content) {
   }
 
   if (quotes.length > 2) {
-    result.issues.push('Too many quotes (3+) - reduce to exactly 2: 1 Executive Vision + 1 Customer Relief');
+    result.issues.push(
+      'Too many quotes (3+) - reduce to exactly 2: 1 Executive Vision + 1 Customer Relief'
+    );
   } else if (quotes.length === 2) {
     result.strengths.push('Follows 2-quote standard (Executive Vision + Customer Relief)');
   } else if (quotes.length === 1) {
@@ -207,4 +208,3 @@ export function scoreCustomerEvidence(content) {
 
   return result;
 }
-

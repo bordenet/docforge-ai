@@ -7,7 +7,7 @@ import {
   WEAK_VERBS,
   FILLER_PATTERNS,
   JARGON_PATTERNS,
-  VAGUE_IMPROVEMENT_PATTERNS
+  VAGUE_IMPROVEMENT_PATTERNS,
 } from './validator-config.js';
 
 /**
@@ -19,21 +19,22 @@ export function detectActionVerbs(text) {
   const words = text.toLowerCase().split(/\s+/);
   const firstWord = words[0] || '';
 
-  const startsWithStrongVerb = STRONG_ACTION_VERBS.some(verb =>
-    firstWord === verb || firstWord === verb + 'd' || firstWord === verb + 'ed'
+  const startsWithStrongVerb = STRONG_ACTION_VERBS.some(
+    (verb) => firstWord === verb || firstWord === verb + 'd' || firstWord === verb + 'ed'
   );
 
-  const strongVerbsFound = STRONG_ACTION_VERBS.filter(verb => {
+  const strongVerbsFound = STRONG_ACTION_VERBS.filter((verb) => {
     const regex = new RegExp(`\\b${verb}(d|ed)?\\b`, 'i');
     return regex.test(text);
   });
 
-  const weakVerbsFound = WEAK_VERBS.filter(verb => {
+  const weakVerbsFound = WEAK_VERBS.filter((verb) => {
     const regex = new RegExp(`\\b${verb}\\b`, 'i');
     return regex.test(text);
   });
 
-  const startsWithWeakPattern = /^(was|were|had|have|helped|assisted|worked|participated|contributed)/i.test(text);
+  const startsWithWeakPattern =
+    /^(was|were|had|have|helped|assisted|worked|participated|contributed)/i.test(text);
 
   return {
     startsWithStrongVerb,
@@ -47,8 +48,8 @@ export function detectActionVerbs(text) {
       startsWithStrongVerb && 'Starts with strong action verb',
       strongVerbsFound.length > 0 && `${strongVerbsFound.length} strong action verbs`,
       weakVerbsFound.length > 0 && `${weakVerbsFound.length} weak verbs detected`,
-      startsWithWeakPattern && 'Starts with weak verb pattern'
-    ].filter(Boolean)
+      startsWithWeakPattern && 'Starts with weak verb pattern',
+    ].filter(Boolean),
   };
 }
 
@@ -60,14 +61,26 @@ export function detectActionVerbs(text) {
 export function detectSpecificity(text) {
   const numberMatches = text.match(/\d+(\.\d+)?/g) || [];
   const percentageMatches = text.match(/\d+(\.\d+)?%/g) || [];
-  const dollarMatches = text.match(/\$[\d,]+(\.\d+)?[KMB]?|\d+(\.\d+)?\s*(million|billion|thousand)/gi) || [];
+  const dollarMatches =
+    text.match(/\$[\d,]+(\.\d+)?[KMB]?|\d+(\.\d+)?\s*(million|billion|thousand)/gi) || [];
   const timeMatches = text.match(/\d+\s*(hour|day|week|month|year|minute|second)s?/gi) || [];
-  const timeframeMatches = text.match(/\b(Q[1-4]\s*[-–]?\s*(Q[1-4]\s*)?\d{4}|\d+\s*(months?|quarters?|weeks?)\b|next\s+(quarter|month|year)|by\s+\w+\s+\d{4}|within\s+\d+\s+\w+)/gi) || [];
-  const quantityMatches = text.match(/\d+\s*(user|customer|client|team|member|employee|project|product|feature|system|application)s?/gi) || [];
-  const comparisonMatches = text.match(/\b(increased|decreased|reduced|improved|grew|doubled|tripled|halved|cut)\s+by\s+\d+/gi) || [];
+  const timeframeMatches =
+    text.match(
+      /\b(Q[1-4]\s*[-–]?\s*(Q[1-4]\s*)?\d{4}|\d+\s*(months?|quarters?|weeks?)\b|next\s+(quarter|month|year)|by\s+\w+\s+\d{4}|within\s+\d+\s+\w+)/gi
+    ) || [];
+  const quantityMatches =
+    text.match(
+      /\d+\s*(user|customer|client|team|member|employee|project|product|feature|system|application)s?/gi
+    ) || [];
+  const comparisonMatches =
+    text.match(
+      /\b(increased|decreased|reduced|improved|grew|doubled|tripled|halved|cut)\s+by\s+\d+/gi
+    ) || [];
 
   const hasContext = /\b(at|for|with|across|within)\s+[A-Z][a-zA-Z]*/i.test(text);
-  const hasTeamContext = /\b(team|department|organization|company|division|corp|inc|llc)\b/i.test(text);
+  const hasTeamContext = /\b(team|department|organization|company|division|corp|inc|llc)\b/i.test(
+    text
+  );
   const hasTimeMetrics = timeMatches.length > 0 || timeframeMatches.length > 0;
   const timeCount = timeMatches.length + timeframeMatches.length;
 
@@ -96,8 +109,8 @@ export function detectSpecificity(text) {
       timeframeMatches.length > 0 && 'Specific timeframes (Q1, by date, etc.)',
       comparisonMatches.length > 0 && 'Quantified comparisons',
       hasContext && 'Contextual details present',
-      hasTeamContext && 'Team/org context provided'
-    ].filter(Boolean)
+      hasTeamContext && 'Team/org context provided',
+    ].filter(Boolean),
   };
 }
 
@@ -107,11 +120,23 @@ export function detectSpecificity(text) {
  * @returns {Object} Impact detection results
  */
 export function detectImpact(text) {
-  const businessImpactMatches = text.match(/\b(revenue|profit|cost|savings|efficiency|productivity|growth|ROI|return)\b/gi) || [];
-  const customerImpactMatches = text.match(/\b(customer|user|client|satisfaction|experience|retention|acquisition|engagement|NPS)\b/gi) || [];
-  const scaleMatches = text.match(/\b(company.wide|organization.wide|enterprise|global|national|regional|cross.functional)\b/gi) || [];
-  const resultMatches = text.match(/\b(resulting in|leading to|which|enabling|driving|achieving|delivering)\b/gi) || [];
-  const improvementMatches = text.match(/\b(improved|increased|reduced|decreased|enhanced|accelerated|streamlined|optimized)\b/gi) || [];
+  const businessImpactMatches =
+    text.match(/\b(revenue|profit|cost|savings|efficiency|productivity|growth|ROI|return)\b/gi) ||
+    [];
+  const customerImpactMatches =
+    text.match(
+      /\b(customer|user|client|satisfaction|experience|retention|acquisition|engagement|NPS)\b/gi
+    ) || [];
+  const scaleMatches =
+    text.match(
+      /\b(company.wide|organization.wide|enterprise|global|national|regional|cross.functional)\b/gi
+    ) || [];
+  const resultMatches =
+    text.match(/\b(resulting in|leading to|which|enabling|driving|achieving|delivering)\b/gi) || [];
+  const improvementMatches =
+    text.match(
+      /\b(improved|increased|reduced|decreased|enhanced|accelerated|streamlined|optimized)\b/gi
+    ) || [];
 
   return {
     hasBusinessImpact: businessImpactMatches.length > 0,
@@ -129,8 +154,8 @@ export function detectImpact(text) {
       customerImpactMatches.length > 0 && 'Customer impact mentioned',
       scaleMatches.length > 0 && 'Scale/scope indicated',
       resultMatches.length > 0 && 'Result language present',
-      improvementMatches.length > 0 && 'Improvement language present'
-    ].filter(Boolean)
+      improvementMatches.length > 0 && 'Improvement language present',
+    ].filter(Boolean),
   };
 }
 
@@ -156,12 +181,15 @@ export function detectClarity(text) {
     jargonFound.push(...matches);
   }
 
-  const wordCount = text.split(/\s+/).filter(w => w.length > 0).length;
+  const wordCount = text.split(/\s+/).filter((w) => w.length > 0).length;
   const isConcise = wordCount >= 50 && wordCount <= 150;
   const isTooShort = wordCount < 30;
   const isTooLong = wordCount > 200;
 
-  const passiveMatches = text.match(/\b(am|are|is|was|were|been|being)\s+(\w+ed|achieved|led|built|won|made|done|given|taken|shown)\b/gi) || [];
+  const passiveMatches =
+    text.match(
+      /\b(am|are|is|was|were|been|being)\s+(\w+ed|achieved|led|built|won|made|done|given|taken|shown)\b/gi
+    ) || [];
   const hasPassiveVoice = passiveMatches.length > 0;
 
   const bulletMatches = text.match(/^\s*[-*+•◆✓✅→►▶|]\s+|^\s*\d+[.)]\s+/gm) || [];
@@ -201,8 +229,8 @@ export function detectClarity(text) {
       isTooShort && 'Statement too brief for sales messaging',
       hasPassiveVoice && 'Passive voice detected',
       hasBulletPoints && 'Uses bullet points instead of paragraphs',
-      hasVagueImprovement && `Vague terms: ${vagueImprovementMatches.slice(0, 3).join(', ')}`
-    ].filter(Boolean)
+      hasVagueImprovement && `Vague terms: ${vagueImprovementMatches.slice(0, 3).join(', ')}`,
+    ].filter(Boolean),
   };
 }
 
@@ -220,7 +248,9 @@ export function detectVersions(text) {
   const hasResults = /###?\s*(Proven\s+)?Results/i.test(text);
   const hasWhyItWorks = /###?\s*Why\s+It\s+Works/i.test(text);
 
-  const structuredSectionCount = [hasChallenge, hasSolution, hasResults, hasWhyItWorks].filter(Boolean).length;
+  const structuredSectionCount = [hasChallenge, hasSolution, hasResults, hasWhyItWorks].filter(
+    Boolean
+  ).length;
   const hasStructuredContent = structuredSectionCount >= 3;
 
   return {
@@ -232,8 +262,7 @@ export function detectVersions(text) {
     indicators: [
       hasVersionA && 'Version A (concise) present',
       hasVersionB && 'Version B (structured) present',
-      hasStructuredContent && `${structuredSectionCount}/4 structured sections`
-    ].filter(Boolean)
+      hasStructuredContent && `${structuredSectionCount}/4 structured sections`,
+    ].filter(Boolean),
   };
 }
-

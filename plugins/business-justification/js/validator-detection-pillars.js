@@ -9,7 +9,7 @@ import {
   EVIDENCE_PATTERNS,
   FINANCIAL_PATTERNS,
   OPTIONS_PATTERNS,
-  EXECUTION_PATTERNS
+  EXECUTION_PATTERNS,
 } from './validator-config.js';
 
 /**
@@ -40,8 +40,8 @@ export function detectStrategicEvidence(text) {
       quantifiedMatches.length > 0 && `${quantifiedMatches.length} quantified metrics`,
       businessMatches.length > 0 && 'Business/customer focus',
       sourceMatches.length > 0 && `${sourceMatches.length} credible sources cited`,
-      beforeAfterMatches.length > 0 && 'Before/after comparisons'
-    ].filter(Boolean)
+      beforeAfterMatches.length > 0 && 'Before/after comparisons',
+    ].filter(Boolean),
   };
 }
 
@@ -75,8 +75,8 @@ export function detectFinancialJustification(text) {
       paybackMatches.length > 0 && 'Payback period discussed',
       paybackTimeMatches.length > 0 && 'Specific payback timeline',
       tcoMatches.length > 0 && 'TCO/3-year analysis present',
-      dollarMatches.length > 0 && `${dollarMatches.length} dollar amounts specified`
-    ].filter(Boolean)
+      dollarMatches.length > 0 && `${dollarMatches.length} dollar amounts specified`,
+    ].filter(Boolean),
   };
 }
 
@@ -111,8 +111,8 @@ export function detectOptionsAnalysis(text) {
       recommendationMatches.length > 0 && 'Clear recommendation present',
       comparisonMatches.length > 0 && 'Comparison/trade-off analysis',
       minimalMatches.length > 0 && 'Minimal investment option considered',
-      fullMatches.length > 0 && 'Full investment option considered'
-    ].filter(Boolean)
+      fullMatches.length > 0 && 'Full investment option considered',
+    ].filter(Boolean),
   };
 }
 
@@ -147,8 +147,7 @@ export function detectExecutionCompleteness(text) {
       hasStakeholderSection && 'Stakeholders identified',
       stakeholderConcernMatches.length > 0 && 'Finance/HR/Legal concerns addressed',
       hasTimelineSection && 'Timeline defined',
-      hasScopeSection && 'Scope boundaries set'
-    ].filter(Boolean)
+      hasScopeSection && 'Scope boundaries set',
+    ].filter(Boolean),
   };
 }
-

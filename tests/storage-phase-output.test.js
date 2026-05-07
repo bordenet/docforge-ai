@@ -30,4 +30,3 @@ describe('Storage: updateProjectPhaseOutput', () => {
     expect(updated.currentPhase).toBe(3);
   });
 });
-

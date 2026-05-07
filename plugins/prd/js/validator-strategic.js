@@ -3,7 +3,11 @@
  * Evaluates: Metric Validity, Scope Realism, Risk & Mitigation Quality, Traceability
  */
 
-import { STRATEGIC_VIABILITY_PATTERNS, BASELINE_TARGET_PATTERNS, COMPETITIVE_DEPTH_PATTERNS } from './validator-config.js';
+import {
+  STRATEGIC_VIABILITY_PATTERNS,
+  BASELINE_TARGET_PATTERNS,
+  COMPETITIVE_DEPTH_PATTERNS,
+} from './validator-config.js';
 
 /**
  * Score Strategic Viability (20 pts max)
@@ -18,10 +22,10 @@ export function scoreStrategicViability(text) {
   // scoring when module-level regex objects retain state between calls.
   // Must cover both STRATEGIC_VIABILITY_PATTERNS and COMPETITIVE_DEPTH_PATTERNS.
   const resetPatterns = () => {
-    Object.values(STRATEGIC_VIABILITY_PATTERNS).forEach(p => {
+    Object.values(STRATEGIC_VIABILITY_PATTERNS).forEach((p) => {
       if (p.global) p.lastIndex = 0;
     });
-    Object.values(COMPETITIVE_DEPTH_PATTERNS).forEach(p => {
+    Object.values(COMPETITIVE_DEPTH_PATTERNS).forEach((p) => {
       if (p.global) p.lastIndex = 0;
     });
   };
@@ -67,7 +71,9 @@ export function scoreStrategicViability(text) {
   const uniqueBaselineTargets = [...new Set(baselineTargetMatches)].length;
   if (uniqueBaselineTargets >= 2) {
     metricValidityScore += 2;
-    strengths.push(`${uniqueBaselineTargets} baseline→target metric pairs (e.g., "reduce from X to Y")`);
+    strengths.push(
+      `${uniqueBaselineTargets} baseline→target metric pairs (e.g., "reduce from X to Y")`
+    );
   } else if (uniqueBaselineTargets >= 1) {
     metricValidityScore += 1;
     strengths.push('Baseline→target metric pair found');
@@ -97,7 +103,9 @@ export function scoreStrategicViability(text) {
     scopeRealismScore += 2;
     strengths.push('One-way/Two-way door decisions tagged');
   } else {
-    issues.push('Tag requirements as One-Way Door 🚪 (irreversible) or Two-Way Door 🔄 (reversible)');
+    issues.push(
+      'Tag requirements as One-Way Door 🚪 (irreversible) or Two-Way Door 🔄 (reversible)'
+    );
   }
 
   if (hasAlternatives || hasAlternativesContent) {
@@ -115,7 +123,8 @@ export function scoreStrategicViability(text) {
   const hasDissentingContent = STRATEGIC_VIABILITY_PATTERNS.dissentingContent.test(text);
   resetPatterns();
   const hasRiskSection = /^#+\s*(\d+\.?\d*\.?\s*)?(risk|unknown|assumption)/im.test(text);
-  const hasSpecificRisks = /\b(risk\s*:|\brisk\b.*\b(that|if|when)|mitigation\s*:|contingency)/gi.test(text);
+  const hasSpecificRisks =
+    /\b(risk\s*:|\brisk\b.*\b(that|if|when)|mitigation\s*:|contingency)/gi.test(text);
 
   if (hasRiskSection && hasSpecificRisks) {
     riskScore += 3;
@@ -162,13 +171,19 @@ export function scoreStrategicViability(text) {
   const hasCompetitorSection = COMPETITIVE_DEPTH_PATTERNS.competitorSection.test(text);
   const competitorMentions = text.match(COMPETITIVE_DEPTH_PATTERNS.competitorMention) || [];
   const competitorNames = text.match(COMPETITIVE_DEPTH_PATTERNS.competitorNames) || [];
-  const uniqueCompetitors = [...new Set([...competitorMentions, ...competitorNames].map(s => s.toLowerCase()))].length;
+  const uniqueCompetitors = [
+    ...new Set([...competitorMentions, ...competitorNames].map((s) => s.toLowerCase())),
+  ].length;
   const hasDifferentiation = COMPETITIVE_DEPTH_PATTERNS.differentiation.test(text);
   const hasMoat = COMPETITIVE_DEPTH_PATTERNS.moat.test(text);
 
   if (hasCompetitorSection || uniqueCompetitors >= 2) {
     competitiveDepthScore += 2;
-    strengths.push(uniqueCompetitors >= 2 ? `${uniqueCompetitors} competitors analyzed` : 'Competitive landscape documented');
+    strengths.push(
+      uniqueCompetitors >= 2
+        ? `${uniqueCompetitors} competitors analyzed`
+        : 'Competitive landscape documented'
+    );
   } else if (uniqueCompetitors >= 1) {
     competitiveDepthScore += 1;
     issues.push('Add 2+ competitor analyses for stronger market positioning');
@@ -190,14 +205,22 @@ export function scoreStrategicViability(text) {
   score += competitiveDepthScore;
 
   return {
-    score: Math.min(score, maxScore), maxScore, issues, strengths,
-    metricValidityScore, scopeRealismScore, riskScore, traceabilityScore, competitiveDepthScore,
+    score: Math.min(score, maxScore),
+    maxScore,
+    issues,
+    strengths,
+    metricValidityScore,
+    scopeRealismScore,
+    riskScore,
+    traceabilityScore,
+    competitiveDepthScore,
     details: {
       hasLeadingIndicators: leadingMatches.length >= 1,
       hasCounterMetrics: counterMatches.length >= 1,
       hasSourceOfTruth: sourceMatches.length >= 1,
       hasBaselineTargetPairs: uniqueBaselineTargets >= 1,
-      hasKillSwitch, hasDoorType,
+      hasKillSwitch,
+      hasDoorType,
       hasAlternatives: hasAlternatives || hasAlternativesContent,
       hasDissentingOpinions: hasDissentingSection || hasDissentingContent,
       hasTraceability: hasTraceabilitySection || traceabilityMatches.length >= 1,
@@ -207,4 +230,3 @@ export function scoreStrategicViability(text) {
     },
   };
 }
-

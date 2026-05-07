@@ -59,7 +59,12 @@ describe('Validator Project Storage (project-scoped)', () => {
     const projectId = 'p3';
     await saveProject(DB, { id: projectId, title: 'T', phase3_output: '# Seed' });
 
-    const storage = createProjectValidatorStorage({ dbName: DB, projectId, phaseNumber: 3, maxVersions: 2 });
+    const storage = createProjectValidatorStorage({
+      dbName: DB,
+      projectId,
+      phaseNumber: 3,
+      maxVersions: 2,
+    });
 
     await storage.saveVersion('# V1');
     await storage.saveVersion('# V2');
@@ -78,4 +83,3 @@ describe('Validator Project Storage (project-scoped)', () => {
     expect(await getValidatorState(DB, projectId)).toBeNull();
   });
 });
-

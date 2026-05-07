@@ -140,4 +140,3 @@ export function sanitizeProject(project) {
 
   return sanitized;
 }
-

@@ -138,7 +138,8 @@
                 <span class="relative group underline decoration-dotted cursor-help"
                   >Human-Controlled AI Workflow<span
                     class="invisible group-hover:visible absolute left-0 top-full mt-1 w-64 p-2 text-xs text-white bg-gray-800 dark:bg-gray-700 rounded shadow-lg z-50"
-                    >You review and send prompts to your chosen AI service. Nothing is sent automatically.</span
+                    >You review and send prompts to your chosen AI service. Nothing is sent
+                    automatically.</span
                   ></span
                 >
               </p>
@@ -159,49 +160,135 @@
             </select>
             <!-- Document Type Dropdown -->
             <div class="relative">
-              <button type="button" id="doc-type-btn" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="Switch Document Type">
-                <svg class="w-6 h-6 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+              <button
+                type="button"
+                id="doc-type-btn"
+                class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                title="Switch Document Type"
+              >
+                <svg
+                  class="w-6 h-6 text-gray-600 dark:text-gray-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                  ></path>
                 </svg>
               </button>
-              <div id="doc-type-menu" class="hidden absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
+              <div
+                id="doc-type-menu"
+                class="hidden absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
+              >
                 <div class="p-2">
-                  <div class="px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Document Types</div>
-                  <a href="?type=one-pager" class="block px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-type="one-pager">
+                  <div
+                    class="px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase"
+                  >
+                    Document Types
+                  </div>
+                  <a
+                    href="?type=one-pager"
+                    class="block px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    data-type="one-pager"
+                  >
                     <div class="font-medium text-gray-900 dark:text-white">📄 One-Pager</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-400">Executive summary for go/no-go decisions</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                      Executive summary for go/no-go decisions
+                    </div>
                   </a>
-                  <a href="?type=prd" class="block px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-type="prd">
-                    <div class="font-medium text-gray-900 dark:text-white">📋 Product Requirements Document</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-400">Full PRD with acceptance criteria</div>
+                  <a
+                    href="?type=prd"
+                    class="block px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    data-type="prd"
+                  >
+                    <div class="font-medium text-gray-900 dark:text-white">
+                      📋 Product Requirements Document
+                    </div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                      Full PRD with acceptance criteria
+                    </div>
                   </a>
-                  <a href="?type=adr" class="block px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-type="adr">
-                    <div class="font-medium text-gray-900 dark:text-white">🏗️ Architecture Decision Record</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-400">Document architecture decisions with tradeoffs</div>
+                  <a
+                    href="?type=adr"
+                    class="block px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    data-type="adr"
+                  >
+                    <div class="font-medium text-gray-900 dark:text-white">
+                      🏗️ Architecture Decision Record
+                    </div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                      Document architecture decisions with tradeoffs
+                    </div>
                   </a>
-                  <a href="?type=pr-faq" class="block px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-type="pr-faq">
+                  <a
+                    href="?type=pr-faq"
+                    class="block px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    data-type="pr-faq"
+                  >
                     <div class="font-medium text-gray-900 dark:text-white">📰 PR-FAQ</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-400">Amazon-style press release + FAQ</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                      Amazon-style press release + FAQ
+                    </div>
                   </a>
-                  <a href="?type=power-statement" class="block px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-type="power-statement">
+                  <a
+                    href="?type=power-statement"
+                    class="block px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    data-type="power-statement"
+                  >
                     <div class="font-medium text-gray-900 dark:text-white">💪 Power Statement</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-400">Craft compelling achievement statements</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                      Craft compelling achievement statements
+                    </div>
                   </a>
-                  <a href="?type=acceptance-criteria" class="block px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-type="acceptance-criteria">
-                    <div class="font-medium text-gray-900 dark:text-white">✅ Acceptance Criteria</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-400">Generate test conditions for user stories</div>
+                  <a
+                    href="?type=acceptance-criteria"
+                    class="block px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    data-type="acceptance-criteria"
+                  >
+                    <div class="font-medium text-gray-900 dark:text-white">
+                      ✅ Acceptance Criteria
+                    </div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                      Generate test conditions for user stories
+                    </div>
                   </a>
-                  <a href="?type=jd" class="block px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-type="jd">
+                  <a
+                    href="?type=jd"
+                    class="block px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    data-type="jd"
+                  >
                     <div class="font-medium text-gray-900 dark:text-white">💼 Job Description</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-400">Create inclusive job descriptions</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                      Create inclusive job descriptions
+                    </div>
                   </a>
-                  <a href="?type=business-justification" class="block px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-type="business-justification">
-                    <div class="font-medium text-gray-900 dark:text-white">📊 Business Justification</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-400">Justify headcount, promotions, budget</div>
+                  <a
+                    href="?type=business-justification"
+                    class="block px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    data-type="business-justification"
+                  >
+                    <div class="font-medium text-gray-900 dark:text-white">
+                      📊 Business Justification
+                    </div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                      Justify headcount, promotions, budget
+                    </div>
                   </a>
-                  <a href="?type=strategic-proposal" class="block px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-type="strategic-proposal">
-                    <div class="font-medium text-gray-900 dark:text-white">🎯 Strategic Proposal</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-400">Build proposals with pain points and metrics</div>
+                  <a
+                    href="?type=strategic-proposal"
+                    class="block px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    data-type="strategic-proposal"
+                  >
+                    <div class="font-medium text-gray-900 dark:text-white">
+                      🎯 Strategic Proposal
+                    </div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                      Build proposals with pain points and metrics
+                    </div>
                   </a>
                 </div>
               </div>
@@ -215,12 +302,26 @@
               aria-pressed="true"
             >
               <!-- Moon icon - shown in dark mode -->
-              <svg aria-hidden="true" class="w-6 h-6 hidden dark:block text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+              <svg
+                aria-hidden="true"
+                class="w-6 h-6 hidden dark:block text-gray-300"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
                 <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
               </svg>
               <!-- Sun icon - shown in light mode -->
-              <svg aria-hidden="true" class="w-6 h-6 dark:hidden text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
+              <svg
+                aria-hidden="true"
+                class="w-6 h-6 dark:hidden text-gray-600"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                  clip-rule="evenodd"
+                ></path>
               </svg>
             </button>
             <button
@@ -262,11 +363,10 @@
             ></path>
           </svg>
           <div class="flex-1">
-            <h3 class="text-sm font-medium text-blue-900 dark:text-blue-200">
-              ℹ️ How This Works
-            </h3>
+            <h3 class="text-sm font-medium text-blue-900 dark:text-blue-200">ℹ️ How This Works</h3>
             <p class="mt-1 text-sm text-blue-700 dark:text-blue-300">
-              Drafts stored <strong>locally in your browser</strong>. You copy prompts to external AI (Claude, Gemini, etc).
+              Drafts stored <strong>locally in your browser</strong>. You copy prompts to external
+              AI (Claude, Gemini, etc).
             </p>
           </div>
           <button
@@ -337,7 +437,9 @@
             <span id="storage-info">Loading storage info...</span>
           </p>
           <!-- Invisible version timestamp - same color as background, visible on selection -->
-          <span class="text-white dark:text-gray-800 select-all" aria-hidden="true">v:2026-02-16T20:47:37-08:00</span>
+          <span class="text-white dark:text-gray-800 select-all" aria-hidden="true"
+            >v:2026-02-16T20:47:37-08:00</span
+          >
           <div class="flex gap-4">
             <a
               href="https://github.com/bordenet/docforge-ai"
@@ -362,17 +464,17 @@
 
     <!-- Document Type Dropdown Handler -->
     <script>
-      (function() {
+      (function () {
         const btn = document.getElementById('doc-type-btn');
         const menu = document.getElementById('doc-type-menu');
         if (!btn || !menu) return;
 
-        btn.addEventListener('click', function(e) {
+        btn.addEventListener('click', function (e) {
           e.stopPropagation();
           menu.classList.toggle('hidden');
         });
 
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
           if (!menu.contains(e.target) && e.target !== btn) {
             menu.classList.add('hidden');
           }

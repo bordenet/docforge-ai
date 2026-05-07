@@ -52,7 +52,8 @@ export function validatePRFAQ(markdown) {
   const faqQuality = scoreFAQQuality(normalized); // Use normalized markdown to find FAQ sections
 
   // Calculate total score
-  let totalScore = structure.score + content.score + professional.score + evidence.score + faqQuality.score;
+  let totalScore =
+    structure.score + content.score + professional.score + evidence.score + faqQuality.score;
 
   // FAQ PENALTY: If Internal FAQ is missing or contains only "softball" questions, cap at 50
   let penaltyApplied = false;
@@ -64,26 +65,32 @@ export function validatePRFAQ(markdown) {
   }
 
   // Combine all issues and strengths (deduplicated)
-  const allIssues = [...new Set([
-    ...structure.issues,
-    ...content.issues,
-    ...professional.issues,
-    ...evidence.issues,
-    ...faqQuality.issues,
-  ])];
+  const allIssues = [
+    ...new Set([
+      ...structure.issues,
+      ...content.issues,
+      ...professional.issues,
+      ...evidence.issues,
+      ...faqQuality.issues,
+    ]),
+  ];
 
   // Add penalty warning if applied
   if (penaltyApplied) {
-    allIssues.unshift('⚠️ SCORE CAPPED AT 50: Internal FAQ is missing or contains only softball questions');
+    allIssues.unshift(
+      '⚠️ SCORE CAPPED AT 50: Internal FAQ is missing or contains only softball questions'
+    );
   }
 
-  const allStrengths = [...new Set([
-    ...structure.strengths,
-    ...content.strengths,
-    ...professional.strengths,
-    ...evidence.strengths,
-    ...faqQuality.strengths,
-  ])];
+  const allStrengths = [
+    ...new Set([
+      ...structure.strengths,
+      ...content.strengths,
+      ...professional.strengths,
+      ...evidence.strengths,
+      ...faqQuality.strengths,
+    ]),
+  ];
 
   return {
     totalScore,
@@ -117,4 +124,3 @@ export function validateDocument(text) {
 
 // Re-export scoring helper functions from shared module for consistency
 export { getGrade, getScoreColor, getScoreLabel } from '../../../shared/js/validator.js';
-

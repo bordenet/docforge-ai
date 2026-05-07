@@ -32,9 +32,27 @@ const mockPlugin = {
   workflowConfig: {
     phaseCount: 3,
     phases: [
-      { number: 1, name: 'Initial Draft', icon: '📝', aiModel: 'Claude', description: 'Generate the first draft' },
-      { number: 2, name: 'Review', icon: '🔍', aiModel: 'Gemini', description: 'Get improvements from Gemini' },
-      { number: 3, name: 'Final Synthesis', icon: '✨', aiModel: 'Claude', description: 'Create final version' },
+      {
+        number: 1,
+        name: 'Initial Draft',
+        icon: '📝',
+        aiModel: 'Claude',
+        description: 'Generate the first draft',
+      },
+      {
+        number: 2,
+        name: 'Review',
+        icon: '🔍',
+        aiModel: 'Gemini',
+        description: 'Get improvements from Gemini',
+      },
+      {
+        number: 3,
+        name: 'Final Synthesis',
+        icon: '✨',
+        aiModel: 'Claude',
+        description: 'Create final version',
+      },
     ],
   },
 };
@@ -237,4 +255,3 @@ describe('Views List Module', () => {
     });
   });
 });
-

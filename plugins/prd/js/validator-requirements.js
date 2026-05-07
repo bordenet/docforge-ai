@@ -38,7 +38,7 @@ export function countFunctionalRequirements(text) {
   const problemLinkMatches = text.match(PROBLEM_LINK_PATTERN) || [];
 
   // Deduplicate FR IDs (FR1 might appear multiple times)
-  const uniqueFRs = [...new Set(frMatches.map(fr => fr.toUpperCase()))];
+  const uniqueFRs = [...new Set(frMatches.map((fr) => fr.toUpperCase()))];
 
   return {
     count: uniqueFRs.length,
@@ -47,11 +47,12 @@ export function countFunctionalRequirements(text) {
     hasProblemLinks: problemLinkMatches.length > 0,
     problemLinkCount: problemLinkMatches.length,
     // Quality score: FRs with door types and problem links are higher quality
-    qualityScore: uniqueFRs.length > 0 ? (
-      (doorTypeMatches.length > 0 ? 2 : 0) +
-      (problemLinkMatches.length > 0 ? 2 : 0) +
-      Math.min(uniqueFRs.length, 3)
-    ) : 0,
+    qualityScore:
+      uniqueFRs.length > 0
+        ? (doorTypeMatches.length > 0 ? 2 : 0) +
+          (problemLinkMatches.length > 0 ? 2 : 0) +
+          Math.min(uniqueFRs.length, 3)
+        : 0,
   };
 }
 
@@ -98,4 +99,3 @@ export function countMeasurableRequirements(text) {
   const matches = text.match(MEASURABLE_PATTERN) || [];
   return matches.length;
 }
-

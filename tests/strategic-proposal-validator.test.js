@@ -4,14 +4,27 @@
 
 import { describe, it, expect } from '@jest/globals';
 import {
-  validateStrategicProposal, validateDocument, getGrade, getScoreColor, getScoreLabel
+  validateStrategicProposal,
+  validateDocument,
+  getGrade,
+  getScoreColor,
+  getScoreLabel,
 } from '../plugins/strategic-proposal/js/validator.js';
 import {
-  detectProblemStatement, detectUrgency, detectSolution, detectBusinessImpact,
-  detectImplementation, detectRisks, detectSuccessMetrics, detectSections
+  detectProblemStatement,
+  detectUrgency,
+  detectSolution,
+  detectBusinessImpact,
+  detectImplementation,
+  detectRisks,
+  detectSuccessMetrics,
+  detectSections,
 } from '../plugins/strategic-proposal/js/validator-detection.js';
 import {
-  scoreProblemStatement, scoreProposedSolution, scoreBusinessImpact, scoreImplementationPlan
+  scoreProblemStatement,
+  scoreProposedSolution,
+  scoreBusinessImpact,
+  scoreImplementationPlan,
 } from '../plugins/strategic-proposal/js/validator-scoring.js';
 
 describe('Strategic Proposal Validator', () => {
@@ -38,7 +51,8 @@ This is a critical priority for the organization.`;
   describe('detectUrgency', () => {
     it('should detect urgency with quantification', () => {
       // Pattern requires specific quantified format: \d+\s*(%|million|thousand|...)
-      const text = 'This is an urgent priority. We lose 50 thousand dollars per week in missed opportunities.';
+      const text =
+        'This is an urgent priority. We lose 50 thousand dollars per week in missed opportunities.';
       const result = detectUrgency(text);
       expect(result.hasUrgencyLanguage).toBe(true);
       expect(result.isQuantified).toBe(true);
@@ -128,8 +142,8 @@ Content here about the challenge.
 More content about our approach.`;
       const result = detectSections(text);
       expect(result.found.length).toBeGreaterThanOrEqual(2);
-      expect(result.found.some(s => s.name === 'Problem Statement')).toBe(true);
-      expect(result.found.some(s => s.name === 'Proposed Solution')).toBe(true);
+      expect(result.found.some((s) => s.name === 'Problem Statement')).toBe(true);
+      expect(result.found.some((s) => s.name === 'Proposed Solution')).toBe(true);
     });
   });
 
@@ -302,4 +316,3 @@ KPI: 30% improvement in customer satisfaction scores within 12 months.`;
     });
   });
 });
-

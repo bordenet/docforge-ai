@@ -4,8 +4,11 @@
  */
 
 import {
-  STRONG_VERBS, WEAK_HEADLINE_LANGUAGE, TIMELINESS_WORDS,
-  PROBLEM_WORDS, HOOK_FLUFF_WORDS
+  STRONG_VERBS,
+  WEAK_HEADLINE_LANGUAGE,
+  TIMELINESS_WORDS,
+  PROBLEM_WORDS,
+  HOOK_FLUFF_WORDS,
 } from './validator-config.js';
 
 /**
@@ -27,7 +30,7 @@ export function analyzeHeadlineQuality(title) {
     return result;
   }
 
-  const words = title.split(/\s+/).filter(w => w.length > 0);
+  const words = title.split(/\s+/).filter((w) => w.length > 0);
   const chars = title.length;
   const titleLower = title.toLowerCase();
 
@@ -44,7 +47,7 @@ export function analyzeHeadlineQuality(title) {
   }
 
   // Strong verbs
-  const hasStrongVerb = STRONG_VERBS.some(verb => titleLower.includes(verb));
+  const hasStrongVerb = STRONG_VERBS.some((verb) => titleLower.includes(verb));
   if (hasStrongVerb) {
     result.score += 2;
     result.strengths.push('Uses strong action verbs');
@@ -54,7 +57,7 @@ export function analyzeHeadlineQuality(title) {
 
   // Specificity (numbers, percentages)
   const specificityPatterns = [/\d+%/, /\d+x/, /\d+(?:,\d{3})*/, /\$\d+/, /by \d+/, /up to \d+/];
-  const hasSpecifics = specificityPatterns.some(p => p.test(title));
+  const hasSpecifics = specificityPatterns.some((p) => p.test(title));
   if (hasSpecifics) {
     result.score += 2;
     result.strengths.push('Includes specific metrics or outcomes');
@@ -67,12 +70,12 @@ export function analyzeHeadlineQuality(title) {
     /\busing\s+\w+/i,
     /\bvia\s+\w+/i,
     /\bthrough\s+\w+/i,
-    /\bby\s+(?![\d])\w+/i,  // "by [word]" but not "by 50%" (that's a metric)
+    /\bby\s+(?![\d])\w+/i, // "by [word]" but not "by 50%" (that's a metric)
     /\bwith\s+\w+/i,
     /\bleveraging\s+\w+/i,
     /\bpowered\s+by\s+\w+/i,
   ];
-  const hasMechanism = mechanismPatterns.some(p => p.test(title));
+  const hasMechanism = mechanismPatterns.some((p) => p.test(title));
   if (hasMechanism) {
     result.score += 2;
     result.strengths.push('Includes mechanism (HOW it works)');
@@ -81,7 +84,7 @@ export function analyzeHeadlineQuality(title) {
   }
 
   // Avoid weak language
-  const hasWeakLanguage = WEAK_HEADLINE_LANGUAGE.some(weak => titleLower.includes(weak));
+  const hasWeakLanguage = WEAK_HEADLINE_LANGUAGE.some((weak) => titleLower.includes(weak));
   if (hasWeakLanguage) {
     result.issues.push('Avoid generic marketing language in headlines');
   } else {
@@ -106,9 +109,10 @@ export function analyzeNewsworthyHook(content) {
   };
 
   // Filter empty paragraphs and find first substantial one
-  const paragraphs = content.split(/\n\n+/)
-    .map(p => p.trim())
-    .filter(p => p.length > 50);
+  const paragraphs = content
+    .split(/\n\n+/)
+    .map((p) => p.trim())
+    .filter((p) => p.length > 50);
 
   const hook = paragraphs[0] || '';
 
@@ -120,8 +124,9 @@ export function analyzeNewsworthyHook(content) {
   const hookLower = hook.toLowerCase();
 
   // Timeliness - check for timeliness words OR dateline format
-  const hasTimelinessWord = TIMELINESS_WORDS.some(word => hookLower.includes(word));
-  const hasDateline = /[A-Z]{2,}[,\s]+[A-Z]{2}\s*[—–-]/.test(hook) || /\([A-Za-z]+\s*Wire\)/.test(hook);
+  const hasTimelinessWord = TIMELINESS_WORDS.some((word) => hookLower.includes(word));
+  const hasDateline =
+    /[A-Z]{2,}[,\s]+[A-Z]{2}\s*[—–-]/.test(hook) || /\([A-Za-z]+\s*Wire\)/.test(hook);
   const hasTimeliness = hasTimelinessWord || hasDateline;
 
   if (hasTimeliness) {
@@ -132,8 +137,15 @@ export function analyzeNewsworthyHook(content) {
   }
 
   // Specificity
-  const specificityPatterns = [/\d+%/, /\d+x/, /cuts .+ by/i, /improves .+ by/i, /reduces .+ by/i, /increases .+ by/i];
-  const hasSpecificity = specificityPatterns.some(p => p.test(hook));
+  const specificityPatterns = [
+    /\d+%/,
+    /\d+x/,
+    /cuts .+ by/i,
+    /improves .+ by/i,
+    /reduces .+ by/i,
+    /increases .+ by/i,
+  ];
+  const hasSpecificity = specificityPatterns.some((p) => p.test(hook));
   if (hasSpecificity) {
     result.score += 4;
     result.strengths.push('Hook includes specific, measurable outcomes');
@@ -142,12 +154,12 @@ export function analyzeNewsworthyHook(content) {
   }
 
   // Problem addressing
-  const addressesProblem = PROBLEM_WORDS.some(word => hookLower.includes(word));
+  const addressesProblem = PROBLEM_WORDS.some((word) => hookLower.includes(word));
   if (addressesProblem) {
     result.score += 3;
     result.strengths.push('Addresses clear problem or improvement');
   } else {
-    result.issues.push('Hook doesn\'t clearly address a problem or need');
+    result.issues.push("Hook doesn't clearly address a problem or need");
   }
 
   // Company clarity - check for comma/em-dash separator with action verb
@@ -155,9 +167,13 @@ export function analyzeNewsworthyHook(content) {
   if (sentences.length > 0) {
     const firstSentence = sentences[0];
     const firstSentenceLower = firstSentence.toLowerCase();
-    const hasSeparator = firstSentence.includes(',') || firstSentence.includes('—') || firstSentence.includes('–');
-    const hasAction = firstSentenceLower.includes('announce') || firstSentenceLower.includes('launch') ||
-                      firstSentenceLower.includes('introduce') || firstSentenceLower.includes('unveil');
+    const hasSeparator =
+      firstSentence.includes(',') || firstSentence.includes('—') || firstSentence.includes('–');
+    const hasAction =
+      firstSentenceLower.includes('announce') ||
+      firstSentenceLower.includes('launch') ||
+      firstSentenceLower.includes('introduce') ||
+      firstSentenceLower.includes('unveil');
     if (hasSeparator && hasAction) {
       result.score += 2;
       result.strengths.push('Clear company identification and action');
@@ -167,7 +183,7 @@ export function analyzeNewsworthyHook(content) {
   }
 
   // Avoid fluff
-  const hasFluff = HOOK_FLUFF_WORDS.some(fluff => hookLower.includes(fluff));
+  const hasFluff = HOOK_FLUFF_WORDS.some((fluff) => hookLower.includes(fluff));
   if (hasFluff) {
     result.issues.push('Hook contains marketing fluff - focus on concrete value');
     result.score = Math.max(0, result.score - 1);
@@ -202,7 +218,7 @@ export function analyzeReleaseDate(content) {
     /\b(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday),?\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2},?\s+\d{4}\b/i,
   ];
 
-  const hasDate = datePatterns.some(p => p.test(firstLines));
+  const hasDate = datePatterns.some((p) => p.test(firstLines));
 
   if (hasDate) {
     result.score = 5;
@@ -215,7 +231,7 @@ export function analyzeReleaseDate(content) {
     }
   } else {
     result.issues.push('Missing release date in opening lines');
-    result.issues.push('Add date and location (e.g., \'Aug 20, 2024. Seattle, WA.\')');
+    result.issues.push("Add date and location (e.g., 'Aug 20, 2024. Seattle, WA.')");
   }
 
   return result;

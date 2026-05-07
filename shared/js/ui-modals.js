@@ -130,4 +130,3 @@ export function showPromptModal(text, title = 'Prompt') {
     }
   });
 }
-

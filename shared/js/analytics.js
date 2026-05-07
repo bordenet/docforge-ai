@@ -61,12 +61,8 @@ export function trackPhase(phase, action, documentType) {
  * @param {number} [score] - Optional score for context
  */
 export function trackValidation(action, documentType, score) {
-  const path = documentType
-    ? `validate/${action}/${documentType}`
-    : `validate/${action}`;
-  const title = score !== undefined
-    ? `Validate ${action} (score: ${score})`
-    : `Validate ${action}`;
+  const path = documentType ? `validate/${action}/${documentType}` : `validate/${action}`;
+  const title = score !== undefined ? `Validate ${action} (score: ${score})` : `Validate ${action}`;
   trackEvent(path, { title });
 }
 
@@ -76,9 +72,7 @@ export function trackValidation(action, documentType, score) {
  * @param {string} [documentType] - Plugin type
  */
 export function trackPowerup(powerup, documentType) {
-  const path = documentType
-    ? `powerup/${powerup}/${documentType}`
-    : `powerup/${powerup}`;
+  const path = documentType ? `powerup/${powerup}/${documentType}` : `powerup/${powerup}`;
   trackEvent(path, { title: `Powerup: ${powerup}` });
 }
 
@@ -88,9 +82,7 @@ export function trackPowerup(powerup, documentType) {
  * @param {string} [documentType] - Plugin type
  */
 export function trackProject(action, documentType) {
-  const path = documentType
-    ? `project/${action}/${documentType}`
-    : `project/${action}`;
+  const path = documentType ? `project/${action}/${documentType}` : `project/${action}`;
   trackEvent(path, { title: `Project ${action}` });
 }
 
@@ -113,4 +105,3 @@ export function initAnalytics() {
     }
   }
 }
-

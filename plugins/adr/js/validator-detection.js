@@ -44,7 +44,7 @@ import {
   SECURITY_PATTERNS,
   DEPENDENCIES_PATTERNS,
   DIAGRAM_PATTERNS,
-  OBSERVABILITY_PATTERNS
+  OBSERVABILITY_PATTERNS,
 } from './validator-config.js';
 
 /**
@@ -72,8 +72,8 @@ export function detectContext(text) {
       contextMatches.length > 0 && 'Context framing language',
       constraintMatches.length > 0 && `${constraintMatches.length} constraints identified`,
       quantifiedMatches.length > 0 && `${quantifiedMatches.length} quantified metrics`,
-      businessMatches.length > 0 && 'Business/stakeholder focus'
-    ].filter(Boolean)
+      businessMatches.length > 0 && 'Business/stakeholder focus',
+    ].filter(Boolean),
   };
 }
 
@@ -106,8 +106,9 @@ export function detectDecision(text) {
       clarityMatches.length > 0 && 'Clear decision statement',
       specificityMatches.length > 0 && 'Specific details provided',
       actionVerbMatches.length > 0 && `${actionVerbMatches.length} action verbs used`,
-      vagueDecisionMatches.length > 0 && `⚠️ ${vagueDecisionMatches.length} vague decision phrases detected`
-    ].filter(Boolean)
+      vagueDecisionMatches.length > 0 &&
+        `⚠️ ${vagueDecisionMatches.length} vague decision phrases detected`,
+    ].filter(Boolean),
   };
 }
 
@@ -133,8 +134,8 @@ export function detectOptions(text) {
       hasOptionsSection && 'Dedicated options section',
       optionsMatches.length > 0 && `${optionsMatches.length} options mentioned`,
       comparisonMatches.length > 0 && 'Options compared',
-      rejectedMatches.length > 0 && 'Rejected options explained'
-    ].filter(Boolean)
+      rejectedMatches.length > 0 && 'Rejected options explained',
+    ].filter(Boolean),
   };
 }
 
@@ -167,8 +168,9 @@ export function detectConsequences(text) {
       positiveMatches.length > 0 && `${positiveMatches.length} positive consequences`,
       negativeMatches.length > 0 && `${negativeMatches.length} negative consequences`,
       neutralMatches.length > 0 && 'Neutral impacts noted',
-      vagueConsequenceMatches.length > 0 && `⚠️ ${vagueConsequenceMatches.length} vague terms (complexity/overhead)`
-    ].filter(Boolean)
+      vagueConsequenceMatches.length > 0 &&
+        `⚠️ ${vagueConsequenceMatches.length} vague terms (complexity/overhead)`,
+    ].filter(Boolean),
   };
 }
 
@@ -203,8 +205,8 @@ export function detectStatus(text) {
       hasStatusSection && 'Dedicated status section',
       statusMatches.length > 0 && `Status: ${statusMatches.join(', ')}`,
       dateMatches.length > 0 && 'Date information present',
-      supersededMatches.length > 0 && 'Supersession reference'
-    ].filter(Boolean)
+      supersededMatches.length > 0 && 'Supersession reference',
+    ].filter(Boolean),
   };
 }
 
@@ -227,8 +229,8 @@ export function detectRationale(text) {
     indicators: [
       hasRationaleSection && 'Dedicated rationale section',
       rationaleMatches.length > 0 && `${rationaleMatches.length} rationale statements`,
-      evidenceMatches.length > 0 && 'Evidence-based reasoning'
-    ].filter(Boolean)
+      evidenceMatches.length > 0 && 'Evidence-based reasoning',
+    ].filter(Boolean),
   };
 }
 
@@ -268,8 +270,8 @@ export function detectDecisionDrivers(text) {
       hasSectionHeader && 'Dedicated Decision Drivers section',
       driversCount > 0 && `${driversCount} drivers listed`,
       driversCount >= 3 && '✓ Minimum 3 drivers (MADR 3.0)',
-      driversCount < 3 && driversCount > 0 && `⚠️ Only ${driversCount} drivers (need 3+)`
-    ].filter(Boolean)
+      driversCount < 3 && driversCount > 0 && `⚠️ Only ${driversCount} drivers (need 3+)`,
+    ].filter(Boolean),
   };
 }
 
@@ -294,8 +296,8 @@ export function detectConfirmation(text) {
     indicators: [
       hasSectionHeader && 'Dedicated Confirmation section',
       validationMatches.length > 0 && `${validationMatches.length} validation mechanisms`,
-      measurableMatches.length > 0 && 'Measurable criteria specified'
-    ].filter(Boolean)
+      measurableMatches.length > 0 && 'Measurable criteria specified',
+    ].filter(Boolean),
   };
 }
 
@@ -345,8 +347,8 @@ export function detectYStatement(text) {
     indicators: [
       hasChosenOption && 'MADR Y-statement format: "Chosen option: X, because..."',
       hasAltFormat && !hasChosenOption && 'Alternative decision format with justification',
-      hasJustification && 'Strong justification pattern detected'
-    ].filter(Boolean)
+      hasJustification && 'Strong justification pattern detected',
+    ].filter(Boolean),
   };
 }
 
@@ -373,8 +375,8 @@ export function detectMADRConsequenceFormat(text) {
       goodMatches.length > 0 && `${goodMatches.length} "Good, because..." items`,
       badMatches.length > 0 && `${badMatches.length} "Bad, because..." items`,
       neutralMatches.length > 0 && `${neutralMatches.length} "Neutral, because..." items`,
-      totalMADRFormat >= 6 && '✓ Rich MADR consequence format (6+ items)'
-    ].filter(Boolean)
+      totalMADRFormat >= 6 && '✓ Rich MADR consequence format (6+ items)',
+    ].filter(Boolean),
   };
 }
 
@@ -398,8 +400,8 @@ export function detectProsConsSection(text) {
     indicators: [
       hasSectionHeader && 'Pros and Cons of Options section present',
       optionMatches.length >= 2 && `${optionMatches.length} options analyzed`,
-      goodArgMatches.length + badArgMatches.length >= 4 && 'Detailed pro/con analysis'
-    ].filter(Boolean)
+      goodArgMatches.length + badArgMatches.length >= 4 && 'Detailed pro/con analysis',
+    ].filter(Boolean),
   };
 }
 
@@ -416,8 +418,9 @@ export function detectYAMLMetadata(text) {
   const hasConsulted = YAML_METADATA_PATTERNS.consulted.test(text);
   const hasInformed = YAML_METADATA_PATTERNS.informed.test(text);
 
-  const metadataCount = [hasStatus, hasDate, hasDecisionMakers, hasConsulted, hasInformed]
-    .filter(Boolean).length;
+  const metadataCount = [hasStatus, hasDate, hasDecisionMakers, hasConsulted, hasInformed].filter(
+    Boolean
+  ).length;
 
   return {
     hasFrontMatter,
@@ -433,8 +436,8 @@ export function detectYAMLMetadata(text) {
       hasDecisionMakers && 'Decision-makers listed',
       hasConsulted && 'Consulted parties listed',
       hasInformed && 'Informed parties listed',
-      metadataCount >= 4 && '✓ Rich MADR metadata (4+ fields)'
-    ].filter(Boolean)
+      metadataCount >= 4 && '✓ Rich MADR metadata (4+ fields)',
+    ].filter(Boolean),
   };
 }
 
@@ -457,8 +460,8 @@ export function detectMoreInfoSection(text) {
     indicators: [
       hasSectionHeader && 'More Information section present',
       linkMatches.length > 0 && `${linkMatches.length} links to external resources`,
-      evidenceMatches.length > 0 && 'Evidence/research references'
-    ].filter(Boolean)
+      evidenceMatches.length > 0 && 'Evidence/research references',
+    ].filter(Boolean),
   };
 }
 
@@ -475,8 +478,13 @@ export function detectQuantifiedMetrics(text) {
   const slaMetrics = text.match(QUANTIFIED_PATTERNS.slaMetrics) || [];
   const latencyMetrics = text.match(QUANTIFIED_PATTERNS.latencyMetrics) || [];
 
-  const totalMetrics = percentages.length + currency.length + timeMetrics.length +
-    userMetrics.length + slaMetrics.length + latencyMetrics.length;
+  const totalMetrics =
+    percentages.length +
+    currency.length +
+    timeMetrics.length +
+    userMetrics.length +
+    slaMetrics.length +
+    latencyMetrics.length;
 
   const categoryCount = [
     percentages.length > 0,
@@ -484,7 +492,7 @@ export function detectQuantifiedMetrics(text) {
     timeMetrics.length > 0,
     userMetrics.length > 0,
     slaMetrics.length > 0,
-    latencyMetrics.length > 0
+    latencyMetrics.length > 0,
   ].filter(Boolean).length;
 
   return {
@@ -503,8 +511,8 @@ export function detectQuantifiedMetrics(text) {
       timeMetrics.length > 0 && `${timeMetrics.length} time metrics`,
       userMetrics.length > 0 && `${userMetrics.length} user/scale metrics`,
       latencyMetrics.length > 0 && 'Performance/latency metrics',
-      totalMetrics >= 8 && '✓ Highly quantified context'
-    ].filter(Boolean)
+      totalMetrics >= 8 && '✓ Highly quantified context',
+    ].filter(Boolean),
   };
 }
 
@@ -528,8 +536,8 @@ export function detectGoals(text) {
     indicators: [
       hasGoalsSection && 'Goals section present',
       hasNonGoalsSection && 'Non-Goals section present',
-      hasGoalsSection && hasNonGoalsSection && '✓ Both Goals and Non-Goals defined (KEP pattern)'
-    ].filter(Boolean)
+      hasGoalsSection && hasNonGoalsSection && '✓ Both Goals and Non-Goals defined (KEP pattern)',
+    ].filter(Boolean),
   };
 }
 
@@ -558,9 +566,10 @@ export function detectRisks(text) {
     mitigationCount: mitigationLanguage.length,
     indicators: [
       hasRisksSection && 'Risks and Mitigations section present',
-      hasRiskMitigationPairs && `${riskLanguage.length} risks with ${mitigationLanguage.length} mitigations`,
-      hasRiskMitigationPairs && '✓ Risk/Mitigation pairs documented'
-    ].filter(Boolean)
+      hasRiskMitigationPairs &&
+        `${riskLanguage.length} risks with ${mitigationLanguage.length} mitigations`,
+      hasRiskMitigationPairs && '✓ Risk/Mitigation pairs documented',
+    ].filter(Boolean),
   };
 }
 
@@ -588,8 +597,8 @@ export function detectADRReferences(text) {
       supersededByMatches.length > 0 && 'Superseded-by reference present',
       supersedesMatches.length > 0 && 'Supersedes reference present',
       hasRelatedADRs && `${adrReferences.length} ADR cross-references`,
-      hasEvolutionTracking && '✓ ADR evolution tracking'
-    ].filter(Boolean)
+      hasEvolutionTracking && '✓ ADR evolution tracking',
+    ].filter(Boolean),
   };
 }
 
@@ -613,8 +622,8 @@ export function detectImplementationHistory(text) {
     indicators: [
       hasSectionHeader && 'Implementation History section present',
       dateEntries.length > 0 && `${dateEntries.length} dated entries`,
-      milestones.length > 0 && `${milestones.length} milestones referenced`
-    ].filter(Boolean)
+      milestones.length > 0 && `${milestones.length} milestones referenced`,
+    ].filter(Boolean),
   };
 }
 
@@ -641,8 +650,8 @@ export function detectTradeoffMatrix(text) {
       hasMarkdownTable && `${tableMatches.length} comparison table(s)`,
       hasComparisonHeader && 'Comparison/Tradeoff section',
       hasOptionComparison && 'Option comparison in table',
-      hasMarkdownTable && hasOptionComparison && '✓ Structured option comparison'
-    ].filter(Boolean)
+      hasMarkdownTable && hasOptionComparison && '✓ Structured option comparison',
+    ].filter(Boolean),
   };
 }
 
@@ -668,10 +677,11 @@ export function detectCompliance(text) {
     hasComplianceAwareness: hasComplianceSection || hasStandards || hasGovernance,
     indicators: [
       hasComplianceSection && 'Compliance section present',
-      hasStandards && `${standards.length} standards referenced (${[...new Set(standards)].join(', ')})`,
+      hasStandards &&
+        `${standards.length} standards referenced (${[...new Set(standards)].join(', ')})`,
       hasGovernance && 'Governance/approval language present',
-      hasComplianceSection && hasStandards && '✓ Compliance-aware ADR'
-    ].filter(Boolean)
+      hasComplianceSection && hasStandards && '✓ Compliance-aware ADR',
+    ].filter(Boolean),
   };
 }
 
@@ -692,7 +702,7 @@ export function detectTechnicalContext(text) {
     diagrams.length > 0,
     techStack.length > 0,
     constraints.length > 0,
-    integrations.length > 0
+    integrations.length > 0,
   ].filter(Boolean).length;
 
   return {
@@ -710,8 +720,8 @@ export function detectTechnicalContext(text) {
       techStack.length > 0 && 'Technology stack mentioned',
       constraints.length > 0 && 'Technical constraints documented',
       integrations.length > 0 && 'Integration points identified',
-      contextDepth >= 3 && '✓ Rich technical context'
-    ].filter(Boolean)
+      contextDepth >= 3 && '✓ Rich technical context',
+    ].filter(Boolean),
   };
 }
 
@@ -738,8 +748,8 @@ export function detectReversibility(text) {
       hasReversibilitySection && 'Reversibility section present',
       oneWayDoor.length > 0 && 'One-way door (irreversible) decision identified',
       twoWayDoor.length > 0 && 'Two-way door (reversible) decision identified',
-      hasClassification && '✓ Decision reversibility classified'
-    ].filter(Boolean)
+      hasClassification && '✓ Decision reversibility classified',
+    ].filter(Boolean),
   };
 }
 
@@ -770,8 +780,8 @@ export function detectTeamContext(text) {
       hasOwnership && 'Decision driver/owner identified',
       hasStakeholderMapping && 'Stakeholder mapping (consulted/informed)',
       hasRACIPattern && 'RACI/DACI pattern detected',
-      hasTeamSection && hasOwnership && '✓ Clear team accountability'
-    ].filter(Boolean)
+      hasTeamSection && hasOwnership && '✓ Clear team accountability',
+    ].filter(Boolean),
   };
 }
 
@@ -785,10 +795,11 @@ export function detectAssumptions(text) {
   const assumptionMatches = text.match(ASSUMPTIONS_PATTERNS.assumptionLanguage) || [];
   const constraintMatches = text.match(ASSUMPTIONS_PATTERNS.constraintAssumption) || [];
 
-  const score = Math.min(3,
+  const score = Math.min(
+    3,
     (hasSection ? 1 : 0) +
-    Math.min(1, Math.floor(assumptionMatches.length / 2)) +
-    Math.min(1, constraintMatches.length > 0 ? 1 : 0)
+      Math.min(1, Math.floor(assumptionMatches.length / 2)) +
+      Math.min(1, constraintMatches.length > 0 ? 1 : 0)
   );
 
   return {
@@ -799,8 +810,8 @@ export function detectAssumptions(text) {
     details: [
       hasSection && '✓ Assumptions section present',
       assumptionMatches.length > 0 && `Found ${assumptionMatches.length} assumption references`,
-      constraintMatches.length > 0 && `Found ${constraintMatches.length} constraint references`
-    ].filter(Boolean)
+      constraintMatches.length > 0 && `Found ${constraintMatches.length} constraint references`,
+    ].filter(Boolean),
   };
 }
 
@@ -815,10 +826,11 @@ export function detectScopeImpact(text) {
   const boundaryMatches = text.match(SCOPE_IMPACT_PATTERNS.boundaryLanguage) || [];
   const systemsMatches = text.match(SCOPE_IMPACT_PATTERNS.systemsAffected) || [];
 
-  const score = Math.min(3,
+  const score = Math.min(
+    3,
     (hasSection ? 1 : 0) +
-    Math.min(1, Math.floor(impactMatches.length / 3)) +
-    (systemsMatches.length > 0 ? 1 : 0)
+      Math.min(1, Math.floor(impactMatches.length / 3)) +
+      (systemsMatches.length > 0 ? 1 : 0)
   );
 
   return {
@@ -830,8 +842,8 @@ export function detectScopeImpact(text) {
     details: [
       hasSection && '✓ Scope/Impact section present',
       impactMatches.length > 0 && `Found ${impactMatches.length} impact references`,
-      systemsMatches.length > 0 && `Found ${systemsMatches.length} systems affected references`
-    ].filter(Boolean)
+      systemsMatches.length > 0 && `Found ${systemsMatches.length} systems affected references`,
+    ].filter(Boolean),
   };
 }
 
@@ -851,13 +863,10 @@ export function detectQualityAttributes(text) {
     perfMatches.length > 0,
     reliabilityMatches.length > 0,
     securityMatches.length > 0,
-    maintainMatches.length > 0
+    maintainMatches.length > 0,
   ].filter(Boolean).length;
 
-  const score = Math.min(3,
-    (hasSection ? 1 : 0) +
-    Math.min(2, attributeCategories)
-  );
+  const score = Math.min(3, (hasSection ? 1 : 0) + Math.min(2, attributeCategories));
 
   return {
     hasSection,
@@ -872,8 +881,8 @@ export function detectQualityAttributes(text) {
       perfMatches.length > 0 && 'Performance considerations documented',
       reliabilityMatches.length > 0 && 'Reliability considerations documented',
       securityMatches.length > 0 && 'Security considerations documented',
-      maintainMatches.length > 0 && 'Maintainability considerations documented'
-    ].filter(Boolean)
+      maintainMatches.length > 0 && 'Maintainability considerations documented',
+    ].filter(Boolean),
   };
 }
 
@@ -892,10 +901,9 @@ export function detectAlternativesDepth(text) {
   const hasProsCons = proConMatches.length >= 3;
   const hasComparisons = comparisonMatches.length > 0;
 
-  const score = Math.min(3,
-    (hasSection ? 1 : 0) +
-    (hasProsCons ? 1 : 0) +
-    (hasRejectionReasons ? 1 : 0)
+  const score = Math.min(
+    3,
+    (hasSection ? 1 : 0) + (hasProsCons ? 1 : 0) + (hasRejectionReasons ? 1 : 0)
   );
 
   return {
@@ -909,8 +917,8 @@ export function detectAlternativesDepth(text) {
       hasSection && '✓ Alternatives section present',
       hasProsCons && `Found ${proConMatches.length} pro/con references`,
       hasComparisons && `Found ${comparisonMatches.length} comparison references`,
-      hasRejectionReasons && '✓ Explains why alternatives were rejected'
-    ].filter(Boolean)
+      hasRejectionReasons && '✓ Explains why alternatives were rejected',
+    ].filter(Boolean),
   };
 }
 
@@ -928,10 +936,7 @@ export function detectLinks(text) {
   const totalLinks = markdownLinks.length + urls.length + wikiLinks.length;
   const hasRichReferences = totalLinks >= 3;
 
-  const score = Math.min(2,
-    (hasSection ? 1 : 0) +
-    (hasRichReferences ? 1 : 0)
-  );
+  const score = Math.min(2, (hasSection ? 1 : 0) + (hasRichReferences ? 1 : 0));
 
   return {
     hasSection,
@@ -944,8 +949,8 @@ export function detectLinks(text) {
     details: [
       hasSection && '✓ Links/References section present',
       totalLinks > 0 && `Found ${totalLinks} external references`,
-      hasRichReferences && '✓ Well-referenced document'
-    ].filter(Boolean)
+      hasRichReferences && '✓ Well-referenced document',
+    ].filter(Boolean),
   };
 }
 
@@ -962,9 +967,9 @@ export function detectChangelog(text) {
   const hasVersionHistory = versionEntries.length >= 2;
   const hasChangeTracking = changeActions.length >= 2;
 
-  const score = Math.min(2,
-    (hasSection ? 1 : 0) +
-    (hasVersionHistory && hasChangeTracking ? 1 : 0)
+  const score = Math.min(
+    2,
+    (hasSection ? 1 : 0) + (hasVersionHistory && hasChangeTracking ? 1 : 0)
   );
 
   return {
@@ -977,8 +982,8 @@ export function detectChangelog(text) {
     details: [
       hasSection && '✓ Changelog section present',
       hasVersionHistory && `Found ${versionEntries.length} version entries`,
-      hasChangeTracking && 'Change actions documented'
-    ].filter(Boolean)
+      hasChangeTracking && 'Change actions documented',
+    ].filter(Boolean),
   };
 }
 
@@ -1006,8 +1011,8 @@ export function detectSuperseded(text) {
     details: [
       hasSupersededStatus && '⚠️ This ADR has been superseded',
       supersedesOtherADR && '✓ Supersedes previous ADR(s)',
-      hasADRReferences && `References ${adrRefs.length} other ADR(s)`
-    ].filter(Boolean)
+      hasADRReferences && `References ${adrRefs.length} other ADR(s)`,
+    ].filter(Boolean),
   };
 }
 
@@ -1027,10 +1032,7 @@ export function detectSignoff(text) {
   const hasRoleSignatures = roleSignatures.length > 0;
   const hasFormalSignoff = hasSection && (hasDatedSignatures || hasRoleSignatures);
 
-  const score = Math.min(2,
-    (hasSection ? 1 : 0) +
-    (hasFormalSignoff ? 1 : 0)
-  );
+  const score = Math.min(2, (hasSection ? 1 : 0) + (hasFormalSignoff ? 1 : 0));
 
   return {
     hasSection,
@@ -1044,8 +1046,8 @@ export function detectSignoff(text) {
       hasApprovals && 'Approval documented',
       hasDatedSignatures && 'Dated signatures present',
       hasRoleSignatures && 'Role-based sign-off documented',
-      hasFormalSignoff && '✓ Formal stakeholder sign-off'
-    ].filter(Boolean)
+      hasFormalSignoff && '✓ Formal stakeholder sign-off',
+    ].filter(Boolean),
   };
 }
 
@@ -1072,8 +1074,8 @@ export function detectADRNumbering(text) {
       hasTitleNumber && 'ADR number in title',
       fileMatches.length > 0 && 'ADR file numbering',
       hasInlineRefs && `Cross-references ${inlineRefs.length} ADRs`,
-      hasNumbering && '✓ Enterprise ADR numbering'
-    ].filter(Boolean)
+      hasNumbering && '✓ Enterprise ADR numbering',
+    ].filter(Boolean),
   };
 }
 
@@ -1101,8 +1103,8 @@ export function detectASR(text) {
       hasASRSection && 'ASR section present',
       hasASRLanguage && `Architecture significance language (${asrLanguageMatches.length} terms)`,
       hasQualityDrivers && 'Quality driver scenarios documented',
-      hasASR && '✓ Architecture Significant Requirements identified'
-    ].filter(Boolean)
+      hasASR && '✓ Architecture Significant Requirements identified',
+    ].filter(Boolean),
   };
 }
 
@@ -1133,8 +1135,8 @@ export function detectCostEstimation(text) {
       hasCostLanguage && 'Cost analysis language',
       hasEffortEstimate && 'Effort estimation provided',
       hasROI && 'ROI/cost-benefit analysis',
-      hasCostAnalysis && '✓ Cost estimation documented'
-    ].filter(Boolean)
+      hasCostAnalysis && '✓ Cost estimation documented',
+    ].filter(Boolean),
   };
 }
 
@@ -1165,8 +1167,8 @@ export function detectTimeline(text) {
       hasDeadlines && 'Deadlines documented',
       hasQuarterRefs && 'Quarter-based planning',
       hasDateRefs && 'Specific dates referenced',
-      hasTimeline && '✓ Timeline awareness'
-    ].filter(Boolean)
+      hasTimeline && '✓ Timeline awareness',
+    ].filter(Boolean),
   };
 }
 
@@ -1198,8 +1200,8 @@ export function detectSecurityImpact(text) {
       hasSecurityLanguage && `Security considerations (${securityMatches.length} terms)`,
       hasThreatAnalysis && 'Threat analysis included',
       hasAuditConsiderations && 'Audit/compliance considerations',
-      hasSecurityAnalysis && '✓ Security impact documented'
-    ].filter(Boolean)
+      hasSecurityAnalysis && '✓ Security impact documented',
+    ].filter(Boolean),
   };
 }
 
@@ -1230,8 +1232,8 @@ export function detectDependencies(text) {
       hasUpstreamDeps && 'Upstream dependencies identified',
       hasDownstreamDeps && 'Downstream impacts documented',
       hasIntegrations && 'Integration points described',
-      hasDependencyAnalysis && '✓ Dependency analysis documented'
-    ].filter(Boolean)
+      hasDependencyAnalysis && '✓ Dependency analysis documented',
+    ].filter(Boolean),
   };
 }
 
@@ -1263,8 +1265,8 @@ export function detectDiagrams(text) {
       hasDiagramReferences && 'Diagram references included',
       hasDiagramTypes && `Specific diagram types: ${diagramTypes.join(', ')}`,
       hasEmbeddedDiagrams && 'Embedded diagrams (mermaid/plantuml)',
-      hasDiagrams && '✓ Visual documentation'
-    ].filter(Boolean)
+      hasDiagrams && '✓ Visual documentation',
+    ].filter(Boolean),
   };
 }
 
@@ -1296,8 +1298,7 @@ export function detectObservability(text) {
       hasMetrics && `SLO/SLI metrics defined (${metricsMatches.length} terms)`,
       hasMonitoring && 'Monitoring/alerting planned',
       hasTracing && 'Distributed tracing considered',
-      hasObservability && '✓ Observability documented'
-    ].filter(Boolean)
+      hasObservability && '✓ Observability documented',
+    ].filter(Boolean),
   };
 }
-

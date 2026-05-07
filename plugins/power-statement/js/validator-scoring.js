@@ -8,11 +8,7 @@
  * 4. Specificity (25 pts) - Metrics, customer type clarity
  */
 
-import {
-  detectSpecificity,
-  detectImpact,
-  detectClarity
-} from './validator-detection.js';
+import { detectSpecificity, detectImpact, detectClarity } from './validator-detection.js';
 
 // Re-export action and specificity scoring from sub-module
 export { scoreAction, scoreSpecificity } from './validator-scoring-action.js';
@@ -83,14 +79,16 @@ export function scoreClarity(text) {
   if (clarityDetection.hasVagueImprovement) {
     const penalty = Math.min(9, clarityDetection.vagueImprovementCount * 3);
     score -= penalty;
-    issues.push(`Replace vague terms with specifics: ${clarityDetection.vagueImprovementFound.slice(0, 3).join(', ')} (-${penalty} pts)`);
+    issues.push(
+      `Replace vague terms with specifics: ${clarityDetection.vagueImprovementFound.slice(0, 3).join(', ')} (-${penalty} pts)`
+    );
   }
 
   return {
     score: Math.max(0, Math.min(score, maxScore)),
     maxScore,
     issues,
-    strengths
+    strengths,
   };
 }
 
@@ -147,6 +145,6 @@ export function scoreImpact(text) {
     score: Math.min(score, maxScore),
     maxScore,
     issues,
-    strengths
+    strengths,
   };
 }

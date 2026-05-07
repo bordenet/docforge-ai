@@ -153,18 +153,24 @@ export function attachProjectEventListeners(plugin, project, phase) {
         const priorPhase = targetPhase - 1;
         const priorPhaseComplete = freshProject.phases?.[priorPhase]?.completed;
         if (!priorPhaseComplete) {
-          showToast(`Complete Phase ${priorPhase} before proceeding to Phase ${targetPhase}`, 'warning');
+          showToast(
+            `Complete Phase ${priorPhase} before proceeding to Phase ${targetPhase}`,
+            'warning'
+          );
           return;
         }
       }
 
       freshProject.currentPhase = targetPhase;
       updatePhaseTabStyles(targetPhase);
-      document.getElementById('phase-content').innerHTML = renderPhaseContent(plugin, freshProject, targetPhase);
+      document.getElementById('phase-content').innerHTML = renderPhaseContent(
+        plugin,
+        freshProject,
+        targetPhase
+      );
       attachPhaseEventListeners(plugin, freshProject, targetPhase);
     });
   });
 
   attachPhaseEventListeners(plugin, project, phase);
 }
-

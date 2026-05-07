@@ -13,15 +13,46 @@ const mockPlugin = {
   description: 'Test plugin for unit tests',
   dbName: 'test-docforge-db',
   formFields: [
-    { id: 'title', label: 'Project Title', type: 'text', required: true, placeholder: 'Enter title' },
-    { id: 'description', label: 'Description', type: 'textarea', required: false, rows: 3, placeholder: 'Enter description' },
+    {
+      id: 'title',
+      label: 'Project Title',
+      type: 'text',
+      required: true,
+      placeholder: 'Enter title',
+    },
+    {
+      id: 'description',
+      label: 'Description',
+      type: 'textarea',
+      required: false,
+      rows: 3,
+      placeholder: 'Enter description',
+    },
   ],
   workflowConfig: {
     phaseCount: 3,
     phases: [
-      { number: 1, name: 'Initial Draft', icon: '📝', aiModel: 'Claude', description: 'Generate the first draft' },
-      { number: 2, name: 'Review', icon: '🔍', aiModel: 'Gemini', description: 'Get improvements from Gemini' },
-      { number: 3, name: 'Final Synthesis', icon: '✨', aiModel: 'Claude', description: 'Create final version' },
+      {
+        number: 1,
+        name: 'Initial Draft',
+        icon: '📝',
+        aiModel: 'Claude',
+        description: 'Generate the first draft',
+      },
+      {
+        number: 2,
+        name: 'Review',
+        icon: '🔍',
+        aiModel: 'Gemini',
+        description: 'Get improvements from Gemini',
+      },
+      {
+        number: 3,
+        name: 'Final Synthesis',
+        icon: '✨',
+        aiModel: 'Claude',
+        description: 'Create final version',
+      },
     ],
   },
 };
@@ -167,13 +198,15 @@ describe('Views Project Module', () => {
       const html = renderPhaseContent(mockPlugin, completedProject, 3);
       expect(html).toContain('Your Test Document is Complete');
       expect(html).toContain('export-final-btn');
-	      expect(html).toContain('Copy Final');
-	      expect(html).toContain('tune & refine');
-	      expect(html).toContain('download-menu-btn');
-	      expect(html).toContain('bg-green-600');
-	      expect(html).toContain('validate-btn');
-	      expect(html).toContain('Tune & Refine');
-	      expect(html).toContain('data-validator-url="../validator/?type=test-plugin&project=completed-project-456&phase=3"');
+      expect(html).toContain('Copy Final');
+      expect(html).toContain('tune & refine');
+      expect(html).toContain('download-menu-btn');
+      expect(html).toContain('bg-green-600');
+      expect(html).toContain('validate-btn');
+      expect(html).toContain('Tune & Refine');
+      expect(html).toContain(
+        'data-validator-url="../validator/?type=test-plugin&project=completed-project-456&phase=3"'
+      );
     });
 
     test('should not render completion banner for incomplete phase 3', () => {

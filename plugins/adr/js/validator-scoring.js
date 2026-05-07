@@ -28,7 +28,7 @@ import {
   detectAssumptions,
   detectScopeImpact,
   detectAlternativesDepth,
-  detectASR
+  detectASR,
 } from './validator-detection.js';
 
 // Re-export consequences and status scoring from separate module
@@ -81,10 +81,14 @@ export function scoreContext(text) {
   const driversDetection = detectDecisionDrivers(text);
   if (driversDetection.hasSectionHeader && driversDetection.hasMinimumDrivers) {
     score += 5;
-    strengths.push(`Decision Drivers section with ${driversDetection.driversCount} drivers (MADR 3.0)`);
+    strengths.push(
+      `Decision Drivers section with ${driversDetection.driversCount} drivers (MADR 3.0)`
+    );
   } else if (driversDetection.hasSectionHeader) {
     score += 2;
-    issues.push(`Decision Drivers section has only ${driversDetection.driversCount} drivers - need 3+ (MADR 3.0)`);
+    issues.push(
+      `Decision Drivers section has only ${driversDetection.driversCount} drivers - need 3+ (MADR 3.0)`
+    );
   } else if (driversDetection.hasDriverLanguage) {
     score += 1;
     issues.push('Decision drivers mentioned but missing dedicated section (MADR 3.0)');
@@ -96,7 +100,9 @@ export function scoreContext(text) {
   const quantifiedDetection = detectQuantifiedMetrics(text);
   if (quantifiedDetection.isWellQuantified) {
     score += 2;
-    strengths.push(`Well-quantified context (${quantifiedDetection.totalMetrics} metrics across ${quantifiedDetection.categoryCount} categories)`);
+    strengths.push(
+      `Well-quantified context (${quantifiedDetection.totalMetrics} metrics across ${quantifiedDetection.categoryCount} categories)`
+    );
   }
 
   // Goals/Non-Goals sections (KEP pattern, bonus 0-2 pts)
@@ -106,7 +112,9 @@ export function scoreContext(text) {
     strengths.push('Goals and Non-Goals sections defined (KEP pattern)');
   } else if (goalsDetection.hasGoalsSection || goalsDetection.hasNonGoalsSection) {
     score += 1;
-    strengths.push(goalsDetection.hasGoalsSection ? 'Goals section present' : 'Non-Goals section present');
+    strengths.push(
+      goalsDetection.hasGoalsSection ? 'Goals section present' : 'Non-Goals section present'
+    );
   }
 
   // Technical Context depth bonus (+2 pts)
@@ -153,7 +161,7 @@ export function scoreContext(text) {
     score: Math.min(score, maxScore),
     maxScore,
     issues,
-    strengths
+    strengths,
   };
 }
 
@@ -186,7 +194,9 @@ export function scoreDecision(text) {
   // Vague decision penalty (-5 pts)
   if (decisionDetection.hasVagueDecision) {
     score -= 5;
-    issues.push(`Vague decision detected (${decisionDetection.vagueDecisionCount} phrases) - be specific about technology/pattern choice`);
+    issues.push(
+      `Vague decision detected (${decisionDetection.vagueDecisionCount} phrases) - be specific about technology/pattern choice`
+    );
   }
 
   // Action verb bonus (+2 pts)
@@ -194,7 +204,9 @@ export function scoreDecision(text) {
     score += 2;
     strengths.push(`Strong action verbs used (${decisionDetection.actionVerbCount})`);
   } else if (!decisionDetection.hasActionVerbs) {
-    issues.push('Missing action verbs - use: adopt, implement, migrate, split, combine, establish, enforce');
+    issues.push(
+      'Missing action verbs - use: adopt, implement, migrate, split, combine, establish, enforce'
+    );
   }
 
   // Explicit alternatives comparison pattern (0-6 pts)
@@ -209,7 +221,9 @@ export function scoreDecision(text) {
     issues.push('Use explicit format: "We considered X, Y, Z but chose..."');
   } else if (optionsDetection.hasOptionsLanguage) {
     score += 2;
-    issues.push('Options mentioned but not compared - use "We considered X, Y, Z but chose..." format');
+    issues.push(
+      'Options mentioned but not compared - use "We considered X, Y, Z but chose..." format'
+    );
   } else {
     issues.push('Alternatives not documented - use "We considered X, Y, Z but chose..." format');
   }
@@ -239,7 +253,9 @@ export function scoreDecision(text) {
   const prosConsDetection = detectProsConsSection(text);
   if (prosConsDetection.hasDetailedAnalysis) {
     score += 2;
-    strengths.push(`Pros/Cons section with ${prosConsDetection.optionCount} options analyzed (MADR 3.0)`);
+    strengths.push(
+      `Pros/Cons section with ${prosConsDetection.optionCount} options analyzed (MADR 3.0)`
+    );
   } else if (prosConsDetection.hasSectionHeader) {
     score += 1;
     strengths.push('Pros and Cons section present');
@@ -264,7 +280,10 @@ export function scoreDecision(text) {
 
   // Alternatives Depth bonus (+2 pts)
   const alternativesDepthDetection = detectAlternativesDepth(text);
-  if (alternativesDepthDetection.hasRejectionReasons && alternativesDepthDetection.proConCount >= 3) {
+  if (
+    alternativesDepthDetection.hasRejectionReasons &&
+    alternativesDepthDetection.proConCount >= 3
+  ) {
     score += 2;
     strengths.push('Alternatives thoroughly analyzed with rejection reasons');
   } else if (alternativesDepthDetection.hasSection || alternativesDepthDetection.proConCount >= 2) {
@@ -276,6 +295,6 @@ export function scoreDecision(text) {
     score: Math.max(0, Math.min(score, maxScore)),
     maxScore,
     issues,
-    strengths
+    strengths,
   };
 }

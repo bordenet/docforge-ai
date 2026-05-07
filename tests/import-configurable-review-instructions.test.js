@@ -48,7 +48,8 @@ describe('Configurable Review Instructions', () => {
 `,
     });
 
-    const customInstruction = '**Analyze this PR-FAQ for strategic alignment and customer clarity. Produce an improved version.**';
+    const customInstruction =
+      '**Analyze this PR-FAQ for strategic alignment and customer clarity. Produce an improved version.**';
     const plugin = {
       id: 'test',
       importConfig: {
@@ -126,4 +127,3 @@ Do something important.
     expect(prompt).toContain('REVIEW THE IMPORTED DOCUMENT');
   });
 });
-

@@ -23,16 +23,27 @@ export function createEmptyResult() {
     length: { score: 0, maxScore: 25, issues: ['No content'] },
     inclusivity: { score: 0, maxScore: 25, issues: ['No content'] },
     culture: { score: 0, maxScore: 25, issues: ['No content'] },
-    transparency: { score: 0, maxScore: 25, issues: ['No content'] }
+    transparency: { score: 0, maxScore: 25, issues: ['No content'] },
   };
 }
 
 /**
  * Assemble final validation result
  */
-export function assembleResult(score, feedback, deductions, wordCountResult, jdValidation,
-    masculineResult, extrovertResult, redFlagResult, slopResult,
-    compensationResult, encouragementResult, isInternal) {
+export function assembleResult(
+  score,
+  feedback,
+  deductions,
+  wordCountResult,
+  jdValidation,
+  masculineResult,
+  extrovertResult,
+  redFlagResult,
+  slopResult,
+  compensationResult,
+  encouragementResult,
+  isInternal
+) {
   // Category breakdowns for UI display
   const lengthDeduction = wordCountResult.penalty;
   const masculineDeduction = masculineResult.penalty;
@@ -48,23 +59,32 @@ export function assembleResult(score, feedback, deductions, wordCountResult, jdV
   const rawTransparency = Math.max(0, 25 - compensationDeduction - encouragementDeduction);
 
   const wordCount = wordCountResult.wordCount;
-  const lengthIssues = lengthDeduction > 0
-    ? (wordCount < 400 ? [`Short (${wordCount} words)`] : [`Long (${wordCount} words)`])
-    : [];
+  const lengthIssues =
+    lengthDeduction > 0
+      ? wordCount < 400
+        ? [`Short (${wordCount} words)`]
+        : [`Long (${wordCount} words)`]
+      : [];
 
   const inclusivityIssues = [
-    ...jdValidation.warnings.filter(w => w.type === 'masculine-coded').map(w => `Masculine-coded: "${w.word}"`),
-    ...jdValidation.warnings.filter(w => w.type === 'extrovert-bias').map(w => `Extrovert-bias: "${w.phrase}"`)
+    ...jdValidation.warnings
+      .filter((w) => w.type === 'masculine-coded')
+      .map((w) => `Masculine-coded: "${w.word}"`),
+    ...jdValidation.warnings
+      .filter((w) => w.type === 'extrovert-bias')
+      .map((w) => `Extrovert-bias: "${w.phrase}"`),
   ];
 
   const cultureIssues = [
-    ...jdValidation.warnings.filter(w => w.type === 'red-flag').map(w => `Red flag: "${w.phrase}"`),
-    ...(slopDeduction > 0 ? [`AI patterns detected (-${slopDeduction})`] : [])
+    ...jdValidation.warnings
+      .filter((w) => w.type === 'red-flag')
+      .map((w) => `Red flag: "${w.phrase}"`),
+    ...(slopDeduction > 0 ? [`AI patterns detected (-${slopDeduction})`] : []),
   ];
 
   const transparencyIssues = [
     ...(compensationDeduction > 0 ? ['No compensation range'] : []),
-    ...(encouragementDeduction > 0 ? ['Missing encouragement statement'] : [])
+    ...(encouragementDeduction > 0 ? ['Missing encouragement statement'] : []),
   ];
 
   // Aggregate all issues from all dimensions for the assistant completion banner
@@ -88,7 +108,7 @@ export function assembleResult(score, feedback, deductions, wordCountResult, jdV
     slopDetection: {
       ...slopResult.slopPenalty,
       deduction: slopResult.penalty,
-      issues: slopResult.issues
+      issues: slopResult.issues,
     },
     length: { score: rawLength, maxScore: 25, issues: lengthIssues },
     inclusivity: { score: rawInclusivity, maxScore: 25, issues: inclusivityIssues },
@@ -101,4 +121,3 @@ export function assembleResult(score, feedback, deductions, wordCountResult, jdV
 
 // Re-export scoring helper functions from shared module for consistency
 export { getGrade, getScoreColor, getScoreLabel } from '../../../shared/js/validator.js';
-

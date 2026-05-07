@@ -5,8 +5,11 @@
 
 import { getSlopPenalty } from '../../../shared/js/slop-scoring.js';
 import {
-  HYPE_WORDS, EMOTIONAL_FLUFF, VAGUE_TERMS, TECH_JARGON,
-  PASSIVE_INDICATORS
+  HYPE_WORDS,
+  EMOTIONAL_FLUFF,
+  VAGUE_TERMS,
+  TECH_JARGON,
+  PASSIVE_INDICATORS,
 } from './validator-config.js';
 import { extractQuotes } from './validator-utils.js';
 
@@ -26,12 +29,15 @@ export function analyzeToneAndReadability(content) {
   const contentLower = content.toLowerCase();
 
   // Sentence length analysis
-  const sentences = content.split(/[.!?]+/).filter(s => s.trim());
+  const sentences = content.split(/[.!?]+/).filter((s) => s.trim());
   let totalWords = 0;
   let longSentences = 0;
 
   for (const sentence of sentences) {
-    const words = sentence.trim().split(/\s+/).filter(w => w.length > 0).length;
+    const words = sentence
+      .trim()
+      .split(/\s+/)
+      .filter((w) => w.length > 0).length;
     totalWords += words;
     if (words > 25) {
       longSentences++;
@@ -90,7 +96,7 @@ export function analyzeToneAndReadability(content) {
 
   for (const quote of quotes) {
     const quoteLower = quote.toLowerCase();
-    if (EMOTIONAL_FLUFF.some(fluff => quoteLower.includes(fluff))) {
+    if (EMOTIONAL_FLUFF.some((fluff) => quoteLower.includes(fluff))) {
       fluffyQuotes++;
     }
   }
@@ -100,7 +106,7 @@ export function analyzeToneAndReadability(content) {
       result.score += 1;
       result.strengths.push('Quotes provide substantive insight');
     } else {
-      result.issues.push('Too many generic \'excited\' quotes - add substantive insights');
+      result.issues.push("Too many generic 'excited' quotes - add substantive insights");
     }
   }
 
@@ -189,8 +195,17 @@ export function analyzeMarketingFluff(content) {
   }
 
   // Check for proof
-  const proofIndicators = [/\d+%/, /\d+x/, /study shows/i, /research indicates/i, /data reveals/i, /according to/i, /measured/i, /demonstrated/i];
-  const hasProof = proofIndicators.some(p => p.test(content));
+  const proofIndicators = [
+    /\d+%/,
+    /\d+x/,
+    /study shows/i,
+    /research indicates/i,
+    /data reveals/i,
+    /according to/i,
+    /measured/i,
+    /demonstrated/i,
+  ];
+  const hasProof = proofIndicators.some((p) => p.test(content));
 
   if (hasProof) {
     result.strengths.push('Backs claims with data or evidence');

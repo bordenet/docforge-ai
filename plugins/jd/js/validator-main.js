@@ -4,12 +4,7 @@
  * Core validateDocument function with dimension scoring.
  */
 
-import {
-  MASCULINE_CODED,
-  EXTROVERT_BIAS,
-  RED_FLAGS,
-  SUGGESTIONS
-} from './validator-config.js';
+import { MASCULINE_CODED, EXTROVERT_BIAS, RED_FLAGS, SUGGESTIONS } from './validator-config.js';
 
 import { extractMandatedSections, isInMandatedSection } from './validator-detection.js';
 import { normalizeText } from '../../../shared/js/validator.js';
@@ -21,13 +16,10 @@ import {
   scoreRedFlags,
   scoreCompensation,
   scoreEncouragement,
-  scoreSlopPenalty
+  scoreSlopPenalty,
 } from './validator-scoring.js';
 
-import {
-  createEmptyResult,
-  assembleResult
-} from './validator-results.js';
+import { createEmptyResult, assembleResult } from './validator-results.js';
 
 // Re-export UI helper functions from shared module for consistency
 export { getGrade, getScoreColor, getScoreLabel } from '../../../shared/js/validator.js';
@@ -42,21 +34,23 @@ export function validateJDContent(text) {
   const { cleanText, mandatedSections } = extractMandatedSections(text);
 
   // Check for masculine-coded words
-  MASCULINE_CODED.forEach(word => {
+  MASCULINE_CODED.forEach((word) => {
     const regex = new RegExp(`\\b${word}\\b`, 'gi');
     if (regex.test(cleanText)) {
       if (!isInMandatedSection(word, mandatedSections)) {
         warnings.push({
           type: 'masculine-coded',
           word,
-          suggestion: SUGGESTIONS[word.toLowerCase()] || `Consider replacing "${word}" with more inclusive language`
+          suggestion:
+            SUGGESTIONS[word.toLowerCase()] ||
+            `Consider replacing "${word}" with more inclusive language`,
         });
       }
     }
   });
 
   // Check for extrovert-bias phrases
-  EXTROVERT_BIAS.forEach(phrase => {
+  EXTROVERT_BIAS.forEach((phrase) => {
     const flexiblePattern = phrase.replace(/[-\s]+/g, '[-\\s]+');
     const regex = new RegExp(`\\b${flexiblePattern}\\b`, 'gi');
     if (regex.test(cleanText)) {
@@ -64,14 +58,16 @@ export function validateJDContent(text) {
         warnings.push({
           type: 'extrovert-bias',
           phrase,
-          suggestion: SUGGESTIONS[phrase.toLowerCase()] || `Consider replacing "${phrase}" with more inclusive language`
+          suggestion:
+            SUGGESTIONS[phrase.toLowerCase()] ||
+            `Consider replacing "${phrase}" with more inclusive language`,
         });
       }
     }
   });
 
   // Check for red flag phrases
-  RED_FLAGS.forEach(phrase => {
+  RED_FLAGS.forEach((phrase) => {
     const flexiblePattern = phrase.replace(/[-\s]+/g, '[-\\s]+');
     const regex = new RegExp(`\\b${flexiblePattern}\\b`, 'gi');
     if (regex.test(cleanText)) {
@@ -79,7 +75,9 @@ export function validateJDContent(text) {
         warnings.push({
           type: 'red-flag',
           phrase,
-          suggestion: SUGGESTIONS[phrase.toLowerCase()] || `Consider replacing "${phrase}" with more positive language`
+          suggestion:
+            SUGGESTIONS[phrase.toLowerCase()] ||
+            `Consider replacing "${phrase}" with more positive language`,
         });
       }
     }
@@ -87,7 +85,7 @@ export function validateJDContent(text) {
 
   return {
     warnings,
-    valid: warnings.length === 0
+    valid: warnings.length === 0,
   };
 }
 
@@ -110,9 +108,10 @@ export function validateDocument(text, postingType = 'external') {
   const deductions = [];
 
   // Detect internal posting
-  const isInternal = postingType === 'internal' ||
-                     /\*\*INTERNAL POSTING\*\*/i.test(normalized) ||
-                     /internal posting/i.test(normalized);
+  const isInternal =
+    postingType === 'internal' ||
+    /\*\*INTERNAL POSTING\*\*/i.test(normalized) ||
+    /internal posting/i.test(normalized);
 
   // Get JD content validation
   const jdValidation = validateJDContent(normalized);
@@ -172,7 +171,18 @@ export function validateDocument(text, postingType = 'external') {
   // Floor score at 0
   score = Math.max(0, score);
 
-  return assembleResult(score, feedback, deductions, wordCountResult, jdValidation,
-    masculineResult, extrovertResult, redFlagResult, slopResult,
-    compensationResult, encouragementResult, isInternal);
+  return assembleResult(
+    score,
+    feedback,
+    deductions,
+    wordCountResult,
+    jdValidation,
+    masculineResult,
+    extrovertResult,
+    redFlagResult,
+    slopResult,
+    compensationResult,
+    encouragementResult,
+    isInternal
+  );
 }

@@ -123,4 +123,3 @@ export function runPhaseChecks(prompt, phase, fixtures) {
 
   return results;
 }
-

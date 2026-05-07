@@ -36,114 +36,126 @@ function getTimeSince(isoDate) {
  * @param {number} params.phaseNumber
  * @param {number} [params.maxVersions=10]
  */
-export function createProjectValidatorStorage({ dbName, projectId, phaseNumber, maxVersions = 10 }) {
+export function createProjectValidatorStorage({
+  dbName,
+  projectId,
+  phaseNumber,
+  maxVersions = 10,
+}) {
   const phaseKey = String(phaseNumber);
 
-	function isIsoAfter(a, b) {
-		if (!a || !b) return false;
-		try {
-			return new Date(a).getTime() > new Date(b).getTime();
-		} catch {
-			return false;
-		}
-	}
+  function isIsoAfter(a, b) {
+    if (!a || !b) return false;
+    try {
+      return new Date(a).getTime() > new Date(b).getTime();
+    } catch {
+      return false;
+    }
+  }
 
-	function trimHistory(history) {
-		if (!history || history.versions.length <= maxVersions) return;
-		history.versions = history.versions.slice(-maxVersions);
-		history.currentIndex = history.versions.length - 1;
-	}
+  function trimHistory(history) {
+    if (!history || history.versions.length <= maxVersions) return;
+    history.versions = history.versions.slice(-maxVersions);
+    history.currentIndex = history.versions.length - 1;
+  }
 
-	function maybePushVersion(history, markdown, savedAt) {
-		const clean = sanitizeString(markdown || '');
-		if (!clean) return;
-		const last = history.versions.length ? history.versions[history.versions.length - 1].markdown : null;
-		if (last === clean) return;
-		history.versions.push({ markdown: clean, savedAt: savedAt || new Date().toISOString() });
-	}
+  function maybePushVersion(history, markdown, savedAt) {
+    const clean = sanitizeString(markdown || '');
+    if (!clean) return;
+    const last = history.versions.length
+      ? history.versions[history.versions.length - 1].markdown
+      : null;
+    if (last === clean) return;
+    history.versions.push({ markdown: clean, savedAt: savedAt || new Date().toISOString() });
+  }
 
   async function ensureState() {
-		let state = await getValidatorState(dbName, projectId);
+    let state = await getValidatorState(dbName, projectId);
 
-		const project = await getProject(dbName, projectId);
-		if (!project) {
-			// Hard contract: do not create validatorState for non-existent projects.
-			throw new Error('Project not found');
-		}
-		const seed = getPhaseOutputInternal(project, phaseNumber) || '';
-		const now = new Date().toISOString();
-		const projectUpdatedAt = project.updatedAt || null;
+    const project = await getProject(dbName, projectId);
+    if (!project) {
+      // Hard contract: do not create validatorState for non-existent projects.
+      throw new Error('Project not found');
+    }
+    const seed = getPhaseOutputInternal(project, phaseNumber) || '';
+    const now = new Date().toISOString();
+    const projectUpdatedAt = project.updatedAt || null;
 
-		let didMutate = false;
+    let didMutate = false;
 
-		if (!state) {
-			const history = createEmptyHistory();
-			if (seed) {
-				history.versions.push({ markdown: sanitizeString(seed), savedAt: projectUpdatedAt || now });
-				history.currentIndex = 0;
-			}
+    if (!state) {
+      const history = createEmptyHistory();
+      if (seed) {
+        history.versions.push({ markdown: sanitizeString(seed), savedAt: projectUpdatedAt || now });
+        history.currentIndex = 0;
+      }
 
-			state = {
-				projectId,
-				schemaVersion: 1,
-				phases: {
-					[phaseKey]: {
-						draftMarkdown: sanitizeString(seed),
-						draftUpdatedAt: seed ? now : null,
-						history,
-					},
-				},
-			};
-			didMutate = true;
-		} else {
-			if (!state.phases) state.phases = {};
-			if (!state.phases[phaseKey]) {
-				const history = createEmptyHistory();
-				if (seed) {
-					history.versions.push({ markdown: sanitizeString(seed), savedAt: projectUpdatedAt || now });
-					history.currentIndex = 0;
-				}
+      state = {
+        projectId,
+        schemaVersion: 1,
+        phases: {
+          [phaseKey]: {
+            draftMarkdown: sanitizeString(seed),
+            draftUpdatedAt: seed ? now : null,
+            history,
+          },
+        },
+      };
+      didMutate = true;
+    } else {
+      if (!state.phases) state.phases = {};
+      if (!state.phases[phaseKey]) {
+        const history = createEmptyHistory();
+        if (seed) {
+          history.versions.push({
+            markdown: sanitizeString(seed),
+            savedAt: projectUpdatedAt || now,
+          });
+          history.currentIndex = 0;
+        }
 
-				state.phases[phaseKey] = {
-					draftMarkdown: sanitizeString(seed),
-					draftUpdatedAt: seed ? now : null,
-					history,
-				};
-				didMutate = true;
-			}
-		}
+        state.phases[phaseKey] = {
+          draftMarkdown: sanitizeString(seed),
+          draftUpdatedAt: seed ? now : null,
+          history,
+        };
+        didMutate = true;
+      }
+    }
 
-		// If the canonical project output was updated after the last validator draft update,
-		// update the draft to match the latest project output so attached-mode always opens
-		// with the newest saved Assistant content (while preserving prior drafts in history).
-		const phaseState = state.phases?.[phaseKey];
-		if (phaseState) {
-			const draftUpdatedAt = phaseState.draftUpdatedAt;
-			const projectNewerThanDraft = Boolean(projectUpdatedAt && (!draftUpdatedAt || isIsoAfter(projectUpdatedAt, draftUpdatedAt)));
-			const cleanSeed = sanitizeString(seed);
-			const cleanDraft = sanitizeString(phaseState.draftMarkdown || '');
-			if (projectNewerThanDraft && cleanSeed && cleanSeed !== cleanDraft) {
-				const history = phaseState.history || createEmptyHistory();
+    // If the canonical project output was updated after the last validator draft update,
+    // update the draft to match the latest project output so attached-mode always opens
+    // with the newest saved Assistant content (while preserving prior drafts in history).
+    const phaseState = state.phases?.[phaseKey];
+    if (phaseState) {
+      const draftUpdatedAt = phaseState.draftUpdatedAt;
+      const projectNewerThanDraft = Boolean(
+        projectUpdatedAt && (!draftUpdatedAt || isIsoAfter(projectUpdatedAt, draftUpdatedAt))
+      );
+      const cleanSeed = sanitizeString(seed);
+      const cleanDraft = sanitizeString(phaseState.draftMarkdown || '');
+      if (projectNewerThanDraft && cleanSeed && cleanSeed !== cleanDraft) {
+        const history = phaseState.history || createEmptyHistory();
 
-				// Preserve the prior draft (if any) as a version before switching to the new canonical.
-				if (cleanDraft) {
-					maybePushVersion(history, cleanDraft, draftUpdatedAt || now);
-				}
-				maybePushVersion(history, cleanSeed, projectUpdatedAt || now);
-				trimHistory(history);
-				history.currentIndex = history.versions.length - 1;
+        // Preserve the prior draft (if any) as a version before switching to the new canonical.
+        if (cleanDraft) {
+          maybePushVersion(history, cleanDraft, draftUpdatedAt || now);
+        }
+        maybePushVersion(history, cleanSeed, projectUpdatedAt || now);
+        trimHistory(history);
+        history.currentIndex = history.versions.length - 1;
 
-				phaseState.history = history;
-				phaseState.draftMarkdown = cleanSeed;
-				phaseState.draftUpdatedAt = now;
-				didMutate = true;
-			}
-		}
+        phaseState.history = history;
+        phaseState.draftMarkdown = cleanSeed;
+        phaseState.draftUpdatedAt = now;
+        didMutate = true;
+      }
+    }
 
-		if (didMutate) {
-			await saveValidatorState(dbName, state);
-		}
-		return state;
+    if (didMutate) {
+      await saveValidatorState(dbName, state);
+    }
+    return state;
   }
 
   function buildVersionView(history) {
@@ -215,7 +227,11 @@ export function createProjectValidatorStorage({ dbName, projectId, phaseNumber, 
 
     await saveValidatorState(dbName, state);
 
-    return { success: true, versionNumber: history.currentIndex + 1, totalVersions: history.versions.length };
+    return {
+      success: true,
+      versionNumber: history.currentIndex + 1,
+      totalVersions: history.versions.length,
+    };
   }
 
   async function goBack() {
@@ -264,4 +280,3 @@ export function createProjectValidatorStorage({ dbName, projectId, phaseNumber, 
     getTimeSince,
   };
 }
-

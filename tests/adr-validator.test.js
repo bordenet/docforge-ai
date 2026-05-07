@@ -19,7 +19,7 @@ import {
   validateDocument,
   getGrade,
   getScoreColor,
-  getScoreLabel
+  getScoreLabel,
 } from '../plugins/adr/js/validator.js';
 
 describe('ADR Validator', () => {
@@ -127,8 +127,8 @@ Some context here.
 A clear decision.`;
       const result = detectSections(text);
       expect(result.found.length).toBeGreaterThanOrEqual(2);
-      expect(result.found.some(s => s.name === 'Context')).toBe(true);
-      expect(result.found.some(s => s.name === 'Decision')).toBe(true);
+      expect(result.found.some((s) => s.name === 'Context')).toBe(true);
+      expect(result.found.some((s) => s.name === 'Decision')).toBe(true);
     });
   });
 
@@ -163,7 +163,7 @@ We considered MySQL, Redis, MongoDB but chose PostgreSQL for ACID compliance.`;
     it('should penalize vague decisions', () => {
       const text = 'We will adopt a strategic approach to improve scalability.';
       const result = scoreDecision(text);
-      expect(result.issues.some(i => i.includes('Vague'))).toBe(true);
+      expect(result.issues.some((i) => i.includes('Vague'))).toBe(true);
     });
   });
 
@@ -183,7 +183,7 @@ Review in 90 days to reassess.`;
     it('should penalize vague consequence terms', () => {
       const text = 'This adds complexity and overhead.';
       const result = scoreConsequences(text);
-      expect(result.issues.some(i => i.includes('Vague'))).toBe(true);
+      expect(result.issues.some((i) => i.includes('Vague'))).toBe(true);
     });
   });
 
@@ -309,7 +309,8 @@ Because our benchmark demonstrates clear advantages.`;
 
   describe('Unicode Normalization', () => {
     it('zero-width spaces should not affect scores', () => {
-      const text = '## Context\nWe need a decision about scalability.\n## Decision\nWe chose option A.';
+      const text =
+        '## Context\nWe need a decision about scalability.\n## Decision\nWe chose option A.';
       const clean = validateDocument(text);
       const withZWS = validateDocument(text.replace(/## /g, '##\u200B '));
       expect(withZWS.totalScore).toBe(clean.totalScore);
@@ -323,4 +324,3 @@ Because our benchmark demonstrates clear advantages.`;
     });
   });
 });
-

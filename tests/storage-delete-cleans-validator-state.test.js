@@ -21,10 +21,13 @@ describe('Storage: deleteProject cleans validator state', () => {
       projectId: project.id,
       schemaVersion: 1,
       phases: {
-        '3': {
+        3: {
           draftMarkdown: '# Draft',
           draftUpdatedAt: new Date().toISOString(),
-          history: { versions: [{ markdown: '# V1', savedAt: new Date().toISOString() }], currentIndex: 0 },
+          history: {
+            versions: [{ markdown: '# V1', savedAt: new Date().toISOString() }],
+            currentIndex: 0,
+          },
         },
       },
     });
@@ -37,4 +40,3 @@ describe('Storage: deleteProject cleans validator state', () => {
     expect(await getValidatorState(DB, project.id)).toBeNull();
   });
 });
-

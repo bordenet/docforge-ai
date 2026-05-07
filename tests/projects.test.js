@@ -3,9 +3,7 @@
  * Tests for pure functions and async functions with IndexedDB
  */
 
-import {
-  describe, it, test, expect, beforeEach, afterAll,
-} from '@jest/globals';
+import { describe, it, test, expect, beforeEach, afterAll } from '@jest/globals';
 import {
   extractTitleFromMarkdown,
   sanitizeFilename,
@@ -160,8 +158,9 @@ describe('Projects Module', () => {
     });
 
     test('throws error for non-existent project', async () => {
-      await expect(updatePhase(TEST_DB, 'non-existent', 1, 'prompt', 'response'))
-        .rejects.toThrow('Project not found');
+      await expect(updatePhase(TEST_DB, 'non-existent', 1, 'prompt', 'response')).rejects.toThrow(
+        'Project not found'
+      );
     });
 
     test('initializes phases object if not present', async () => {
@@ -223,7 +222,9 @@ describe('Projects Module', () => {
     test('does not auto-advance when skipAutoAdvance is true', async () => {
       const project = await saveProject(TEST_DB, { id: 'test-7', title: 'Test', currentPhase: 1 });
 
-      const updated = await updatePhase(TEST_DB, project.id, 1, 'P1', 'Response', { skipAutoAdvance: true });
+      const updated = await updatePhase(TEST_DB, project.id, 1, 'P1', 'Response', {
+        skipAutoAdvance: true,
+      });
 
       expect(updated.currentPhase).toBe(1);
     });
@@ -259,7 +260,10 @@ describe('Projects Module', () => {
     });
 
     test('does not overwrite title from formData', async () => {
-      const project = await saveProject(TEST_DB, { id: 'test-11', formData: { title: 'Form Title' } });
+      const project = await saveProject(TEST_DB, {
+        id: 'test-11',
+        formData: { title: 'Form Title' },
+      });
 
       const markdown = '# New Title\n\nContent...';
       const updated = await updatePhase(TEST_DB, project.id, 3, 'P3', markdown);
@@ -280,8 +284,9 @@ describe('Projects Module', () => {
     });
 
     test('throws error for non-existent project', async () => {
-      await expect(updateProject(TEST_DB, 'non-existent', { title: 'New' }))
-        .rejects.toThrow('Project not found');
+      await expect(updateProject(TEST_DB, 'non-existent', { title: 'New' })).rejects.toThrow(
+        'Project not found'
+      );
     });
 
     test('updates project with provided fields', async () => {
@@ -298,7 +303,9 @@ describe('Projects Module', () => {
 
     test('preserves existing fields not in updates', async () => {
       const project = await saveProject(TEST_DB, {
-        id: 'upd-2', title: 'Title', formData: { field: 'value' },
+        id: 'upd-2',
+        title: 'Title',
+        formData: { field: 'value' },
       });
 
       const updated = await updateProject(TEST_DB, project.id, { currentPhase: 2 });

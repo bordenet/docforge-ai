@@ -128,4 +128,3 @@ A {{DOCUMENT_TYPE}} document must include...
     expect(prompt).not.toMatch(/\bA\s{2,}document/i);
   });
 });
-

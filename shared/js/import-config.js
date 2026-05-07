@@ -98,4 +98,3 @@ export const GENERIC_HEADER_PATTERNS = [
 export function isGenericSectionHeader(text) {
   return GENERIC_HEADER_PATTERNS.some((pattern) => pattern.test(text.trim()));
 }
-

@@ -2,11 +2,7 @@
  * JD Validator - Detection Functions
  */
 
-import {
-  MASCULINE_CODED,
-  EXTROVERT_BIAS,
-  RED_FLAGS
-} from './validator-config.js';
+import { MASCULINE_CODED, EXTROVERT_BIAS, RED_FLAGS } from './validator-config.js';
 
 /**
  * Extract company-mandated sections from text
@@ -21,7 +17,7 @@ export function extractMandatedSections(text) {
   for (const match of text.matchAll(preambleRegex)) {
     mandatedSections.push({
       type: 'preamble',
-      content: match[1]
+      content: match[1],
     });
   }
 
@@ -30,7 +26,7 @@ export function extractMandatedSections(text) {
   for (const match of text.matchAll(legalRegex)) {
     mandatedSections.push({
       type: 'legal',
-      content: match[1]
+      content: match[1],
     });
   }
 
@@ -48,9 +44,7 @@ export function extractMandatedSections(text) {
  */
 export function isInMandatedSection(word, mandatedSections) {
   const lowerWord = word.toLowerCase();
-  return mandatedSections.some(section =>
-    section.content.toLowerCase().includes(lowerWord)
-  );
+  return mandatedSections.some((section) => section.content.toLowerCase().includes(lowerWord));
 }
 
 /**
@@ -62,7 +56,7 @@ export function detectMasculineCoded(text) {
   const { cleanText, mandatedSections } = extractMandatedSections(text);
   const foundWords = [];
 
-  MASCULINE_CODED.forEach(word => {
+  MASCULINE_CODED.forEach((word) => {
     const regex = new RegExp(`\\b${word}\\b`, 'i');
     if (regex.test(cleanText)) {
       if (!isInMandatedSection(word, mandatedSections)) {
@@ -74,7 +68,7 @@ export function detectMasculineCoded(text) {
   return {
     found: foundWords.length > 0,
     count: foundWords.length,
-    words: foundWords
+    words: foundWords,
   };
 }
 
@@ -87,7 +81,7 @@ export function detectExtrovertBias(text) {
   const { cleanText, mandatedSections } = extractMandatedSections(text);
   const foundPhrases = [];
 
-  EXTROVERT_BIAS.forEach(phrase => {
+  EXTROVERT_BIAS.forEach((phrase) => {
     const flexiblePattern = phrase.replace(/[-\s]+/g, '[-\\s]+');
     const regex = new RegExp(`\\b${flexiblePattern}\\b`, 'i');
     if (regex.test(cleanText)) {
@@ -100,7 +94,7 @@ export function detectExtrovertBias(text) {
   return {
     found: foundPhrases.length > 0,
     count: foundPhrases.length,
-    phrases: foundPhrases
+    phrases: foundPhrases,
   };
 }
 
@@ -113,7 +107,7 @@ export function detectRedFlags(text) {
   const { cleanText, mandatedSections } = extractMandatedSections(text);
   const foundPhrases = [];
 
-  RED_FLAGS.forEach(phrase => {
+  RED_FLAGS.forEach((phrase) => {
     const flexiblePattern = phrase.replace(/[-\s]+/g, '[-\\s]+');
     const regex = new RegExp(`\\b${flexiblePattern}\\b`, 'i');
     if (regex.test(cleanText)) {
@@ -126,7 +120,7 @@ export function detectRedFlags(text) {
   return {
     found: foundPhrases.length > 0,
     count: foundPhrases.length,
-    phrases: foundPhrases
+    phrases: foundPhrases,
   };
 }
 
@@ -136,14 +130,16 @@ export function detectRedFlags(text) {
  * @returns {Object} { found, hasSalaryRange, hasHourlyRange, hasBonusMention }
  */
 export function detectCompensation(text) {
-  const hasSalaryRange = /\$[\d,]+\s*[-–—]\s*\$[\d,]+/i.test(text) ||
-                         /salary.*\$[\d,]+/i.test(text) ||
-                         /compensation.*\$[\d,]+/i.test(text) ||
-                         /(USD|EUR|GBP|CAD|AUD)\s*[\d,]+\s*[-–—]\s*[\d,]+/i.test(text) ||
-                         /[\d,]+\s*(USD|EUR|GBP|CAD|AUD)\s*[-–—]/i.test(text);
+  const hasSalaryRange =
+    /\$[\d,]+\s*[-–—]\s*\$[\d,]+/i.test(text) ||
+    /salary.*\$[\d,]+/i.test(text) ||
+    /compensation.*\$[\d,]+/i.test(text) ||
+    /(USD|EUR|GBP|CAD|AUD)\s*[\d,]+\s*[-–—]\s*[\d,]+/i.test(text) ||
+    /[\d,]+\s*(USD|EUR|GBP|CAD|AUD)\s*[-–—]/i.test(text);
 
-  const hasHourlyRange = /\$[\d.]+\s*[-–—]\s*\$[\d.]+\s*\/?\s*(hour|hr)/i.test(text) ||
-                         /\$[\d.]+\s*\/?\s*(hour|hr)/i.test(text);
+  const hasHourlyRange =
+    /\$[\d.]+\s*[-–—]\s*\$[\d.]+\s*\/?\s*(hour|hr)/i.test(text) ||
+    /\$[\d.]+\s*\/?\s*(hour|hr)/i.test(text);
 
   const hasBonusMention = /bonus|equity|stock|RSU|options/i.test(text);
 
@@ -151,7 +147,7 @@ export function detectCompensation(text) {
     found: hasSalaryRange || hasHourlyRange,
     hasSalaryRange,
     hasHourlyRange,
-    hasBonusMention
+    hasBonusMention,
   };
 }
 
@@ -174,8 +170,8 @@ export function detectEncouragement(text) {
       has60to70 && '60-70% threshold mentioned',
       hasMeetMost && 'Meet most requirements language',
       hasEncourageApply && 'Encourage to apply language',
-      hasDontMeetAll && "Don't meet all qualifications language"
-    ].filter(Boolean)
+      hasDontMeetAll && "Don't meet all qualifications language",
+    ].filter(Boolean),
   };
 }
 
@@ -185,7 +181,7 @@ export function detectEncouragement(text) {
  * @returns {Object} { wordCount, isIdeal, isTooShort, isTooLong }
  */
 export function detectWordCount(text) {
-  const wordCount = text.split(/\s+/).filter(w => w.length > 0).length;
+  const wordCount = text.split(/\s+/).filter((w) => w.length > 0).length;
   const isIdeal = wordCount >= 400 && wordCount <= 700;
   const isTooShort = wordCount < 400;
   const isTooLong = wordCount > 700;
@@ -194,7 +190,6 @@ export function detectWordCount(text) {
     wordCount,
     isIdeal,
     isTooShort,
-    isTooLong
+    isTooLong,
   };
 }
-

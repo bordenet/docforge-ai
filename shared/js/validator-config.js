@@ -69,7 +69,8 @@ export const COMMON_SECTIONS = [
     weight: 2,
   },
   {
-    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(problem\s+statement|problem|challenge|pain.?point|current\s+state)/im,
+    pattern:
+      /^(#+\s*)?(\d+\.?\d*\.?\s*)?(problem\s+statement|problem|challenge|pain.?point|current\s+state)/im,
     name: 'Problem Statement',
     weight: 2,
   },
@@ -79,7 +80,8 @@ export const COMMON_SECTIONS = [
     weight: 2,
   },
   {
-    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(proposed\s+solution|solution|proposal|approach|recommendation)/im,
+    pattern:
+      /^(#+\s*)?(\d+\.?\d*\.?\s*)?(proposed\s+solution|solution|proposal|approach|recommendation)/im,
     name: 'Solution/Proposal',
     weight: 2,
   },
@@ -150,7 +152,8 @@ export const COMMON_SECTIONS = [
     weight: 1,
   },
   {
-    pattern: /^(#+\s*)?(\d+\.?\d*\.?\s*)?(financial\s+impact|roi|return\s+on\s+investment|cost.benefit)/im,
+    pattern:
+      /^(#+\s*)?(\d+\.?\d*\.?\s*)?(financial\s+impact|roi|return\s+on\s+investment|cost.benefit)/im,
     name: 'Financial Impact',
     weight: 2,
   },
@@ -183,4 +186,3 @@ export const QUALITY_PATTERNS = {
   actionable: /\b(will|shall|must|should|enable|provide|deliver|implement|build|create)\b/gi,
   measurable: /\b(measure|metric|kpi|track|monitor|achieve|target|goal)\b/gi,
 };
-

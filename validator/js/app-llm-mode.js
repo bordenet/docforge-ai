@@ -108,4 +108,3 @@ export function handleViewLLMPrompt(currentPrompt) {
   }
   showPromptModal(currentPrompt.text, 'LLM Scoring Prompt');
 }
-

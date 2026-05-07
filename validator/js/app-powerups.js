@@ -5,7 +5,10 @@
  */
 
 import { showToast, copyToClipboard, showPromptModal } from '../../shared/js/ui.js';
-import { generateCritiquePrompt, generateRewritePrompt } from '../../shared/js/validator-prompts.js';
+import {
+  generateCritiquePrompt,
+  generateRewritePrompt,
+} from '../../shared/js/validator-prompts.js';
 
 // Shared state references (set via init)
 let getState = null;
@@ -28,7 +31,12 @@ export function initPowerups(stateGetter, promptSetter) {
  */
 export function enableButton(btn, colorClass = 'bg-teal-600 hover:bg-teal-700') {
   if (!btn) return;
-  btn.classList.remove('bg-slate-600', 'text-slate-400', 'cursor-not-allowed', 'pointer-events-none');
+  btn.classList.remove(
+    'bg-slate-600',
+    'text-slate-400',
+    'cursor-not-allowed',
+    'pointer-events-none'
+  );
   btn.classList.add(...colorClass.split(' '), 'text-white');
   btn.disabled = false;
   btn.removeAttribute('aria-disabled');
@@ -101,4 +109,3 @@ export function handleViewPrompt(currentPrompt) {
   }
   showPromptModal(currentPrompt.text, `${currentPrompt.type} Prompt`);
 }
-

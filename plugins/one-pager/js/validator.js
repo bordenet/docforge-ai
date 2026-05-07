@@ -1,6 +1,6 @@
 /**
  * One-Pager Validator - Main Entry Point
- * 
+ *
  * Scoring Dimensions:
  * 1. Problem Clarity (30 pts) - Problem statement, cost of inaction, customer focus
  * 2. Solution Quality (25 pts) - Solution addresses problem, measurable goals, high-level
@@ -14,20 +14,20 @@ import { WORD_LIMIT } from './validator-config.js';
 import {
   detectCircularLogic,
   detectBaselineTarget,
-  detectVagueQuantifiers
+  detectVagueQuantifiers,
 } from './validator-detection.js';
 import {
   scoreProblemClarity,
   scoreSolutionQuality,
   scoreScopeDiscipline,
-  scoreCompleteness
+  scoreCompleteness,
 } from './validator-scoring.js';
 
 // Re-export detection functions for testing/external access
 export {
   detectCircularLogic,
   detectBaselineTarget,
-  detectSections
+  detectSections,
 } from './validator-detection.js';
 
 export {
@@ -44,14 +44,14 @@ export {
   detectDecisionNeeded,
   detectVagueQuantifiers,
   detectStakeholderTableQuality,
-  detectAlternativesQuality
+  detectAlternativesQuality,
 } from './validator-detection.js';
 
 export {
   scoreProblemClarity,
   scoreSolutionQuality,
   scoreScopeDiscipline,
-  scoreCompleteness
+  scoreCompleteness,
 } from './validator-scoring.js';
 
 export { calculateSlopScore };
@@ -72,7 +72,7 @@ export function validateOnePager(text) {
       problemClarity: { score: 0, maxScore: 30, issues: ['No content to validate'], strengths: [] },
       solution: { score: 0, maxScore: 25, issues: ['No content to validate'], strengths: [] },
       scope: { score: 0, maxScore: 25, issues: ['No content to validate'], strengths: [] },
-      completeness: { score: 0, maxScore: 20, issues: ['No content to validate'], strengths: [] }
+      completeness: { score: 0, maxScore: 20, issues: ['No content to validate'], strengths: [] },
     };
   }
 
@@ -124,21 +124,32 @@ export function validateOnePager(text) {
     // Deduct up to 8 points for vague quantifiers
     vagueDeduction = Math.min(8, vagueQuantifiers.vaguenessPenalty);
     if (vagueQuantifiers.uniqueVagueTerms.length > 0) {
-      vagueIssues.push(`Vague terms detected: ${vagueQuantifiers.uniqueVagueTerms.slice(0, 3).join(', ')}. Replace with specific numbers.`);
+      vagueIssues.push(
+        `Vague terms detected: ${vagueQuantifiers.uniqueVagueTerms.slice(0, 3).join(', ')}. Replace with specific numbers.`
+      );
     }
   }
 
   // Word count enforcement - increased to 600 words for full Amazon-style structure
-  const wordCount = normalized.split(/\s+/).filter(w => w.length > 0).length;
+  const wordCount = normalized.split(/\s+/).filter((w) => w.length > 0).length;
   let wordCountDeduction = 0;
   const wordCountIssues = [];
   if (wordCount > WORD_LIMIT) {
     // Deduct 5 points for every 50 words over limit, max 15 points
     wordCountDeduction = Math.min(15, Math.floor((wordCount - WORD_LIMIT) / 50) * 5);
-    wordCountIssues.push(`Document is ${wordCount} words (max ${WORD_LIMIT}). Deducting ${wordCountDeduction} points.`);
+    wordCountIssues.push(
+      `Document is ${wordCount} words (max ${WORD_LIMIT}). Deducting ${wordCountDeduction} points.`
+    );
   }
 
-  const rawScore = problemClarity.score + solution.score + scope.score + completeness.score - slopDeduction - wordCountDeduction - vagueDeduction;
+  const rawScore =
+    problemClarity.score +
+    solution.score +
+    scope.score +
+    completeness.score -
+    slopDeduction -
+    wordCountDeduction -
+    vagueDeduction;
 
   // CRITICAL: Cap at 50 if circular logic detected (per prompts.js line 49)
   const isCircularCapped = circularLogic.isCircular && rawScore > 50;
@@ -171,27 +182,27 @@ export function validateOnePager(text) {
     slopDetection: {
       ...slopPenalty,
       deduction: slopDeduction,
-      issues: slopIssues
+      issues: slopIssues,
     },
     circularLogic: {
       ...circularLogic,
       capped: isCircularCapped,
-      issues: circularIssues
+      issues: circularIssues,
     },
     baselineTarget: {
       ...baselineTarget,
-      issues: baselineIssues
+      issues: baselineIssues,
     },
     vagueQuantifiers: {
       ...vagueQuantifiers,
       deduction: vagueDeduction,
-      issues: vagueIssues
+      issues: vagueIssues,
     },
     wordCount: {
       count: wordCount,
       limit: WORD_LIMIT,
       deduction: wordCountDeduction,
-      issues: wordCountIssues
+      issues: wordCountIssues,
     },
     // Top-level issues array for assistant completion banner display
     issues: allIssues,
@@ -211,4 +222,3 @@ export function validateDocument(text) {
 
 // Re-export scoring helper functions from shared module for consistency
 export { getGrade, getScoreColor, getScoreLabel } from '../../../shared/js/validator.js';
-

@@ -10,7 +10,7 @@ import {
   REQUIRED_SECTIONS,
   TEAM_PATTERNS,
   SUBSEQUENT_PATTERN,
-  REVIEW_PATTERN
+  REVIEW_PATTERN,
 } from './validator-config.js';
 
 import {
@@ -36,7 +36,7 @@ import {
   detectSecurityImpact,
   detectDependencies,
   detectDiagrams,
-  detectObservability
+  detectObservability,
 } from './validator-detection.js';
 
 /**
@@ -84,7 +84,9 @@ export function scoreConsequences(text) {
   // Vague consequence penalty (-3 pts)
   if (consequencesDetection.hasVagueConsequences) {
     score -= 3;
-    issues.push(`Vague consequence terms detected (${consequencesDetection.vagueConsequenceCount}) - replace "complexity"/"overhead" with specific impacts`);
+    issues.push(
+      `Vague consequence terms detected (${consequencesDetection.vagueConsequenceCount}) - replace "complexity"/"overhead" with specific impacts`
+    );
   }
 
   // Team factors detection (0-5 pts)
@@ -115,7 +117,9 @@ export function scoreConsequences(text) {
   const madrFormatDetection = detectMADRConsequenceFormat(text);
   if (madrFormatDetection.hasMADRFormat && madrFormatDetection.hasBalancedMADR) {
     score += 2;
-    strengths.push(`MADR consequence format: ${madrFormatDetection.goodBecauseCount} good, ${madrFormatDetection.badBecauseCount} bad`);
+    strengths.push(
+      `MADR consequence format: ${madrFormatDetection.goodBecauseCount} good, ${madrFormatDetection.badBecauseCount} bad`
+    );
   } else if (madrFormatDetection.hasMADRFormat) {
     score += 1;
     strengths.push('MADR consequence format partially used');
@@ -125,7 +129,9 @@ export function scoreConsequences(text) {
   const risksDetection = detectRisks(text);
   if (risksDetection.hasRisksSection && risksDetection.hasRiskMitigationPairs) {
     score += 2;
-    strengths.push(`Risks with mitigations: ${risksDetection.riskCount} risks, ${risksDetection.mitigationCount} mitigations`);
+    strengths.push(
+      `Risks with mitigations: ${risksDetection.riskCount} risks, ${risksDetection.mitigationCount} mitigations`
+    );
   } else if (risksDetection.hasRiskLanguage || risksDetection.hasRisksSection) {
     score += 1;
     strengths.push('Risk awareness present');
@@ -135,7 +141,9 @@ export function scoreConsequences(text) {
   const qualityDetection = detectQualityAttributes(text);
   if (qualityDetection.categoriesCovered >= 3) {
     score += 2;
-    strengths.push(`Quality attributes documented (${qualityDetection.categoriesCovered} categories: performance, reliability, security, maintainability)`);
+    strengths.push(
+      `Quality attributes documented (${qualityDetection.categoriesCovered} categories: performance, reliability, security, maintainability)`
+    );
   } else if (qualityDetection.categoriesCovered >= 1) {
     score += 1;
     strengths.push('Quality considerations mentioned');
@@ -175,7 +183,7 @@ export function scoreConsequences(text) {
     score: Math.max(0, Math.min(score, maxScore)),
     maxScore,
     issues,
-    strengths
+    strengths,
   };
 }
 
@@ -219,10 +227,12 @@ export function scoreStatus(text) {
 
   if (sectionPercentage >= 0.85) {
     score += 5;
-    strengths.push(`${sections.found.length}/${REQUIRED_SECTIONS.length} required sections present`);
-  } else if (sectionPercentage >= 0.60) {
+    strengths.push(
+      `${sections.found.length}/${REQUIRED_SECTIONS.length} required sections present`
+    );
+  } else if (sectionPercentage >= 0.6) {
     score += 3;
-    issues.push(`Missing sections: ${sections.missing.map(s => s.name).join(', ')}`);
+    issues.push(`Missing sections: ${sections.missing.map((s) => s.name).join(', ')}`);
   } else {
     issues.push(`Only ${sections.found.length} of ${REQUIRED_SECTIONS.length} sections present`);
   }
@@ -236,7 +246,9 @@ export function scoreStatus(text) {
     score += 1;
     issues.push('Validation mentioned but missing dedicated Confirmation section (MADR 3.0)');
   } else {
-    issues.push('Missing Confirmation section - specify how compliance will be validated (MADR 3.0)');
+    issues.push(
+      'Missing Confirmation section - specify how compliance will be validated (MADR 3.0)'
+    );
   }
 
   // YAML Front Matter metadata bonus (MADR 3.0) - (+2 pts)
@@ -283,7 +295,9 @@ export function scoreStatus(text) {
   const complianceDetection = detectCompliance(text);
   if (complianceDetection.hasComplianceSection && complianceDetection.hasStandards) {
     score += 2;
-    strengths.push(`Compliance documented: ${complianceDetection.standardsCount} standards referenced`);
+    strengths.push(
+      `Compliance documented: ${complianceDetection.standardsCount} standards referenced`
+    );
   } else if (complianceDetection.hasComplianceAwareness) {
     score += 1;
     strengths.push('Compliance/governance awareness');
@@ -333,7 +347,9 @@ export function scoreStatus(text) {
   const numberingDetection = detectADRNumbering(text);
   if (numberingDetection.hasTitleNumber && numberingDetection.hasInlineRefs) {
     score += 2;
-    strengths.push(`Enterprise ADR numbering with ${numberingDetection.inlineRefCount} cross-references`);
+    strengths.push(
+      `Enterprise ADR numbering with ${numberingDetection.inlineRefCount} cross-references`
+    );
   } else if (numberingDetection.detected) {
     score += 1;
     strengths.push('ADR numbering present');
@@ -351,7 +367,10 @@ export function scoreStatus(text) {
 
   // Diagrams/Visual Documentation bonus (+2 pts)
   const diagramsDetection = detectDiagrams(text);
-  if (diagramsDetection.hasEmbeddedDiagrams || (diagramsDetection.hasDiagramSection && diagramsDetection.hasDiagramTypes)) {
+  if (
+    diagramsDetection.hasEmbeddedDiagrams ||
+    (diagramsDetection.hasDiagramSection && diagramsDetection.hasDiagramTypes)
+  ) {
     score += 2;
     strengths.push(`Visual documentation (${diagramsDetection.diagramCount} diagrams)`);
   } else if (diagramsDetection.detected) {
@@ -373,7 +392,6 @@ export function scoreStatus(text) {
     score: Math.min(score, maxScore),
     maxScore,
     issues,
-    strengths
+    strengths,
   };
 }
-

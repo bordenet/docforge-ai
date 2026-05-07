@@ -41,9 +41,9 @@ describe('Theme Module', () => {
   describe('toggleDarkMode', () => {
     test('should toggle from dark to light mode', () => {
       expect(document.documentElement.classList.contains('dark')).toBe(true);
-      
+
       toggleDarkMode();
-      
+
       expect(document.documentElement.classList.contains('dark')).toBe(false);
     });
 
@@ -51,15 +51,15 @@ describe('Theme Module', () => {
       // Start in light mode
       document.documentElement.classList.remove('dark');
       document.body.className = 'bg-white text-slate-900';
-      
+
       toggleDarkMode();
-      
+
       expect(document.documentElement.classList.contains('dark')).toBe(true);
     });
 
     test('should update body classes when switching to light', () => {
       toggleDarkMode();
-      
+
       expect(document.body.classList.contains('bg-white')).toBe(true);
       expect(document.body.classList.contains('text-slate-900')).toBe(true);
       expect(document.body.classList.contains('bg-slate-950')).toBe(false);
@@ -68,24 +68,24 @@ describe('Theme Module', () => {
     test('should update body classes when switching to dark', () => {
       document.documentElement.classList.remove('dark');
       document.body.className = 'bg-white text-slate-900';
-      
+
       toggleDarkMode();
-      
+
       expect(document.body.classList.contains('bg-slate-950')).toBe(true);
       expect(document.body.classList.contains('text-slate-100')).toBe(true);
     });
 
     test('should save theme to localStorage when toggling to light', () => {
       toggleDarkMode();
-      
+
       expect(localStorage.getItem('docforge-theme')).toBe('light');
     });
 
     test('should save theme to localStorage when toggling to dark', () => {
       document.documentElement.classList.remove('dark');
-      
+
       toggleDarkMode();
-      
+
       expect(localStorage.getItem('docforge-theme')).toBe('dark');
     });
 
@@ -143,23 +143,23 @@ describe('Theme Module', () => {
   describe('initTheme', () => {
     test('should keep dark mode when no saved preference', () => {
       initTheme();
-      
+
       expect(document.documentElement.classList.contains('dark')).toBe(true);
     });
 
     test('should switch to light when localStorage has light preference', () => {
       localStorage.setItem('docforge-theme', 'light');
-      
+
       initTheme();
-      
+
       expect(document.documentElement.classList.contains('dark')).toBe(false);
     });
 
     test('should keep dark when localStorage has dark preference', () => {
       localStorage.setItem('docforge-theme', 'dark');
-      
+
       initTheme();
-      
+
       expect(document.documentElement.classList.contains('dark')).toBe(true);
     });
   });
@@ -167,7 +167,7 @@ describe('Theme Module', () => {
   describe('DOM class mutations', () => {
     test('should update header classes when switching to light', () => {
       toggleDarkMode();
-      
+
       const header = document.querySelector('header');
       expect(header.classList.contains('bg-slate-200')).toBe(true);
       expect(header.classList.contains('border-slate-300')).toBe(true);
@@ -176,7 +176,7 @@ describe('Theme Module', () => {
 
     test('should update panel bg-slate-900 to bg-slate-100 in light mode', () => {
       toggleDarkMode();
-      
+
       const panel = document.querySelector('div');
       expect(panel.classList.contains('bg-slate-100')).toBe(true);
       expect(panel.classList.contains('bg-slate-900')).toBe(false);
@@ -184,7 +184,7 @@ describe('Theme Module', () => {
 
     test('should update panel bg-slate-800 to bg-slate-200 in light mode', () => {
       toggleDarkMode();
-      
+
       const panels = document.querySelectorAll('div');
       const panel2 = panels[1];
       expect(panel2.classList.contains('bg-slate-200')).toBe(true);
@@ -284,4 +284,3 @@ describe('Theme Module', () => {
     });
   });
 });
-

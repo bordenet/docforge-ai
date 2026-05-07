@@ -22,7 +22,7 @@ import {
   scoreProblemClarity,
   scoreSolutionQuality,
   detectAlternatives,
-  detectUrgency
+  detectUrgency,
 } from '../plugins/one-pager/js/validator.js';
 import { detectStakeholderTableQuality } from '../plugins/one-pager/js/validator-detection.js';
 
@@ -31,19 +31,19 @@ describe('One-Pager Validator', () => {
     it('should detect Problem section with markdown heading', () => {
       const text = '## Problem Statement\nWe have a critical issue.';
       const result = detectSections(text);
-      expect(result.found.some(s => s.name === 'Problem/Challenge')).toBe(true);
+      expect(result.found.some((s) => s.name === 'Problem/Challenge')).toBe(true);
     });
 
     it('should detect Problem section with numbered heading', () => {
       const text = '1. Problem\nWe have a critical issue.';
       const result = detectSections(text);
-      expect(result.found.some(s => s.name === 'Problem/Challenge')).toBe(true);
+      expect(result.found.some((s) => s.name === 'Problem/Challenge')).toBe(true);
     });
 
     it('should detect Solution section', () => {
       const text = '## Solution\nBuild a new system.';
       const result = detectSections(text);
-      expect(result.found.some(s => s.name === 'Solution/Proposal')).toBe(true);
+      expect(result.found.some((s) => s.name === 'Solution/Proposal')).toBe(true);
     });
 
     it('should report missing sections', () => {
@@ -147,7 +147,7 @@ Implement customer success program.
 ## Goals
 Reduce churn to 10%.`;
       const result = validateOnePager(text);
-      
+
       expect(result).toHaveProperty('totalScore');
       expect(result).toHaveProperty('problemClarity');
       expect(result).toHaveProperty('solution');
@@ -170,13 +170,15 @@ Reduce churn to 10%.`;
 
   describe('detectAlternatives', () => {
     it('should detect alternatives section', () => {
-      const text = '## Alternatives Considered\nWe evaluated Option A, Option B, and doing nothing.';
+      const text =
+        '## Alternatives Considered\nWe evaluated Option A, Option B, and doing nothing.';
       const result = detectAlternatives(text);
       expect(result.hasAlternativesSection).toBe(true);
     });
 
     it('should detect alternatives language', () => {
-      const text = 'We chose this approach instead of Option B because it is faster. Compared to the status quo, this saves 20%.';
+      const text =
+        'We chose this approach instead of Option B because it is faster. Compared to the status quo, this saves 20%.';
       const result = detectAlternatives(text);
       expect(result.hasAlternativesLanguage).toBe(true);
     });
@@ -203,7 +205,8 @@ Reduce churn to 10%.`;
     });
 
     it('should detect urgency language', () => {
-      const text = 'This is urgent because the deadline is Q4 2024. The window of opportunity closes soon.';
+      const text =
+        'This is urgent because the deadline is Q4 2024. The window of opportunity closes soon.';
       const result = detectUrgency(text);
       expect(result.hasUrgencyLanguage).toBe(true);
     });
@@ -284,7 +287,7 @@ const fixturesDir = join(__dirname, 'fixtures/one-pager-samples');
 describe('One-Pager Fixture Regression Tests', () => {
   // Load all fixtures once
   const fixtureFiles = readdirSync(fixturesDir)
-    .filter(f => f.endsWith('.md'))
+    .filter((f) => f.endsWith('.md'))
     .sort();
 
   const loadFixture = (filename) => {
@@ -292,7 +295,7 @@ describe('One-Pager Fixture Regression Tests', () => {
   };
 
   describe('Excellent Quality Documents (01-05)', () => {
-    const excellentFiles = fixtureFiles.filter(f => f.startsWith('0'));
+    const excellentFiles = fixtureFiles.filter((f) => f.startsWith('0'));
 
     it.each(excellentFiles)('%s should score 70+ (excellent quality)', (filename) => {
       const content = loadFixture(filename);
@@ -308,7 +311,9 @@ describe('One-Pager Fixture Regression Tests', () => {
   });
 
   describe('Good Quality Documents (06-10)', () => {
-    const goodFiles = fixtureFiles.filter(f => f.startsWith('0') && parseInt(f.slice(0, 2)) >= 6 || f.startsWith('10'));
+    const goodFiles = fixtureFiles.filter(
+      (f) => (f.startsWith('0') && parseInt(f.slice(0, 2)) >= 6) || f.startsWith('10')
+    );
 
     it.each(goodFiles)('%s should score 60+ (good quality)', (filename) => {
       const content = loadFixture(filename);
@@ -318,7 +323,7 @@ describe('One-Pager Fixture Regression Tests', () => {
   });
 
   describe('Needs-Work Quality Documents (11-15)', () => {
-    const needsWorkFiles = fixtureFiles.filter(f => parseInt(f.slice(0, 2)) >= 11);
+    const needsWorkFiles = fixtureFiles.filter((f) => parseInt(f.slice(0, 2)) >= 11);
 
     it.each(needsWorkFiles)('%s should score below 60 (needs improvement)', (filename) => {
       const content = loadFixture(filename);
@@ -360,16 +365,16 @@ describe('One-Pager Fixture Regression Tests', () => {
   describe('Score Distribution', () => {
     it('should maintain proper tier separation', () => {
       const excellentScores = fixtureFiles
-        .filter(f => parseInt(f.slice(0, 2)) <= 5)
-        .map(f => validateOnePager(loadFixture(f)).totalScore);
+        .filter((f) => parseInt(f.slice(0, 2)) <= 5)
+        .map((f) => validateOnePager(loadFixture(f)).totalScore);
 
       const _goodScores = fixtureFiles
-        .filter(f => parseInt(f.slice(0, 2)) >= 6 && parseInt(f.slice(0, 2)) <= 10)
-        .map(f => validateOnePager(loadFixture(f)).totalScore);
+        .filter((f) => parseInt(f.slice(0, 2)) >= 6 && parseInt(f.slice(0, 2)) <= 10)
+        .map((f) => validateOnePager(loadFixture(f)).totalScore);
 
       const needsWorkScores = fixtureFiles
-        .filter(f => parseInt(f.slice(0, 2)) >= 11)
-        .map(f => validateOnePager(loadFixture(f)).totalScore);
+        .filter((f) => parseInt(f.slice(0, 2)) >= 11)
+        .map((f) => validateOnePager(loadFixture(f)).totalScore);
 
       const minExcellent = Math.min(...excellentScores);
       const maxNeedsWork = Math.max(...needsWorkScores);
@@ -379,8 +384,7 @@ describe('One-Pager Fixture Regression Tests', () => {
     });
 
     it('should average 60+ across all fixtures', () => {
-      const allScores = fixtureFiles
-        .map(f => validateOnePager(loadFixture(f)).totalScore);
+      const allScores = fixtureFiles.map((f) => validateOnePager(loadFixture(f)).totalScore);
 
       const average = allScores.reduce((a, b) => a + b, 0) / allScores.length;
       expect(average).toBeGreaterThanOrEqual(55); // Reasonable threshold
@@ -413,12 +417,13 @@ describe('One-Pager Fixture Regression Tests', () => {
 
   describe('Regex Determinism', () => {
     it('detectStakeholderTableQuality should produce consistent results across repeated calls', () => {
-      const text = '| Role | Responsible | Accountable | Consulted | Informed |\n|---|---|---|---|---|\n| PM | x | | x | |';
+      const text =
+        '| Role | Responsible | Accountable | Consulted | Informed |\n|---|---|---|---|---|\n| PM | x | | x | |';
       const results = [];
       for (let i = 0; i < 5; i++) {
         results.push(detectStakeholderTableQuality(text));
       }
-      const scores = results.map(r => r.qualityScore);
+      const scores = results.map((r) => r.qualityScore);
       expect(new Set(scores).size).toBe(1);
     });
   });

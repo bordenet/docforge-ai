@@ -22,13 +22,17 @@ import {
 describe('Business Justification Validator', () => {
   describe('detectStrategicEvidence', () => {
     it('detects problem section', () => {
-      const result = detectStrategicEvidence('## Problem Statement\nWe have a 40% customer churn rate.');
+      const result = detectStrategicEvidence(
+        '## Problem Statement\nWe have a 40% customer churn rate.'
+      );
       expect(result.hasProblemSection).toBe(true);
       expect(result.isQuantified).toBe(true);
     });
 
     it('detects credible sources', () => {
-      const result = detectStrategicEvidence('According to Gartner research, 75% of companies fail.');
+      const result = detectStrategicEvidence(
+        'According to Gartner research, 75% of companies fail.'
+      );
       expect(result.hasSources).toBe(true);
       expect(result.sourceCount).toBeGreaterThan(0);
     });
@@ -39,7 +43,9 @@ describe('Business Justification Validator', () => {
     });
 
     it('detects business focus', () => {
-      const result = detectStrategicEvidence('This impacts customer revenue and competitive positioning.');
+      const result = detectStrategicEvidence(
+        'This impacts customer revenue and competitive positioning.'
+      );
       expect(result.hasBusinessFocus).toBe(true);
     });
   });
@@ -107,23 +113,31 @@ describe('Business Justification Validator', () => {
     });
 
     it('detects risks section', () => {
-      const result = detectExecutionCompleteness('## Risks and Mitigation\nRisk 1: Schedule delays.');
+      const result = detectExecutionCompleteness(
+        '## Risks and Mitigation\nRisk 1: Schedule delays.'
+      );
       expect(result.hasRisksSection).toBe(true);
     });
 
     it('detects risk language', () => {
-      const result = detectExecutionCompleteness('The main risk is budget overrun. We have a contingency fallback plan.');
+      const result = detectExecutionCompleteness(
+        'The main risk is budget overrun. We have a contingency fallback plan.'
+      );
       expect(result.hasRiskLanguage).toBe(true);
       expect(result.riskCount).toBeGreaterThan(0);
     });
 
     it('detects stakeholder section', () => {
-      const result = detectExecutionCompleteness('## Stakeholders\nCFO, VP Engineering, HR Director.');
+      const result = detectExecutionCompleteness(
+        '## Stakeholders\nCFO, VP Engineering, HR Director.'
+      );
       expect(result.hasStakeholderSection).toBe(true);
     });
 
     it('detects stakeholder concerns', () => {
-      const result = detectExecutionCompleteness('Finance, FP&A, and Legal have approved this request.');
+      const result = detectExecutionCompleteness(
+        'Finance, FP&A, and Legal have approved this request.'
+      );
       expect(result.hasStakeholderConcerns).toBe(true);
     });
   });
@@ -285,13 +299,15 @@ ROI is 200% with 6 months payback.`;
 
   describe('Issues Rollup', () => {
     it('should include top-level issues array', () => {
-      const text = '## Problem\nRevenue declining 15% quarterly.\n## Financial Analysis\nROI of 200%.';
+      const text =
+        '## Problem\nRevenue declining 15% quarterly.\n## Financial Analysis\nROI of 200%.';
       const result = validateDocument(text);
       expect(Array.isArray(result.issues)).toBe(true);
     });
 
     it('should aggregate all dimension issues', () => {
-      const text = '## Problem\nRevenue declining 15% quarterly.\n## Financial Analysis\nROI of 200%.';
+      const text =
+        '## Problem\nRevenue declining 15% quarterly.\n## Financial Analysis\nROI of 200%.';
       const result = validateDocument(text);
       const expectedCount =
         result.strategicEvidence.issues.length +
@@ -305,14 +321,16 @@ ROI is 200% with 6 months payback.`;
 
   describe('Unicode Normalization', () => {
     it('zero-width spaces should not affect scores', () => {
-      const text = '## Problem\nRevenue declining 15% quarterly.\n## Financial Analysis\nROI of 200%.';
+      const text =
+        '## Problem\nRevenue declining 15% quarterly.\n## Financial Analysis\nROI of 200%.';
       const clean = validateDocument(text);
       const withZWS = validateDocument(text.replace(/## /g, '##\u200B '));
       expect(withZWS.totalScore).toBe(clean.totalScore);
     });
 
     it('BOM should not affect scores', () => {
-      const text = '## Problem\nRevenue declining 15% quarterly.\n## Financial Analysis\nROI of 200%.';
+      const text =
+        '## Problem\nRevenue declining 15% quarterly.\n## Financial Analysis\nROI of 200%.';
       const clean = validateDocument(text);
       const withBOM = validateDocument('\uFEFF' + text);
       expect(withBOM.totalScore).toBe(clean.totalScore);

@@ -13,7 +13,8 @@ import { logger } from './logger.js';
  * Default review instruction for imported documents.
  * Used when plugin doesn't specify a custom importConfig.reviewInstruction
  */
-export const DEFAULT_REVIEW_INSTRUCTION = '**REVIEW THE IMPORTED DOCUMENT ABOVE. Identify weaknesses, gaps, and areas for improvement. Then provide an enhanced version that addresses these issues.**';
+export const DEFAULT_REVIEW_INSTRUCTION =
+  '**REVIEW THE IMPORTED DOCUMENT ABOVE. Identify weaknesses, gaps, and areas for improvement. Then provide an enhanced version that addresses these issues.**';
 
 /**
  * DOCFORGE marker constants for import stripping.
@@ -288,8 +289,8 @@ function stripMarkedSections(template) {
   // Use non-greedy match to handle multiple pairs
   const markerRegex = new RegExp(
     escapeRegex(DOCFORGE_MARKERS.START) +
-    '[\\s\\S]*?' +  // Non-greedy match any content
-    escapeRegex(DOCFORGE_MARKERS.END),
+      '[\\s\\S]*?' + // Non-greedy match any content
+      escapeRegex(DOCFORGE_MARKERS.END),
     'g'
   );
 
@@ -369,7 +370,10 @@ function stripCreationSectionsFromTemplate(template, plugin = {}) {
   // This is where template sections live; user content goes IN the placeholder
 
   // Remove ## INPUT DATA section
-  afterMarker = afterMarker.replace(/## INPUT DATA[\s\S]*?(?=\n## |\n\*\*BEGIN WITH|\n---\s*$|$)/g, '');
+  afterMarker = afterMarker.replace(
+    /## INPUT DATA[\s\S]*?(?=\n## |\n\*\*BEGIN WITH|\n---\s*$|$)/g,
+    ''
+  );
 
   // Remove ## Context section (with empty form fields like {{TITLE}})
   // Only match if followed by template field patterns (**, {{)
@@ -382,7 +386,10 @@ function stripCreationSectionsFromTemplate(template, plugin = {}) {
   afterMarker = afterMarker.replace(/## OUTPUT FORMAT[\s\S]*?(?=\n## |\n\*\*BEGIN WITH|$)/g, '');
 
   // Remove "### Required Sections" table
-  afterMarker = afterMarker.replace(/### Required Sections[\s\S]*?(?=\n## |\n\*\*BEGIN WITH|$)/g, '');
+  afterMarker = afterMarker.replace(
+    /### Required Sections[\s\S]*?(?=\n## |\n\*\*BEGIN WITH|$)/g,
+    ''
+  );
 
   // Inject review instruction (replaces anchor or appends)
   afterMarker = injectReviewInstruction(afterMarker, reviewInstruction);
@@ -475,12 +482,21 @@ function fixBrokenPlaceholderProse(prompt, userContentStart = -1, userContentEnd
  * @param {boolean} [options.isImported] - Whether the document was imported (triggers section stripping)
  * @returns {Promise<string>} Complete prompt ready for LLM
  */
-export async function generatePrompt(plugin, phase, formData, previousResponses = {}, options = {}) {
+export async function generatePrompt(
+  plugin,
+  phase,
+  formData,
+  previousResponses = {},
+  options = {}
+) {
   let template = await loadPromptTemplate(plugin.id, phase);
 
   // Defensive check: warn if formData is empty (but not for imports, which only have importedContent)
   if (!formData || Object.keys(formData).length === 0) {
-    logger.warn('generatePrompt called with empty formData - prompt will have no user inputs', 'prompt-generator');
+    logger.warn(
+      'generatePrompt called with empty formData - prompt will have no user inputs',
+      'prompt-generator'
+    );
   } else if (phase === 1 && !options.isImported) {
     // For CREATE workflow, check if ANY content fields are populated
     // Different document types have different required fields, so we just check
@@ -489,7 +505,10 @@ export async function generatePrompt(plugin, phase, formData, previousResponses 
       ([key, value]) => key !== 'importedContent' && typeof value === 'string' && value.length > 0
     );
     if (contentFields.length === 0) {
-      logger.warn('Phase 1 CREATE prompt has no form field values - user may not have filled out the form', 'prompt-generator');
+      logger.warn(
+        'Phase 1 CREATE prompt has no form field values - user may not have filled out the form',
+        'prompt-generator'
+      );
     }
   }
 
@@ -514,7 +533,7 @@ export async function generatePrompt(plugin, phase, formData, previousResponses 
   // When isImported: true, inject the imported document
   // When isImported: false, set to empty string to prevent content leaking via formData spread
   const importedContentValue = options.isImported
-    ? (formData?.importedContent || previousResponses[1] || '')
+    ? formData?.importedContent || previousResponses[1] || ''
     : '';
 
   // Track where user content will be inserted (for scoped prose normalization)

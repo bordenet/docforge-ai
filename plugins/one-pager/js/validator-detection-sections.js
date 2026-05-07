@@ -1,6 +1,6 @@
 /**
  * One-Pager Validator Detection Functions - Sections, Stakeholders, Timeline
- * 
+ *
  * Split from validator-detection.js to keep files under 250 lines.
  */
 
@@ -9,7 +9,7 @@ import {
   SCOPE_PATTERNS,
   METRICS_PATTERNS,
   STAKEHOLDER_PATTERNS,
-  TIMELINE_PATTERNS
+  TIMELINE_PATTERNS,
 } from './validator-config.js';
 
 // ============================================================================
@@ -36,8 +36,8 @@ export function detectScope(text) {
     indicators: [
       inScopeMatches.length > 0 && 'In-scope items defined',
       outOfScopeMatches.length > 0 && 'Out-of-scope items defined',
-      hasScopeSection && 'Dedicated scope section'
-    ].filter(Boolean)
+      hasScopeSection && 'Dedicated scope section',
+    ].filter(Boolean),
   };
 }
 
@@ -68,8 +68,8 @@ export function detectSuccessMetrics(text) {
       hasMetricsSection && 'Dedicated metrics section',
       smartMatches.length > 0 && 'SMART criteria mentioned',
       quantifiedMatches.length > 0 && `${quantifiedMatches.length} quantified metrics`,
-      metricsMatches.length > 0 && `${metricsMatches.length} metric references`
-    ].filter(Boolean)
+      metricsMatches.length > 0 && `${metricsMatches.length} metric references`,
+    ].filter(Boolean),
   };
 }
 
@@ -124,8 +124,9 @@ export function detectStakeholders(text) {
       hasStakeholderSection && 'Dedicated stakeholder section',
       stakeholderMatches.length > 0 && `${stakeholderMatches.length} stakeholder references`,
       roleMatches.length > 0 && 'Roles/responsibilities defined',
-      concernMatches.length > 0 && `${concernMatches.length} stakeholder concerns addressed (FP&A, legal, C-suite)`
-    ].filter(Boolean)
+      concernMatches.length > 0 &&
+        `${concernMatches.length} stakeholder concerns addressed (FP&A, legal, C-suite)`,
+    ].filter(Boolean),
   };
 }
 
@@ -152,8 +153,7 @@ export function detectTimeline(text) {
     indicators: [
       hasTimelineSection && 'Dedicated timeline section',
       dateMatches.length > 0 && `${dateMatches.length} timeline references`,
-      phasingMatches.length > 0 && `${phasingMatches.length} phases/milestones`
-    ].filter(Boolean)
+      phasingMatches.length > 0 && `${phasingMatches.length} phases/milestones`,
+    ].filter(Boolean),
   };
 }
-

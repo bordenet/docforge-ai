@@ -10,7 +10,7 @@ export default {
     'Remote and hybrid teams at mid-size companies (100-1000 employees) who conduct ' +
     '20+ meetings per week and struggle with meeting overload and action item tracking.',
   problem:
-    'Meetings consume 35% of knowledge workers\' time, yet 70% of action items are ' +
+    "Meetings consume 35% of knowledge workers' time, yet 70% of action items are " +
     'forgotten or lost. Teams waste hours in unproductive meetings and then more hours ' +
     'trying to remember what was decided.',
   theAlternative:
@@ -33,4 +33,3 @@ export default {
     'Enterprise: Custom pricing with SSO and admin controls. ' +
     'Available immediately at smartmeet.io.',
 };
-

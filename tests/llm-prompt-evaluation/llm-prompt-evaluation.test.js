@@ -11,20 +11,14 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { describe, it, expect, beforeAll } from '@jest/globals';
 import { generatePrompt } from '../../shared/js/prompt-generator.js';
-import { runAllChecks } from "./evaluators";
+import { runAllChecks } from './evaluators';
 import phaseOutputs from './fixtures/phase-outputs.js';
 
 /**
  * Load a prompt template from disk (for mocking fetch)
  */
 function loadPromptTemplate(pluginId, phase) {
-  const templatePath = path.join(
-    process.cwd(),
-    'plugins',
-    pluginId,
-    'prompts',
-    `phase${phase}.md`
-  );
+  const templatePath = path.join(process.cwd(), 'plugins', pluginId, 'prompts', `phase${phase}.md`);
   try {
     return fs.readFileSync(templatePath, 'utf-8');
   } catch {
@@ -191,7 +185,10 @@ describe('LLM Prompt Evaluation Battery', () => {
 
               // Report warnings but don't fail
               if (results.warnings.length > 0) {
-                console.warn(`Warnings for ${docType}/${workflow}/phase${phase}:`, results.warnings);
+                console.warn(
+                  `Warnings for ${docType}/${workflow}/phase${phase}:`,
+                  results.warnings
+                );
               }
 
               // Fail on any FAIL-severity issues
@@ -203,4 +200,3 @@ describe('LLM Prompt Evaluation Battery', () => {
     });
   }
 });
-

@@ -18,7 +18,7 @@ import {
   detectUrgency,
   detectDecisionNeeded,
   detectStakeholderTableQuality,
-  detectAlternativesQuality
+  detectAlternativesQuality,
 } from './validator-detection.js';
 
 // ============================================================================
@@ -70,7 +70,10 @@ export function scoreProblemClarity(text) {
 
   // Why Now / Urgency established (0-4 pts) - NEW
   const urgencyDetection = detectUrgency(text);
-  if (urgencyDetection.hasUrgencySection || (urgencyDetection.hasUrgencyLanguage && urgencyDetection.hasTimePressure)) {
+  if (
+    urgencyDetection.hasUrgencySection ||
+    (urgencyDetection.hasUrgencyLanguage && urgencyDetection.hasTimePressure)
+  ) {
     score += 4;
     strengths.push('Clear urgency/timing justification ("Why Now")');
   } else if (urgencyDetection.hasUrgencyLanguage || urgencyDetection.hasTimePressure) {
@@ -84,7 +87,7 @@ export function scoreProblemClarity(text) {
     score: Math.min(score, maxScore),
     maxScore,
     issues,
-    strengths
+    strengths,
   };
 }
 
@@ -152,7 +155,9 @@ export function scoreSolutionQuality(text) {
     }
   } else if (alternativesDetection.hasAlternativesLanguage) {
     score += 2;
-    issues.push('Alternatives mentioned but not in dedicated section or missing "do nothing" option');
+    issues.push(
+      'Alternatives mentioned but not in dedicated section or missing "do nothing" option'
+    );
   } else {
     issues.push('No alternatives considered - explain why THIS solution over other options');
   }
@@ -161,7 +166,7 @@ export function scoreSolutionQuality(text) {
     score: Math.min(score, maxScore),
     maxScore,
     issues,
-    strengths
+    strengths,
   };
 }
 
@@ -197,7 +202,7 @@ export function scoreScopeDiscipline(text) {
     score += 9;
     strengths.push('Out-of-scope explicitly defined');
   } else {
-    issues.push('Out-of-scope missing - explicitly state what you WON\'T do');
+    issues.push("Out-of-scope missing - explicitly state what you WON'T do");
   }
 
   // Success metrics are SMART (0-8 pts)
@@ -207,16 +212,18 @@ export function scoreScopeDiscipline(text) {
     strengths.push('Success metrics are SMART and quantified');
   } else if (metricsDetection.hasMetrics) {
     score += 4;
-    issues.push('Metrics present but not SMART - make them Specific, Measurable, Achievable, Relevant, Time-bound');
+    issues.push(
+      'Metrics present but not SMART - make them Specific, Measurable, Achievable, Relevant, Time-bound'
+    );
   } else {
-    issues.push('Success metrics missing - define how you\'ll measure success');
+    issues.push("Success metrics missing - define how you'll measure success");
   }
 
   return {
     score: Math.min(score, maxScore),
     maxScore,
     issues,
-    strengths
+    strengths,
   };
 }
 
@@ -243,10 +250,12 @@ export function scoreCompleteness(text) {
 
   if (sectionPercentage >= 0.85) {
     score += 6;
-    strengths.push(`${sections.found.length}/${REQUIRED_SECTIONS.length} required sections present`);
-  } else if (sectionPercentage >= 0.70) {
+    strengths.push(
+      `${sections.found.length}/${REQUIRED_SECTIONS.length} required sections present`
+    );
+  } else if (sectionPercentage >= 0.7) {
     score += 4;
-    issues.push(`Missing sections: ${sections.missing.map(s => s.name).join(', ')}`);
+    issues.push(`Missing sections: ${sections.missing.map((s) => s.name).join(', ')}`);
   } else {
     score += 2;
     issues.push(`Only ${sections.found.length} of ${REQUIRED_SECTIONS.length} sections present`);
@@ -269,7 +278,7 @@ export function scoreCompleteness(text) {
     score += 2;
     issues.push('Stakeholders mentioned but roles not clearly defined - consider RACI table');
   } else {
-    issues.push('Stakeholders not identified - list who\'s involved and their roles');
+    issues.push("Stakeholders not identified - list who's involved and their roles");
   }
 
   // Timeline is realistic and phased (0-5 pts) - reduced from 6
@@ -300,6 +309,6 @@ export function scoreCompleteness(text) {
     score: Math.min(score, maxScore),
     maxScore,
     issues,
-    strengths
+    strengths,
   };
 }

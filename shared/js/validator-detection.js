@@ -131,4 +131,3 @@ export function scoreDimension(text, dimension) {
     issues,
   };
 }
-

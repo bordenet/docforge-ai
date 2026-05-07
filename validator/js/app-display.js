@@ -121,9 +121,13 @@ export function renderExpansionStubs(stubData) {
     return;
   }
 
-  const sectionList = stubData.stubbedSections.length > 0
-    ? stubData.stubbedSections.slice(0, 5).map(s => `<li>• ${escapeHtml(s)}</li>`).join('')
-    : '<li>• (sections not detected)</li>';
+  const sectionList =
+    stubData.stubbedSections.length > 0
+      ? stubData.stubbedSections
+          .slice(0, 5)
+          .map((s) => `<li>• ${escapeHtml(s)}</li>`)
+          .join('')
+      : '<li>• (sections not detected)</li>';
 
   container.innerHTML = `
     <div class="mt-4 p-3 bg-blue-900/50 border border-blue-700 rounded-lg">
@@ -171,4 +175,3 @@ export function renderIssues(issues) {
     </div>
   `;
 }
-

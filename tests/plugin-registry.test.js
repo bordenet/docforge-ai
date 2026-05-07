@@ -159,7 +159,8 @@ describe('Plugin Registry', () => {
         for (let j = i + 1; j < plugins.length; j++) {
           const namesA = plugins[i].scoringDimensions.map((d) => d.name).sort();
           const namesB = plugins[j].scoringDimensions.map((d) => d.name).sort();
-          const identical = namesA.length === namesB.length && namesA.every((n, k) => n === namesB[k]);
+          const identical =
+            namesA.length === namesB.length && namesA.every((n, k) => n === namesB[k]);
           expect(identical).toBe(false);
         }
       }
@@ -197,15 +198,21 @@ describe('Plugin Registry', () => {
     // The JD plugin uses a deduction-based model with different result keys.
 
     const sampleTexts = {
-      'one-pager': '## Problem Statement\nUsers struggle with X.\n## Proposed Solution\nBuild Y.\n## Success Metrics\n50% reduction.\n## Scope\nIn scope: A. Out of scope: B.\n## Stakeholders\nTeam lead.\n## Timeline\nQ1 2026.',
-      'prd': '## Executive Summary\nThis PRD covers X.\n## Problem Statement\nUsers need Y.\n## Value Proposition\nValue to customer: faster.\n## Goals and Objectives\nReduce time by 50%.\n## Requirements\nFR1: Must do X.\n## Scope\nIn scope: A. Out of scope: B.',
-      'adr': '## Context\nWe need to decide X.\n## Decision\nWe will use Y.\n## Consequences\nThis means Z.\n## Status\nAccepted.',
-      'pr-faq': '# Press Release: New Feature\n## Summary\nAmazon announces X.\n## Problem\nCustomers struggle with Y.\n## Solution\nNew feature Z.\n## Customer Quote\n"This is amazing" — Customer\n## Internal FAQ\nQ: Why now?\nA: Market timing.\n## External FAQ\nQ: How much?\nA: Free.',
-      'power-statement': 'Led migration of 50 microservices to Kubernetes at Acme Corp, reducing deployment time by 75% and saving $2M annually.',
-      'acceptance-criteria': '## Feature: Login\n**Given** a registered user\n**When** they enter valid credentials\n**Then** they are redirected to dashboard\n## Edge Cases\nInvalid password shows error.',
-      'jd': '## Software Engineer\nWe are looking for a software engineer to join our team.\n## Responsibilities\nDesign and build systems.\n## Qualifications\n3+ years experience.\n## Benefits\nHealth insurance, 401k.',
-      'business-justification': '## Strategic Context\nMarket opportunity of $10M.\n## Financial Analysis\nROI: 300% over 3 years. NPV: $5M.\n## Options Analysis\nOption A: Build. Option B: Buy.\n## Execution Plan\nPhase 1: Discovery. Phase 2: Build.',
-      'strategic-proposal': '## Problem Statement\nCurrent system cannot scale.\n## Proposed Solution\nMigrate to cloud.\n## Business Impact\nReduce costs by 40%.\n## Implementation Plan\nQ1: Design. Q2: Build.',
+      'one-pager':
+        '## Problem Statement\nUsers struggle with X.\n## Proposed Solution\nBuild Y.\n## Success Metrics\n50% reduction.\n## Scope\nIn scope: A. Out of scope: B.\n## Stakeholders\nTeam lead.\n## Timeline\nQ1 2026.',
+      prd: '## Executive Summary\nThis PRD covers X.\n## Problem Statement\nUsers need Y.\n## Value Proposition\nValue to customer: faster.\n## Goals and Objectives\nReduce time by 50%.\n## Requirements\nFR1: Must do X.\n## Scope\nIn scope: A. Out of scope: B.',
+      adr: '## Context\nWe need to decide X.\n## Decision\nWe will use Y.\n## Consequences\nThis means Z.\n## Status\nAccepted.',
+      'pr-faq':
+        '# Press Release: New Feature\n## Summary\nAmazon announces X.\n## Problem\nCustomers struggle with Y.\n## Solution\nNew feature Z.\n## Customer Quote\n"This is amazing" — Customer\n## Internal FAQ\nQ: Why now?\nA: Market timing.\n## External FAQ\nQ: How much?\nA: Free.',
+      'power-statement':
+        'Led migration of 50 microservices to Kubernetes at Acme Corp, reducing deployment time by 75% and saving $2M annually.',
+      'acceptance-criteria':
+        '## Feature: Login\n**Given** a registered user\n**When** they enter valid credentials\n**Then** they are redirected to dashboard\n## Edge Cases\nInvalid password shows error.',
+      jd: '## Software Engineer\nWe are looking for a software engineer to join our team.\n## Responsibilities\nDesign and build systems.\n## Qualifications\n3+ years experience.\n## Benefits\nHealth insurance, 401k.',
+      'business-justification':
+        '## Strategic Context\nMarket opportunity of $10M.\n## Financial Analysis\nROI: 300% over 3 years. NPV: $5M.\n## Options Analysis\nOption A: Build. Option B: Buy.\n## Execution Plan\nPhase 1: Discovery. Phase 2: Build.',
+      'strategic-proposal':
+        '## Problem Statement\nCurrent system cannot scale.\n## Proposed Solution\nMigrate to cloud.\n## Business Impact\nReduce costs by 40%.\n## Implementation Plan\nQ1: Design. Q2: Build.',
     };
 
     it('every plugin validateDocument should return totalScore and issues', () => {

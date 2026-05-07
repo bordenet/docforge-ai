@@ -151,4 +151,3 @@ describe('getExportFilename', () => {
     expect(filename).not.toMatch(/[/:*!]/);
   });
 });
-

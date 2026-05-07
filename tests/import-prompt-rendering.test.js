@@ -54,13 +54,7 @@ Create comprehensive integration tests that verify import behavior.
  * Load actual Phase 1 template from disk
  */
 function loadRealTemplate(pluginId) {
-  const templatePath = path.join(
-    process.cwd(),
-    'plugins',
-    pluginId,
-    'prompts',
-    'phase1.md'
-  );
+  const templatePath = path.join(process.cwd(), 'plugins', pluginId, 'prompts', 'phase1.md');
   try {
     return fs.readFileSync(templatePath, 'utf-8');
   } catch {
@@ -329,4 +323,3 @@ describe('Import Prompt Rendering - Edge Cases', () => {
     expect(prompt).toContain('fallback content');
   });
 });
-

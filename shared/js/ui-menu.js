@@ -31,17 +31,21 @@ export function createActionMenu({ triggerElement, items, position: _position = 
   function createMenuElement() {
     menu = document.createElement('div');
     menu.id = menuId;
-    menu.className = 'action-menu bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 min-w-[180px]';
+    menu.className =
+      'action-menu bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 min-w-[180px]';
     menu.setAttribute('role', 'menu');
     menu.tabIndex = -1;
 
-    menu.innerHTML = items.map((item, index) => {
-      if (item.separator) {
-        return '<div class="border-t border-gray-200 dark:border-gray-700 my-1" role="separator"></div>';
-      }
-      const disabledClass = item.disabled ? 'opacity-50 cursor-not-allowed' : '';
-      const destructiveClass = item.destructive ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300';
-      return `
+    menu.innerHTML = items
+      .map((item, index) => {
+        if (item.separator) {
+          return '<div class="border-t border-gray-200 dark:border-gray-700 my-1" role="separator"></div>';
+        }
+        const disabledClass = item.disabled ? 'opacity-50 cursor-not-allowed' : '';
+        const destructiveClass = item.destructive
+          ? 'text-red-600 dark:text-red-400'
+          : 'text-gray-700 dark:text-gray-300';
+        return `
         <button
           class="action-menu-item w-full px-4 py-2 text-left flex items-center hover:bg-gray-100 dark:hover:bg-gray-700 ${disabledClass} ${destructiveClass}"
           role="menuitem"
@@ -53,7 +57,8 @@ export function createActionMenu({ triggerElement, items, position: _position = 
           <span>${item.label}</span>
         </button>
       `;
-    }).join('');
+      })
+      .join('');
 
     return menu;
   }
@@ -155,4 +160,3 @@ export function createActionMenu({ triggerElement, items, position: _position = 
   controller = { open, close, toggle, isOpen: () => isOpen };
   return controller;
 }
-

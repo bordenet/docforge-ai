@@ -13,7 +13,7 @@ import {
   detectUrgency,
   detectSolution,
   detectBusinessImpact,
-  detectImplementation
+  detectImplementation,
 } from './validator-detection.js';
 
 /**
@@ -63,7 +63,7 @@ export function scoreProblemStatement(text) {
     score: Math.min(score, maxScore),
     maxScore,
     issues,
-    strengths
+    strengths,
   };
 }
 
@@ -110,7 +110,7 @@ export function scoreProposedSolution(text) {
     score: Math.min(score, maxScore),
     maxScore,
     issues,
-    strengths
+    strengths,
   };
 }
 
@@ -160,7 +160,7 @@ export function scoreBusinessImpact(text) {
     score: Math.min(score, maxScore),
     maxScore,
     issues,
-    strengths
+    strengths,
   };
 }
 
@@ -213,7 +213,6 @@ export function scoreImplementationPlan(text) {
     score: Math.min(score, maxScore),
     maxScore,
     issues,
-    strengths
+    strengths,
   };
 }
-

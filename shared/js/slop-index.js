@@ -14,12 +14,8 @@ export {
   detectPatterns,
   detectStructuralPatterns,
   analyzeSentenceVariance,
-  analyzeTypeTokenRatio
+  analyzeTypeTokenRatio,
 } from './slop-detection.js';
 
 // Scoring functions
-export {
-  calculateSlopScore,
-  getSlopPenalty
-} from './slop-scoring.js';
-
+export { calculateSlopScore, getSlopPenalty } from './slop-scoring.js';

@@ -31,4 +31,3 @@ export default {
     'Annual bonus: 10-15%. Benefits include health insurance, 401(k) matching, ' +
     'unlimited PTO, and $5,000 annual learning budget.',
 };
-

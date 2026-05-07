@@ -10,14 +10,20 @@ const localStorageMock = (() => {
   let store = {};
   return {
     getItem: (key) => store[key] || null,
-    setItem: (key, value) => { store[key] = value.toString(); },
-    removeItem: (key) => { delete store[key]; },
-    clear: () => { store = {}; }
+    setItem: (key, value) => {
+      store[key] = value.toString();
+    },
+    removeItem: (key) => {
+      delete store[key];
+    },
+    clear: () => {
+      store = {};
+    },
   };
 })();
 
 Object.defineProperty(global, 'localStorage', {
-  value: localStorageMock
+  value: localStorageMock,
 });
 
 describe('Validator Storage - Version History', () => {
@@ -77,12 +83,12 @@ describe('Validator Storage - Version History', () => {
 
     it('respects maxVersions limit', () => {
       const limitedStorage = createStorage('limited-test', 3);
-      
+
       limitedStorage.saveVersion('# V1');
       limitedStorage.saveVersion('# V2');
       limitedStorage.saveVersion('# V3');
       limitedStorage.saveVersion('# V4');
-      
+
       const current = limitedStorage.getCurrentVersion();
       expect(current.totalVersions).toBe(3);
       expect(current.versionNumber).toBe(3);
@@ -387,4 +393,3 @@ describe('Validator Storage - Version History', () => {
     });
   });
 });
-

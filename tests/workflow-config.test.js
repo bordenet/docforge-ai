@@ -3,11 +3,7 @@
  * Tests for WORKFLOW_CONFIG, PHASES constant, and getPhaseMetadata
  */
 
-import {
-  WORKFLOW_CONFIG,
-  PHASES,
-  getPhaseMetadata,
-} from '../shared/js/workflow.js';
+import { WORKFLOW_CONFIG, PHASES, getPhaseMetadata } from '../shared/js/workflow.js';
 
 describe('WORKFLOW_CONFIG', () => {
   it('should have required structure', () => {
@@ -64,4 +60,3 @@ describe('getPhaseMetadata', () => {
     expect(getPhaseMetadata(0)).toBeUndefined();
   });
 });
-

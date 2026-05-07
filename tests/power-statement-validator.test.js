@@ -17,7 +17,7 @@ import {
   validateDocument,
   getGrade,
   getScoreColor,
-  getScoreLabel
+  getScoreLabel,
 } from '../plugins/power-statement/js/validator.js';
 
 describe('Power Statement Validator', () => {
@@ -34,7 +34,9 @@ describe('Power Statement Validator', () => {
     });
 
     it('finds multiple strong verbs', () => {
-      const result = detectActionVerbs('Developed and launched a platform that transformed customer engagement.');
+      const result = detectActionVerbs(
+        'Developed and launched a platform that transformed customer engagement.'
+      );
       expect(result.strongVerbCount).toBeGreaterThanOrEqual(2);
     });
 
@@ -92,18 +94,23 @@ describe('Power Statement Validator', () => {
 
   describe('detectClarity', () => {
     it('detects filler words', () => {
-      const result = detectClarity('This is basically a very important solution that really works.');
+      const result = detectClarity(
+        'This is basically a very important solution that really works.'
+      );
       expect(result.hasFillers).toBe(true);
       expect(result.fillerCount).toBeGreaterThan(0);
     });
 
     it('detects jargon', () => {
-      const result = detectClarity('We leverage synergy to move the needle and deep dive into solutions.');
+      const result = detectClarity(
+        'We leverage synergy to move the needle and deep dive into solutions.'
+      );
       expect(result.hasJargon).toBe(true);
     });
 
     it('detects appropriate word count', () => {
-      const text = 'Led the development of a customer analytics platform at Acme Corp that transformed how the sales team engages with enterprise clients. By implementing real-time data insights and predictive scoring, we increased qualified leads by 45% and shortened the sales cycle by 2 weeks. The solution now serves 500+ sales representatives across 3 regions.';
+      const text =
+        'Led the development of a customer analytics platform at Acme Corp that transformed how the sales team engages with enterprise clients. By implementing real-time data insights and predictive scoring, we increased qualified leads by 45% and shortened the sales cycle by 2 weeks. The solution now serves 500+ sales representatives across 3 regions.';
       const result = detectClarity(text);
       expect(result.isConcise).toBe(true);
     });
@@ -114,7 +121,9 @@ describe('Power Statement Validator', () => {
     });
 
     it('detects vague improvement terms', () => {
-      const result = detectClarity('We improved performance and enhanced the system significantly.');
+      const result = detectClarity(
+        'We improved performance and enhanced the system significantly.'
+      );
       expect(result.hasVagueImprovement).toBe(true);
     });
   });
@@ -156,14 +165,16 @@ Explanation.
 
   describe('scoreClarity', () => {
     it('gives high score for clean text', () => {
-      const text = 'Led the development of an analytics platform at Acme Corp that transformed customer engagement. The team delivered real-time insights that increased qualified leads by 45% within 3 months. Sales representatives now close deals 2 weeks faster with actionable data.';
+      const text =
+        'Led the development of an analytics platform at Acme Corp that transformed customer engagement. The team delivered real-time insights that increased qualified leads by 45% within 3 months. Sales representatives now close deals 2 weeks faster with actionable data.';
       const result = scoreClarity(text);
       expect(result.score).toBeGreaterThan(15);
       expect(result.maxScore).toBe(25);
     });
 
     it('penalizes filler words', () => {
-      const text = 'This is basically a very important solution that really helps customers quite a lot.';
+      const text =
+        'This is basically a very important solution that really helps customers quite a lot.';
       const result = scoreClarity(text);
       expect(result.issues.length).toBeGreaterThan(0);
     });
@@ -171,7 +182,8 @@ Explanation.
 
   describe('scoreImpact', () => {
     it('gives high score for quantified business impact', () => {
-      const text = 'Drove revenue growth of 25% and reduced customer churn by 15% within the enterprise team.';
+      const text =
+        'Drove revenue growth of 25% and reduced customer churn by 15% within the enterprise team.';
       const result = scoreImpact(text);
       expect(result.score).toBeGreaterThan(15);
     });
@@ -185,7 +197,8 @@ Explanation.
 
   describe('scoreAction', () => {
     it('gives high score for strong action verbs', () => {
-      const text = 'Spearheaded a cross-functional initiative that transformed customer engagement and delivered measurable results.';
+      const text =
+        'Spearheaded a cross-functional initiative that transformed customer engagement and delivered measurable results.';
       const result = scoreAction(text);
       expect(result.score).toBeGreaterThan(15);
     });
@@ -199,7 +212,8 @@ Explanation.
 
   describe('scoreSpecificity', () => {
     it('gives high score for specific metrics', () => {
-      const text = 'At Acme Corp, increased conversion by 35% and generated $1.5 million in 6 months for the enterprise team.';
+      const text =
+        'At Acme Corp, increased conversion by 35% and generated $1.5 million in 6 months for the enterprise team.';
       const result = scoreSpecificity(text);
       expect(result.score).toBeGreaterThan(15);
     });
@@ -213,7 +227,8 @@ Explanation.
 
   describe('validatePowerStatement', () => {
     it('returns complete validation results', () => {
-      const text = 'Led the development of a customer analytics platform at Acme Corp that transformed how the sales team engages with enterprise clients. By implementing real-time data insights, we increased qualified leads by 45% and shortened the sales cycle by 2 weeks.';
+      const text =
+        'Led the development of a customer analytics platform at Acme Corp that transformed how the sales team engages with enterprise clients. By implementing real-time data insights, we increased qualified leads by 45% and shortened the sales cycle by 2 weeks.';
       const result = validatePowerStatement(text);
 
       expect(result.totalScore).toBeGreaterThan(0);
@@ -333,13 +348,15 @@ Real-time data enables faster, smarter decisions.
 
   describe('Issues Rollup', () => {
     it('should include top-level issues array', () => {
-      const text = 'Led migration of 50 microservices to Kubernetes at Acme Corp, reducing deployment time by 75%.';
+      const text =
+        'Led migration of 50 microservices to Kubernetes at Acme Corp, reducing deployment time by 75%.';
       const result = validateDocument(text);
       expect(Array.isArray(result.issues)).toBe(true);
     });
 
     it('should aggregate all dimension issues', () => {
-      const text = 'Led migration of 50 microservices to Kubernetes at Acme Corp, reducing deployment time by 75%.';
+      const text =
+        'Led migration of 50 microservices to Kubernetes at Acme Corp, reducing deployment time by 75%.';
       const result = validateDocument(text);
       const expectedCount =
         result.clarity.issues.length +
@@ -354,19 +371,21 @@ Real-time data enables faster, smarter decisions.
 
   describe('Regex Determinism', () => {
     it('detectSpecificity should produce consistent results across repeated calls', () => {
-      const text = 'Led a team of 12 engineers at Acme Corp department to deliver the project in Q1 2024.';
+      const text =
+        'Led a team of 12 engineers at Acme Corp department to deliver the project in Q1 2024.';
       const results = [];
       for (let i = 0; i < 5; i++) {
         results.push(detectSpecificity(text));
       }
-      const teamContexts = results.map(r => r.hasTeamContext);
+      const teamContexts = results.map((r) => r.hasTeamContext);
       expect(new Set(teamContexts).size).toBe(1);
     });
   });
 
   describe('Unicode Normalization', () => {
     it('zero-width spaces should not affect scores', () => {
-      const text = 'Led migration of 50 microservices to Kubernetes at Acme Corp, reducing deployment time by 75%.';
+      const text =
+        'Led migration of 50 microservices to Kubernetes at Acme Corp, reducing deployment time by 75%.';
       const clean = validateDocument(text);
       // Insert ZWS between words without changing word content
       const withZWS = validateDocument(text.replace(/migration/g, 'migra\u200Btion'));
@@ -374,11 +393,11 @@ Real-time data enables faster, smarter decisions.
     });
 
     it('BOM should not affect scores', () => {
-      const text = 'Led migration of 50 microservices to Kubernetes at Acme Corp, reducing deployment time by 75%.';
+      const text =
+        'Led migration of 50 microservices to Kubernetes at Acme Corp, reducing deployment time by 75%.';
       const clean = validateDocument(text);
       const withBOM = validateDocument('\uFEFF' + text);
       expect(withBOM.totalScore).toBe(clean.totalScore);
     });
   });
 });
-

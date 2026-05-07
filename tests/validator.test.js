@@ -226,9 +226,7 @@ Phase 2: Q2 2024
       const pluginWithValidator = {
         id: 'test-plugin',
         validateDocument: (_text) => customResult,
-        scoringDimensions: [
-          { name: 'Test', maxPoints: 100, description: 'Test' },
-        ],
+        scoringDimensions: [{ name: 'Test', maxPoints: 100, description: 'Test' }],
       };
       const result = validateDocument('# Test\nContent', pluginWithValidator);
       // Should get the result from the plugin validator, not generic scoring
@@ -245,7 +243,10 @@ Phase 2: Q2 2024
           { name: 'Structure', maxPoints: 50, description: 'Structure' },
         ],
       };
-      const result = validateDocument('# Test\nSome content here with details.', pluginWithoutValidator);
+      const result = validateDocument(
+        '# Test\nSome content here with details.',
+        pluginWithoutValidator
+      );
       // Should use generic scoring since validateDocument is null
       expect(result.totalScore).toBeDefined();
       expect(result.Quality).toBeDefined();

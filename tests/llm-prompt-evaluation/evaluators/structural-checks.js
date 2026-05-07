@@ -117,4 +117,3 @@ export function runStructuralChecks(prompt) {
 
   return results;
 }
-

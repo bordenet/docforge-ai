@@ -51,4 +51,3 @@ export default {
     'Engineering Lead (sponsor), Product Manager (requirements), ' +
     'Customer Success (user feedback), Marketing (App Store presence).',
 };
-

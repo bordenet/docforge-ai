@@ -8,7 +8,7 @@ import {
   detectClarity,
   detectTestability,
   detectCompleteness,
-  detectSections
+  detectSections,
 } from './validator-detection.js';
 
 /**
@@ -116,7 +116,9 @@ export function scoreTestability(text) {
     issues.push(`Remove vague terms: ${detection.vagueTerms.slice(0, 2).join(', ')}`);
   } else {
     score -= 15;
-    issues.push(`${detection.vagueTermCount} vague terms found: ${detection.vagueTerms.slice(0, 3).join(', ')}`);
+    issues.push(
+      `${detection.vagueTermCount} vague terms found: ${detection.vagueTerms.slice(0, 3).join(', ')}`
+    );
   }
 
   // Deduct for user story anti-pattern (-5 pts)
@@ -140,7 +142,9 @@ export function scoreTestability(text) {
   // Deduct for implementation details (-5 pts)
   if (detection.hasImplementationDetails) {
     score -= 5;
-    issues.push(`Remove implementation details: ${detection.implementationTerms.slice(0, 3).join(', ')}`);
+    issues.push(
+      `Remove implementation details: ${detection.implementationTerms.slice(0, 3).join(', ')}`
+    );
   }
 
   // Positive indicator if clean
@@ -200,11 +204,10 @@ export function scoreCompleteness(text) {
     strengths.push(`${sections.found.length}/${REQUIRED_SECTIONS.length} sections present`);
   } else if (sectionPercentage >= 0.6) {
     score += 3;
-    issues.push(`Missing sections: ${sections.missing.map(s => s.name).join(', ')}`);
+    issues.push(`Missing sections: ${sections.missing.map((s) => s.name).join(', ')}`);
   } else {
     issues.push('Add required sections: Summary, Acceptance Criteria, Out of Scope');
   }
 
   return { score: Math.min(score, maxScore), maxScore, issues, strengths };
 }
-

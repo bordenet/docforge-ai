@@ -4,8 +4,17 @@
  */
 
 import { STRATEGIC_VIABILITY_PATTERNS, SEGMENT_SPECIFICITY_PATTERNS } from './validator-config.js';
-import { detectUserPersonas, detectProblemStatement, detectCustomerEvidence, detectNonFunctionalRequirements } from './validator-detection.js';
-import { countUserStories, countFunctionalRequirements, countAcceptanceCriteria } from './validator-requirements.js';
+import {
+  detectUserPersonas,
+  detectProblemStatement,
+  detectCustomerEvidence,
+  detectNonFunctionalRequirements,
+} from './validator-detection.js';
+import {
+  countUserStories,
+  countFunctionalRequirements,
+  countAcceptanceCriteria,
+} from './validator-requirements.js';
 
 /**
  * Score user focus (20 pts max)
@@ -20,19 +29,27 @@ export function scoreUserFocus(text) {
   const personas = detectUserPersonas(text);
   const personaQuality =
     (personas.hasPersonaSection ? 2 : 0) +
-    (personas.userTypes.length >= 2 ? 2 : (personas.userTypes.length >= 1 ? 1 : 0)) +
-    (personas.hasPainPoints ? 1 : 0) + (personas.hasScenarios ? 1 : 0) + (personas.hasPersonaDepth ? 1 : 0);
+    (personas.userTypes.length >= 2 ? 2 : personas.userTypes.length >= 1 ? 1 : 0) +
+    (personas.hasPainPoints ? 1 : 0) +
+    (personas.hasScenarios ? 1 : 0) +
+    (personas.hasPersonaDepth ? 1 : 0);
 
   if (personaQuality >= 5) {
     score += 5;
-    strengths.push(personas.userTypes.length >= 2 ? `${personas.userTypes.length} user types identified with dedicated section` : 'Well-defined user persona with pain points and context');
+    strengths.push(
+      personas.userTypes.length >= 2
+        ? `${personas.userTypes.length} user types identified with dedicated section`
+        : 'Well-defined user persona with pain points and context'
+    );
   } else if (personaQuality >= 3) {
     score += 4;
-    if (personas.userTypes.length > 0) strengths.push(`User types identified: ${personas.userTypes.slice(0, 3).join(', ')}`);
+    if (personas.userTypes.length > 0)
+      strengths.push(`User types identified: ${personas.userTypes.slice(0, 3).join(', ')}`);
     if (personas.hasPainPoints) strengths.push('User pain points addressed');
   } else if (personaQuality >= 2) {
     score += 2;
-    if (personas.userTypes.length > 0) strengths.push(`User types identified: ${personas.userTypes.slice(0, 3).join(', ')}`);
+    if (personas.userTypes.length > 0)
+      strengths.push(`User types identified: ${personas.userTypes.slice(0, 3).join(', ')}`);
     issues.push('Add more persona depth (pain points, scenarios, detailed descriptions)');
   } else if (personas.userTypes.length >= 1) {
     score += 1;
@@ -46,11 +63,19 @@ export function scoreUserFocus(text) {
   const boundedSegments = text.match(SEGMENT_SPECIFICITY_PATTERNS.bounded) || [];
   const specificSegments = text.match(SEGMENT_SPECIFICITY_PATTERNS.specific) || [];
   const demographicSegments = text.match(SEGMENT_SPECIFICITY_PATTERNS.demographic) || [];
-  const segmentSpecificityCount = [...new Set([...quantifiedSegments, ...boundedSegments, ...specificSegments, ...demographicSegments].map(s => s.toLowerCase()))].length;
+  const segmentSpecificityCount = [
+    ...new Set(
+      [...quantifiedSegments, ...boundedSegments, ...specificSegments, ...demographicSegments].map(
+        (s) => s.toLowerCase()
+      )
+    ),
+  ].length;
 
   if (segmentSpecificityCount >= 3) {
     score += 2;
-    strengths.push(`Specific user segments defined (${segmentSpecificityCount} specificity markers)`);
+    strengths.push(
+      `Specific user segments defined (${segmentSpecificityCount} specificity markers)`
+    );
   } else if (segmentSpecificityCount >= 1) {
     score += 1;
     strengths.push('Some segment specificity present');
@@ -85,7 +110,8 @@ export function scoreUserFocus(text) {
     strengths.push('Requirements clearly linked to user needs');
   } else if (hasSomeRequirements || problem.hasWhyExplanation) {
     score += 2;
-    if (!hasSomeRequirements) issues.push('Use FR format (FR1, FR2) to connect features to user needs');
+    if (!hasSomeRequirements)
+      issues.push('Use FR format (FR1, FR2) to connect features to user needs');
   } else {
     issues.push('Requirements should trace back to user needs');
   }
@@ -93,8 +119,10 @@ export function scoreUserFocus(text) {
   // Customer evidence (0-5 pts)
   const customerEvidence = detectCustomerEvidence(text);
   // Reset lastIndex on global patterns before .test() to prevent stale state
-  if (STRATEGIC_VIABILITY_PATTERNS.customerFAQ.global) STRATEGIC_VIABILITY_PATTERNS.customerFAQ.lastIndex = 0;
-  if (STRATEGIC_VIABILITY_PATTERNS.ahaQuote.global) STRATEGIC_VIABILITY_PATTERNS.ahaQuote.lastIndex = 0;
+  if (STRATEGIC_VIABILITY_PATTERNS.customerFAQ.global)
+    STRATEGIC_VIABILITY_PATTERNS.customerFAQ.lastIndex = 0;
+  if (STRATEGIC_VIABILITY_PATTERNS.ahaQuote.global)
+    STRATEGIC_VIABILITY_PATTERNS.ahaQuote.lastIndex = 0;
   const hasCustomerFAQ = STRATEGIC_VIABILITY_PATTERNS.customerFAQ.test(text);
   const hasAhaQuote = STRATEGIC_VIABILITY_PATTERNS.ahaQuote.test(text);
 
@@ -117,11 +145,28 @@ export function scoreUserFocus(text) {
     issues.push('No customer evidence found');
   }
 
-  if (hasCustomerFAQ) { evidenceScore += 1; strengths.push('Customer FAQ section (Working Backwards approach)'); }
-  if (hasAhaQuote) { evidenceScore += 1; strengths.push('Customer "Aha!" moment quote included'); }
+  if (hasCustomerFAQ) {
+    evidenceScore += 1;
+    strengths.push('Customer FAQ section (Working Backwards approach)');
+  }
+  if (hasAhaQuote) {
+    evidenceScore += 1;
+    strengths.push('Customer "Aha!" moment quote included');
+  }
   score += Math.min(evidenceScore, 5);
 
-  return { score: Math.min(score, maxScore), maxScore, issues, strengths, personas, problem, customerEvidence, hasCustomerFAQ, hasAhaQuote, segmentSpecificityCount };
+  return {
+    score: Math.min(score, maxScore),
+    maxScore,
+    issues,
+    strengths,
+    personas,
+    problem,
+    customerEvidence,
+    hasCustomerFAQ,
+    hasAhaQuote,
+    segmentSpecificityCount,
+  };
 }
 
 /**
@@ -150,7 +195,10 @@ export function scoreTechnicalQuality(text) {
 
   // Acceptance criteria (0-5 pts)
   const acceptanceCriteriaCount = countAcceptanceCriteria(text);
-  const hasFailureCases = /\b(fail|error|invalid|edge\s+case|exception|timeout|reject|deny|empty|offline|ac\s*\(failure\)|failure\))\b/i.test(text);
+  const hasFailureCases =
+    /\b(fail|error|invalid|edge\s+case|exception|timeout|reject|deny|empty|offline|ac\s*\(failure\)|failure\))\b/i.test(
+      text
+    );
   const hasSuccessAndFailure = acceptanceCriteriaCount >= 2 && hasFailureCases;
 
   if (acceptanceCriteriaCount >= 3 && hasSuccessAndFailure) {
@@ -176,8 +224,12 @@ export function scoreTechnicalQuality(text) {
 
   // Dependencies and constraints (0-5 pts)
   // Support both markdown # headings and numbered sections (e.g., "8.3 Constraints")
-  const hasDependencies = /^(?:#+\s*|\d+\.?\d*\.?\s*)(depend|risk|assumption|constraint)/im.test(text);
-  const mentionsDependencies = /\b(depends.?on|requires|prerequisite|blocker|assumption)\b/i.test(text);
+  const hasDependencies = /^(?:#+\s*|\d+\.?\d*\.?\s*)(depend|risk|assumption|constraint)/im.test(
+    text
+  );
+  const mentionsDependencies = /\b(depends.?on|requires|prerequisite|blocker|assumption)\b/i.test(
+    text
+  );
 
   if (hasDependencies && mentionsDependencies) {
     score += 5;
@@ -189,6 +241,12 @@ export function scoreTechnicalQuality(text) {
     issues.push('Missing dependencies/constraints section');
   }
 
-  return { score: Math.min(score, maxScore), maxScore, issues, strengths, nfr, acceptanceCriteriaCount };
+  return {
+    score: Math.min(score, maxScore),
+    maxScore,
+    issues,
+    strengths,
+    nfr,
+    acceptanceCriteriaCount,
+  };
 }
-

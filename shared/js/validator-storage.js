@@ -54,15 +54,17 @@ export function createStorage(storageKey, maxVersions = 10) {
     }
 
     // Don't save if content is identical to current version
-    if (history.versions.length > 0 &&
-        history.versions[history.currentIndex]?.markdown === markdown) {
+    if (
+      history.versions.length > 0 &&
+      history.versions[history.currentIndex]?.markdown === markdown
+    ) {
       return { success: false, reason: 'no-change' };
     }
 
     // Add new version
     history.versions.push({
       markdown,
-      savedAt: new Date().toISOString()
+      savedAt: new Date().toISOString(),
     });
 
     // Trim to max versions
@@ -76,7 +78,7 @@ export function createStorage(storageKey, maxVersions = 10) {
       return {
         success: true,
         versionNumber: history.currentIndex + 1,
-        totalVersions: history.versions.length
+        totalVersions: history.versions.length,
       };
     }
     return { success: false, reason: 'storage-error' };
@@ -96,7 +98,7 @@ export function createStorage(storageKey, maxVersions = 10) {
     return {
       ...history.versions[history.currentIndex],
       versionNumber: history.currentIndex + 1,
-      totalVersions: history.versions.length
+      totalVersions: history.versions.length,
     };
   }
 
@@ -114,7 +116,7 @@ export function createStorage(storageKey, maxVersions = 10) {
     return {
       ...history.versions[history.currentIndex],
       versionNumber: history.currentIndex + 1,
-      totalVersions: history.versions.length
+      totalVersions: history.versions.length,
     };
   }
 
@@ -131,7 +133,7 @@ export function createStorage(storageKey, maxVersions = 10) {
       versionNumber: history.currentIndex + 1,
       totalVersions: history.versions.length,
       canGoBack: history.currentIndex > 0,
-      canGoForward: history.currentIndex < history.versions.length - 1
+      canGoForward: history.currentIndex < history.versions.length - 1,
     };
   }
 
@@ -175,7 +177,6 @@ export function createStorage(storageKey, maxVersions = 10) {
     goForward,
     getCurrentVersion,
     loadDraft,
-    getTimeSince
+    getTimeSince,
   };
 }
-

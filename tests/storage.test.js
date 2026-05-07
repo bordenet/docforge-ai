@@ -461,7 +461,9 @@ describe('Storage Module', () => {
     });
 
     test('should throw error for null project', async () => {
-      await expect(saveProject(TEST_DB_NAME, null)).rejects.toThrow('Project must be a non-null object');
+      await expect(saveProject(TEST_DB_NAME, null)).rejects.toThrow(
+        'Project must be a non-null object'
+      );
     });
 
     test('should set default title if missing', async () => {

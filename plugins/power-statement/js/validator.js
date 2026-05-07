@@ -1,6 +1,6 @@
 /**
  * Power Statement Validator - Main Entry Point
- * 
+ *
  * Scoring Dimensions:
  * 1. Clarity (25 pts) - Plain language, conversational tone, no jargon
  * 2. Impact (25 pts) - Customer outcomes, quantified results
@@ -19,7 +19,7 @@ export {
   detectSpecificity,
   detectImpact,
   detectClarity,
-  detectVersions
+  detectVersions,
 } from './validator-detection.js';
 
 // Re-export scoring functions for testing
@@ -42,7 +42,7 @@ export function validatePowerStatement(text) {
       dimension2: { score: 0, maxScore: 25, issues: ['No content to validate'], strengths: [] },
       dimension3: { score: 0, maxScore: 25, issues: ['No content to validate'], strengths: [] },
       dimension4: { score: 0, maxScore: 25, issues: ['No content to validate'], strengths: [] },
-      issues: ['No content to validate']
+      issues: ['No content to validate'],
     };
   }
 
@@ -65,7 +65,9 @@ export function validatePowerStatement(text) {
     versionStrengths.push('Both Version A and Version B with structured sections (+5 bonus)');
   } else if (versionDetection.hasBothVersions) {
     versionBonus = 3;
-    versionIssues.push(`Version B needs structured sections (${versionDetection.structuredSectionCount}/4 found)`);
+    versionIssues.push(
+      `Version B needs structured sections (${versionDetection.structuredSectionCount}/4 found)`
+    );
   } else if (versionDetection.hasVersionA || versionDetection.hasVersionB) {
     versionBonus = 2;
     versionIssues.push('Include both Version A (concise) and Version B (structured)');
@@ -85,9 +87,13 @@ export function validatePowerStatement(text) {
     }
   }
 
-  const totalScore = Math.max(0, Math.min(100,
-    clarity.score + impact.score + action.score + specificity.score + versionBonus - slopDeduction
-  ));
+  const totalScore = Math.max(
+    0,
+    Math.min(
+      100,
+      clarity.score + impact.score + action.score + specificity.score + versionBonus - slopDeduction
+    )
+  );
 
   // Aggregate all issues from all dimensions for the assistant completion banner
   const allIssues = [
@@ -114,12 +120,12 @@ export function validatePowerStatement(text) {
       ...versionDetection,
       bonus: versionBonus,
       strengths: versionStrengths,
-      issues: versionIssues
+      issues: versionIssues,
     },
     slopDetection: {
       ...slopPenalty,
       deduction: slopDeduction,
-      issues: slopIssues
+      issues: slopIssues,
     },
     // Top-level issues array for assistant completion banner display
     issues: allIssues,
@@ -137,4 +143,3 @@ export function validateDocument(text) {
 
 // Re-export scoring helper functions from shared module for consistency
 export { getGrade, getScoreColor, getScoreLabel } from '../../../shared/js/validator.js';
-

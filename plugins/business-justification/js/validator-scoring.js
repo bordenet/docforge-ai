@@ -12,7 +12,7 @@ import {
   detectStrategicEvidence,
   detectFinancialJustification,
   detectOptionsAnalysis,
-  detectExecutionCompleteness
+  detectExecutionCompleteness,
 } from './validator-detection.js';
 
 /**

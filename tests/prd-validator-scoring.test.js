@@ -46,7 +46,11 @@ Feedback from beta testers confirms this need.
     test('identifies missing personas', () => {
       const text = 'Some generic content without user mentions.';
       const result = scoreUserFocus(text);
-      expect(result.issues.some((i) => i.toLowerCase().includes('persona') || i.toLowerCase().includes('user'))).toBe(true);
+      expect(
+        result.issues.some(
+          (i) => i.toLowerCase().includes('persona') || i.toLowerCase().includes('user')
+        )
+      ).toBe(true);
     });
 
     test('identifies missing problem statement', () => {
@@ -113,7 +117,11 @@ Requires: API Gateway v2
     test('identifies missing acceptance criteria', () => {
       const text = 'Requirements without Given/When/Then format.';
       const result = scoreTechnicalQuality(text);
-      expect(result.issues.some((i) => i.includes('acceptance criteria') || i.includes('Given/When/Then'))).toBe(true);
+      expect(
+        result.issues.some(
+          (i) => i.includes('acceptance criteria') || i.includes('Given/When/Then')
+        )
+      ).toBe(true);
     });
 
     test('detects failure case acceptance criteria', () => {
@@ -174,20 +182,23 @@ Risk: Timeline slip. This could fail if resources unavailable.
     });
 
     test('detects alternatives considered', () => {
-      const text = '# Alternatives Considered\nOption A: Build custom. Option B: Buy vendor solution.';
+      const text =
+        '# Alternatives Considered\nOption A: Build custom. Option B: Buy vendor solution.';
       const result = scoreStrategicViability(text);
       expect(result.details.hasAlternatives).toBe(true);
     });
 
     test('detects dissenting opinions', () => {
-      const text = '# Known Unknowns & Dissenting Opinions\nSome team members disagree with approach.';
+      const text =
+        '# Known Unknowns & Dissenting Opinions\nSome team members disagree with approach.';
       const result = scoreStrategicViability(text);
       expect(result.details.hasDissentingOpinions).toBe(true);
       expect(result.riskScore).toBeGreaterThan(0);
     });
 
     test('detects risk section with mitigations', () => {
-      const text = '# Risks\nRisk: Timeline slip. Mitigation: Add buffer. Contingency: Reduce scope.';
+      const text =
+        '# Risks\nRisk: Timeline slip. Mitigation: Add buffer. Contingency: Reduce scope.';
       const result = scoreStrategicViability(text);
       expect(result.riskScore).toBeGreaterThan(0);
     });
@@ -203,7 +214,9 @@ Risk: Timeline slip. This could fail if resources unavailable.
       const text = 'Basic PRD without strategic elements.';
       const result = scoreStrategicViability(text);
       expect(result.issues.length).toBeGreaterThan(0);
-      expect(result.issues.some((i) => i.includes('leading indicator') || i.includes('counter-metric'))).toBe(true);
+      expect(
+        result.issues.some((i) => i.includes('leading indicator') || i.includes('counter-metric'))
+      ).toBe(true);
     });
   });
 

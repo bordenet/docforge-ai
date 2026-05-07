@@ -43,9 +43,9 @@ async function getDB(dbName) {
         store.createIndex('updatedAt', 'updatedAt', { unique: false });
         store.createIndex('title', 'title', { unique: false });
       }
-	      if (!db.objectStoreNames.contains(VALIDATOR_STORE_NAME)) {
-	        db.createObjectStore(VALIDATOR_STORE_NAME, { keyPath: 'projectId' });
-	      }
+      if (!db.objectStoreNames.contains(VALIDATOR_STORE_NAME)) {
+        db.createObjectStore(VALIDATOR_STORE_NAME, { keyPath: 'projectId' });
+      }
     };
   });
 }
@@ -218,12 +218,12 @@ export async function deleteProject(dbName, id) {
   const db = await getDB(dbName);
 
   return new Promise((resolve, reject) => {
-	  const tx = db.transaction([STORE_NAME, VALIDATOR_STORE_NAME], 'readwrite');
-	  tx.objectStore(STORE_NAME).delete(id);
-	  tx.objectStore(VALIDATOR_STORE_NAME).delete(id);
+    const tx = db.transaction([STORE_NAME, VALIDATOR_STORE_NAME], 'readwrite');
+    tx.objectStore(STORE_NAME).delete(id);
+    tx.objectStore(VALIDATOR_STORE_NAME).delete(id);
 
-	  tx.oncomplete = () => resolve();
-	  tx.onerror = () => reject(tx.error);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
   });
 }
 
@@ -276,10 +276,10 @@ export async function clearAllProjects(dbName) {
   const db = await getDB(dbName);
 
   return new Promise((resolve, reject) => {
-	  const tx = db.transaction([STORE_NAME, VALIDATOR_STORE_NAME], 'readwrite');
-	  tx.objectStore(STORE_NAME).clear();
-	  tx.objectStore(VALIDATOR_STORE_NAME).clear();
-	  tx.oncomplete = () => resolve();
-	  tx.onerror = () => reject(tx.error);
+    const tx = db.transaction([STORE_NAME, VALIDATOR_STORE_NAME], 'readwrite');
+    tx.objectStore(STORE_NAME).clear();
+    tx.objectStore(VALIDATOR_STORE_NAME).clear();
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
   });
 }

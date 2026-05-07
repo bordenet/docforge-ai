@@ -24,4 +24,3 @@ export default {
     'CockroachDB: Rejected as overkill for current scale. ' +
     'Keep SQLite: Rejected due to production requirements.',
 };
-

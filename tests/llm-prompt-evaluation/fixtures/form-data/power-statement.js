@@ -23,8 +23,7 @@ export default {
     '5x faster than traditional ETL tools.',
   objections:
     'Common objection: "We already have data pipelines." Response: DataSync Pro ' +
-    'doesn\'t replace pipelines - it ensures consistency across them. ' +
+    "doesn't replace pipelines - it ensures consistency across them. " +
     'Objection: "Security concerns." Response: Your data never leaves your network; ' +
     'we only orchestrate, never store.',
 };
-

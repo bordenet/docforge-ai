@@ -9,7 +9,7 @@ import {
   IMPACT_PATTERNS,
   IMPLEMENTATION_PATTERNS,
   RISK_PATTERNS,
-  METRICS_PATTERNS
+  METRICS_PATTERNS,
 } from './validator-config.js';
 
 /**
@@ -36,8 +36,8 @@ export function detectProblemStatement(text) {
       problemMatches.length > 0 && 'Problem framing language',
       urgencyMatches.length > 0 && 'Urgency/priority established',
       quantifiedMatches.length > 0 && `${quantifiedMatches.length} quantified metrics`,
-      strategicMatches.length > 0 && 'Strategic alignment shown'
-    ].filter(Boolean)
+      strategicMatches.length > 0 && 'Strategic alignment shown',
+    ].filter(Boolean),
   };
 }
 
@@ -60,8 +60,8 @@ export function detectUrgency(text) {
     indicators: [
       urgencyMatches.length > 0 && `${urgencyMatches.length} urgency/priority references`,
       quantifiedMatches.length > 0 && `${quantifiedMatches.length} quantified values`,
-      hasUrgencySection && 'Dedicated urgency/timing section'
-    ].filter(Boolean)
+      hasUrgencySection && 'Dedicated urgency/timing section',
+    ].filter(Boolean),
   };
 }
 
@@ -88,8 +88,8 @@ export function detectSolution(text) {
       solutionMatches.length > 0 && 'Solution language present',
       actionableMatches.length > 0 && 'Actionable verbs used',
       alternativesMatches.length > 0 && 'Alternatives considered',
-      justificationMatches.length > 0 && 'Rationale provided'
-    ].filter(Boolean)
+      justificationMatches.length > 0 && 'Rationale provided',
+    ].filter(Boolean),
   };
 }
 
@@ -117,8 +117,8 @@ export function detectBusinessImpact(text) {
       impactMatches.length > 0 && 'Impact language present',
       quantifiedMatches.length > 0 && `${quantifiedMatches.length} quantified metrics`,
       financialMatches.length > 0 && 'Financial terms used',
-      competitiveMatches.length > 0 && 'Competitive advantage mentioned'
-    ].filter(Boolean)
+      competitiveMatches.length > 0 && 'Competitive advantage mentioned',
+    ].filter(Boolean),
   };
 }
 
@@ -147,8 +147,8 @@ export function detectImplementation(text) {
       phaseMatches.length > 0 && `${phaseMatches.length} phases/milestones`,
       dateMatches.length > 0 && `${dateMatches.length} timeline references`,
       ownerMatches.length > 0 && 'Ownership defined',
-      resourceMatches.length > 0 && 'Resources identified'
-    ].filter(Boolean)
+      resourceMatches.length > 0 && 'Resources identified',
+    ].filter(Boolean),
   };
 }
 
@@ -171,8 +171,8 @@ export function detectRisks(text) {
     indicators: [
       hasRiskSection && 'Dedicated risk section',
       riskMatches.length > 0 && `${riskMatches.length} risks identified`,
-      mitigationMatches.length > 0 && 'Mitigation strategies included'
-    ].filter(Boolean)
+      mitigationMatches.length > 0 && 'Mitigation strategies included',
+    ].filter(Boolean),
   };
 }
 
@@ -198,8 +198,8 @@ export function detectSuccessMetrics(text) {
       hasMetricsSection && 'Dedicated metrics section',
       metricsMatches.length > 0 && `${metricsMatches.length} metric references`,
       quantifiedMatches.length > 0 && `${quantifiedMatches.length} quantified metrics`,
-      timeboundMatches.length > 0 && 'Time-bound targets specified'
-    ].filter(Boolean)
+      timeboundMatches.length > 0 && 'Time-bound targets specified',
+    ].filter(Boolean),
   };
 }
 
@@ -222,4 +222,3 @@ export function detectSections(text) {
 
   return { found, missing };
 }
-

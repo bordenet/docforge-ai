@@ -47,7 +47,6 @@ describe('Import with fallback prompt (no IMPORTED_CONTENT marker)', () => {
     expect(prompt).toContain('## Context');
     expect(prompt).toContain('**Title:** New Document');
   });
-
 });
 
 describe('Edge case: Template with unusual structure', () => {
@@ -114,4 +113,3 @@ Do something.
     expect(prompt).toContain('## Instructions');
   });
 });
-

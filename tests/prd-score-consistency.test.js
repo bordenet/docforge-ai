@@ -114,10 +114,12 @@ describe('PRD Validator Score Consistency', () => {
 
     test('multiple invisible characters combined should not affect scores', () => {
       // Simulate worst-case copy-paste: BOM + ZWS + NBSP + directional marks
-      const corrupted = '\uFEFF' + fixtureContent
-        .replace(/## /g, '##\u200B ')
-        .replace(/\| /g, '|\u00A0')
-        .replace(/# /g, '#\u200E ');
+      const corrupted =
+        '\uFEFF' +
+        fixtureContent
+          .replace(/## /g, '##\u200B ')
+          .replace(/\| /g, '|\u00A0')
+          .replace(/# /g, '#\u200E ');
       const result = validatePRD(corrupted);
       expect(result.totalScore).toBe(validationResult.totalScore);
     });
@@ -238,4 +240,3 @@ describe('PRD Validator Score Consistency', () => {
     });
   });
 });
-

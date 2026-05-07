@@ -31,4 +31,3 @@ export default {
     'Agent resistance to new tools (mitigated by change management program). ' +
     'Vendor lock-in (mitigated by contractual data portability clause).',
 };
-

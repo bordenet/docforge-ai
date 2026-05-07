@@ -16,7 +16,7 @@ import {
   validateDocument,
   getGrade,
   getScoreColor,
-  getScoreLabel
+  getScoreLabel,
 } from '../plugins/acceptance-criteria/js/validator.js';
 
 describe('Acceptance Criteria Validator', () => {
@@ -27,7 +27,9 @@ describe('Acceptance Criteria Validator', () => {
     });
 
     it('detects checkbox criteria', () => {
-      const result = detectStructure('- [ ] First criterion\n- [ ] Second criterion\n- [x] Third done');
+      const result = detectStructure(
+        '- [ ] First criterion\n- [ ] Second criterion\n- [x] Third done'
+      );
       expect(result.hasCheckboxes).toBe(true);
       expect(result.checkboxCount).toBe(3);
     });
@@ -47,7 +49,9 @@ describe('Acceptance Criteria Validator', () => {
 
   describe('detectClarity', () => {
     it('detects action verbs', () => {
-      const result = detectClarity('Implement the login flow. Display error messages. Validate user input.');
+      const result = detectClarity(
+        'Implement the login flow. Display error messages. Validate user input.'
+      );
       expect(result.hasActionVerbs).toBe(true);
       expect(result.actionVerbCount).toBeGreaterThanOrEqual(3);
     });
@@ -117,7 +121,8 @@ describe('Acceptance Criteria Validator', () => {
 
   describe('detectSections', () => {
     it('finds all required sections', () => {
-      const text = '# Summary\nFeature overview.\n# Acceptance Criteria\n- [ ] Test\n# Out of Scope\nNot included.';
+      const text =
+        '# Summary\nFeature overview.\n# Acceptance Criteria\n- [ ] Test\n# Out of Scope\nNot included.';
       const result = detectSections(text);
       expect(result.found.length).toBe(3);
       expect(result.missing.length).toBe(0);
@@ -131,7 +136,8 @@ describe('Acceptance Criteria Validator', () => {
 
   describe('scoreStructure', () => {
     it('gives full points for complete structure', () => {
-      const text = '# Summary\nOverview.\n- [ ] First\n- [ ] Second\n- [ ] Third\n# Out of Scope\nNot included.';
+      const text =
+        '# Summary\nOverview.\n- [ ] First\n- [ ] Second\n- [ ] Third\n# Out of Scope\nNot included.';
       const result = scoreStructure(text);
       expect(result.score).toBe(25);
     });
@@ -146,7 +152,8 @@ describe('Acceptance Criteria Validator', () => {
 
   describe('scoreClarity', () => {
     it('gives full points for clear criteria', () => {
-      const text = 'Implement login. Create user profile. Display dashboard. Validate email. Load data within 100ms. Return 5 results. Show 3 items.';
+      const text =
+        'Implement login. Create user profile. Display dashboard. Validate email. Load data within 100ms. Return 5 results. Show 3 items.';
       const result = scoreClarity(text);
       expect(result.score).toBe(30);
     });
@@ -186,7 +193,8 @@ describe('Acceptance Criteria Validator', () => {
 
   describe('scoreCompleteness', () => {
     it('scores ideal criterion count', () => {
-      const text = '# Summary\nFeature.\n# Acceptance Criteria\n- [ ] One\n- [ ] Two\n- [ ] Three\n- [ ] Four\n# Out of Scope\nNot this.\nHandle error cases. Test edge case scenarios.';
+      const text =
+        '# Summary\nFeature.\n# Acceptance Criteria\n- [ ] One\n- [ ] Two\n- [ ] Three\n- [ ] Four\n# Out of Scope\nNot this.\nHandle error cases. Test edge case scenarios.';
       const result = scoreCompleteness(text);
       expect(result.score).toBeGreaterThan(10);
     });
@@ -294,7 +302,8 @@ A login feature.
 
   describe('Unicode Normalization', () => {
     it('zero-width spaces should not affect scores', () => {
-      const text = '# Summary\nA login feature.\n- [ ] Display login form within 200ms\n- [ ] Validate email format';
+      const text =
+        '# Summary\nA login feature.\n- [ ] Display login form within 200ms\n- [ ] Validate email format';
       const clean = validateDocument(text);
       const withZWS = validateDocument(text.replace(/# /g, '#\u200B '));
       expect(withZWS.totalScore).toBe(clean.totalScore);
@@ -315,4 +324,3 @@ A login feature.
     });
   });
 });
-

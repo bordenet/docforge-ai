@@ -58,7 +58,8 @@ export function renderPhaseContent(plugin, project, phase) {
     const dimensions = plugin.scoringDimensions || [];
     const dimensionScoresHtml = dimensions
       .map((dim, index) => {
-        const dimResult = validationResult[dim.name] || validationResult[`dimension${index + 1}`] || { score: 0, maxScore: dim.maxPoints };
+        const dimResult = validationResult[dim.name] ||
+          validationResult[`dimension${index + 1}`] || { score: 0, maxScore: dim.maxPoints };
         return `
           <div class="p-2 rounded bg-gray-50 dark:bg-gray-700/50">
             <div class="text-gray-500 dark:text-gray-400 text-xs">${escapeHtml(dim.name)}</div>
@@ -71,7 +72,7 @@ export function renderPhaseContent(plugin, project, phase) {
     // Collect all issues
     const allIssues = validationResult.issues || [];
 
-				completionBanner = `
+    completionBanner = `
 		      <div class="mb-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
 		        <div class="flex items-center justify-between flex-wrap gap-3">
 		          <div class="min-w-0">
@@ -102,9 +103,13 @@ export function renderPhaseContent(plugin, project, phase) {
 		          <div class="min-w-0 flex-1">
 		            <div class="font-semibold text-gray-900 dark:text-white flex items-center">
 		              📊 Automated Validation Score
-		              ${allIssues.length > 0 && validationResult.totalScore < 70 ? `
+		              ${
+                    allIssues.length > 0 && validationResult.totalScore < 70
+                      ? `
 		                <span class="ml-2 text-xs text-gray-500 dark:text-gray-400">• ${allIssues.length} suggestion${allIssues.length > 1 ? 's' : ''}</span>
-		              ` : ''}
+		              `
+                      : ''
+                  }
 		            </div>
 		            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
 		              Pattern-based checks • May differ from AI critique scores
@@ -125,13 +130,19 @@ export function renderPhaseContent(plugin, project, phase) {
 
 		      <div class="mt-4">
 		        <!-- Score Breakdown -->
-		        ${dimensionScoresHtml ? `
+		        ${
+              dimensionScoresHtml
+                ? `
 		        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
 		          ${dimensionScoresHtml}
 		        </div>
-		        ` : ''}
+		        `
+                : ''
+            }
 
-		        ${allIssues.length > 0 && validationResult.totalScore < 70 ? `
+		        ${
+              allIssues.length > 0 && validationResult.totalScore < 70
+                ? `
 		        <!-- Improvement Suggestions -->
 		        <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
 		          <div class="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -141,7 +152,9 @@ export function renderPhaseContent(plugin, project, phase) {
 				            ${allIssues.map((issue) => `<li>${escapeHtml(issue)}</li>`).join('')}
 		          </ul>
 		        </div>
-		        ` : ''}
+		        `
+                : ''
+            }
 		      </div>
 		    </details>
       </div>
@@ -231,4 +244,3 @@ export function renderPhaseContent(plugin, project, phase) {
     </div>
   `;
 }
-

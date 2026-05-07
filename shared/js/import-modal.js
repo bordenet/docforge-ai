@@ -5,7 +5,11 @@
  */
 
 import { showToast } from './ui.js';
-import { convertHtmlToMarkdown, normalizeMarkdown, extractTitleFromMarkdown } from './import-document.js';
+import {
+  convertHtmlToMarkdown,
+  normalizeMarkdown,
+  extractTitleFromMarkdown,
+} from './import-document.js';
 
 /**
  * Generate the import modal HTML
@@ -145,4 +149,3 @@ export function showImportModal(plugin, saveProject, onComplete) {
 
   pasteArea.focus();
 }
-

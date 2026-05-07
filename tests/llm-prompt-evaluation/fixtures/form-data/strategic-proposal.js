@@ -24,4 +24,3 @@ export default {
     'Competing bid from Microsoft Teams but concerns about customization for healthcare. ' +
     'Decision timeline: Board meeting on April 15th.',
 };
-

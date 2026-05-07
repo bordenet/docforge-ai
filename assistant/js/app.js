@@ -23,10 +23,24 @@
 
 import { getCurrentPlugin, initRouter } from '../../shared/js/router.js';
 import { getProject, getAllProjects } from '../../shared/js/storage.js';
-import { renderListView, renderNewView, renderProjectView, renderPhaseContent } from '../../shared/js/views.js';
-import { showToast, showLoading, hideLoading, setupGlobalErrorHandler } from '../../shared/js/ui.js';
+import {
+  renderListView,
+  renderNewView,
+  renderProjectView,
+  renderPhaseContent,
+} from '../../shared/js/views.js';
+import {
+  showToast,
+  showLoading,
+  hideLoading,
+  setupGlobalErrorHandler,
+} from '../../shared/js/ui.js';
 import { logger } from '../../shared/js/logger.js';
-import { setupListEventHandlers, setupNewFormEventHandlers, attachProjectEventListeners } from './app-handlers.js';
+import {
+  setupListEventHandlers,
+  setupNewFormEventHandlers,
+  attachProjectEventListeners,
+} from './app-handlers.js';
 import { setupGlobalEventListeners } from './app-global.js';
 import { initAnalytics } from '../../shared/js/analytics.js';
 
@@ -187,7 +201,12 @@ async function renderEdit(container, projectId) {
 
   currentTemplates = await loadPluginTemplates(currentPlugin.id);
   // Pass existing form data to pre-populate the form
-  container.innerHTML = renderNewView(currentPlugin, project.formData || {}, currentTemplates, project.id);
+  container.innerHTML = renderNewView(
+    currentPlugin,
+    project.formData || {},
+    currentTemplates,
+    project.id
+  );
   setupNewFormEventHandlers(currentPlugin, currentTemplates, project.id);
 }
 

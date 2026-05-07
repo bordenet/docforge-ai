@@ -13,7 +13,7 @@ import {
   TIMELINE_PATTERNS,
   SCOPE_PATTERNS,
   METRICS_PATTERNS,
-  SOLUTION_PATTERNS
+  SOLUTION_PATTERNS,
 } from './validator-config.js';
 
 // Import pillar functions for internal use
@@ -21,7 +21,7 @@ import {
   detectStrategicEvidence,
   detectFinancialJustification,
   detectOptionsAnalysis,
-  detectExecutionCompleteness
+  detectExecutionCompleteness,
 } from './validator-detection-pillars.js';
 
 // Re-export pillar detection functions for backward compatibility
@@ -29,7 +29,7 @@ export {
   detectStrategicEvidence,
   detectFinancialJustification,
   detectOptionsAnalysis,
-  detectExecutionCompleteness
+  detectExecutionCompleteness,
 };
 
 // Legacy detection function aliases
@@ -40,7 +40,9 @@ export function detectProblemStatement(text) {
 export function detectCostOfInaction(text) {
   const costMatches = text.match(OPTIONS_PATTERNS.doNothing) || [];
   const quantifiedMatches = text.match(EVIDENCE_PATTERNS.quantified) || [];
-  const hasCostSection = /^(#+\s*)?(cost|impact|consequence|risk|why.now|urgency|inaction)/im.test(text);
+  const hasCostSection = /^(#+\s*)?(cost|impact|consequence|risk|why.now|urgency|inaction)/im.test(
+    text
+  );
 
   return {
     hasCostLanguage: costMatches.length > 0,
@@ -51,8 +53,8 @@ export function detectCostOfInaction(text) {
     indicators: [
       costMatches.length > 0 && `${costMatches.length} cost/impact references`,
       quantifiedMatches.length > 0 && `${quantifiedMatches.length} quantified values`,
-      hasCostSection && 'Dedicated cost/impact section'
-    ].filter(Boolean)
+      hasCostSection && 'Dedicated cost/impact section',
+    ].filter(Boolean),
   };
 }
 
@@ -74,8 +76,8 @@ export function detectSolution(text) {
       solutionMatches.length > 0 && 'Solution language present',
       measurableMatches.length > 0 && 'Measurable outcomes mentioned',
       highlevelMatches.length > 0 && 'High-level approach described',
-      implementationMatches.length === 0 && 'No implementation details (good)'
-    ].filter(Boolean)
+      implementationMatches.length === 0 && 'No implementation details (good)',
+    ].filter(Boolean),
   };
 }
 
@@ -108,8 +110,8 @@ export function detectStakeholders(text) {
     indicators: [
       hasStakeholderSection && 'Dedicated stakeholder section',
       stakeholderMatches.length > 0 && `${stakeholderMatches.length} stakeholder references`,
-      roleMatches.length > 0 && 'Roles/responsibilities defined'
-    ].filter(Boolean)
+      roleMatches.length > 0 && 'Roles/responsibilities defined',
+    ].filter(Boolean),
   };
 }
 
@@ -127,8 +129,8 @@ export function detectTimeline(text) {
     indicators: [
       hasTimelineSection && 'Dedicated timeline section',
       dateMatches.length > 0 && `${dateMatches.length} timeline references`,
-      phasingMatches.length > 0 && `${phasingMatches.length} phases/milestones`
-    ].filter(Boolean)
+      phasingMatches.length > 0 && `${phasingMatches.length} phases/milestones`,
+    ].filter(Boolean),
   };
 }
 
@@ -147,8 +149,8 @@ export function detectScope(text) {
     indicators: [
       inScopeMatches.length > 0 && 'In-scope items defined',
       outOfScopeMatches.length > 0 && 'Out-of-scope items defined',
-      hasScopeSection && 'Dedicated scope section'
-    ].filter(Boolean)
+      hasScopeSection && 'Dedicated scope section',
+    ].filter(Boolean),
   };
 }
 
@@ -170,8 +172,7 @@ export function detectSuccessMetrics(text) {
       hasMetricsSection && 'Dedicated metrics section',
       smartMatches.length > 0 && 'SMART criteria mentioned',
       quantifiedMatches.length > 0 && `${quantifiedMatches.length} quantified metrics`,
-      metricsMatches.length > 0 && `${metricsMatches.length} metric references`
-    ].filter(Boolean)
+      metricsMatches.length > 0 && `${metricsMatches.length} metric references`,
+    ].filter(Boolean),
   };
 }
-

@@ -148,7 +148,6 @@ This enables better productivity so that teams can focus on value.
       expect(result.categories).toContain('reliability');
     });
 
-
     test('detects usability NFRs', () => {
       const text = 'Must comply with WCAG 2.1 accessibility guidelines.';
       const result = detectNonFunctionalRequirements(text);
@@ -207,7 +206,8 @@ This enables better productivity so that teams can focus on value.
 
     test('counts evidence types', () => {
       // Use actual patterns from validator-config
-      const text = 'User research shows concerns. "This is a quote that is at least 10 chars" - Tester. Customer feedback confirmed.';
+      const text =
+        'User research shows concerns. "This is a quote that is at least 10 chars" - Tester. Customer feedback confirmed.';
       const result = detectCustomerEvidence(text);
       expect(result.evidenceTypes).toBeGreaterThanOrEqual(2);
     });

@@ -4,18 +4,31 @@
 
 import { describe, it, expect } from '@jest/globals';
 import {
-  validatePRFAQ, validateDocument, getGrade, getScoreColor, getScoreLabel
+  validatePRFAQ,
+  validateDocument,
+  getGrade,
+  getScoreColor,
+  getScoreLabel,
 } from '../plugins/pr-faq/js/validator.js';
 import { extractQuotes } from '../plugins/pr-faq/js/validator-utils.js';
-import { detectMetricsInText, scoreCustomerEvidence } from '../plugins/pr-faq/js/validator-customer-evidence.js';
+import {
+  detectMetricsInText,
+  scoreCustomerEvidence,
+} from '../plugins/pr-faq/js/validator-customer-evidence.js';
 import { analyzeHeadlineQuality } from '../plugins/pr-faq/js/validator-structure.js';
 import { analyzeFiveWs } from '../plugins/pr-faq/js/validator-content.js';
-import { extractFAQs, parseFAQQuestions, isSoftballQuestion, checkHardQuestions } from '../plugins/pr-faq/js/validator-faq.js';
+import {
+  extractFAQs,
+  parseFAQQuestions,
+  isSoftballQuestion,
+  checkHardQuestions,
+} from '../plugins/pr-faq/js/validator-faq.js';
 
 describe('PR-FAQ Validator', () => {
   describe('extractQuotes', () => {
     it('should extract standard double quotes', () => {
-      const text = 'The CEO said "This will reduce costs by 50% for our customers" in the announcement.';
+      const text =
+        'The CEO said "This will reduce costs by 50% for our customers" in the announcement.';
       const quotes = extractQuotes(text);
       expect(quotes.length).toBe(1);
       expect(quotes[0]).toContain('50%');
@@ -50,7 +63,8 @@ describe('PR-FAQ Validator', () => {
 
   describe('analyzeHeadlineQuality', () => {
     it('should give high score for strong headline with metrics and verbs', () => {
-      const title = 'Acme Launches AI-Powered Dashboard, Reducing Energy Costs by 40% Through Smart Automation';
+      const title =
+        'Acme Launches AI-Powered Dashboard, Reducing Energy Costs by 40% Through Smart Automation';
       const result = analyzeHeadlineQuality(title);
       expect(result.score).toBeGreaterThan(6);
       expect(result.strengths.length).toBeGreaterThan(0);
@@ -81,7 +95,7 @@ starting March 2026, SmartWidget enables customers to automate routine tasks.`;
     it('should identify missing WHO', () => {
       const content = 'Today a new product was launched that helps customers save money.';
       const result = analyzeFiveWs(content);
-      expect(result.issues.some(i => i.includes('WHO'))).toBe(true);
+      expect(result.issues.some((i) => i.includes('WHO'))).toBe(true);
     });
   });
 
@@ -120,12 +134,14 @@ A: Starting at $99/month.`;
 
   describe('isSoftballQuestion', () => {
     it('should detect softball questions', () => {
-      const softball = 'What is the risk of being too successful? The risk is minimal since customers love it.';
+      const softball =
+        'What is the risk of being too successful? The risk is minimal since customers love it.';
       expect(isSoftballQuestion(softball)).toBe(true);
     });
 
     it('should not flag legitimate hard questions', () => {
-      const hard = 'What happens if adoption is slower than expected? We would need to pivot our go-to-market.';
+      const hard =
+        'What happens if adoption is slower than expected? We would need to pivot our go-to-market.';
       expect(isSoftballQuestion(hard)).toBe(false);
     });
   });
@@ -160,7 +176,7 @@ A: Starting at $99/month.`;
 "Quote three with some content here" said C.
 "Quote four with some content here" said D.`;
       const result = scoreCustomerEvidence(content);
-      expect(result.issues.some(i => i.includes('Too many quotes'))).toBe(true);
+      expect(result.issues.some((i) => i.includes('Too many quotes'))).toBe(true);
     });
   });
 
@@ -287,4 +303,3 @@ A: Break-even expected within 24 months.`;
     });
   });
 });
-

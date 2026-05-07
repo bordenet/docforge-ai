@@ -82,48 +82,57 @@ export function showAboutModal(plugin) {
     'one-pager': {
       pluralName: 'One-Pagers',
       learnMoreText: 'one-pagers',
-      description: 'A concise decision document that fits on one page. Used to get executive buy-in before investing in detailed planning.'
+      description:
+        'A concise decision document that fits on one page. Used to get executive buy-in before investing in detailed planning.',
     },
-    'prd': {
+    prd: {
       pluralName: 'Product Requirements Documents',
       learnMoreText: 'PRDs',
-      description: 'A Product Requirements Document defines WHAT to build and WHY. It bridges business goals and engineering implementation.'
+      description:
+        'A Product Requirements Document defines WHAT to build and WHY. It bridges business goals and engineering implementation.',
     },
-    'adr': {
+    adr: {
       pluralName: 'Architecture Decision Records',
       learnMoreText: 'ADRs',
-      description: 'Architecture Decision Records capture significant technical decisions, their context, and consequences. Essential for team knowledge sharing.'
+      description:
+        'Architecture Decision Records capture significant technical decisions, their context, and consequences. Essential for team knowledge sharing.',
     },
     'pr-faq': {
       pluralName: 'PR-FAQs',
       learnMoreText: 'PR-FAQs',
-      description: 'An Amazon-style internal planning document. NOT an actual press release. It is a thinking tool that forces customer-centric product definition.'
+      description:
+        'An Amazon-style internal planning document. NOT an actual press release. It is a thinking tool that forces customer-centric product definition.',
     },
     'power-statement': {
       pluralName: 'Power Statements',
       learnMoreText: 'power statements',
-      description: 'A sales technique for articulating value. Combines a customer pain point with quantified business impact to create compelling pitches.'
+      description:
+        'A sales technique for articulating value. Combines a customer pain point with quantified business impact to create compelling pitches.',
     },
     'acceptance-criteria': {
       pluralName: 'Acceptance Criteria',
       learnMoreText: 'acceptance criteria',
-      description: 'Testable conditions that define when a user story is complete. Bridges the gap between requirements and QA.'
+      description:
+        'Testable conditions that define when a user story is complete. Bridges the gap between requirements and QA.',
     },
-    'jd': {
+    jd: {
       pluralName: 'Job Descriptions',
       learnMoreText: 'job descriptions',
-      description: 'Complete job descriptions with clear scope, leveling criteria, and realistic qualifications. Avoids common pitfalls that repel good candidates.'
+      description:
+        'Complete job descriptions with clear scope, leveling criteria, and realistic qualifications. Avoids common pitfalls that repel good candidates.',
     },
     'business-justification': {
       pluralName: 'Business Justifications',
       learnMoreText: 'business justifications',
-      description: 'A business case document for headcount, budget, or investment requests. Quantifies ROI and risk.'
+      description:
+        'A business case document for headcount, budget, or investment requests. Quantifies ROI and risk.',
     },
     'strategic-proposal': {
       pluralName: 'Strategic Proposals',
       learnMoreText: 'sales proposals',
-      description: 'A sales-focused proposal for strategic initiatives. Structures the pitch around customer pain points and measurable outcomes.'
-    }
+      description:
+        'A sales-focused proposal for strategic initiatives. Structures the pitch around customer pain points and measurable outcomes.',
+    },
   };
 
   const meta = pluginMeta[plugin?.id] || {};
@@ -170,4 +179,3 @@ export function showAboutModal(plugin) {
     }
   });
 }
-

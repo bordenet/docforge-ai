@@ -4,9 +4,7 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import {
-  detectStrategicEvidence,
-} from '../plugins/business-justification/js/validator.js';
+import { detectStrategicEvidence } from '../plugins/business-justification/js/validator.js';
 import {
   detectProblemStatement,
   detectCostOfInaction,

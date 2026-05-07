@@ -28,7 +28,9 @@ test.describe('Validator', () => {
     await page.waitForLoadState('networkidle');
 
     await expect(page).toHaveTitle(/Validator/);
-    await expect(page.locator('#header-title')).toContainText('Product Requirements Document Validator');
+    await expect(page.locator('#header-title')).toContainText(
+      'Product Requirements Document Validator'
+    );
   });
 
   test('document type selector contains all 9 types', async ({ page }) => {

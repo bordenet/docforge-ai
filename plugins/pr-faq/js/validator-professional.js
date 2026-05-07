@@ -6,13 +6,13 @@
 import { ALL_FLUFF_PATTERNS } from './validator-config.js';
 import {
   analyzeToneAndReadability,
-  analyzeMarketingFluff
+  analyzeMarketingFluff,
 } from './validator-professional-analysis.js';
 
 // Re-export analysis functions
 export {
   analyzeToneAndReadability,
-  analyzeMarketingFluff
+  analyzeMarketingFluff,
 } from './validator-professional-analysis.js';
 
 /**
@@ -41,7 +41,7 @@ export function detectFluffWords(content) {
   return {
     found: results.length > 0,
     count: results.length,
-    words: results
+    words: results,
   };
 }
 
@@ -70,4 +70,3 @@ export function scoreProfessionalQuality(content) {
     },
   };
 }
-

@@ -206,4 +206,3 @@ Current development hardware (5-year-old Surface 4 with i7-11185G7, 16GB RAM) ca
     });
   });
 });
-

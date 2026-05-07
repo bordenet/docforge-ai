@@ -127,4 +127,3 @@ export default {
   phase1: genericPhase1Output,
   phase2: genericPhase2Output,
 };
-

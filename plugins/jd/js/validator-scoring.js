@@ -12,7 +12,7 @@ import { getSlopPenalty } from '../../../shared/js/slop-scoring.js';
  * @returns {Object} { penalty, maxPenalty, wordCount, feedback, deduction }
  */
 export function scoreWordCount(text) {
-  const wordCount = text.split(/\s+/).filter(w => w.length > 0).length;
+  const wordCount = text.split(/\s+/).filter((w) => w.length > 0).length;
 
   if (wordCount >= 400 && wordCount <= 700) {
     return {
@@ -20,27 +20,27 @@ export function scoreWordCount(text) {
       maxPenalty: 15,
       wordCount,
       feedback: `✅ Good length: ${wordCount} words (ideal: 400-700)`,
-      deduction: null
+      deduction: null,
     };
-  } if (wordCount < 400) {
+  }
+  if (wordCount < 400) {
     const penalty = Math.min(15, Math.floor((400 - wordCount) / 20));
     return {
       penalty,
       maxPenalty: 15,
       wordCount,
       feedback: `⚠️ Short: ${wordCount} words (aim for 400-700)`,
-      deduction: `-${penalty} pts: Too short (${wordCount} words, aim for 400+)`
+      deduction: `-${penalty} pts: Too short (${wordCount} words, aim for 400+)`,
     };
-  } 
-    const penalty = Math.min(10, Math.floor((wordCount - 700) / 50));
-    return {
-      penalty,
-      maxPenalty: 10,
-      wordCount,
-      feedback: `⚠️ Long: ${wordCount} words (aim for ≤700)`,
-      deduction: `-${penalty} pts: Too long (${wordCount} words, aim for ≤700)`
-    };
-  
+  }
+  const penalty = Math.min(10, Math.floor((wordCount - 700) / 50));
+  return {
+    penalty,
+    maxPenalty: 10,
+    wordCount,
+    feedback: `⚠️ Long: ${wordCount} words (aim for ≤700)`,
+    deduction: `-${penalty} pts: Too long (${wordCount} words, aim for ≤700)`,
+  };
 }
 
 /**
@@ -49,7 +49,7 @@ export function scoreWordCount(text) {
  * @returns {Object} { penalty, maxPenalty, count, feedback, deduction }
  */
 export function scoreMasculineCoded(warnings) {
-  const count = warnings.filter(w => w.type === 'masculine-coded').length;
+  const count = warnings.filter((w) => w.type === 'masculine-coded').length;
 
   if (count > 0) {
     const penalty = Math.min(25, count * 5);
@@ -58,7 +58,7 @@ export function scoreMasculineCoded(warnings) {
       maxPenalty: 25,
       count,
       feedback: `🚨 ${count} masculine-coded word(s) found`,
-      deduction: `-${penalty} pts: ${count} masculine-coded word(s)`
+      deduction: `-${penalty} pts: ${count} masculine-coded word(s)`,
     };
   }
 
@@ -67,7 +67,7 @@ export function scoreMasculineCoded(warnings) {
     maxPenalty: 25,
     count: 0,
     feedback: '✅ No masculine-coded words',
-    deduction: null
+    deduction: null,
   };
 }
 
@@ -77,7 +77,7 @@ export function scoreMasculineCoded(warnings) {
  * @returns {Object} { penalty, maxPenalty, count, feedback, deduction }
  */
 export function scoreExtrovertBias(warnings) {
-  const count = warnings.filter(w => w.type === 'extrovert-bias').length;
+  const count = warnings.filter((w) => w.type === 'extrovert-bias').length;
 
   if (count > 0) {
     const penalty = Math.min(20, count * 5);
@@ -86,7 +86,7 @@ export function scoreExtrovertBias(warnings) {
       maxPenalty: 20,
       count,
       feedback: `🚨 ${count} extrovert-bias phrase(s) found`,
-      deduction: `-${penalty} pts: ${count} extrovert-bias phrase(s)`
+      deduction: `-${penalty} pts: ${count} extrovert-bias phrase(s)`,
     };
   }
 
@@ -95,7 +95,7 @@ export function scoreExtrovertBias(warnings) {
     maxPenalty: 20,
     count: 0,
     feedback: '✅ No extrovert-bias phrases',
-    deduction: null
+    deduction: null,
   };
 }
 
@@ -105,7 +105,7 @@ export function scoreExtrovertBias(warnings) {
  * @returns {Object} { penalty, maxPenalty, count, feedback, deduction }
  */
 export function scoreRedFlags(warnings) {
-  const count = warnings.filter(w => w.type === 'red-flag').length;
+  const count = warnings.filter((w) => w.type === 'red-flag').length;
 
   if (count > 0) {
     const penalty = Math.min(25, count * 5);
@@ -114,7 +114,7 @@ export function scoreRedFlags(warnings) {
       maxPenalty: 25,
       count,
       feedback: `🚨 ${count} red flag phrase(s) found`,
-      deduction: `-${penalty} pts: ${count} red flag phrase(s)`
+      deduction: `-${penalty} pts: ${count} red flag phrase(s)`,
     };
   }
 
@@ -123,7 +123,7 @@ export function scoreRedFlags(warnings) {
     maxPenalty: 25,
     count: 0,
     feedback: '✅ No red flag phrases',
-    deduction: null
+    deduction: null,
   };
 }
 
@@ -141,16 +141,17 @@ export function scoreCompensation(text, isInternal) {
       hasCompensation: null,
       feedback: 'ℹ️ Internal posting - compensation check skipped',
       deduction: null,
-      skipped: true
+      skipped: true,
     };
   }
 
-  const hasCompensation = /\$[\d,]+\s*[-–—]\s*\$[\d,]+/i.test(text) ||
-                          /salary.*\$[\d,]+/i.test(text) ||
-                          /compensation.*\$[\d,]+/i.test(text) ||
-                          /\$[\d,]+k?\s*[-–—]\s*\$[\d,]+k?/i.test(text) ||
-                          /[\d,]+\s*[-–—]\s*[\d,]+\s*(USD|EUR|GBP|CAD|AUD)/i.test(text) ||
-                          /[€£][\d,]+\s*[-–—]\s*[€£][\d,]+/i.test(text);
+  const hasCompensation =
+    /\$[\d,]+\s*[-–—]\s*\$[\d,]+/i.test(text) ||
+    /salary.*\$[\d,]+/i.test(text) ||
+    /compensation.*\$[\d,]+/i.test(text) ||
+    /\$[\d,]+k?\s*[-–—]\s*\$[\d,]+k?/i.test(text) ||
+    /[\d,]+\s*[-–—]\s*[\d,]+\s*(USD|EUR|GBP|CAD|AUD)/i.test(text) ||
+    /[€£][\d,]+\s*[-–—]\s*[€£][\d,]+/i.test(text);
 
   if (hasCompensation) {
     return {
@@ -159,7 +160,7 @@ export function scoreCompensation(text, isInternal) {
       hasCompensation: true,
       feedback: '✅ Compensation range included',
       deduction: null,
-      skipped: false
+      skipped: false,
     };
   }
 
@@ -169,7 +170,7 @@ export function scoreCompensation(text, isInternal) {
     hasCompensation: false,
     feedback: '⚠️ No compensation range found',
     deduction: '-10 pts: No compensation range found',
-    skipped: false
+    skipped: false,
   };
 }
 
@@ -179,7 +180,10 @@ export function scoreCompensation(text, isInternal) {
  * @returns {Object} { penalty, maxPenalty, hasEncouragement, feedback, deduction }
  */
 export function scoreEncouragement(text) {
-  const hasEncouragement = /60[-–]70%|60\s*[-–]\s*70\s*%|60\s+to\s+70\s*%|meet.*most.*(requirements|qualifications)|we\s+encourage.*apply|don't.*meet.*all.*(qualifications|requirements)/i.test(text);
+  const hasEncouragement =
+    /60[-–]70%|60\s*[-–]\s*70\s*%|60\s+to\s+70\s*%|meet.*most.*(requirements|qualifications)|we\s+encourage.*apply|don't.*meet.*all.*(qualifications|requirements)/i.test(
+      text
+    );
 
   if (hasEncouragement) {
     return {
@@ -187,7 +191,7 @@ export function scoreEncouragement(text) {
       maxPenalty: 5,
       hasEncouragement: true,
       feedback: '✅ Includes encouragement statement',
-      deduction: null
+      deduction: null,
     };
   }
 
@@ -196,7 +200,7 @@ export function scoreEncouragement(text) {
     maxPenalty: 5,
     hasEncouragement: false,
     feedback: '⚠️ Missing encouragement statement (e.g., "If you meet 60-70%...")',
-    deduction: '-5 pts: Missing "60-70%" encouragement statement'
+    deduction: '-5 pts: Missing "60-70%" encouragement statement',
   };
 }
 
@@ -222,7 +226,7 @@ export function scoreSlopPenalty(text) {
         slopPenalty,
         issues: slopIssues,
         feedback: '⚠️ AI-generated language detected - consider making more authentic',
-        deduction: `-${penalty} pts: AI slop detected`
+        deduction: `-${penalty} pts: AI slop detected`,
       };
     }
   }
@@ -233,7 +237,6 @@ export function scoreSlopPenalty(text) {
     slopPenalty,
     issues: slopIssues,
     feedback: null,
-    deduction: null
+    deduction: null,
   };
 }
-

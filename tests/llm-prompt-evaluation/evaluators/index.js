@@ -41,4 +41,3 @@ export function runAllChecks(prompt, workflow, phase, fixtures) {
     passed: failures.length === 0,
   };
 }
-
