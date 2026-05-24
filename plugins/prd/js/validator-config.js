@@ -105,10 +105,10 @@ export const SCOPE_REQUIRED_SECTION_NAMES = {
 
 // Invariant: all names in SCOPE_REQUIRED_SECTION_NAMES must exist in REQUIRED_SECTIONS.
 // Throws at module load if a section is renamed without updating both places.
-const _allSectionNames = new Set(REQUIRED_SECTIONS.map((s) => s.name));
+const allSectionNames = new Set(REQUIRED_SECTIONS.map((s) => s.name));
 for (const [scope, names] of Object.entries(SCOPE_REQUIRED_SECTION_NAMES)) {
   for (const name of names) {
-    if (!_allSectionNames.has(name)) {
+    if (!allSectionNames.has(name)) {
       throw new Error(
         `Config invariant: SCOPE_REQUIRED_SECTION_NAMES["${scope}"] references unknown section "${name}"`
       );
