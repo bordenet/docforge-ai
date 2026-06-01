@@ -175,17 +175,10 @@ async function exportFinalAsPdf(plugin, project) {
     'html2pdf'
   );
 
-  // NOTE: html2canvas/html2pdf can produce a blank PDF if the source element is placed
-  // far off-screen (e.g. large negative `left`). Keep the render target in-viewport and
-  // cover it with an overlay so it never flashes in the UI.
-  const overlay = document.createElement('div');
-  overlay.style.position = 'fixed';
-  overlay.style.inset = '0';
-  overlay.style.background = 'rgba(0, 0, 0, 0.10)';
-  overlay.style.zIndex = '2147483647';
-  overlay.style.pointerEvents = 'all';
-  document.body.appendChild(overlay);
-
+  // NOTE: html2canvas produces a blank PDF if a higher-z-index sibling element covers the
+  // render target (it composites fixed-position siblings by stacking order). The fix:
+  // add the container first, then show a blocking overlay to hide the visual flash, then
+  // remove the overlay before capture so html2canvas sees only the container content.
   const container = document.createElement('div');
   container.style.position = 'fixed';
   container.style.left = '0';
@@ -198,14 +191,30 @@ async function exportFinalAsPdf(plugin, project) {
   container.innerHTML = `<style>${EXPORT_CSS}</style><div>${renderMarkdown(finalResponse)}</div>`;
   document.body.appendChild(container);
 
+  const overlay = document.createElement('div');
+  overlay.style.position = 'fixed';
+  overlay.style.inset = '0';
+  overlay.style.background = 'rgba(0, 0, 0, 0.10)';
+  overlay.style.zIndex = '2147483647';
+  overlay.style.pointerEvents = 'all';
+  document.body.appendChild(overlay);
+
   const filename = `${getExportBaseFilename(freshProject)}.pdf`;
   try {
+    // Two nested rAFs: first defers past the current frame, second fires after the next
+    // frame's layout pass — ensures getBoundingClientRect() is valid before html2canvas runs.
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+    // Remove the overlay before capture — a covering fixed element at higher z-index causes
+    // html2canvas to composite it over the container, producing a blank canvas.
+    overlay.remove();
+
     await window
       .html2pdf()
       .set({
         margin: 10,
         filename,
-        html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0, windowWidth: 800 },
+        html2canvas: { scale: 2, useCORS: true, logging: false, windowWidth: 800 },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
       })
       .from(container)
@@ -214,7 +223,7 @@ async function exportFinalAsPdf(plugin, project) {
     trackPhase(3, 'download-pdf', plugin.id);
     showToast('Downloaded PDF', 'success');
   } finally {
-    overlay.remove();
+    overlay.remove(); // no-op if already removed above; ensures cleanup on throw
     container.remove();
   }
 }

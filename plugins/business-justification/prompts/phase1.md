@@ -2,7 +2,7 @@
 
 <!--
 CUSTOMIZATION: This template uses form field IDs as template variables.
-REFERENCE: https://github.com/bordenet/product-requirements-assistant/blob/main/prompts/phase1.md
+REFERENCE: https://github.com/bordenet/docforge-ai
 -->
 
 You are a principal-level expert helping create a {{DOCUMENT_TYPE}} document.

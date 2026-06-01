@@ -244,7 +244,7 @@ During synthesis, actively remove any "HOW" language that slipped through:
 - ❌ **NO METADATA TABLE**: Don't include author/version/date table at the top
 - ❌ **NO VAGUE TERMS**: Ensure "fast", "scalable", "near-real-time" are replaced with specific thresholds
 - ✅ **USE SECTION NUMBERING**: Number all ## and ### level headings
-- ✅ **INCLUDE CITATION**: Add the citation at the end of the document
+- ✅ **INCLUDE CITATION**: End the document with the exact verbatim text specified in Step 5 below
 - ✅ **FOCUS ON OUTCOMES**: Emphasize what users achieve, not how it's built
 - ✅ **VERIFY QUALITY GATE**: Ensure all Step 5 quality gate criteria are met before finalizing
 
@@ -295,9 +295,9 @@ When synthesizing, **choose the shorter of the two versions** for each section u
 | ## 16. Known Unknowns & Dissenting Opinions | Debates, dissenting views | H2 + subsections |
 | Citation | Tool attribution | Horizontal rule + italic text |
 
-**End with:**
+**End with this exact text (reproduce verbatim, including Markdown link syntax):**
 ---
-*This PRD was generated using the Product Requirements Assistant tool. Learn more at: https://github.com/bordenet/product-requirements-assistant*
+*This PRD was generated using [DocForge AI](https://bordenet.github.io/docforge-ai/assistant/?type=prd).*
 
 ---
 

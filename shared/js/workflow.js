@@ -40,6 +40,14 @@ import {
   getExportFilename,
 } from './workflow-functions.js';
 
+// Single source of truth for the DocForge AI base URL used in export attribution.
+// Also referenced verbatim in: plugins/prd/prompts/phase3.md (LLM prompt citation)
+// and indirectly in: shared/js/demo-data.js, tests/workflow.test.js.
+// NOTE: this is a personal GitHub Pages URL (bordenet.github.io). If the account
+// or repo is renamed, all three locations above must be updated together, and links
+// in archived documents will break. Accepted risk pending a custom-domain migration.
+const DOCFORGE_BASE_URL = 'https://bordenet.github.io/docforge-ai';
+
 // Re-export config for backward compatibility
 export { WORKFLOW_CONFIG, PHASES, getPhaseMetadata };
 
@@ -199,7 +207,14 @@ export class Workflow {
       content = `# ${this.project.title || this.project.name || 'Untitled'}\n\nNo content generated yet.`;
     }
 
-    return content + '\n\n---\n\n*Generated with DocForgeAI*';
+    // PRD and any plugin that already embeds attribution via its phase3 prompt will include
+    // the DocForge URL in the generated content — skip the footer to avoid duplication.
+    // Non-PRD plugins (adr, one-pager, etc.) have no prompt-level attribution and always
+    // reach the footer append below; this is intentional asymmetry by design.
+    if (content.includes(DOCFORGE_BASE_URL)) {
+      return content;
+    }
+    return content + `\n\n---\n\n*Generated with [DocForge AI](${DOCFORGE_BASE_URL}/)*`;
   }
 
   /**

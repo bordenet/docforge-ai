@@ -242,9 +242,17 @@ describe('Workflow class', () => {
       expect(md).toContain('Final content');
     });
 
-    it('should include DocForgeAI attribution', () => {
+    it('should include DocForge AI attribution', () => {
       const md = workflow.exportAsMarkdown();
-      expect(md).toContain('DocForgeAI');
+      expect(md).toContain('DocForge AI');
+    });
+
+    it('should not append footer when content already contains DocForge attribution', () => {
+      project.phase3_output =
+        'PRD content\n\n---\n\n*This PRD was generated using [DocForge AI](https://bordenet.github.io/docforge-ai/assistant/?type=prd).*';
+      const md = workflow.exportAsMarkdown();
+      const footerCount = (md.match(/DocForge AI/g) || []).length;
+      expect(footerCount).toBe(1);
     });
 
     it('should fall back to phase 1 if no phase 3', () => {

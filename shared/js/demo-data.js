@@ -216,7 +216,7 @@ Seeking strategic partners in:
 3. Series A introduction
 
 ---
-*Document generated with DocForgeAI • Reviewed and refined through 3-phase process*
+*Document generated with DocForge AI • Reviewed and refined through 3-phase process*
 `;
 
 /**

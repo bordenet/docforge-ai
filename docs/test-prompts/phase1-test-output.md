@@ -130,5 +130,5 @@ Product managers spend 3+ hours/week waiting 2-3 days for engineering to run SQL
 
 ---
 
-*This PRD was generated using the Product Requirements Assistant tool.*
+*This PRD was generated using [DocForge AI](https://bordenet.github.io/docforge-ai/assistant/?type=prd)*
 
