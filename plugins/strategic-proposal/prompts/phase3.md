@@ -60,7 +60,7 @@ Create the final strategic proposal that:
 <output_rules>
 CRITICAL - Your final proposal must be COPY-PASTE READY:
 - Start IMMEDIATELY with "## Executive Summary" (no preamble like "Here's the final proposal...")
-- End after the Recommendation section (no sign-off like "Let me know if...")
+- End with the attribution line specified below, then stop (no sign-off like "Let me know if...")
 - NO markdown code fences (```markdown) wrapping the output
 - NO explanations of what you did or why
 - Maximum 500-600 words (1.25 pages)
@@ -116,3 +116,7 @@ Before finalizing, eliminate ALL remaining slop:
 - Use professional formatting with clear headers and bullet points
 - Ruthlessly prioritize - include only the most impactful information
 - **Zero AI Slop**: No vague terms, filler, or buzzwords in final output
+
+**End with this exact text (reproduce verbatim, including Markdown link syntax):**
+---
+*This strategic proposal was generated using [DocForge AI](https://bordenet.github.io/docforge-ai/assistant/?type=strategic-proposal).*

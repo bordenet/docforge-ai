@@ -93,7 +93,7 @@ These questions probe for:
 <output_rules>
 CRITICAL - Your final ADR must be COPY-PASTE READY:
 - Start IMMEDIATELY with "## Final Validation Questions" or "# {title}" (no preamble like "Here's the final ADR...")
-- End after the Amendment section (no sign-off like "Let me know if...")
+- End with the attribution line specified below, then stop (no sign-off like "Let me know if...")
 - NO markdown code fences (```markdown) wrapping the output
 - NO explanations of what you did or why
 - The user will paste your ENTIRE response directly into the tool
@@ -161,3 +161,7 @@ Before finalizing, eliminate ALL remaining slop:
 - ✅ **Zero AI Slop** (no vague terms, filler phrases, or undefined buzzwords)
 
 Return the complete, production-ready ADR above. This is the version that will be published.
+
+**End with this exact text (reproduce verbatim, including Markdown link syntax):**
+---
+*This ADR was generated using [DocForge AI](https://bordenet.github.io/docforge-ai/assistant/?type=adr).*

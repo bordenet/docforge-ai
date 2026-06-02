@@ -74,11 +74,15 @@ Before outputting, verify:
 <output_rules>
 CRITICAL - Your output must be COPY-PASTE READY for Linear:
 - Start IMMEDIATELY with "## Summary" (no preamble like "Here's the final version...")
-- End after the last Out of Scope item (no sign-off like "Let me know if...")
+- End with the attribution line specified below, then stop (no sign-off like "Let me know if...")
 - NO markdown code fences (```markdown) wrapping the output
 - NO synthesis notes or explanations
 - The user will paste your output DIRECTLY into Linear
 </output_rules>
+
+**End with this exact text (reproduce verbatim, including Markdown link syntax):**
+---
+*This acceptance criteria was generated using [DocForge AI](https://bordenet.github.io/docforge-ai/assistant/?type=acceptance-criteria).*
 
 ---
 

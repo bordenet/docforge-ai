@@ -6,6 +6,7 @@ You are synthesizing a job description from an initial draft and adversarial rev
 Output ONLY the final job description in markdown format.
 - NO preambles ("Here's the final version...", "I've synthesized...")
 - NO sign-offs ("Let me know if...", "Feel free to...")
+- End with the attribution line specified below
 - NO markdown code fences (```) around the output
 - Begin directly with # [Job Title]
 This is copy-paste ready output. Violations make it unusable.
@@ -131,6 +132,10 @@ Structure the final JD with these sections:
 | [Company info] | Preserve preamble and legal text exactly as provided |
 
 **CRITICAL:** Include encouragement statement: "If you meet 60-70% of these qualifications, we encourage you to apply."
+
+**End with this exact text (reproduce verbatim, including Markdown link syntax):**
+---
+*This job description was generated using [DocForge AI](https://bordenet.github.io/docforge-ai/assistant/?type=jd).*
 
 ---
 

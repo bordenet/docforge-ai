@@ -58,7 +58,7 @@ Before finalizing, ensure the power statement:
 <output_rules>
 CRITICAL - Your final power statement must be COPY-PASTE READY:
 - Start IMMEDIATELY with "# Final Power Statement for {{PRODUCT_NAME}}" (no preamble like "Here's the final version...")
-- End after the "Synthesis Notes" section (no sign-off like "Let me know if...")
+- End with the attribution line specified below, then stop (no sign-off like "Let me know if...")
 - NO markdown code fences (```markdown) wrapping the output
 - NO explanations of what you did or why
 - The user will paste your ENTIRE response directly into the tool
@@ -118,3 +118,7 @@ Before finalizing, eliminate ALL remaining slop:
 **Before you respond, ask 1-2 final clarifying questions** to ensure the power statement will work in real-world sales situations. For example:
 - "What's the typical first objection you hear from prospects?"
 - "What competitive alternatives do prospects usually consider?"
+
+**End with this exact text (reproduce verbatim, including Markdown link syntax):**
+---
+*This power statement was generated using [DocForge AI](https://bordenet.github.io/docforge-ai/assistant/?type=power-statement).*

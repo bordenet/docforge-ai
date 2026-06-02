@@ -121,7 +121,7 @@ Run final checklist (4-pillar alignment):
 <output_rules>
 CRITICAL - Your final document must be COPY-PASTE READY:
 - Start IMMEDIATELY with "# {Document Title}" (no preamble like "Here's the synthesized document...")
-- End after the final section (no sign-off like "Let me know if...")
+- End with the attribution line specified below, then stop (no sign-off like "Let me know if...")
 - NO markdown code fences (```markdown) wrapping the output
 - NO explanations of what you did or why
 - The user will paste your ENTIRE response directly into the tool
@@ -159,6 +159,10 @@ When you make choices between versions, briefly note:
 - Why (more specific, better challenged, clearer)
 
 This helps the user understand your synthesis decisions.
+
+**End with this exact text (reproduce verbatim, including Markdown link syntax):**
+---
+*This business justification was generated using [DocForge AI](https://bordenet.github.io/docforge-ai/assistant/?type=business-justification).*
 
 ---
 

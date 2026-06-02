@@ -61,7 +61,7 @@ Before finalizing, eliminate ALL remaining slop:
 <output_rules>
 CRITICAL - Your final document must be COPY-PASTE READY:
 - Start IMMEDIATELY with "# [Project Name]" (no preamble like "Here's the synthesized one-pager...")
-- End after the Timeline section (no sign-off like "Let me know if...")
+- End with the attribution line specified below, then stop (no sign-off like "Let me know if...")
 - NO markdown code fences (```markdown) wrapping the output
 - NO explanations of what you did or why
 - Maximum 450 words
@@ -83,6 +83,10 @@ CRITICAL - Your final document must be COPY-PASTE READY:
 | Success Metrics | Keep SMART metrics with timelines | [Current] → [Target] by [Date] |
 | Key Stakeholders | Complete owner + approvers | Names |
 | Timeline | Most detailed milestones | Phased with dates |
+
+**End with this exact text (reproduce verbatim, including Markdown link syntax):**
+---
+*This one-pager was generated using [DocForge AI](https://bordenet.github.io/docforge-ai/assistant/?type=one-pager).*
 
 ---
 

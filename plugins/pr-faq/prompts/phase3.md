@@ -87,7 +87,7 @@ Before outputting, mentally score your document:
 <output_rules>
 CRITICAL - Your final PR-FAQ must be copy-paste ready:
 - Start IMMEDIATELY with the headline (no preamble like "Here's the final PR-FAQ...")
-- End after the Internal FAQ (no sign-off like "Let me know if...")
+- End with the attribution line specified below, then stop (no sign-off like "Let me know if...")
 - NO markdown code fences (```markdown) wrapping the output
 - No commentary — Do NOT explain what you did or why
 - The user will paste your ENTIRE response directly into the tool
@@ -107,5 +107,9 @@ CRITICAL - Your final PR-FAQ must be copy-paste ready:
 | About [Company] | Company boilerplate | Paragraph |
 | External FAQ | 5-7 customer questions | H2 + Q&A format |
 | Internal FAQ | 5-7 MANDATORY hard questions (Risk, Reversibility, Opportunity Cost) | H2 + Q&A format |
+
+**End with this exact text (reproduce verbatim, including Markdown link syntax):**
+---
+*This PR-FAQ was generated using [DocForge AI](https://bordenet.github.io/docforge-ai/assistant/?type=pr-faq).*
 
 **BEGIN WITH THE HEADLINE NOW:**

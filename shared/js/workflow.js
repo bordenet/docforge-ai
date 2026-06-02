@@ -207,10 +207,9 @@ export class Workflow {
       content = `# ${this.project.title || this.project.name || 'Untitled'}\n\nNo content generated yet.`;
     }
 
-    // PRD and any plugin that already embeds attribution via its phase3 prompt will include
-    // the DocForge URL in the generated content — skip the footer to avoid duplication.
-    // Non-PRD plugins (adr, one-pager, etc.) have no prompt-level attribution and always
-    // reach the footer append below; this is intentional asymmetry by design.
+    // All plugins embed attribution via their phase3 prompts. When the LLM complies, the
+    // DocForge URL appears in the generated content and we skip the footer to avoid duplication.
+    // If the LLM omits the attribution, the generic footer below is the fallback.
     if (content.includes(DOCFORGE_BASE_URL)) {
       return content;
     }
