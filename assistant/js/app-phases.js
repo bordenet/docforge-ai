@@ -203,7 +203,7 @@ async function exportFinalAsPdf(plugin, project) {
   try {
     // Two nested rAFs: first defers past the current frame, second fires after the next
     // frame's layout pass — ensures getBoundingClientRect() is valid before html2canvas runs.
-    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    await new Promise((r) => { requestAnimationFrame(() => requestAnimationFrame(r)); });
 
     // Remove the overlay before capture — a covering fixed element at higher z-index causes
     // html2canvas to composite it over the container, producing a blank canvas.

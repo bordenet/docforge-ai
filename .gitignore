@@ -8,3 +8,7 @@ playwright-report/
 
 #Ignore vscode AI rules
 .github/instructions/codacy.instructions.md
+
+# Working plans (AI-authored, not for public history)
+docs/superpowers/plans/2026-06-16-kb-article-plugin.md
+docs/superpowers/plans/2026-06-16-kb-article-research.md
