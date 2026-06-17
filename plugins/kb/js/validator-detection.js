@@ -61,7 +61,14 @@ export function extractSection(text, sectionPattern) {
       sectionLevel = hMatch[1].length;
       continue;
     }
-    if (inSection && hMatch && hMatch[1].length <= sectionLevel) { break; }
+    if (inSection && hMatch && hMatch[1].length <= sectionLevel) {
+      // Same-level header that also matches (e.g., ## Step 2 after ## Step 1) — merge sections.
+      if (hMatch[1].length === sectionLevel && sectionPattern.test(line)) {
+        sectionLines.push('');
+        continue;
+      }
+      break;
+    }
     if (inSection) { sectionLines.push(line); }
   }
   return sectionLines.join('\n');
@@ -155,9 +162,16 @@ export function detectResolutionSteps(resText) {
 
   const stepCount = (resText.match(/^\s*(?:\d+\.|[-*])\s+\S/gm) || []).length;
 
-  const singleVerbMatches = resText.match(ABSTRACT_SINGLE_WORD_PATTERN) || [];
   const lowerText = resText.toLowerCase();
   const multiPhraseMatches = ABSTRACT_MULTI_WORD_PHRASES.filter(p => lowerText.includes(p));
+  // Strip matched multi-word phrases before single-word matching to avoid counting
+  // overlapping prefixes twice (e.g., "update" in "update accordingly").
+  let textForSingleMatch = resText;
+  for (const phrase of multiPhraseMatches) {
+    const escaped = phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    textForSingleMatch = textForSingleMatch.replace(new RegExp(escaped, 'gi'), ' '.repeat(phrase.length));
+  }
+  const singleVerbMatches = textForSingleMatch.match(ABSTRACT_SINGLE_WORD_PATTERN) || [];
   const abstractVerbCount = singleVerbMatches.length + multiPhraseMatches.length;
 
   const hasUiPaths = (resText.match(UI_PATH_PATTERN) || []).length > 0;

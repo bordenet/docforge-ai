@@ -356,9 +356,10 @@ export function scoreCompleteness(text, articleType) {
 
 /**
  * @param {string} text - Full document text
+ * @param {'troubleshooting' | 'how-to'} [articleType]
  * @returns {{ score: number, maxScore: number, issues: string[], strengths: string[] }}
  */
-export function scorePrecision(text) {
+export function scorePrecision(text, articleType = 'troubleshooting') {
   const issues = [];
   const strengths = [];
   let raw = 0;
@@ -382,7 +383,7 @@ export function scorePrecision(text) {
   }
 
   // 3 pts: Cause quality (how-to equivalent: prerequisites specificity)
-  if (getArticleType(text) === 'how-to') {
+  if (articleType === 'how-to') {
     const prereqText = extractSection(text, SECTION_PATTERNS.prerequisites);
     const prereqEnv = detectEnvironment(prereqText);
     const hasSpecificPrereq = prereqText.trim().length > 0 && (prereqEnv.hasVersion || prereqEnv.hasPlatform || prereqEnv.hasIntegration);
@@ -516,10 +517,3 @@ export function scoreSelfService(text, articleType) {
   return { score: Math.max(0, Math.min(raw, 15)), maxScore: 15, issues, strengths };
 }
 
-// ── HELPER: detect articleType without importing validator-detection directly ─
-
-function getArticleType(text) {
-  const metaMatch = text.slice(0, 500).match(/\*\*Article\s+type:\*\*\s*(Troubleshooting|How-To)/i);
-  if (metaMatch) return metaMatch[1].toLowerCase();
-  return 'troubleshooting';
-}

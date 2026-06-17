@@ -13,6 +13,7 @@ import {
   getScoreColor,
   getScoreLabel,
 } from '../plugins/kb/js/validator.js';
+import { kbPlugin } from '../plugins/kb/config.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -28,6 +29,15 @@ const polishedTheater = loadFixture('polished-theater.md');
 const resolutionTheater = loadFixture('resolution-theater.md');
 const minimal = loadFixture('minimal.md');
 const vagueEscalation = loadFixture('vague-escalation.md');
+
+// ── Config invariants ─────────────────────────────────────────────────────────
+
+describe('kbPlugin config invariants', () => {
+  it('scoringDimensions sum to exactly 100', () => {
+    const total = kbPlugin.scoringDimensions.reduce((sum, d) => sum + d.maxPoints, 0);
+    expect(total).toBe(100);
+  });
+});
 
 // ── Empty / whitespace input ──────────────────────────────────────────────────
 

@@ -5,7 +5,7 @@
  */
 
 import { escapeHtml } from '../../shared/js/ui.js';
-import { getGrade, getScoreColor, getScoreLabel } from '../../shared/js/validator.js';
+import { getGrade as defaultGetGrade, getScoreColor as defaultGetScoreColor, getScoreLabel as defaultGetScoreLabel } from '../../shared/js/validator.js';
 
 /**
  * Update score display from validation result
@@ -33,7 +33,7 @@ export function updateScoreDisplay(result, plugin) {
   const totalEl = document.getElementById('score-total');
   if (totalEl) totalEl.textContent = result.totalScore;
 
-  updateBadge(result.totalScore);
+  updateBadge(result.totalScore, plugin);
 }
 
 /**
@@ -49,12 +49,17 @@ export function getBarColor(pct) {
 }
 
 /**
- * Update badge using shared helper functions
+ * Update badge using plugin-specific helper functions (fallback to shared).
  * @param {number} score - Total score
+ * @param {Object} [plugin] - Current plugin config (may provide getGrade/getScoreColor/getScoreLabel)
  */
-export function updateBadge(score) {
+export function updateBadge(score, plugin) {
   const badge = document.getElementById('score-badge');
   if (!badge) return;
+
+  const getGrade = plugin?.getGrade || defaultGetGrade;
+  const getScoreColor = plugin?.getScoreColor || defaultGetScoreColor;
+  const getScoreLabel = plugin?.getScoreLabel || defaultGetScoreLabel;
 
   const label = getScoreLabel(score);
   const color = getScoreColor(score);

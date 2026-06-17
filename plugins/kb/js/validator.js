@@ -76,13 +76,14 @@ export function validateDocument(text) {
   const d1 = scoreFindability(text, articleType);
   const d2 = scoreResolutionQuality(resolutionText, resSignals, articleType);
   const d3 = scoreCompleteness(text, articleType);
-  const d4 = scorePrecision(text);
+  const d4 = scorePrecision(text, articleType);
   const d5 = scoreSelfService(text, articleType);
 
   const rawTotal = d1.score + d2.score + d3.score + d4.score + d5.score;
 
-  // Resolution Theater Gate: cap at 49 when Resolution has zero specificity signals.
-  const theaterGate = !resSignals.hasSpecificitySignals;
+  // Resolution Theater Gate: cap at 49 when Resolution exists but has zero specificity signals.
+  // Empty resolution (missing section) is penalized by D2/D3, not by theater cap.
+  const theaterGate = resolutionText.trim().length > 0 && !resSignals.hasSpecificitySignals;
   const totalScore = theaterGate ? Math.min(rawTotal, 49) : rawTotal;
   const gateIssues = theaterGate
     ? ['Resolution Theater: steps contain no UI path, command, or exact value — unfollowable. Score capped at 49 until the Resolution adds concrete specificity.']

@@ -65,10 +65,11 @@ export const PASSIVE_VOICE_PATTERN = /\b(should be|can be|may be|will be|could b
 export const FUTURE_TENSE_PATTERN = /\b(you will need to|you'll need to|the system will|it will be)\b/gi;
 
 // UI path navigation (space-only [a-zA-Z ] to prevent newline spans). One arrow / two segments.
-export const UI_PATH_PATTERN = /[A-Z][a-zA-Z ]{2,}\s*[→>]\s*[A-Z][a-zA-Z ]{2,}/g;
+// Upper bound {2,30} prevents quadratic backtracking on title-case prose without arrows.
+export const UI_PATH_PATTERN = /[A-Z][a-zA-Z ]{2,30}\s*[→>]\s*[A-Z][a-zA-Z ]{2,30}/g;
 
 // Multi-level UI path: 3+ segments (≥2 arrows) — backs the D2 "+1 multi-level" bonus.
-export const UI_PATH_MULTILEVEL_PATTERN = /[A-Z][a-zA-Z ]{2,}(?:\s*[→>]\s*[A-Z][a-zA-Z ]{2,}){2,}/g;
+export const UI_PATH_MULTILEVEL_PATTERN = /[A-Z][a-zA-Z ]{2,30}(?:\s*[→>]\s*[A-Z][a-zA-Z ]{2,30}){2,}/g;
 
 // CLI commands. Two prongs:
 //   1. inline backtick span: "`openssl x509 -in cert.pem -noout -dates`"

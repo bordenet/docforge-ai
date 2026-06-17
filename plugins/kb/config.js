@@ -3,7 +3,7 @@
  * @see https://support.zendesk.com/hc/en-us/articles/4408831743258-Best-practices-Developing-content-for-your-knowledge-base
  */
 
-import { validateDocument } from './js/validator.js';
+import { validateDocument, getGrade, getScoreColor, getScoreLabel } from './js/validator.js';
 
 export const kbPlugin = {
   id: 'kb',
@@ -98,6 +98,9 @@ export const kbPlugin = {
   ],
 
   validateDocument,
+  getGrade,
+  getScoreColor,
+  getScoreLabel,
 
   workflowConfig: {
     phaseCount: 3,
@@ -127,8 +130,3 @@ export const kbPlugin = {
   },
 };
 
-// Invariant: scoringDimensions must total exactly 100
-const KB_DIMENSION_TOTAL = kbPlugin.scoringDimensions.reduce((sum, d) => sum + d.maxPoints, 0);
-if (KB_DIMENSION_TOTAL !== 100) {
-  throw new Error(`Config invariant: kb scoringDimensions total ${KB_DIMENSION_TOTAL}, expected 100`);
-}
