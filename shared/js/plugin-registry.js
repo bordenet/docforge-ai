@@ -13,6 +13,7 @@ import { acceptanceCriteriaPlugin } from '../../plugins/acceptance-criteria/conf
 import { jdPlugin } from '../../plugins/jd/config.js';
 import { businessJustificationPlugin } from '../../plugins/business-justification/config.js';
 import { strategicProposalPlugin } from '../../plugins/strategic-proposal/config.js';
+import { kbPlugin } from '../../plugins/kb/config.js';
 
 /**
  * @typedef {Object} FormField
@@ -154,6 +155,7 @@ const plugins = [
   jdPlugin,
   businessJustificationPlugin,
   strategicProposalPlugin,
+  kbPlugin,
 ];
 
 plugins.forEach((plugin) => {

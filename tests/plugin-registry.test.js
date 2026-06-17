@@ -13,9 +13,9 @@ import {
 
 describe('Plugin Registry', () => {
   describe('getPluginIds', () => {
-    it('should return all 9 document type IDs', () => {
+    it('should return all 10 document type IDs', () => {
       const ids = getPluginIds();
-      expect(ids).toHaveLength(9);
+      expect(ids).toHaveLength(10);
       expect(ids).toContain('one-pager');
       expect(ids).toContain('prd');
       expect(ids).toContain('adr');
@@ -25,6 +25,7 @@ describe('Plugin Registry', () => {
       expect(ids).toContain('jd');
       expect(ids).toContain('business-justification');
       expect(ids).toContain('strategic-proposal');
+      expect(ids).toContain('kb');
     });
   });
 
@@ -78,7 +79,7 @@ describe('Plugin Registry', () => {
     it('should return array of all plugins', () => {
       const plugins = getAllPlugins();
       expect(Array.isArray(plugins)).toBe(true);
-      expect(plugins).toHaveLength(9);
+      expect(plugins).toHaveLength(10);
     });
 
     it('should return plugins with unique IDs', () => {
@@ -213,6 +214,7 @@ describe('Plugin Registry', () => {
         '## Strategic Context\nMarket opportunity of $10M.\n## Financial Analysis\nROI: 300% over 3 years. NPV: $5M.\n## Options Analysis\nOption A: Build. Option B: Buy.\n## Execution Plan\nPhase 1: Discovery. Phase 2: Build.',
       'strategic-proposal':
         '## Problem Statement\nCurrent system cannot scale.\n## Proposed Solution\nMigrate to cloud.\n## Business Impact\nReduce costs by 40%.\n## Implementation Plan\nQ1: Design. Q2: Build.',
+      kb: '# SSO login fails with "invalid_audience" error\n\n**Article type:** Troubleshooting\n**Severity:** high\n**Audience:** Customer Admin\n\n## Summary\nSSO login fails due to audience mismatch.\n\n## Symptoms\n- Error: `invalid_audience`\n\n## Resolution\n1. In Admin → SSO → OAuth Apps, set Audience to `prod-app`.\n2. Click Save.\n\n## Verification\n- You should see the status change to Connected.',
     };
 
     it('every plugin validateDocument should return totalScore and issues', () => {
