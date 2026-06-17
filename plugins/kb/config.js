@@ -10,7 +10,8 @@ export const kbPlugin = {
   name: 'Knowledge Base Article',
   icon: '📖',
   description: 'Troubleshooting and how-to articles for product support',
-  docsUrl: 'https://support.zendesk.com/hc/en-us/articles/4408831743258-Best-practices-Developing-content-for-your-knowledge-base',
+  docsUrl:
+    'https://support.zendesk.com/hc/en-us/articles/4408831743258-Best-practices-Developing-content-for-your-knowledge-base',
   dbName: 'kb-docforge-db',
 
   formFields: [
@@ -85,16 +86,38 @@ export const kbPlugin = {
       type: 'textarea',
       required: true,
       rows: 4,
-      placeholder: 'Key steps you know. Be specific — UI paths, commands, exact values. LLM fills gaps and formalizes.',
+      placeholder:
+        'Key steps you know. Be specific — UI paths, commands, exact values. LLM fills gaps and formalizes.',
     },
   ],
 
   scoringDimensions: [
-    { name: 'Findability & Framing', maxPoints: 20, description: 'Actionable title; exact error text; audience; articleType consistency' },
-    { name: 'Resolution Quality', maxPoints: 25, description: 'Numbered steps with UI paths/commands/exact values; no abstract verbs' },
-    { name: 'Completeness & Safety Net', maxPoints: 25, description: 'Verification with expected output; 3-component escalation; type-required sections' },
-    { name: 'Precision & Technical Accuracy', maxPoints: 15, description: 'Environment specificity; cause quality; no slop/vague qualifiers' },
-    { name: 'Self-Service Architecture', maxPoints: 15, description: 'Prevention; related; summary/goal; self-contained; time estimate' },
+    {
+      name: 'Findability & Framing',
+      maxPoints: 20,
+      description: 'Actionable title; exact error text; audience; articleType consistency',
+    },
+    {
+      name: 'Resolution Quality',
+      maxPoints: 25,
+      description: 'Numbered steps with UI paths/commands/exact values; no abstract verbs',
+    },
+    {
+      name: 'Completeness & Safety Net',
+      maxPoints: 25,
+      description:
+        'Verification with expected output; 3-component escalation; type-required sections',
+    },
+    {
+      name: 'Precision & Technical Accuracy',
+      maxPoints: 15,
+      description: 'Environment specificity; cause quality; no slop/vague qualifiers',
+    },
+    {
+      name: 'Self-Service Architecture',
+      maxPoints: 15,
+      description: 'Prevention; related; summary/goal; self-contained; time estimate',
+    },
   ],
 
   validateDocument,
@@ -129,4 +152,3 @@ export const kbPlugin = {
     ],
   },
 };
-

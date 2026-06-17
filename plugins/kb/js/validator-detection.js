@@ -52,7 +52,9 @@ export function extractSection(text, sectionPattern) {
   for (const line of lines) {
     if (/^\s*(```|~~~)/.test(line)) {
       inFence = !inFence;
-      if (inSection) { sectionLines.push(line); }
+      if (inSection) {
+        sectionLines.push(line);
+      }
       continue;
     }
     const hMatch = inFence ? null : line.match(/^(#+)\s/);
@@ -69,7 +71,9 @@ export function extractSection(text, sectionPattern) {
       }
       break;
     }
-    if (inSection) { sectionLines.push(line); }
+    if (inSection) {
+      sectionLines.push(line);
+    }
   }
   return sectionLines.join('\n');
 }
@@ -152,24 +156,36 @@ export function detectSymptoms(sectionText) {
  */
 export function detectResolutionSteps(resText) {
   const zero = {
-    stepCount: 0, abstractVerbCount: 0, hasSpecificitySignals: false,
-    hasUiPaths: false, hasMultiLevelUiPath: false, hasCLICommands: false,
-    hasExactValues: false, hasFencedCodeBlock: false, hasPassiveVoice: false,
-    hasFutureTense: false, hasReproducibleVerbs: false, hasBranchConditions: false,
-    hasInlineCodeOrValues: false, longStepCount: 0,
+    stepCount: 0,
+    abstractVerbCount: 0,
+    hasSpecificitySignals: false,
+    hasUiPaths: false,
+    hasMultiLevelUiPath: false,
+    hasCLICommands: false,
+    hasExactValues: false,
+    hasFencedCodeBlock: false,
+    hasPassiveVoice: false,
+    hasFutureTense: false,
+    hasReproducibleVerbs: false,
+    hasBranchConditions: false,
+    hasInlineCodeOrValues: false,
+    longStepCount: 0,
   };
   if (!resText || !resText.trim()) return zero;
 
   const stepCount = (resText.match(/^\s*(?:\d+\.|[-*])\s+\S/gm) || []).length;
 
   const lowerText = resText.toLowerCase();
-  const multiPhraseMatches = ABSTRACT_MULTI_WORD_PHRASES.filter(p => lowerText.includes(p));
+  const multiPhraseMatches = ABSTRACT_MULTI_WORD_PHRASES.filter((p) => lowerText.includes(p));
   // Strip matched multi-word phrases before single-word matching to avoid counting
   // overlapping prefixes twice (e.g., "update" in "update accordingly").
   let textForSingleMatch = resText;
   for (const phrase of multiPhraseMatches) {
     const escaped = phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    textForSingleMatch = textForSingleMatch.replace(new RegExp(escaped, 'gi'), ' '.repeat(phrase.length));
+    textForSingleMatch = textForSingleMatch.replace(
+      new RegExp(escaped, 'gi'),
+      ' '.repeat(phrase.length)
+    );
   }
   const singleVerbMatches = textForSingleMatch.match(ABSTRACT_SINGLE_WORD_PATTERN) || [];
   const abstractVerbCount = singleVerbMatches.length + multiPhraseMatches.length;
@@ -179,7 +195,8 @@ export function detectResolutionSteps(resText) {
   const hasCLICommands = (resText.match(CLI_COMMAND_PATTERN) || []).length > 0;
   const hasExactValues = (resText.match(EXACT_VALUE_PATTERN) || []).length > 0;
   const hasFencedCodeBlock = /^\s*(```|~~~)/m.test(resText);
-  const hasSpecificitySignals = hasUiPaths || hasCLICommands || hasExactValues || hasFencedCodeBlock;
+  const hasSpecificitySignals =
+    hasUiPaths || hasCLICommands || hasExactValues || hasFencedCodeBlock;
 
   const hasPassiveVoice = (resText.match(PASSIVE_VOICE_PATTERN) || []).length > 0;
   const hasFutureTense = (resText.match(FUTURE_TENSE_PATTERN) || []).length > 0;
@@ -188,13 +205,23 @@ export function detectResolutionSteps(resText) {
   const hasInlineCodeOrValues = hasExactValues || hasFencedCodeBlock;
 
   const steps = resText.split(/^\s*(?:\d+\.|[-*])\s/m).slice(1);
-  const longStepCount = steps.filter(s => s.length >= 300).length;
+  const longStepCount = steps.filter((s) => s.length >= 300).length;
 
   return {
-    stepCount, abstractVerbCount, hasSpecificitySignals,
-    hasUiPaths, hasMultiLevelUiPath, hasCLICommands, hasExactValues,
-    hasFencedCodeBlock, hasPassiveVoice, hasFutureTense,
-    hasReproducibleVerbs, hasBranchConditions, hasInlineCodeOrValues, longStepCount,
+    stepCount,
+    abstractVerbCount,
+    hasSpecificitySignals,
+    hasUiPaths,
+    hasMultiLevelUiPath,
+    hasCLICommands,
+    hasExactValues,
+    hasFencedCodeBlock,
+    hasPassiveVoice,
+    hasFutureTense,
+    hasReproducibleVerbs,
+    hasBranchConditions,
+    hasInlineCodeOrValues,
+    longStepCount,
   };
 }
 
@@ -219,7 +246,13 @@ export function detectVerification(sectionText) {
  */
 export function detectEscalation(sectionText) {
   if (!sectionText || !sectionText.trim()) {
-    return { present: false, hasTrigger: false, hasThreshold: false, hasEvidenceList: false, isUnconditional: false };
+    return {
+      present: false,
+      hasTrigger: false,
+      hasThreshold: false,
+      hasEvidenceList: false,
+      isUnconditional: false,
+    };
   }
   return {
     present: true,
@@ -242,7 +275,8 @@ export function detectEnvironment(sectionText) {
     present: true,
     hasVersion: (sectionText.match(ENVIRONMENT_SPECIFICITY_PATTERNS.version) || []).length > 0,
     hasPlatform: (sectionText.match(ENVIRONMENT_SPECIFICITY_PATTERNS.platform) || []).length > 0,
-    hasIntegration: (sectionText.match(ENVIRONMENT_SPECIFICITY_PATTERNS.integration) || []).length > 0,
+    hasIntegration:
+      (sectionText.match(ENVIRONMENT_SPECIFICITY_PATTERNS.integration) || []).length > 0,
   };
 }
 
@@ -276,8 +310,8 @@ export function detectSelfService(text, articleType) {
 
   let hasSummaryOrGoal;
   if (articleType === 'how-to') {
-    hasSummaryOrGoal = SECTION_PATTERNS.goal.test(text) ||
-      (text.match(SELF_SERVICE_PATTERNS.goal) || []).length > 0;
+    hasSummaryOrGoal =
+      SECTION_PATTERNS.goal.test(text) || (text.match(SELF_SERVICE_PATTERNS.goal) || []).length > 0;
   } else {
     hasSummaryOrGoal = SECTION_PATTERNS.summary.test(text);
   }
@@ -296,8 +330,8 @@ export function detectSlopPatterns(text) {
   const pattern = new RegExp(`\\b(${SLOP_SINGLE_WORD.join('|')})\\b`, 'gi');
   const singleMatches = text.match(pattern) || [];
   const lower = text.toLowerCase();
-  const multiMatches = SLOP_MULTI_WORD.filter(p => lower.includes(p));
-  const items = [...singleMatches.map(m => m.toLowerCase()), ...multiMatches];
+  const multiMatches = SLOP_MULTI_WORD.filter((p) => lower.includes(p));
+  const items = [...singleMatches.map((m) => m.toLowerCase()), ...multiMatches];
   return { count: items.length, items };
 }
 
@@ -311,7 +345,7 @@ export function detectVagueQualifiers(resText) {
   const pattern = new RegExp(`\\b(${allWords.join('|')})\\b`, 'gi');
   const singleMatches = resText.match(pattern) || [];
   const lower = resText.toLowerCase();
-  const multiMatches = VAGUE_QUALIFIER_MULTI_WORD.filter(p => lower.includes(p));
-  const items = [...singleMatches.map(m => m.toLowerCase()), ...multiMatches];
+  const multiMatches = VAGUE_QUALIFIER_MULTI_WORD.filter((p) => lower.includes(p));
+  const items = [...singleMatches.map((m) => m.toLowerCase()), ...multiMatches];
   return { count: items.length, items };
 }

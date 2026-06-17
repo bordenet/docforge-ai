@@ -109,8 +109,12 @@ describe('validateDocument — result structure', () => {
 
   it('maxScore sums to 100 across all dimensions', () => {
     const result = validateDocument(goodTroubleshooting);
-    const total = result.findability.maxScore + result.resolutionQuality.maxScore +
-      result.completeness.maxScore + result.precision.maxScore + result.selfService.maxScore;
+    const total =
+      result.findability.maxScore +
+      result.resolutionQuality.maxScore +
+      result.completeness.maxScore +
+      result.precision.maxScore +
+      result.selfService.maxScore;
     expect(total).toBe(100);
   });
 });
@@ -136,7 +140,9 @@ describe('validateDocument — articleType detection', () => {
 
 describe('good-troubleshooting.md', () => {
   let result;
-  beforeAll(() => { result = validateDocument(goodTroubleshooting); });
+  beforeAll(() => {
+    result = validateDocument(goodTroubleshooting);
+  });
 
   it('scores ≥80', () => {
     expect(result.totalScore).toBeGreaterThanOrEqual(80);
@@ -163,7 +169,9 @@ describe('good-troubleshooting.md', () => {
 
 describe('good-how-to.md', () => {
   let result;
-  beforeAll(() => { result = validateDocument(goodHowTo); });
+  beforeAll(() => {
+    result = validateDocument(goodHowTo);
+  });
 
   it('scores ≥80', () => {
     expect(result.totalScore).toBeGreaterThanOrEqual(80);
@@ -182,7 +190,9 @@ describe('good-how-to.md', () => {
 
 describe('polished-theater.md', () => {
   let result;
-  beforeAll(() => { result = validateDocument(polishedTheater); });
+  beforeAll(() => {
+    result = validateDocument(polishedTheater);
+  });
 
   it('theater gate IS applied', () => {
     expect(result.theaterGateApplied).toBe(true);
@@ -197,7 +207,7 @@ describe('polished-theater.md', () => {
   });
 
   it('issues array contains theater gate message', () => {
-    const gateMsg = result.issues.find(i => i.includes('Resolution Theater'));
+    const gateMsg = result.issues.find((i) => i.includes('Resolution Theater'));
     expect(gateMsg).toBeDefined();
   });
 });
@@ -206,7 +216,9 @@ describe('polished-theater.md', () => {
 
 describe('resolution-theater.md', () => {
   let result;
-  beforeAll(() => { result = validateDocument(resolutionTheater); });
+  beforeAll(() => {
+    result = validateDocument(resolutionTheater);
+  });
 
   it('theater gate IS applied', () => {
     expect(result.theaterGateApplied).toBe(true);
@@ -229,7 +241,9 @@ describe('minimal.md', () => {
 
 describe('vague-escalation.md', () => {
   let result;
-  beforeAll(() => { result = validateDocument(vagueEscalation); });
+  beforeAll(() => {
+    result = validateDocument(vagueEscalation);
+  });
 
   it('scores ≤80 (strong D2 but penalized D3/D5)', () => {
     expect(result.totalScore).toBeLessThanOrEqual(80);

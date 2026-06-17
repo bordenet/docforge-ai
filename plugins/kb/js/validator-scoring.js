@@ -44,7 +44,9 @@ export function scoreFindability(text, articleType) {
     raw += 5;
     strengths.push('Title uses actionable problem-statement vocabulary');
   } else {
-    issues.push('Title lacks actionable symptom or error vocabulary (fail, error, invalid, blocked...)');
+    issues.push(
+      'Title lacks actionable symptom or error vocabulary (fail, error, invalid, blocked...)'
+    );
   }
 
   // 4 pts: Error code (troubleshooting) OR concrete task target (how-to)
@@ -86,7 +88,9 @@ export function scoreFindability(text, articleType) {
       raw += 4;
       strengths.push('Goal states a concrete measurable outcome');
     } else {
-      issues.push('Goal section lacks a concrete outcome statement ("By the end of this, you will...")');
+      issues.push(
+        'Goal section lacks a concrete outcome statement ("By the end of this, you will...")'
+      );
     }
   } else if (SECTION_PATTERNS.symptoms.test(text)) {
     const symptomsText = extractSection(text, SECTION_PATTERNS.symptoms);
@@ -96,7 +100,9 @@ export function scoreFindability(text, articleType) {
       strengths.push('Symptoms contain exact quoted error text');
     } else {
       raw -= 3;
-      issues.push('Symptoms section lacks exact quoted error text — include error messages in backticks or quotes');
+      issues.push(
+        'Symptoms section lacks exact quoted error text — include error messages in backticks or quotes'
+      );
     }
     // If no symptoms: penalty already applied above, no points earned here
   }
@@ -126,7 +132,11 @@ export function scoreFindability(text, articleType) {
  * @param {'troubleshooting' | 'how-to'} [articleType] - For branch-condition bonus (troubleshooting only)
  * @returns {{ score: number, maxScore: number, issues: string[], strengths: string[] }}
  */
-export function scoreResolutionQuality(resolutionText, resSignals, articleType = 'troubleshooting') {
+export function scoreResolutionQuality(
+  resolutionText,
+  resSignals,
+  articleType = 'troubleshooting'
+) {
   const issues = [];
   const strengths = [];
   let raw = 0;
@@ -138,7 +148,9 @@ export function scoreResolutionQuality(resolutionText, resSignals, articleType =
     strengths.push(`Resolution has ${resSignals.stepCount} numbered/bulleted steps`);
   } else if (hasResolution && resSignals.stepCount > 0) {
     raw += 3; // partial credit
-    issues.push(`Resolution has only ${resSignals.stepCount} step(s) — aim for ≥3 numbered or bulleted steps`);
+    issues.push(
+      `Resolution has only ${resSignals.stepCount} step(s) — aim for ≥3 numbered or bulleted steps`
+    );
   } else if (!hasResolution) {
     issues.push('Resolution section missing or empty');
   } else {
@@ -159,7 +171,9 @@ export function scoreResolutionQuality(resolutionText, resSignals, articleType =
     raw += 5;
     strengths.push('Steps include exact values (backtick code, URL, or config key=value)');
   } else {
-    issues.push('Resolution steps contain no exact values — wrap values, URLs, or config keys in backticks');
+    issues.push(
+      'Resolution steps contain no exact values — wrap values, URLs, or config keys in backticks'
+    );
   }
 
   // 5 pts: Abstract verb count zero or low (≤1)
@@ -169,11 +183,15 @@ export function scoreResolutionQuality(resolutionText, resSignals, articleType =
       strengths.push('No abstract verbs in Resolution steps');
     }
   } else {
-    issues.push(`Resolution contains ${resSignals.abstractVerbCount} abstract verb(s) — replace with specific actions`);
+    issues.push(
+      `Resolution contains ${resSignals.abstractVerbCount} abstract verb(s) — replace with specific actions`
+    );
   }
   if (resSignals.abstractVerbCount >= 3) {
     raw -= 5;
-    issues.push('Resolution Theater: ≥3 abstract verbs make steps unfollowable without interpretation');
+    issues.push(
+      'Resolution Theater: ≥3 abstract verbs make steps unfollowable without interpretation'
+    );
   }
 
   // 2 pts: No passive voice or future tense
@@ -184,10 +202,14 @@ export function scoreResolutionQuality(resolutionText, resSignals, articleType =
   }
   if (resSignals.hasPassiveVoice) {
     raw -= 2;
-    issues.push('Resolution uses passive voice ("should be configured") — rewrite as direct instructions');
+    issues.push(
+      'Resolution uses passive voice ("should be configured") — rewrite as direct instructions'
+    );
   }
   if (resSignals.hasFutureTense) {
-    issues.push('Resolution defers action with future tense ("you will need to") — use imperative form');
+    issues.push(
+      'Resolution defers action with future tense ("you will need to") — use imperative form'
+    );
   }
 
   // 2 pts: Reproducible verbs
@@ -195,7 +217,9 @@ export function scoreResolutionQuality(resolutionText, resSignals, articleType =
     raw += 2;
     strengths.push('Steps use KCS reproducible verbs (click, set, run, confirm...)');
   } else {
-    issues.push('Steps lack KCS reproducible verbs — start steps with: click, open, set, run, navigate, enter');
+    issues.push(
+      'Steps lack KCS reproducible verbs — start steps with: click, open, set, run, navigate, enter'
+    );
   }
 
   // Penalty: no inline code or values
@@ -208,13 +232,17 @@ export function scoreResolutionQuality(resolutionText, resSignals, articleType =
   if (resSignals.longStepCount > 0) {
     const penalty = Math.min(resSignals.longStepCount * 2, 4);
     raw -= penalty;
-    issues.push(`${resSignals.longStepCount} step(s) exceed ~300 chars — split into single-action steps`);
+    issues.push(
+      `${resSignals.longStepCount} step(s) exceed ~300 chars — split into single-action steps`
+    );
   }
 
   // Bonus: branch conditions (troubleshooting type only)
   if (articleType === 'troubleshooting' && resSignals.hasBranchConditions) {
     raw += 2;
-    strengths.push('Resolution includes branch conditions (if/otherwise) — appropriate for troubleshooting');
+    strengths.push(
+      'Resolution includes branch conditions (if/otherwise) — appropriate for troubleshooting'
+    );
   }
 
   // Bonus: multi-level UI path
@@ -289,9 +317,13 @@ export function scoreCompleteness(text, articleType) {
       strengths.push('Verification states a specific expected output');
     } else if (verSignals.isVague) {
       raw -= 3;
-      issues.push('Verification only says "verify it works" — add a specific expected success state');
+      issues.push(
+        'Verification only says "verify it works" — add a specific expected success state'
+      );
     } else {
-      issues.push('Verification lacks a specific success indicator (e.g., "You should see: Connected")');
+      issues.push(
+        'Verification lacks a specific success indicator (e.g., "You should see: Connected")'
+      );
     }
   } else {
     raw -= 6;
@@ -305,7 +337,11 @@ export function scoreCompleteness(text, articleType) {
     strengths.push('Escalation/fallback section present');
     const escText = extractSection(text, SECTION_PATTERNS.escalation);
     const escSignals = detectEscalation(escText);
-    const componentCount = [escSignals.hasTrigger, escSignals.hasThreshold, escSignals.hasEvidenceList].filter(Boolean).length;
+    const componentCount = [
+      escSignals.hasTrigger,
+      escSignals.hasThreshold,
+      escSignals.hasEvidenceList,
+    ].filter(Boolean).length;
     if (componentCount === 3) {
       raw += 5;
       strengths.push('Escalation has all 3 components: trigger, threshold, and evidence checklist');
@@ -315,18 +351,26 @@ export function scoreCompleteness(text, articleType) {
         !escSignals.hasTrigger && 'conditional trigger',
         !escSignals.hasThreshold && 'measurable threshold',
         !escSignals.hasEvidenceList && 'evidence checklist',
-      ].filter(Boolean).join(', ');
+      ]
+        .filter(Boolean)
+        .join(', ');
       issues.push(`Escalation missing: ${missing}`);
     } else {
-      issues.push('Escalation section has none of the 3 required components (trigger, threshold, evidence)');
+      issues.push(
+        'Escalation section has none of the 3 required components (trigger, threshold, evidence)'
+      );
     }
     if (escSignals.isUnconditional) {
       raw -= 3;
-      issues.push('Escalation is unconditional "contact support" — add a conditional trigger ("Escalate if...")');
+      issues.push(
+        'Escalation is unconditional "contact support" — add a conditional trigger ("Escalate if...")'
+      );
     }
   } else {
     raw -= 4;
-    issues.push('Missing Escalation section — readers need a clear next step when self-service fails');
+    issues.push(
+      'Missing Escalation section — readers need a clear next step when self-service fails'
+    );
   }
 
   // Common: Environment (2 pts)
@@ -368,13 +412,21 @@ export function scorePrecision(text, articleType = 'troubleshooting') {
   const envText = extractSection(text, SECTION_PATTERNS.environment);
   const envSignals = detectEnvironment(envText);
   if (envSignals.present) {
-    const specificity = [envSignals.hasVersion, envSignals.hasPlatform, envSignals.hasIntegration].filter(Boolean).length;
+    const specificity = [
+      envSignals.hasVersion,
+      envSignals.hasPlatform,
+      envSignals.hasIntegration,
+    ].filter(Boolean).length;
     if (specificity >= 2) {
       raw += 4;
-      strengths.push('Environment section has specific version, platform, and/or integration details');
+      strengths.push(
+        'Environment section has specific version, platform, and/or integration details'
+      );
     } else if (specificity === 1) {
       raw += 2;
-      issues.push('Environment section exists but lacks full specificity — add version numbers, platforms, or integration names');
+      issues.push(
+        'Environment section exists but lacks full specificity — add version numbers, platforms, or integration names'
+      );
     } else {
       issues.push('Environment section lacks specific details (version, platform, integration)');
     }
@@ -386,7 +438,9 @@ export function scorePrecision(text, articleType = 'troubleshooting') {
   if (articleType === 'how-to') {
     const prereqText = extractSection(text, SECTION_PATTERNS.prerequisites);
     const prereqEnv = detectEnvironment(prereqText);
-    const hasSpecificPrereq = prereqText.trim().length > 0 && (prereqEnv.hasVersion || prereqEnv.hasPlatform || prereqEnv.hasIntegration);
+    const hasSpecificPrereq =
+      prereqText.trim().length > 0 &&
+      (prereqEnv.hasVersion || prereqEnv.hasPlatform || prereqEnv.hasIntegration);
     if (hasSpecificPrereq) {
       raw += 3;
       strengths.push('Prerequisites specify named roles, tools, or versions');
@@ -404,9 +458,11 @@ export function scorePrecision(text, articleType = 'troubleshooting') {
       strengths.push('Cause section explains the root cause with causal language (≥20 words)');
     } else if (causeSignals.present) {
       raw += 1;
-      issues.push(causeSignals.wordCount < 20
-        ? 'Cause section too brief — expand to ≥20 words for full credit'
-        : 'Cause section lacks causal language (because, caused by, due to, triggered by...)');
+      issues.push(
+        causeSignals.wordCount < 20
+          ? 'Cause section too brief — expand to ≥20 words for full credit'
+          : 'Cause section lacks causal language (because, caused by, due to, triggered by...)'
+      );
     }
   }
 
@@ -424,7 +480,9 @@ export function scorePrecision(text, articleType = 'troubleshooting') {
     raw += 3;
     if (slopSignals.count === 0) strengths.push('No AI-slop patterns detected');
   } else {
-    issues.push(`${slopSignals.count} slop word(s): ${slopSignals.items.slice(0, 3).join(', ')} — replace with plain technical language`);
+    issues.push(
+      `${slopSignals.count} slop word(s): ${slopSignals.items.slice(0, 3).join(', ')} — replace with plain technical language`
+    );
     if (slopSignals.count >= 4) raw -= 3;
   }
 
@@ -435,7 +493,9 @@ export function scorePrecision(text, articleType = 'troubleshooting') {
     raw += 3;
     if (vagueSignals.count === 0) strengths.push('No vague qualifiers in Resolution steps');
   } else {
-    issues.push(`${vagueSignals.count} vague qualifier(s) in Resolution: ${vagueSignals.items.slice(0, 3).join(', ')} — be specific`);
+    issues.push(
+      `${vagueSignals.count} vague qualifier(s) in Resolution: ${vagueSignals.items.slice(0, 3).join(', ')} — be specific`
+    );
     if (vagueSignals.count >= 3) raw -= 2;
   }
 
@@ -475,11 +535,15 @@ export function scoreSelfService(text, articleType) {
   // 3 pts: Summary (troubleshooting) OR Goal outcome (how-to)
   if (ss.hasSummaryOrGoal) {
     raw += 3;
-    strengths.push(articleType === 'how-to' ? 'Goal outcome statement present' : 'Summary section present');
+    strengths.push(
+      articleType === 'how-to' ? 'Goal outcome statement present' : 'Summary section present'
+    );
   } else {
-    issues.push(articleType === 'how-to'
-      ? 'Missing goal outcome statement ("By the end of this article, you will be able to...")'
-      : 'Missing Summary section — add a brief orientation for readers');
+    issues.push(
+      articleType === 'how-to'
+        ? 'Missing goal outcome statement ("By the end of this article, you will be able to...")'
+        : 'Missing Summary section — add a brief orientation for readers'
+    );
   }
 
   // 3 pts: Self-contained (no dangling references)
@@ -490,7 +554,9 @@ export function scoreSelfService(text, articleType) {
   } else {
     const penalty = Math.min(danglingMatches.length * 2, 4);
     raw -= penalty;
-    issues.push(`${danglingMatches.length} dangling reference(s) without links — add URLs or say "see below/above"`);
+    issues.push(
+      `${danglingMatches.length} dangling reference(s) without links — add URLs or say "see below/above"`
+    );
   }
 
   // 3 pts: Time estimate
@@ -503,17 +569,18 @@ export function scoreSelfService(text, articleType) {
 
   // Penalty: contact support as only resolution path
   const resText = extractSection(text, SECTION_PATTERNS.resolution);
-  const hasNoSteps = !resText.trim() ||
-    (resText.match(/^\s*(?:\d+\.|[-*])\s+\S/gm) || []).length === 0;
+  const hasNoSteps =
+    !resText.trim() || (resText.match(/^\s*(?:\d+\.|[-*])\s+\S/gm) || []).length === 0;
   if (hasNoSteps) {
     const escText = extractSection(text, SECTION_PATTERNS.escalation);
     const escSignals = detectEscalation(escText);
     if (escSignals.isUnconditional) {
       raw -= 8;
-      issues.push('"Contact support" is the only resolution path — add self-service steps before escalating');
+      issues.push(
+        '"Contact support" is the only resolution path — add self-service steps before escalating'
+      );
     }
   }
 
   return { score: Math.max(0, Math.min(raw, 15)), maxScore: 15, issues, strengths };
 }
-

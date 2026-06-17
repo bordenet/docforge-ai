@@ -5,11 +5,7 @@
  */
 
 import { SECTION_PATTERNS } from './validator-config.js';
-import {
-  extractSection,
-  detectArticleType,
-  detectResolutionSteps,
-} from './validator-detection.js';
+import { extractSection, detectArticleType, detectResolutionSteps } from './validator-detection.js';
 import {
   scoreFindability,
   scoreResolutionQuality,
@@ -86,7 +82,9 @@ export function validateDocument(text) {
   const theaterGate = resolutionText.trim().length > 0 && !resSignals.hasSpecificitySignals;
   const totalScore = theaterGate ? Math.min(rawTotal, 49) : rawTotal;
   const gateIssues = theaterGate
-    ? ['Resolution Theater: steps contain no UI path, command, or exact value — unfollowable. Score capped at 49 until the Resolution adds concrete specificity.']
+    ? [
+        'Resolution Theater: steps contain no UI path, command, or exact value — unfollowable. Score capped at 49 until the Resolution adds concrete specificity.',
+      ]
     : [];
 
   return {
@@ -106,7 +104,13 @@ export function validateDocument(text) {
     dimension4: { ...d4, issues: [...d4.issues], strengths: [...d4.strengths] },
     dimension5: { ...d5, issues: [...d5.issues], strengths: [...d5.strengths] },
     issues: [...gateIssues, ...d1.issues, ...d2.issues, ...d3.issues, ...d4.issues, ...d5.issues],
-    strengths: [...d1.strengths, ...d2.strengths, ...d3.strengths, ...d4.strengths, ...d5.strengths],
+    strengths: [
+      ...d1.strengths,
+      ...d2.strengths,
+      ...d3.strengths,
+      ...d4.strengths,
+      ...d5.strengths,
+    ],
   };
 }
 

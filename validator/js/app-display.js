@@ -5,7 +5,11 @@
  */
 
 import { escapeHtml } from '../../shared/js/ui.js';
-import { getGrade as defaultGetGrade, getScoreColor as defaultGetScoreColor, getScoreLabel as defaultGetScoreLabel } from '../../shared/js/validator.js';
+import {
+  getGrade as defaultGetGrade,
+  getScoreColor as defaultGetScoreColor,
+  getScoreLabel as defaultGetScoreLabel,
+} from '../../shared/js/validator.js';
 
 /**
  * Update score display from validation result
