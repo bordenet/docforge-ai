@@ -5,6 +5,11 @@ test-results/
 playwright-report/
 *.backup
 
+# Security: secrets and credentials
+.env
+*.pem
+*.key
+
 
 #Ignore vscode AI rules
 .github/instructions/codacy.instructions.md
