@@ -102,6 +102,7 @@
               <option value="jd">Job Description</option>
               <option value="business-justification">Business Justification</option>
               <option value="strategic-proposal">Strategic Proposal</option>
+              <option value="kb">Knowledge Base Article</option>
             </select>
             <!-- Document Type Dropdown -->
             <div class="relative">
@@ -210,9 +211,36 @@
                       Build proposals with pain points and metrics
                     </div>
                   </a>
+                  <a
+                    href="../assistant/?type=kb"
+                    class="block px-3 py-2 rounded-md hover:bg-slate-700 transition-colors"
+                    data-type="kb"
+                  >
+                    <div class="font-medium text-white">📖 Knowledge Base Article</div>
+                    <div class="text-xs text-slate-400">
+                      Troubleshooting and how-to articles for product support
+                    </div>
+                  </a>
                 </div>
               </div>
             </div>
+            <button
+              id="btn-back-to-assistant"
+              class="p-2 rounded-lg hover:bg-slate-500 dark:hover:bg-slate-800 transition-colors text-white"
+              aria-label="Back to Assistant"
+              title="Back to Assistant"
+            >
+              <svg
+                aria-hidden="true"
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+              </svg>
+            </button>
             <button
               id="btn-dark-mode"
               class="p-2 rounded-lg hover:bg-slate-500 dark:hover:bg-slate-800 transition-colors text-white"

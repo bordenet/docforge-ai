@@ -695,6 +695,19 @@ function setupEventListeners() {
   darkModeBtn?.addEventListener('click', () => toggleDarkMode());
   loadCanonicalBtn?.addEventListener('click', () => handleLoadCanonical());
 
+  document.getElementById('btn-back-to-assistant')?.addEventListener('click', async () => {
+    if (attachedContext?.projectId) {
+      const editorEl = document.getElementById('editor');
+      if (editorEl && typeof storage?.saveDraft === 'function') {
+        await storage.saveDraft(editorEl.value).catch(() => {});
+      }
+      window.location.href = `../assistant/?type=${encodeURIComponent(currentPlugin.id)}#project/${attachedContext.projectId}`;
+    } else {
+      const type = new URLSearchParams(window.location.search).get('type') || 'one-pager';
+      window.location.href = `../assistant/?type=${encodeURIComponent(type)}`;
+    }
+  });
+
   // About button
   document
     .getElementById('btn-about')
