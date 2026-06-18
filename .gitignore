@@ -17,7 +17,6 @@ id_dsa
 id_ecdsa
 id_ed25519
 
-
 #Ignore vscode AI rules
 .github/instructions/codacy.instructions.md
 
