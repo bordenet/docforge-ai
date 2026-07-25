@@ -9,6 +9,7 @@
  */
 
 import { getSlopPenalty } from '../../../shared/js/slop-scoring.js';
+import { getLengthPenalty } from '../../../shared/js/length-scoring.js';
 import { normalizeText } from '../../../shared/js/validator.js';
 import {
   scoreContext,
@@ -16,6 +17,10 @@ import {
   scoreConsequences,
   scoreStatus,
 } from './validator-scoring.js';
+
+// A single architectural decision, well-argued, reads in about a page.
+// This is a ceiling, not a target -- shorter is fine.
+const ADR_TARGET_WORDS = 550;
 
 // Re-export detection functions for testing
 export {
@@ -78,9 +83,18 @@ export function validateADR(text) {
     }
   }
 
+  // Length penalty - a good ADR argues one decision clearly in about a page.
+  // Bloat past that is a defect, not thoroughness.
+  const lengthPenalty = getLengthPenalty(normalized, ADR_TARGET_WORDS, { maxPenalty: 10 });
+
   const totalScore = Math.max(
     0,
-    context.score + decision.score + consequences.score + status.score - slopDeduction
+    context.score +
+      decision.score +
+      consequences.score +
+      status.score -
+      slopDeduction -
+      lengthPenalty.penalty
   );
 
   // Aggregate all issues from all dimensions for the assistant completion banner
@@ -90,6 +104,7 @@ export function validateADR(text) {
     ...consequences.issues,
     ...status.issues,
     ...slopIssues,
+    ...lengthPenalty.issues,
   ];
 
   return {
@@ -108,6 +123,7 @@ export function validateADR(text) {
       deduction: slopDeduction,
       issues: slopIssues,
     },
+    lengthCheck: lengthPenalty,
     // Top-level issues array for assistant completion banner display
     issues: allIssues,
   };

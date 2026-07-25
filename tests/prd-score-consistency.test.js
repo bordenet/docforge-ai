@@ -52,8 +52,18 @@ describe('PRD Validator Score Consistency', () => {
 
     test('should produce expected scores for Project Verity PRD fixture', () => {
       // These are the exact scores from running the validator on the fixture
-      // If these change, either the validator logic changed or the fixture changed
-      expect(validationResult.totalScore).toBe(77);
+      // If these change, either the validator logic changed or the fixture changed.
+      //
+      // totalScore is 69, not 77: this fixture is 3,686 words and validatePRD()
+      // is called here with no formData, so the length penalty (added to flag
+      // documents that run past their target length) defaults to the 'feature'
+      // scope target (1,500 words) -- the same conservative default the Phase 1
+      // prompt itself uses when no scope is declared. That's a 2.46x overage,
+      // an 8-point deduction. A caller that passes formData.documentScope:
+      // 'product' would see zero length penalty for this same fixture, since
+      // 3,686 words is comfortably within the Product scope target (~6,000).
+      expect(validationResult.totalScore).toBe(69);
+      expect(validationResult.lengthCheck.penalty).toBe(8);
 
       expect(validationResult.structure.score).toBe(18);
       expect(validationResult.structure.maxScore).toBe(20);
@@ -137,7 +147,8 @@ describe('PRD Validator Score Consistency', () => {
         validationResult.userFocus.issues.length +
         validationResult.technical.issues.length +
         validationResult.strategicViability.issues.length +
-        (validationResult.slopDetection?.issues?.length || 0);
+        (validationResult.slopDetection?.issues?.length || 0) +
+        (validationResult.lengthCheck?.issues?.length || 0);
       expect(validationResult.issues.length).toBe(expectedIssueCount);
     });
   });

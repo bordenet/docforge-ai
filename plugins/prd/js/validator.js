@@ -10,6 +10,7 @@
  */
 
 import { getSlopPenalty, calculateSlopScore } from '../../../shared/js/slop-scoring.js';
+import { getLengthPenalty } from '../../../shared/js/length-scoring.js';
 import { normalizeText } from '../../../shared/js/validator.js';
 import {
   scoreDocumentStructure,
@@ -19,6 +20,18 @@ import {
 } from './validator-scoring.js';
 import { scoreStrategicViability } from './validator-strategic.js';
 import { detectExpansionStubs } from './validator-detection.js';
+
+// Upper-bound word targets by declared Document Scope (see config.js formFields).
+// These mirror the targets stated in the Phase 1 prompt itself, so the score
+// enforces the same ceiling the LLM was asked to write to. Unset/unknown scope
+// defaults to 'feature' -- the prompt's own stated default -- rather than
+// inferring scope from the word count, which would let any long document
+// grade itself into a bigger bucket and dodge the penalty entirely.
+const SCOPE_TARGET_WORDS = {
+  feature: 1500,
+  epic: 3000,
+  product: 6000,
+};
 
 // Re-export detection functions for external use
 export {
@@ -59,9 +72,10 @@ export { calculateSlopScore };
 /**
  * Validate a PRD and return comprehensive scoring results
  * @param {string} text - PRD content
+ * @param {Object} [formData] - Project form data; formData.documentScope selects the length target
  * @returns {Object} Complete validation results
  */
-export function validatePRD(text) {
+export function validatePRD(text, formData) {
   if (!text || typeof text !== 'string') {
     return {
       totalScore: 0,
@@ -105,6 +119,21 @@ export function validatePRD(text) {
     }
   }
 
+  // Length penalty - scoped to the document's declared Document Scope so a
+  // correctly-brief Feature PRD isn't compared against a Product-scope target.
+  const targetWords = SCOPE_TARGET_WORDS[formData?.documentScope] || SCOPE_TARGET_WORDS.feature;
+  const lengthPenalty = getLengthPenalty(normalized, targetWords, { maxPenalty: 12 });
+  if (lengthPenalty.penalty > 0 && !formData?.documentScope) {
+    // The standalone Validator tool (paste-a-document, no project form data) has no
+    // Document Scope selector, so this always defaults to the Feature target. Disclose
+    // that assumption rather than let a legitimately long Epic/Product PRD read as
+    // silently "bloated" with no explanation (llm-skill-review finding, 2026-07-25).
+    lengthPenalty.issues.push(
+      `Scored against the Feature-scope target (${targetWords} words) because no Document Scope was declared -- ` +
+        'if this is intentionally an Epic or Product-scope document, note that and re-check.'
+    );
+  }
+
   const totalScore = Math.max(
     0,
     structure.score +
@@ -112,7 +141,8 @@ export function validatePRD(text) {
       userFocus.score +
       technical.score +
       strategicViability.score -
-      slopDeduction
+      slopDeduction -
+      lengthPenalty.penalty
   );
 
   // Aggregate all issues from all dimensions for the assistant completion banner
@@ -124,6 +154,7 @@ export function validatePRD(text) {
     ...technical.issues,
     ...strategicViability.issues,
     ...slopIssues,
+    ...lengthPenalty.issues,
   ];
 
   return {
@@ -145,6 +176,7 @@ export function validatePRD(text) {
       deduction: slopDeduction,
       issues: slopIssues,
     },
+    lengthCheck: lengthPenalty,
     // Top-level issues array for assistant completion banner display
     issues: allIssues,
     // Expansion stubs from length checkpoint feature (informational, no penalty)
@@ -155,8 +187,8 @@ export function validatePRD(text) {
 /**
  * Alias for backward compatibility with assistant UI
  */
-export function validateDocument(text) {
-  return validatePRD(text);
+export function validateDocument(text, formData) {
+  return validatePRD(text, formData);
 }
 
 // Re-export scoring helper functions from shared module for consistency

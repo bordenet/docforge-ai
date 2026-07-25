@@ -50,7 +50,7 @@ export function renderPhaseContent(plugin, project, phase) {
   if (phase === 3 && phaseData.completed) {
     // Calculate quality score
     const documentContent = phaseData.response || '';
-    const validationResult = validateDocument(documentContent, plugin);
+    const validationResult = validateDocument(documentContent, plugin, project.formData);
     const scoreColor = getScoreColor(validationResult.totalScore);
     const scoreLabel = getScoreLabel(validationResult.totalScore);
 

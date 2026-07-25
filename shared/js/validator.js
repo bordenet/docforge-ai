@@ -110,9 +110,11 @@ export function detectPrompt(text) {
  * Validate a document using plugin dimensions
  * @param {string} text - Document text to validate
  * @param {Object} plugin - Plugin configuration with scoringDimensions
+ * @param {Object} [formData] - Project form data, forwarded to plugin-specific validators
+ *   that need it (e.g. PRD reads formData.documentScope to pick a length target)
  * @returns {Object} Validation result with scores
  */
-export function validateDocument(text, plugin) {
+export function validateDocument(text, plugin, formData) {
   if (!text || !text.trim()) {
     return createEmptyResult(plugin);
   }
@@ -131,7 +133,7 @@ export function validateDocument(text, plugin) {
   // Each plugin can define its own validateDocument function with domain-specific
   // scoring patterns (e.g., PRD checks for metrics, JD checks for inclusivity)
   if (plugin?.validateDocument && typeof plugin.validateDocument === 'function') {
-    return plugin.validateDocument(normalizedText);
+    return plugin.validateDocument(normalizedText, formData);
   }
 
   // Fall back to generic dimension-based scoring if no plugin-specific validator

@@ -254,6 +254,22 @@ describe('Prompt-Rubric Alignment', () => {
       // The JS validator can theoretically score 26 pts but caps at 20
       expect(phase2Content).toContain('capped at 20');
     });
+
+    test('Scope Realism, Risk/Dissenting, and Traceability are scope-qualified for Feature PRDs', () => {
+      // Regression guard (llm-skill-review finding, 2026-07-25): these sub-checks were
+      // previously unscoped, contradicting Phase 1's Feature-scope skip list (Scope,
+      // Traceability, Known Unknowns sections) and reintroducing the exact
+      // rubric-as-instructions bloat pattern this rewrite otherwise removed. Each must
+      // now say WHEN it doesn't apply, the same way Competitive Depth already does.
+      expect(phase2Content).toMatch(/Scope Realism.*\(Epic\/Product only/i);
+      expect(phase2Content).toMatch(/Dissenting opinions.*Epic\/Product only/i);
+      expect(phase2Content).toMatch(/Traceability.*\(Epic\/Product only/i);
+      expect(phase2Content).toMatch(/Competitive.*\(Product scope only\)/i);
+    });
+
+    test('a Feature-scope PRD correctly omitting these sections is explicitly told it is not penalized', () => {
+      expect(phase2Content).toMatch(/Feature-scope PRD that correctly omits.*is not weaker/i);
+    });
   });
 
   describe('Phase 2 Output Format Rules', () => {

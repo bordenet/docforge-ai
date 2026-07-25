@@ -1,90 +1,28 @@
-You are synthesizing a final, production-ready Architecture Decision Record (ADR).
+You are synthesizing the final, production-ready Architecture Decision Record (ADR).
 
-Your job is to combine the best of the original draft with critical feedback to create the definitive ADR aligned with **MADR 3.0 standards**.
-
-Reference: MADR 3.0 at https://adr.github.io/madr/ - emphasizing explicit decision drivers, validation criteria, and justified design choices.
-
-## Original ADR (Phase 1 - Initial Draft)
+## Original ADR (Phase 1)
 
 {{PHASE1_OUTPUT}}
 
-## Critical Feedback (Phase 2 - Review)
+## Review (Phase 2)
 
 {{PHASE2_OUTPUT}}
 
 ## Your Synthesis Task
 
-Create the final ADR by:
+Merge Phase 1 and Phase 2 into one final ADR. This is a selection process, not an averaging process:
 
-1. **Keeping what works**: Don't change sections that are already strong
-2. **Fixing what's weak**: Address all identified gaps and vague language
-3. **Adding missing elements**: Incorporate feedback about missing considerations
-4. **Maintaining balance**: Ensure consequences remain honestly balanced (not weighted to positives)
-5. **Improving specificity**: Replace vague language with concrete details
+- Where Phase 1 is already specific and concrete, keep it as-is.
+- Where Phase 2 sharpened something vague, adopt Phase 2's version.
+- **Never combine both phrasings into one bloated sentence.** Pick the clearer one.
+- Don't carry forward anything from either version that isn't grounded in the original Context -- if either phase invented a detail, drop it rather than merge it in.
 
-## Synthesis Decision Rules
+**Example of what NOT to do:** "may increase complexity (from Phase 1) with some mitigation planned (from Phase 2)" ❌
+**Example of what TO do:** "Requires distributed tracing; debugging moves from grep-based log search to Jaeger" ✅
 
-When deciding between Phase 1 and feedback suggestions:
-- **If Phase 1 is specific and concrete**: Keep it (don't weaken it)
-- **If feedback suggests better specificity**: Adopt the specific version without hesitation
-- **If Phase 1 is vague**: Replace with the concrete suggestion from Phase 2
-- **NEVER average or water down**: Choose the clearer, more concrete version EVERY time
-- **If both are strong but different**: Pick the one that better addresses the business drivers
-- **Example of what NOT to do**: "may increase complexity (from Phase 1) with some mitigation (from Phase 2)" ❌
-- **Example of what TO do**: "Requires distributed tracing implementation; debugging cross-service issues changes from grep-based to Jaeger visualization" ✅
+## ⛔ Synthesis is not additive
 
-## Critical Requirements for Final ADR (MADR 3.0)
-
-### Decision Drivers Section Must:
-- List 3-5 explicit drivers as bullet points
-- Include desired qualities (e.g., "scalability to 10k concurrent users")
-- Include constraints (e.g., "must integrate with existing Oracle DB")
-- Include concerns (e.g., "team has no Kubernetes experience")
-- Be specific and measurable where possible
-
-### Decision Outcome Section Must:
-- Name the specific architectural approach chosen (not vague principles)
-- Explain the RATIONALE (why this approach over alternatives)
-- **Include explicit alternatives discussion** ("We considered X and Y, but chose Z because...")
-- **Ground rationale in business drivers** (cost, time-to-market, team capability, risk mitigation)
-- Include specific numbers/constraints from context where relevant
-- Use decisive language ("will", "shall", "implements")
-
-### Consequences Section Must:
-- Include MINIMUM 3 positive consequences (specific, not generic)
-- Include MINIMUM 3 negative consequences (honest, specific)
-- **Address team factors explicitly** (training needs, skill gaps, hiring impact, team structure)
-- **Include subsequent ADRs triggered by this decision** (e.g., "This necessitates decisions on X, Y, Z")
-- **Include after-action review timing** (e.g., "Review in 30 days" or "after 3 production deployments")
-- Address three dimensions: technical, organizational, operational
-- Each consequence should be one substantive sentence, not a phrase
-- Avoid generic words: "complexity", "overhead" - be specific about WHAT is complex
-
-### Confirmation Section Must (MADR 3.0):
-- Specify how implementation compliance will be validated
-- Include concrete verification mechanisms (not vague "monitor progress")
-- Options: code review, architecture review, automated tests, metrics thresholds, DCAR
-
-### Context Section Should:
-- Reference specific numbers/facts that drive the decision
-- Clearly state the problem that this decision solves
-- Identify key constraints or trade-offs
-
-## Interactive Question Phase (Final Synthesis)
-
-**CRITICAL**: As you synthesize Phase 1 and Phase 2, ask 1-3 final clarifying questions to validate your synthesis:
-
-These questions probe for:
-- **Decision clarity** - "Did I understand the core decision correctly? Is there a better way to phrase it?"
-- **Consequences completeness** - "Are there consequences I'm missing? What about [obvious impact]?"
-- **Implementation readiness** - "Is this decision specific enough to implement? Or do you need more detail?"
-
-**Format**: Return final questions BEFORE the synthesized ADR using this structure:
-- Start with "## Final Validation Questions" header
-- List 2-3 numbered questions with bold topic labels
-- Follow with horizontal rule then the final ADR
-
-**Why this matters**: Synthesis isn't mechanical averaging. It's about validating that you understood the decision correctly and that the final ADR will actually guide your team. These final questions catch misunderstandings before they're published.
+The final ADR should be the same length as the better of the two drafts, not the sum of both. If Phase 1 was 400 words and Phase 2's feedback added detail, the synthesis should still land around 400-500 words -- replacing weak phrasing with strong phrasing, not appending Phase 2's notes onto Phase 1's draft.
 
 ---
 
@@ -92,7 +30,7 @@ These questions probe for:
 
 <output_rules>
 CRITICAL - Your final ADR must be COPY-PASTE READY:
-- Start IMMEDIATELY with "## Final Validation Questions" or "# {title}" (no preamble like "Here's the final ADR...")
+- Start IMMEDIATELY with "# {title}" (no preamble like "Here's the final ADR...")
 - End with the attribution line specified below, then stop (no sign-off like "Let me know if...")
 - NO markdown code fences (```markdown) wrapping the output
 - NO explanations of what you did or why
@@ -101,64 +39,18 @@ CRITICAL - Your final ADR must be COPY-PASTE READY:
 
 ### Required Sections (MADR 3.0 Aligned)
 
-| Section | Synthesis Guidance | Format |
-|---------|-------------------|--------|
-| # {title} | Use clearer title (problem + solution essence) | H1 header |
-| ## Status | Keep original with metadata (date, deciders) | Paragraph |
-| ## Context and Problem Statement | Incorporate feedback improvements | Paragraph |
-| ## Decision Drivers | 3-5 explicit forces/constraints | Bullet list |
-| ## Considered Options | Alternatives investigated | Numbered list |
-| ## Decision Outcome | Best specificity with Y-statement | Paragraph |
-| ### Positive Consequences | 3+ "Good, because..." impacts | Bullet list |
-| ### Negative Consequences | 3+ "Bad, because..." assessments | Bullet list |
-| ### Subsequent ADRs Triggered | Combined from both | Bullet list |
-| ### Recommended Review Timing | Most specific checkpoint | Paragraph |
-| ## Confirmation | How compliance will be validated | Paragraph |
-| ## If This ADR Is Updated Later | Amendment pattern | Template |
-
-## ⚠️ FINAL AI Slop Sweep
-
-Before finalizing, eliminate ALL remaining slop:
-
-### Zero Tolerance Patterns
-
-**These MUST NOT appear in final output:**
-
-| Category | Banned Examples |
-|----------|-----------------|
-| Vague metrics | "improve", "enhance", "optimize" (without numbers) |
-| Generic impacts | "complexity", "overhead" (without specifics) |
-| Undefined terms | "scalable", "resilient", "robust" (without scope) |
-| Filler phrases | "It's important to note", "Going forward" |
-
-### Required Patterns
-
-**These MUST appear in final output:**
-- All consequences: **Specific, measurable impacts**
-- All decisions: **Alternatives comparison with trade-offs**
-- All claims: **Grounded in context facts with numbers**
-
----
-
-## Quality Checklist Before Returning (MADR 3.0 Aligned)
-- ✅ **Decision Drivers section** lists 3-5 explicit forces/constraints
-- ✅ **Considered Options section** lists alternatives investigated
-- ✅ Decision names a specific approach (microservices, monorepo, event-driven, etc.)
-- ✅ Decision explains why, not how
-- ✅ **Decision includes alternatives discussion** ("We considered X and Y, but chose Z because...")
-- ✅ **Decision is grounded in business drivers** (cost, time-to-market, capability, risk)
-- ✅ 3+ positive consequences with "Good, because..." format
-- ✅ 3+ negative consequences with "Bad, because..." format
-- ✅ **Team factors explicitly addressed** (training, skill gaps, hiring, team structure)
-- ✅ Negative consequences are honest and realistic
-- ✅ No vague words (improve, optimize, better, enhance, complexity)
-- ✅ Specific technical implications (network latency, event-driven patterns, etc.)
-- ✅ Organizational impact addressed (training needs, team coordination, etc.)
-- ✅ **Subsequent ADRs section present** (lists 2-3 triggered decisions)
-- ✅ **Recommended Review Timing present** (specific checkpoints)
-- ✅ **Confirmation section present** (specifies how compliance will be validated)
-- ✅ **Living document guidance included** (amendment pattern with dates)
-- ✅ **Zero AI Slop** (no vague terms, filler phrases, or undefined buzzwords)
+| Section | Synthesis Guidance |
+|---------|-------------------|
+| # {title} | Clearer of the two titles |
+| ## Status | Keep original with metadata |
+| ## Context and Problem Statement | Incorporate genuine feedback improvements |
+| ## Decision Drivers | Forces that actually apply |
+| ## Considered Options | Alternatives investigated |
+| ## Decision Outcome | Best specificity from either draft |
+| ### Positive Consequences | Real, specific benefits |
+| ### Negative Consequences | Honest, specific trade-offs |
+| ## Confirmation | How compliance will be validated |
+| ## If This ADR Is Updated Later | Amendment pattern |
 
 Return the complete, production-ready ADR above. This is the version that will be published.
 
