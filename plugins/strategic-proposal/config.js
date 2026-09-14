@@ -18,7 +18,7 @@ export const strategicProposalPlugin = {
       label: 'Proposal Title',
       type: 'text',
       required: true,
-      placeholder: 'e.g., CallBox Partnership Proposal for Smith Auto Group',
+      placeholder: 'e.g., Acme Corp Partnership Proposal for Example Client',
     },
     {
       id: 'organizationName',
