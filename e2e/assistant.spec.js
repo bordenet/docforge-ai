@@ -10,6 +10,7 @@ const DOC_TYPES = [
   { id: 'jd', name: 'Job Description', icon: '💼' },
   { id: 'business-justification', name: 'Business Justification', icon: '📊' },
   { id: 'strategic-proposal', name: 'Strategic Proposal', icon: '🎯' },
+  { id: 'kb', name: 'Knowledge Base Article', icon: '📖' },
 ];
 
 test.describe('Assistant', () => {
@@ -31,7 +32,7 @@ test.describe('Assistant', () => {
     await expect(page.locator('#header-icon')).toContainText('📄');
   });
 
-  test('document type selector contains all 9 types', async ({ page }) => {
+  test('document type selector contains all document types', async ({ page }) => {
     await page.goto('/assistant/?type=one-pager');
     await page.waitForLoadState('networkidle');
 
@@ -40,12 +41,12 @@ test.describe('Assistant', () => {
     await expect(menuBtn).toBeVisible();
     await menuBtn.click();
 
-    // Check menu is visible and contains 9 document type links
+    // Check menu is visible and contains a link for every document type
     const menu = page.locator('#doc-type-menu');
     await expect(menu).toBeVisible();
 
     const links = await menu.locator('a[data-type]').all();
-    expect(links.length).toBe(9);
+    expect(links.length).toBe(DOC_TYPES.length);
 
     // Verify all doc types are present
     for (const docType of DOC_TYPES) {
